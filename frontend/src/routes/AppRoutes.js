@@ -1,15 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "../pages/Home/Home";
-import About from "../pages/About/About";
-import Contact from "../pages/Contact/Contact";
+import Home from "../pages/Home";
+import BookTable from "../components/BookTable";
+import BookRoom from "../components/BookRoom";
+import About from "../pages/About";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/bookTable" element={<BookTable />} />
+        <Route path="/bookRoom" element={<BookRoom />} />
         <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+
       </Routes>
     </BrowserRouter>
   );
