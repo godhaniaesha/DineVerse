@@ -4,8 +4,9 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Navbar from "../components/Navbar";
 import Auth from "../components/Auth";
-import Home from "../pages/Home";
 import Header from "../components/Header";
+import BookTable from "../components/BookTable";
+import BookRoom from "../components/BookRoom";
 
 function AppRoutes() {
   return (
@@ -19,8 +20,12 @@ function AppRoutes() {
         <Route path="/" element={<Navbar />} />
         {/* <Route path="/register" element={<Register />} /> */}
         <Route path="/auth" element={<Auth />} />
-        <Route path="/" element={<Home />} />
+        {/* <Route path="/" element={<Home />} /> */}
         <Route path="/header" element={<Header />} />
+        {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/bookTable" element={<BookTable />} />
+        <Route path="/bookRoom" element={<BookRoom />} />
+
       </Routes>
     </BrowserRouter>
   );

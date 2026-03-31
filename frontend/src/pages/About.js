@@ -1,765 +1,566 @@
-import { useEffect, useRef, useState } from "react";
-import { forwardRef } from "react";
-import {
-  FiAward, FiUsers, FiCoffee, FiStar,
-  FiArrowRight, FiChevronDown
-} from "react-icons/fi";
-import {
-  GiWineGlass, GiKnifeFork, GiCoffeeCup,
-  GiCook, GiVineLeaf
-} from "react-icons/gi";
-import { TbSparkles, TbChefHat, TbFlame } from "react-icons/tb";
-import { MdOutlineLocalBar } from "react-icons/md";
+import { useState } from "react";
+import "../style/h_style.css";
 
-/* ─── DATA ─── */
-const STATS = [
-  { icon: <FiStar />, value: "4.9", label: "Guest Rating", suffix: "★" },
-  { icon: <FiUsers />, value: "12K+", label: "Happy Guests", suffix: "" },
-  { icon: <TbChefHat />, value: "18", label: "Expert Chefs", suffix: "" },
-  { icon: <FiAward />, value: "7", label: "Awards Won", suffix: "" },
-];
-
-const VENUES = [
-  {
-    id: "restaurant",
-    icon: <GiKnifeFork />,
-    accent: "var(--d-restaurant)",
-    dim: "var(--d-restaurant-dim)",
-    name: "The Restaurant",
-    tagline: "Fine Dining Redefined",
-    desc: "A temple of flavour where classical French technique meets bold Indian soul. Every plate is a conversation between heritage and modernity, served in a setting that breathes elegance.",
-    details: ["Seats 64 guests", "Open 12pm – 11pm", "Private dining available"],
-    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80",
-  },
-  {
-    id: "bar",
-    icon: <MdOutlineLocalBar />,
-    accent: "var(--d-bar)",
-    dim: "var(--d-bar-dim)",
-    name: "The Bar",
-    tagline: "Crafted Pour by Pour",
-    desc: "A dimly lit sanctuary of rare spirits and bespoke cocktails. Our mixologists are storytellers—every glass holds a narrative, from smoked Old Fashioneds to floral zero-proof creations.",
-    details: ["Seats 36 guests", "Open 5pm – 1am", "Live jazz on Fridays"],
-    img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=900&q=80",
-  },
-  {
-    id: "cafe",
-    icon: <GiCoffeeCup />,
-    accent: "var(--d-cafe)",
-    dim: "var(--d-cafe-dim)",
-    name: "The Café",
-    tagline: "Mornings Worth Waking For",
-    desc: "Sun-drenched and serene, our café is the city's best-kept secret. Single-origin brews, house-baked pastries and a menu that celebrates the unhurried joy of a slow morning.",
-    details: ["Seats 28 guests", "Open 7am – 6pm", "Weekend brunch specials"],
-    img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=900&q=80",
-  },
-];
-
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
 const TEAM = [
   {
-    name: "Arjun Mehta", role: "Executive Chef",
-    bio: "15 years across Michelin-starred kitchens in Paris and Tokyo. Back home to tell India's story through food.",
-    img: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=400&q=80",
-    accent: "var(--d-restaurant)",
+    id: 1,
+    name: "Étienne Moreau",
+    title: "Executive Chef & Founder",
+    bio: "Trained under Michelin-starred mentors in Lyon and Paris, Chef Étienne brings 22 years of culinary mastery to every plate at La Noirè. His philosophy: let the finest seasonal ingredients speak for themselves.",
+    specialties: ["French Cuisine", "Molecular Gastronomy", "Seasonal Menus"],
+    img: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80",
+    featured: true,
   },
   {
-    name: "Leila Nair", role: "Head Mixologist",
-    bio: "World Cocktail Champion 2022. She treats every glass like a canvas, every sip like the first sentence of a novel.",
-    img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80",
-    accent: "var(--d-bar)",
+    id: 2,
+    name: "Isabelle Laurent",
+    title: "Pastry Chef",
+    bio: "Award-winning pastry artist whose desserts are as beautiful as they are divine. Her signature dark chocolate soufflé has earned its own legendary status.",
+    specialties: ["Pastry Arts", "Chocolate Work", "Dessert Pairing"],
+    img: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=600&q=80",
+    featured: false,
   },
   {
-    name: "Rohan Shah", role: "Pastry & Café Lead",
-    bio: "Trained in Vienna and Copenhagen. Brings European pastry mastery with a deep love for spiced chai and cardamom.",
-    img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
-    accent: "var(--d-cafe)",
+    id: 3,
+    name: "Marco Delacroix",
+    title: "Head Mixologist",
+    bio: "With a background spanning Tokyo, New York, and London's finest cocktail bars, Marco crafts liquid stories that complement every dining journey at La Noirè.",
+    specialties: ["Craft Cocktails", "Barrel Ageing", "Botanical Infusions"],
+    img: "https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=600&q=80",
+    featured: false,
+  },
+  {
+    id: 4,
+    name: "Sophie Renard",
+    title: "Sommelier",
+    bio: "One of France's youngest certified Master Sommeliers, Sophie's curated wine collection spans six continents and pairs perfectly with every course.",
+    specialties: ["Wine Curation", "Food Pairing", "Natural Wines"],
+    img: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=600&q=80",
+    featured: false,
+  },
+  {
+    id: 5,
+    name: "Antoine Leclerc",
+    title: "Sous Chef",
+    bio: "Antoine's mastery of fire and spice brings a bold, unconventional edge to the kitchen. Specialising in wood-fired preparations and smoky depth of flavour.",
+    specialties: ["Wood-Fire Cooking", "Charcuterie", "Regional French"],
+    img: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=600&q=80",
+    featured: false,
+  },
+  {
+    id: 6,
+    name: "Camille Voss",
+    title: "Front-of-House Director",
+    bio: "With an unparalleled eye for detail, Camille ensures every guest at La Noirè experiences an evening of impeccable, warm hospitality.",
+    specialties: ["Guest Experience", "Event Curation", "Wine Service"],
+    img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80",
+    featured: false,
   },
 ];
 
-const MILESTONES = [
-  { year: "2019", title: "The Dream Begins", desc: "Aurum opens its doors in Surat — three spaces, one vision." },
-  { year: "2020", title: "Survived & Thrived", desc: "Adapted to the world's shift. Launched cloud kitchen & delivery." },
-  { year: "2021", title: "First Award", desc: "Named 'Best New Restaurant' by Gujarat Culinary Guild." },
-  { year: "2022", title: "The Bar Blooms", desc: "Leila joins. The bar earns national recognition in Spirited Awards." },
-  { year: "2023", title: "Expansion", desc: "Private dining suite & rooftop terrace added. Capacity doubled." },
-  { year: "2024", title: "A Decade Dream", desc: "12,000+ guests hosted. Michelin Guide informal listing noted." },
+const TIMELINE = [
+  { year: "2006", title: "A Dream Takes Shape", desc: "Chef Étienne returns from Paris with a singular vision — a place where French tradition meets contemporary soul, tucked away on a quiet Parisian side street." },
+  { year: "2009", title: "First Michelin Recognition", desc: "Just three years in, La Noirè earned its first Michelin star, heralding a new era of prestige and drawing guests from across the globe." },
+  { year: "2014", title: "The Bar Lounge Opens", desc: "The iconic Bar Noirè — a low-lit world of rare spirits and artisan cocktails — extended our hospitality into the night, becoming one of the city's most celebrated cocktail destinations." },
+  { year: "2018", title: "Renovation & Reinvention", desc: "A full redesign unveiled La Noirè's signature dark-luxe interior — emerald accents, vaulted ceilings, and the bespoke lighting that guests now photograph from every angle." },
+  { year: "2023", title: "The Second Star", desc: "Our proudest moment: a second Michelin star awarded, placing La Noirè among the finest restaurants in Europe and fulfilling a dream years in the making." },
 ];
 
-/* ─── HOOK: intersection observer ─── */
-function useReveal() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.12 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return [ref, visible];
-}
+const VALUES = [
+  { icon: "🌿", title: "Farm to Table", text: "Every ingredient is sourced from trusted local farms and artisan producers. We visit our suppliers personally, ensuring the highest quality from soil to plate." },
+  { icon: "🍷", title: "Curated Cellars", text: "Our 800-bottle cellar spans celebrated châteaux and hidden gems. Each selection is curated to complement and elevate your dining experience." },
+  { icon: "🕯️", title: "Intimate Ambience", text: "Candlelit tables, bespoke acoustics, and a dedication to unhurried time. La Noirè is designed to make every evening feel like the only evening." },
+  { icon: "🎭", title: "Living Culture", text: "Monthly chef's table events, wine tastings, and culinary workshops ensure La Noirè remains a living, breathing cultural destination." },
+  { icon: "🌍", title: "Sustainable Craft", text: "From zero-waste kitchen practices to biodegradable packaging, our commitment to the planet is as serious as our commitment to flavour." },
+  { icon: "✨", title: "Exceptional Service", text: "Our team is trained to anticipate every need — warm, knowledgeable, and genuinely delighted to make your evening unforgettable." },
+];
 
-/* ─── STAT CARD ─── */
-function StatCard({ icon, value, label, delay }) {
-  const [ref, visible] = useReveal();
-  return (
-    <div ref={ref} className="x_stat_card" style={{ animationDelay: delay, opacity: visible ? undefined : 0, animation: visible ? `x_fadeUp 0.6s var(--d-ease) ${delay} both` : "none" }}>
-      <span className="x_stat_icon">{icon}</span>
-      <span className="x_stat_value">{value}</span>
-      <span className="x_stat_label">{label}</span>
-    </div>
-  );
-}
+const AWARDS = [
+  { icon: "⭐", name: "Michelin ★★", year: "2023 — 2024" },
+  { icon: "🏆", name: "Best Restaurant", year: "Paris Eats 2022" },
+  { icon: "🍸", name: "Top 50 Bars", year: "World's Best 2023" },
+  { icon: "🌿", name: "Sustainable Dining", year: "Green Fork 2024" },
+];
 
-/* ─── VENUE CARD ─── */
-function VenueCard({ venue, reverse }) {
-  const [ref, visible] = useReveal();
-  return (
-    <div
-      ref={ref}
-      className={`x_venue_card${reverse ? " x_venue_card--rev" : ""}${visible ? " x_visible" : ""}`}
-      style={{ "--accent": venue.accent, "--dim": venue.dim }}
-    >
-      <div className="x_venue_img_wrap">
-        <img src={venue.img} alt={venue.name} className="x_venue_img" loading="lazy" />
-        <div className="x_venue_img_overlay" />
-        <span className="x_venue_icon_badge">{venue.icon}</span>
-      </div>
-      <div className="x_venue_body">
-        <span className="x_venue_kicker">{venue.tagline}</span>
-        <h3 className="x_venue_name">{venue.name}</h3>
-        <p className="x_venue_desc">{venue.desc}</p>
-        <ul className="x_venue_details">
-          {venue.details.map((d) => (
-            <li key={d} className="x_venue_detail_item">
-              <FiArrowRight className="x_venue_detail_arrow" /> {d}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
+const TESTIMONIALS = [
+  { text: "An evening at La Noirè doesn't just satisfy the palate — it nourishes the soul. The most extraordinary restaurant experience of my life.", author: "Juliette M.", source: "TripAdvisor — 5 Stars", stars: "★★★★★" },
+  { text: "Chef Étienne's tasting menu is a journey through emotion and memory. Every course arrived as a surprise, every bite a revelation.", author: "Thomas B.", source: "Google Reviews — 5 Stars", stars: "★★★★★" },
+  { text: "The bar alone is worth the visit. Marco's cocktails are pure theatre. I've been back four times this year and will return for a fifth.", author: "Céline D.", source: "Yelp — 5 Stars", stars: "★★★★★" },
+];
 
-/* ─── TEAM CARD ─── */
-function TeamCard({ member, delay }) {
-  const [ref, visible] = useReveal();
-  return (
-    <div ref={ref} className="x_team_card" style={{ "--accent": member.accent, animationDelay: delay, opacity: visible ? undefined : 0, animation: visible ? `x_fadeUp 0.6s var(--d-ease) ${delay} both` : "none" }}>
-      <div className="x_team_img_wrap">
-        <img src={member.img} alt={member.name} className="x_team_img" loading="lazy" />
-        <div className="x_team_img_glow" />
-      </div>
-      <div className="x_team_body">
-        <h4 className="x_team_name">{member.name}</h4>
-        <span className="x_team_role">{member.role}</span>
-        <p className="x_team_bio">{member.bio}</p>
-      </div>
-    </div>
-  );
-}
+const AMBIENCE_IMAGES = [
+  { img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80", label: "Main Dining Room" },
+  { img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", label: "Private Terrace" },
+  { img: "https://images.unsplash.com/photo-1550966871-3ed3cfd6fac9?w=800&q=80", label: "Bar Noirè" },
+  { img: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80", label: "Chef's Table" },
+  { img: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800&q=80", label: "Wine Cellar" },
+  { img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80", label: "Garden Terrace" },
+];
 
-/* ─── TIMELINE ITEM ─── */
-function TimelineItem({ item, idx }) {
-  const [ref, visible] = useReveal();
-  return (
-    <div ref={ref} className={`x_tl_item${visible ? " x_visible" : ""}`} style={{ animationDelay: `${idx * 0.1}s` }}>
-      <div className="x_tl_year">{item.year}</div>
-      <div className="x_tl_dot" />
-      <div className="x_tl_content">
-        <h4 className="x_tl_title">{item.title}</h4>
-        <p className="x_tl_desc">{item.desc}</p>
-      </div>
-    </div>
-  );
-}
+const AMBIENCE_CARDS = [
+  { icon: "🕯️", title: "The Dining Room", text: "Vaulted ceilings, candlelit tables for two, and velvet booths for six. The main dining room seats 48 in an atmosphere of deep noir luxury, where every table feels like your own private world." },
+  { icon: "🌿", title: "The Open Terrace", text: "Draped in climbing jasmine and lit by a thousand fairy lights, our terrasse is Paris at its most romantic — the perfect setting for a summer evening beneath the stars." },
+  { icon: "🥂", title: "Bar Noirè", text: "Low-lit and deeply seductive, the bar lounge is a late-night world of rare cognacs, smoked old fashioneds, and jazz so close you can feel the bass. Open until 2AM Wednesday through Sunday." },
+];
 
-/* ─── MAIN PAGE ─── */
+// ─────────────────────────────────────────────
+//  COMPONENT
+// ─────────────────────────────────────────────
 export default function About() {
-  const [heroVisible, setHeroVisible] = useState(false);
-  useEffect(() => { setTimeout(() => setHeroVisible(true), 80); }, []);
+  const [activeTeamFilter, setActiveTeamFilter] = useState("All");
+  const filters = ["All", "Kitchen", "Bar", "Service"];
+
+  const filteredTeam = TEAM.filter(m => {
+    if (activeTeamFilter === "All") return true;
+    if (activeTeamFilter === "Kitchen") return ["Executive Chef & Founder","Pastry Chef","Sous Chef"].includes(m.title);
+    if (activeTeamFilter === "Bar") return ["Head Mixologist","Sommelier"].includes(m.title);
+    if (activeTeamFilter === "Service") return ["Front-of-House Director"].includes(m.title);
+    return true;
+  });
 
   return (
-    <>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');`}</style>
-      <div className="x_about_wrapper">
+    <div className="h_about_page" style={{ backgroundColor: "#060c10" }}>
 
-        {/* ── HERO ── */}
-        <section className="x_hero">
-          <div className="x_hero_bg" />
-          <div className="x_hero_grain" />
-          <div className="x_hero_radial" />
-          <div className={`x_hero_inner${heroVisible ? " x_visible" : ""}`}>
-            <div className="x_hero_eyebrow">
-              <span className="x_hero_line" />
-              <GiVineLeaf className="x_hero_leaf" />
-              <span>Our Story</span>
-              <GiVineLeaf className="x_hero_leaf x_hero_leaf--flip" />
-              <span className="x_hero_line" />
+      {/* ── Atmosphere ── */}
+      <div className="h_ambient_bg" />
+      <div className="h_grid_lines" />
+      <div className="h_grain_overlay" />
+
+      {/* ══════════════════════════════════════
+          NAVBAR
+      ══════════════════════════════════════ */}
+      <nav className="h_navbar navbar navbar-expand-lg">
+        <div className="container">
+          <a className="h_nav_brand" href="#">La <span>Noirè</span></a>
+          <button className="h_nav_toggler navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <div className="h_toggler_icon"><span /><span /><span /></div>
+          </button>
+          <div className="collapse navbar-collapse" id="navMenu">
+            <ul className="navbar-nav ms-auto gap-4 py-3 py-lg-0">
+              {["Menu", "Cocktails", "Events", "Reserve", "Contact"].map(n => (
+                <li key={n} className="nav-item">
+                  <a className="h_nav_link nav-link" href="#">{n}</a>
+                </li>
+              ))}
+              <li className="nav-item">
+                <a className="h_nav_link h_active nav-link" href="#">About</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {/* ══════════════════════════════════════
+          HERO
+      ══════════════════════════════════════ */}
+      <section className="h_about_hero">
+        <div className="h_hero_img_bg" />
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-8 col-xl-7">
+              <div className="h_hero_content">
+                <div className="h_hero_eyebrow h_anim_in">
+                  <span className="h_eyebrow_line" />
+                  Est. 2006 · Paris
+                </div>
+                <h1 className="h_hero_title h_anim_up h_d1">
+                  More Than a Meal —<br />
+                  <em>A Story Worth Tasting</em>
+                </h1>
+                <p className="h_hero_tagline h_anim_up h_d2">
+                  "We don't just cook food. We craft moments that linger long after the last course, long after the last sip, long after you've left our door."
+                </p>
+                <p className="h_anim_up h_d2" style={{ fontSize: "0.72rem", color: "var(--h-muted)", letterSpacing: "0.1em" }}>
+                  — Chef Étienne Moreau, Founder
+                </p>
+
+                <div className="h_hero_stats h_anim_up h_d3" style={{ marginTop: "2.5rem" }}>
+                  {[
+                    { num: "18+", label: "Years of Excellence" },
+                    { num: "★★",  label: "Michelin Stars" },
+                    { num: "42k", label: "Guests Per Year" },
+                    { num: "800", label: "Label Wine Cellar" },
+                  ].map(s => (
+                    <div className="h_stat_item" key={s.label}>
+                      <span className="h_stat_number">{s.num}</span>
+                      <span className="h_stat_label">{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <h1 className="x_hero_title">
-              Where <em>Craft</em><br />Meets <em>Soul</em>
-            </h1>
-            <p className="x_hero_sub">
-              Three venues. One philosophy. The relentless pursuit of moments that linger long after the last sip.
+          </div>
+        </div>
+        <div className="h_scroll_indicator">
+          <div className="h_scroll_line" />
+          <div className="h_scroll_dot" />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          OUR STORY
+      ══════════════════════════════════════ */}
+      <section className="h_section">
+        <div className="container">
+          <div className="row g-5 align-items-center">
+            {/* Images */}
+            <div className="col-lg-5 h_anim_right h_d1">
+              <div className="h_story_img_wrap" style={{ paddingBottom: "1.25rem", paddingRight: "1.25rem" }}>
+                <div className="h_story_img_frame">
+                  <img
+                    src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80"
+                    alt="La Noirè dining room"
+                  />
+                </div>
+                <div className="h_img_badge">
+                  <span className="h_img_badge_num">★★</span>
+                  <span className="h_img_badge_text">Michelin Stars</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Story text */}
+            <div className="col-lg-7 h_anim_up h_d2">
+              <div className="h_story_body">
+                <div className="h_section_head">
+                  <div className="h_section_eyebrow">Our Story</div>
+                  <h2 className="h_section_title">
+                    Born from a Passion for <em>Authentic Flavour</em>
+                  </h2>
+                  <div className="h_ornament">
+                    <span className="h_ornament_line" />
+                    <span className="h_ornament_dot" />
+                    <span className="h_ornament_diamond" />
+                    <span className="h_ornament_dot" />
+                    <span className="h_ornament_line h_rev" />
+                  </div>
+                </div>
+
+                <p className="h_story_lead">
+                  "I didn't open a restaurant. I opened a place where time slows down and every detail matters."
+                </p>
+
+                <p className="h_story_text">
+                  La Noirè was born in 2006 from Chef Étienne Moreau's singular obsession: to create a space that felt like the best dinner party you'd ever been to — intimate, unexpected, and unforgettable. Starting with just 18 covers in a candlelit stone cellar, our first guests became our greatest advocates.
+                </p>
+                <p className="h_story_text">
+                  Over nearly two decades, La Noirè has evolved from a beloved neighbourhood secret into one of Paris's most celebrated dining destinations. Our tasting menus rotate with the seasons, our bar programme rivals the world's finest, and our private dining room has hosted proposals, anniversaries, and quiet celebrations of life's most precious moments.
+                </p>
+                <p className="h_story_text">
+                  What has never changed: the belief that exceptional food, great wine, and genuine hospitality — offered without pretension — remain the most radical act of generosity a chef can offer.
+                </p>
+
+                <div className="h_story_features h_d3">
+                  {[
+                    { icon: "🌾", text: "Locally Sourced Ingredients" },
+                    { icon: "🏅", text: "Two Michelin Stars" },
+                    { icon: "🍷", text: "800-Bottle Wine Cellar" },
+                    { icon: "🌍", text: "Zero-Waste Kitchen" },
+                    { icon: "🎶", text: "Live Jazz — Thursdays" },
+                    { icon: "🥩", text: "Aged In-House Charcuterie" },
+                  ].map(f => (
+                    <div className="h_story_feat" key={f.text}>
+                      <span className="h_story_feat_icon">{f.icon}</span>
+                      <span>{f.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          TIMELINE
+      ══════════════════════════════════════ */}
+      <section className="h_section h_section_alt">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-5 h_anim_up">
+              <div className="h_section_head">
+                <div className="h_section_eyebrow">Our Journey</div>
+                <h2 className="h_section_title">
+                  Two Decades of <em>Craft & Character</em>
+                </h2>
+                <p className="h_section_subtitle">
+                  From a single-room cellar to a two-starred institution — the milestones that shaped who we are today.
+                </p>
+              </div>
+              <div className="h_timeline h_anim_up h_d2">
+                {TIMELINE.map((t, i) => (
+                  <div className="h_timeline_item" key={t.year}>
+                    <div className="h_timeline_dot">
+                      <div className="h_timeline_dot_inner" />
+                    </div>
+                    <div>
+                      <div className="h_timeline_year">{t.year}</div>
+                      <div className="h_timeline_event">
+                        <strong>{t.title}</strong>
+                        {t.desc}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Values */}
+            <div className="col-lg-7 h_anim_up h_d2" style={{ marginTop: "0" }}>
+              <div className="h_section_head" style={{ marginTop: "0.5rem" }}>
+                <div className="h_section_eyebrow">Our Philosophy</div>
+                <h2 className="h_section_title">
+                  The <em>Principles</em> We Live By
+                </h2>
+              </div>
+              <div className="h_values_row">
+                {VALUES.map((v, i) => (
+                  <div
+                    className={`h_value_card h_anim_up`}
+                    style={{ animationDelay: `${0.08 * (i + 1)}s` }}
+                    key={v.title}
+                  >
+                    <div className="h_value_icon_wrap">{v.icon}</div>
+                    <div className="h_value_title">{v.title}</div>
+                    <p className="h_value_text">{v.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          AWARDS
+      ══════════════════════════════════════ */}
+      <section className="h_section" style={{ padding: "3rem 0" }}>
+        <div className="container">
+          <div className="text-center mb-4 h_anim_up">
+            <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>Recognition</div>
+            <h2 className="h_section_title" style={{ textAlign: "center" }}>
+              Honoured by the <em>World's Best</em>
+            </h2>
+          </div>
+          <div className="h_awards_row h_anim_up h_d2">
+            {AWARDS.map(a => (
+              <div className="h_award_item" key={a.name}>
+                <span className="h_award_icon">{a.icon}</span>
+                <div className="h_award_name">{a.name}</div>
+                <div className="h_award_year">{a.year}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          TEAM / CHEFS
+      ══════════════════════════════════════ */}
+      <section className="h_section h_section_alt">
+        <div className="container">
+          <div className="h_section_head text-center h_anim_up">
+            <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>The People Behind the Magic</div>
+            <h2 className="h_section_title" style={{ textAlign: "center" }}>
+              Meet Our <em>Extraordinary Team</em>
+            </h2>
+            <p className="h_section_subtitle" style={{ margin: "0 auto", textAlign: "center" }}>
+              Every great experience is built by extraordinary people. Ours combine classical training, bold creativity, and an unwavering passion for hospitality.
             </p>
-            <a href="#story" className="x_hero_scroll">
-              <FiChevronDown className="x_scroll_icon" />
-            </a>
           </div>
 
-          {/* floating orbs */}
-          <div className="x_orb x_orb--1" />
-          <div className="x_orb x_orb--2" />
-          <div className="x_orb x_orb--3" />
-        </section>
-
-        {/* ── STATS ── */}
-        <section className="x_stats_section">
-          <div className="x_stats_grid">
-            {STATS.map((s, i) => <StatCard key={s.label} {...s} delay={`${i * 0.12}s`} />)}
+          {/* Filter Tabs */}
+          <div className="d-flex justify-content-center gap-2 flex-wrap mb-4 h_anim_up h_d2">
+            {filters.map(f => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setActiveTeamFilter(f)}
+                style={{
+                  padding: "0.4rem 1.2rem",
+                  borderRadius: "100px",
+                  border: `1px solid ${activeTeamFilter === f ? "var(--h-em)" : "rgba(0,201,138,0.16)"}`,
+                  background: activeTeamFilter === f ? "var(--h-em-dim)" : "transparent",
+                  color: activeTeamFilter === f ? "var(--h-em)" : "var(--h-muted)",
+                  fontSize: "0.68rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.25s",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 400,
+                  boxShadow: activeTeamFilter === f ? "0 0 12px rgba(0,201,138,0.15)" : "none",
+                }}
+              >
+                {f}
+              </button>
+            ))}
           </div>
-        </section>
 
-        {/* ── STORY ── */}
-        <section id="story" className="x_story_section">
-          <div className="x_story_inner">
-            <div className="x_story_text_col">
-              <span className="x_kicker">The Beginning</span>
-              <h2 className="x_section_title">A Space Born from<br /><em>Obsession</em></h2>
-              <p className="x_body_text">
-                Aurum was never meant to be just a restaurant. It was the answer to a question we kept asking: why should extraordinary food, exceptional cocktails, and the warmth of a neighbourhood café live in separate worlds?
-              </p>
-              <p className="x_body_text">
-                In 2019, we opened three doors under one roof in the heart of Surat. Each space has its own personality, its own light, its own pulse — but they share the same obsessive attention to quality, the same reverence for ingredients, and the same belief that hospitality is a form of love made tangible.
-              </p>
-              <div className="x_story_quote">
-                <span className="x_quote_mark">"</span>
-                <blockquote>Food is memory. We cook so you never forget.</blockquote>
-                <cite>— Arjun Mehta, Executive Chef</cite>
+          <div className="h_team_grid">
+            {filteredTeam.map((member, i) => (
+              <div
+                className={`h_chef_card h_anim_up ${member.featured ? "h_featured" : ""}`}
+                style={{ animationDelay: `${0.1 * (i + 1)}s` }}
+                key={member.id}
+              >
+                <div className="h_chef_img_wrap">
+                  <div className="h_chef_hover_overlay" />
+                  <span className="h_chef_role_tag">{member.title}</span>
+                  <img src={member.img} alt={member.name} />
+                  {member.featured && (
+                    <div style={{
+                      position: "absolute", bottom: "1rem", right: "1rem",
+                      zIndex: 5,
+                      background: "var(--h-em)",
+                      color: "var(--h-bg-root)",
+                      padding: "0.25rem 0.7rem",
+                      borderRadius: "100px",
+                      fontSize: "0.58rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                    }}>
+                      Featured
+                    </div>
+                  )}
+                </div>
+                <div className="h_chef_info">
+                  <div className="h_chef_name">{member.name}</div>
+                  <div className="h_chef_title">{member.title}</div>
+                  <p className="h_chef_bio">{member.bio}</p>
+                  <div className="h_chef_specialty">
+                    {member.specialties.map(s => (
+                      <span className="h_chef_tag" key={s}>{s}</span>
+                    ))}
+                  </div>
+                  <div className="h_chef_social">
+                    {["in", "tw", "ig"].map(s => (
+                      <a key={s} href="#" className="h_social_btn">{s === "in" ? "𝐢𝐧" : s === "tw" ? "𝕏" : "📷"}</a>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="x_story_img_col">
-              <div className="x_story_img_stack">
-                <img
-                  src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=700&q=80"
-                  alt="Aurum interior"
-                  className="x_story_img x_story_img--main"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=400&q=80"
-                  alt="Aurum detail"
-                  className="x_story_img x_story_img--accent"
-                />
-                <div className="x_story_badge">Est. 2019</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          AMBIENCE
+      ══════════════════════════════════════ */}
+      <section className="h_section">
+        <div className="container">
+          <div className="h_section_head text-center h_anim_up">
+            <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>The Space</div>
+            <h2 className="h_section_title" style={{ textAlign: "center" }}>
+              An Atmosphere Like <em>Nowhere Else</em>
+            </h2>
+            <p className="h_section_subtitle" style={{ margin: "0 auto", textAlign: "center" }}>
+              Designed by award-winning studio Atelier Fontenay, our space balances intimacy with drama — a place that feels unmistakably alive.
+            </p>
+          </div>
+
+          {/* Photo Mosaic */}
+          <div className="h_ambience_grid h_anim_up h_d1">
+            {AMBIENCE_IMAGES.map((item, i) => (
+              <div className={`h_amb_item h_amb_${i + 1}`} key={i}>
+                <img src={item.img} alt={item.label} />
+                <span className="h_amb_label">{item.label}</span>
               </div>
-            </div>
+            ))}
           </div>
-        </section>
 
-        {/* ── VENUES ── */}
-        <section className="x_venues_section">
-          <div className="x_venues_inner">
-            <div className="x_section_head_center">
-              <span className="x_kicker">Our Spaces</span>
-              <h2 className="x_section_title">Three Worlds,<br /><em>One Address</em></h2>
-            </div>
-            <div className="x_venues_list">
-              {VENUES.map((v, i) => <VenueCard key={v.id} venue={v} reverse={i % 2 !== 0} />)}
-            </div>
+          {/* Ambience description cards */}
+          <div className="h_ambience_cards">
+            {AMBIENCE_CARDS.map((c, i) => (
+              <div
+                className={`h_amb_desc_card h_anim_up`}
+                style={{ animationDelay: `${0.12 * (i + 1)}s` }}
+                key={c.title}
+              >
+                <span className="h_amb_desc_icon">{c.icon}</span>
+                <div className="h_amb_desc_title">{c.title}</div>
+                <p className="h_amb_desc_text">{c.text}</p>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── TIMELINE ── */}
-        <section className="x_timeline_section">
-          <div className="x_timeline_inner">
-            <div className="x_section_head_center">
-              <span className="x_kicker">Our Journey</span>
-              <h2 className="x_section_title">Five Years of<br /><em>Milestones</em></h2>
-            </div>
-            <div className="x_timeline">
-              <div className="x_tl_track" />
-              {MILESTONES.map((m, i) => <TimelineItem key={m.year} item={m} idx={i} />)}
-            </div>
+      {/* ══════════════════════════════════════
+          TESTIMONIALS
+      ══════════════════════════════════════ */}
+      <section className="h_section h_section_alt">
+        <div className="container">
+          <div className="h_section_head text-center h_anim_up">
+            <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>Guest Stories</div>
+            <h2 className="h_section_title" style={{ textAlign: "center" }}>
+              Words That <em>Mean Everything</em>
+            </h2>
           </div>
-        </section>
-
-        {/* ── TEAM ── */}
-        <section className="x_team_section">
-          <div className="x_team_inner">
-            <div className="x_section_head_center">
-              <span className="x_kicker">The People</span>
-              <h2 className="x_section_title">Faces Behind<br /><em>the Flavours</em></h2>
-            </div>
-            <div className="x_team_grid">
-              {TEAM.map((m, i) => <TeamCard key={m.name} member={m} delay={`${i * 0.15}s`} />)}
-            </div>
+          <div className="h_testimonials">
+            {TESTIMONIALS.map((t, i) => (
+              <div
+                className={`h_testi_card h_anim_up`}
+                style={{ animationDelay: `${0.12 * (i + 1)}s` }}
+                key={i}
+              >
+                <div className="h_testi_quote">"</div>
+                <div className="h_testi_stars">{t.stars}</div>
+                <p className="h_testi_text">{t.text}</p>
+                <div className="h_testi_author">
+                  <img
+                    className="h_testi_avatar"
+                    src={`https://i.pravatar.cc/80?img=${10 + i}`}
+                    alt={t.author}
+                  />
+                  <div>
+                    <div className="h_testi_name">{t.author}</div>
+                    <div className="h_testi_source">{t.source}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── CTA ── */}
-        <section className="x_cta_section">
-          <div className="x_cta_glow" />
-          <div className="x_cta_inner">
-            <TbSparkles className="x_cta_spark" />
-            <h2 className="x_cta_title">Come Experience <em>Aurum</em></h2>
-            <p className="x_cta_sub">Reserve your table, explore the bar, or start your morning right.</p>
-            <div className="x_cta_btns">
-              <a href="#" className="x_btn x_btn--gold">Book a Table <FiArrowRight /></a>
-              <a href="#" className="x_btn x_btn--ghost">View Menu <GiKnifeFork /></a>
-            </div>
+      {/* ══════════════════════════════════════
+          CTA BAND
+      ══════════════════════════════════════ */}
+      <div className="h_cta_band">
+        <div className="container">
+          <h2 className="h_cta_title h_anim_up">
+            Ready for Your <em>La Noirè Evening</em>?
+          </h2>
+          <p className="h_cta_subtitle h_anim_up h_d2">
+            Reserve your table today. Tasting menu available nightly — advance booking recommended.
+          </p>
+          <div className="h_cta_btns h_anim_up h_d3">
+            <a href="#" className="h_btn_primary">Reserve a Table →</a>
+            <a href="#" className="h_btn_secondary">View Our Menu</a>
           </div>
-        </section>
-
-        {/* ── FOOTER ── */}
-        <footer className="x_footer">
-          <div className="x_footer_divider" />
-          <p className="x_footer_text">© 2024 Aurum · Restaurant, Bar & Café · Surat, India</p>
-        </footer>
-
-        <style>{STYLES}</style>
+        </div>
       </div>
-    </>
+
+      {/* ══════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════ */}
+      <footer className="h_footer">
+        <div className="h_footer_brand">La Noirè</div>
+        <div className="h_footer_text">© 2025 La Noirè · 12 Rue de la Paix, Paris</div>
+        <div className="h_footer_links">
+          {["Privacy", "Terms", "Accessibility", "Sitemap"].map(l => (
+            <a key={l} href="#" className="h_footer_link">{l}</a>
+          ))}
+        </div>
+      </footer>
+
+    </div>
   );
 }
-
-/* ─── STYLES ─── */
-const STYLES = `
-:root {
-  --d-bg:             #080705;
-  --d-surface:        #100e0b;
-  --d-surface-2:      #181510;
-  --d-surface-3:      #201c16;
-  --d-surface-glass:  rgba(16, 14, 11, 0.82);
-  --d-border:         rgba(200, 160, 90, 0.10);
-  --d-border-hover:   rgba(200, 160, 90, 0.28);
-  --d-border-strong:  rgba(200, 160, 90, 0.50);
-  --d-gold:           #c8965a;
-  --d-gold-light:     #e8b878;
-  --d-gold-pale:      #f2d4a8;
-  --d-gold-dark:      #9a6e3a;
-  --d-gold-glow:      rgba(200, 150, 90, 0.22);
-  --d-gold-subtle:    rgba(200, 150, 90, 0.08);
-  --d-text-1:         #f5f0e8;
-  --d-text-2:         #b8b0a0;
-  --d-text-3:         #7a7060;
-  --d-text-4:         #4a4438;
-  --d-cafe:           #7ab898;
-  --d-cafe-dim:       rgba(122, 184, 152, 0.10);
-  --d-restaurant:     #c8965a;
-  --d-restaurant-dim: rgba(200, 150, 90, 0.10);
-  --d-bar:            #9b8fd4;
-  --d-bar-dim:        rgba(155, 143, 212, 0.10);
-  --d-room:           #d48fb5;
-  --d-room-dim:       rgba(212, 143, 181, 0.10);
-  --d-shadow-sm:   0 2px 12px rgba(0,0,0,0.40);
-  --d-shadow-md:   0 8px 32px  rgba(0,0,0,0.55);
-  --d-shadow-lg:   0 20px 60px rgba(0,0,0,0.70);
-  --d-glow-gold:   0 0 40px rgba(200,150,90,0.12);
-  --d-r-xs:   4px;
-  --d-r-sm:   8px;
-  --d-r-md:   14px;
-  --d-r-lg:   22px;
-  --d-r-xl:   32px;
-  --d-r-pill: 999px;
-  --d-font-serif: 'Cormorant Garamond','Georgia',serif;
-  --d-font-sans:  'DM Sans',system-ui,sans-serif;
-  --d-ease:   cubic-bezier(0.25,0.46,0.45,0.94);
-  --d-spring: cubic-bezier(0.34,1.56,0.64,1);
-  --d-dur:    0.30s;
-  --d-header-h: 80px;
-  --d-strip-h:  38px;
-}
-
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
-/* ── WRAPPER ── */
-.x_about_wrapper{
-  font-family:var(--d-font-sans);
-  background:var(--d-bg);
-  color:var(--d-text-1);
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* ── HERO ── */
-.x_hero{
-  position:relative;
-  min-height:100svh;
-  display:flex; align-items:center; justify-content:center;
-  text-align:center;
-  overflow:hidden;
-}
-.x_hero_bg{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,150,90,0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 20% 100%, rgba(155,143,212,0.07) 0%, transparent 60%),
-    var(--d-surface);
-}
-.x_hero_grain{
-  position:absolute;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events:none;
-}
-.x_hero_radial{
-  position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);
-  width:800px;height:400px;
-  background:radial-gradient(ellipse,rgba(200,150,90,0.08) 0%,transparent 70%);
-  pointer-events:none;
-}
-
-/* orbs */
-.x_orb{
-  position:absolute;border-radius:50%;
-  filter:blur(80px);pointer-events:none;
-  animation:x_orb_drift 12s ease-in-out infinite alternate;
-}
-.x_orb--1{width:340px;height:340px;top:5%;left:8%;background:rgba(200,150,90,0.07);animation-delay:0s;}
-.x_orb--2{width:260px;height:260px;bottom:10%;right:6%;background:rgba(155,143,212,0.07);animation-delay:-4s;}
-.x_orb--3{width:180px;height:180px;top:40%;right:20%;background:rgba(122,184,152,0.05);animation-delay:-8s;}
-
-.x_hero_inner{
-  position:relative;z-index:2;
-  padding:0 24px;
-  opacity:0;transform:translateY(30px);
-  transition:opacity 0.9s var(--d-ease),transform 0.9s var(--d-ease);
-}
-.x_hero_inner.x_visible{opacity:1;transform:translateY(0);}
-
-.x_hero_eyebrow{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  margin-bottom:24px;
-  font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--d-gold);font-weight:500;
-}
-.x_hero_line{flex:0 0 50px;height:1px;background:var(--d-border-strong);}
-.x_hero_leaf{font-size:14px;animation:x_leaf_sway 4s ease-in-out infinite;}
-.x_hero_leaf--flip{transform:scaleX(-1);animation-delay:-2s;}
-
-.x_hero_title{
-  font-family:var(--d-font-serif);
-  font-size:clamp(52px,10vw,110px);
-  font-weight:300;line-height:1.0;
-  letter-spacing:-0.02em;
-  margin-bottom:22px;
-}
-.x_hero_title em{
-  font-style:italic;color:var(--d-gold-light);
-  text-shadow:0 0 80px rgba(232,184,120,0.35);
-}
-.x_hero_sub{
-  font-size:clamp(14px,2vw,17px);
-  color:var(--d-text-3);
-  max-width:500px;margin:0 auto 48px;
-  line-height:1.7;
-}
-.x_hero_scroll{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:50%;
-  border:1px solid var(--d-border-strong);
-  color:var(--d-gold);text-decoration:none;
-  animation:x_bounce 2.2s ease-in-out infinite;
-  transition:background var(--d-dur),border-color var(--d-dur);
-}
-.x_hero_scroll:hover{background:var(--d-gold-subtle);border-color:var(--d-gold);}
-.x_scroll_icon{font-size:18px;}
-
-/* ── STATS ── */
-.x_stats_section{
-  padding:0 24px;
-  transform:translateY(-40px);
-}
-.x_stats_grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  max-width:900px;margin:0 auto;
-}
-.x_stat_card{
-  background:var(--d-surface-2);
-  border:1px solid var(--d-border);
-  border-radius:var(--d-r-lg);
-  padding:28px 20px;
-  text-align:center;
-  transition:border-color var(--d-dur),box-shadow var(--d-dur);
-}
-.x_stat_card:hover{border-color:var(--d-border-hover);box-shadow:var(--d-shadow-md),var(--d-glow-gold);}
-.x_stat_icon{display:block;font-size:20px;color:var(--d-gold);margin-bottom:10px;}
-.x_stat_value{display:block;font-family:var(--d-font-serif);font-size:36px;font-weight:600;color:var(--d-gold-light);line-height:1;}
-.x_stat_label{display:block;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--d-text-4);margin-top:6px;}
-
-/* ── STORY ── */
-.x_story_section{padding:80px 24px 100px;}
-.x_story_inner{
-  display:grid;grid-template-columns:1fr 1fr;gap:80px;
-  max-width:1100px;margin:0 auto;align-items:center;
-}
-.x_kicker{
-  display:inline-block;
-  font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--d-gold);
-  padding:4px 12px;border:1px solid var(--d-border-strong);border-radius:var(--d-r-pill);
-  margin-bottom:16px;
-}
-.x_section_title{
-  font-family:var(--d-font-serif);
-  font-size:clamp(30px,4.5vw,50px);
-  font-weight:300;line-height:1.15;
-  color:var(--d-text-1);margin-bottom:24px;
-}
-.x_section_title em{font-style:italic;color:var(--d-gold-light);}
-.x_body_text{
-  font-size:15px;color:var(--d-text-3);line-height:1.75;margin-bottom:16px;
-}
-.x_story_quote{
-  margin-top:32px;
-  padding:24px 24px 24px 32px;
-  border-left:2px solid var(--d-gold);
-  background:var(--d-gold-subtle);
-  border-radius:0 var(--d-r-md) var(--d-r-md) 0;
-  position:relative;
-}
-.x_quote_mark{
-  position:absolute;top:-8px;left:20px;
-  font-family:var(--d-font-serif);font-size:60px;
-  color:var(--d-gold);line-height:1;opacity:0.5;
-}
-.x_story_quote blockquote{
-  font-family:var(--d-font-serif);font-style:italic;
-  font-size:18px;color:var(--d-gold-pale);line-height:1.5;
-  margin-bottom:8px;
-}
-.x_story_quote cite{font-size:12px;color:var(--d-text-4);letter-spacing:0.08em;}
-
-/* story images */
-.x_story_img_stack{position:relative;height:520px;}
-.x_story_img--main{
-  position:absolute;top:0;right:0;
-  width:85%;height:420px;object-fit:cover;
-  border-radius:var(--d-r-lg);
-  box-shadow:var(--d-shadow-lg);
-}
-.x_story_img--accent{
-  position:absolute;bottom:0;left:0;
-  width:55%;height:230px;object-fit:cover;
-  border-radius:var(--d-r-md);
-  border:3px solid var(--d-surface-2);
-  box-shadow:var(--d-shadow-md);
-}
-.x_story_badge{
-  position:absolute;bottom:60px;right:20px;
-  background:var(--d-gold);color:var(--d-bg);
-  font-family:var(--d-font-serif);font-size:13px;font-weight:600;
-  padding:8px 16px;border-radius:var(--d-r-pill);
-  letter-spacing:0.06em;
-}
-
-/* ── VENUES ── */
-.x_venues_section{
-  background:var(--d-surface);
-  padding:100px 24px;
-  border-top:1px solid var(--d-border);
-  border-bottom:1px solid var(--d-border);
-}
-.x_venues_inner{max-width:1100px;margin:0 auto;}
-.x_section_head_center{text-align:center;margin-bottom:64px;}
-.x_venues_list{display:flex;flex-direction:column;gap:64px;}
-
-.x_venue_card{
-  display:grid;grid-template-columns:1fr 1fr;gap:60px;
-  align-items:center;
-  opacity:0;transform:translateY(32px);
-  transition:opacity 0.6s var(--d-ease),transform 0.6s var(--d-ease);
-}
-.x_venue_card.x_visible{opacity:1;transform:none;}
-.x_venue_card--rev{direction:rtl;}
-.x_venue_card--rev>*{direction:ltr;}
-
-.x_venue_img_wrap{
-  position:relative;border-radius:var(--d-r-lg);overflow:hidden;
-  aspect-ratio:4/3;
-}
-.x_venue_img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s var(--d-ease);}
-.x_venue_card:hover .x_venue_img{transform:scale(1.05);}
-.x_venue_img_overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--accent) 0%,transparent 50%);
-  opacity:0.15;
-}
-.x_venue_icon_badge{
-  position:absolute;bottom:16px;left:16px;
-  background:var(--accent);color:#fff;
-  width:42px;height:42px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;box-shadow:var(--d-shadow-sm);
-}
-
-.x_venue_body{display:flex;flex-direction:column;gap:12px;}
-.x_venue_kicker{
-  font-size:10px;letter-spacing:0.20em;text-transform:uppercase;
-  color:var(--accent);font-weight:500;
-}
-.x_venue_name{
-  font-family:var(--d-font-serif);
-  font-size:clamp(28px,3.5vw,42px);font-weight:300;
-  color:var(--d-text-1);
-}
-.x_venue_desc{font-size:14px;color:var(--d-text-3);line-height:1.75;}
-.x_venue_details{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:8px;}
-.x_venue_detail_item{
-  display:flex;align-items:center;gap:8px;
-  font-size:13px;color:var(--d-text-2);
-}
-.x_venue_detail_arrow{color:var(--accent);font-size:13px;flex-shrink:0;}
-
-/* ── TIMELINE ── */
-.x_timeline_section{padding:100px 24px;}
-.x_timeline_inner{max-width:800px;margin:0 auto;}
-.x_timeline{position:relative;margin-top:56px;}
-.x_tl_track{
-  position:absolute;left:90px;top:0;bottom:0;width:1px;
-  background:linear-gradient(to bottom,transparent,var(--d-border-strong) 10%,var(--d-border-strong) 90%,transparent);
-}
-.x_tl_item{
-  display:grid;grid-template-columns:90px 16px 1fr;gap:0 20px;
-  align-items:flex-start;margin-bottom:48px;
-  opacity:0;transform:translateX(-20px);
-  transition:opacity 0.55s var(--d-ease),transform 0.55s var(--d-ease);
-}
-.x_tl_item.x_visible{opacity:1;transform:none;}
-.x_tl_year{
-  font-family:var(--d-font-serif);font-size:22px;font-weight:600;
-  color:var(--d-gold);text-align:right;padding-top:2px;line-height:1;
-}
-.x_tl_dot{
-  width:16px;height:16px;border-radius:50%;
-  background:var(--d-surface-2);border:2px solid var(--d-gold);
-  margin-top:4px;position:relative;z-index:1;flex-shrink:0;
-  transition:background var(--d-dur),box-shadow var(--d-dur);
-}
-.x_tl_item:hover .x_tl_dot{background:var(--d-gold);box-shadow:0 0 12px var(--d-gold-glow);}
-.x_tl_content{padding-bottom:4px;}
-.x_tl_title{
-  font-family:var(--d-font-serif);font-size:20px;font-weight:400;
-  color:var(--d-text-1);margin-bottom:6px;
-}
-.x_tl_desc{font-size:13px;color:var(--d-text-3);line-height:1.65;}
-
-/* ── TEAM ── */
-.x_team_section{
-  background:var(--d-surface);
-  padding:100px 24px;
-  border-top:1px solid var(--d-border);
-}
-.x_team_inner{max-width:1000px;margin:0 auto;}
-.x_team_grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:28px;
-  margin-top:56px;
-}
-.x_team_card{
-  background:var(--d-surface-2);
-  border:1px solid var(--d-border);
-  border-radius:var(--d-r-lg);overflow:hidden;
-  transition:border-color var(--d-dur),transform var(--d-dur) var(--d-spring),box-shadow var(--d-dur);
-}
-.x_team_card:hover{
-  border-color:var(--accent);
-  transform:translateY(-5px);
-  box-shadow:var(--d-shadow-lg),0 0 30px color-mix(in srgb,var(--accent) 20%,transparent);
-}
-.x_team_img_wrap{position:relative;aspect-ratio:1/1;overflow:hidden;}
-.x_team_img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s var(--d-ease);}
-.x_team_card:hover .x_team_img{transform:scale(1.06);}
-.x_team_img_glow{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,var(--d-surface-2) 0%,transparent 50%);
-}
-.x_team_body{padding:20px 22px 24px;display:flex;flex-direction:column;gap:6px;}
-.x_team_name{
-  font-family:var(--d-font-serif);font-size:22px;font-weight:400;
-  color:var(--d-text-1);
-}
-.x_team_role{
-  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--accent);font-weight:500;
-}
-.x_team_bio{font-size:13px;color:var(--d-text-3);line-height:1.65;margin-top:4px;}
-
-/* ── CTA ── */
-.x_cta_section{
-  position:relative;
-  text-align:center;
-  padding:100px 24px;
-  overflow:hidden;
-  background:var(--d-surface-2);
-  border-top:1px solid var(--d-border);
-}
-.x_cta_glow{
-  position:absolute;top:-60px;left:50%;transform:translateX(-50%);
-  width:600px;height:300px;
-  background:radial-gradient(ellipse,var(--d-gold-glow) 0%,transparent 70%);
-  pointer-events:none;
-}
-.x_cta_inner{position:relative;z-index:1;max-width:600px;margin:0 auto;}
-.x_cta_spark{font-size:28px;color:var(--d-gold);margin-bottom:16px;display:block;animation:x_spin_slow 8s linear infinite;}
-.x_cta_title{font-family:var(--d-font-serif);font-size:clamp(34px,5vw,56px);font-weight:300;margin-bottom:16px;}
-.x_cta_title em{font-style:italic;color:var(--d-gold-light);}
-.x_cta_sub{font-size:15px;color:var(--d-text-3);margin-bottom:40px;line-height:1.65;}
-.x_cta_btns{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
-
-.x_btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:14px 28px;border-radius:var(--d-r-pill);
-  font-family:var(--d-font-sans);font-size:14px;font-weight:500;
-  text-decoration:none;cursor:pointer;
-  transition:all var(--d-dur) var(--d-spring);
-}
-.x_btn--gold{background:var(--d-gold);color:var(--d-bg);}
-.x_btn--gold:hover{background:var(--d-gold-light);transform:translateY(-2px);box-shadow:0 8px 24px var(--d-gold-glow);}
-.x_btn--ghost{background:none;color:var(--d-gold);border:1px solid var(--d-border-strong);}
-.x_btn--ghost:hover{background:var(--d-gold-subtle);border-color:var(--d-gold);transform:translateY(-2px);}
-
-/* ── FOOTER ── */
-.x_footer{text-align:center;padding:28px 24px 40px;}
-.x_footer_divider{height:1px;background:var(--d-border);max-width:300px;margin:0 auto 20px;}
-.x_footer_text{font-size:12px;color:var(--d-text-4);letter-spacing:0.06em;}
-
-/* ── KEYFRAMES ── */
-@keyframes x_fadeUp{
-  from{opacity:0;transform:translateY(24px);}
-  to{opacity:1;transform:translateY(0);}
-}
-@keyframes x_orb_drift{
-  from{transform:translateY(0) translateX(0);}
-  to{transform:translateY(-30px) translateX(20px);}
-}
-@keyframes x_bounce{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(8px);}
-}
-@keyframes x_leaf_sway{
-  0%,100%{transform:rotate(-8deg);}
-  50%{transform:rotate(8deg);}
-}
-@keyframes x_spin_slow{
-  from{transform:rotate(0deg);}
-  to{transform:rotate(360deg);}
-}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .x_stats_grid{grid-template-columns:repeat(2,1fr);}
-  .x_story_inner{grid-template-columns:1fr;gap:48px;}
-  .x_story_img_stack{height:340px;}
-  .x_team_grid{grid-template-columns:1fr 1fr;}
-  .x_venue_card,.x_venue_card--rev{grid-template-columns:1fr;direction:ltr;}
-}
-@media(max-width:600px){
-  .x_stats_grid{grid-template-columns:repeat(2,1fr);}
-  .x_team_grid{grid-template-columns:1fr;}
-  .x_hero_title{font-size:clamp(40px,12vw,60px);}
-  .x_tl_track,.x_tl_year{display:none;}
-  .x_tl_item{grid-template-columns:16px 1fr;}
-}
-`;
