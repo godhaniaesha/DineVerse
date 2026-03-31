@@ -1,0 +1,371 @@
+/* ============================================================
+   testimonials.css — Lumière  |  Customer Testimonials Section
+   Custom classes: d_testi_ prefix
+   Scope: .d_testi_section
+   ============================================================ */
+
+/* ── SECTION ROOT ─────────────────────────────────────────── */
+.d_testi_section {
+  position: relative !important;
+  background: var(--d-bg) !important;
+  padding: 110px 0 120px !important;
+  overflow: hidden !important;
+}
+
+.d_testi_section::before {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -60px !important;
+  left: 20% !important;
+  width: 560px !important;
+  height: 560px !important;
+  background: radial-gradient(ellipse, rgba(155,143,212,0.055) 0%, transparent 65%) !important;
+  pointer-events: none !important;
+}
+
+/* ── HEADER ───────────────────────────────────────────────── */
+.d_testi_header {
+  text-align: center !important;
+  margin-bottom: 70px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.d_testi_header__eyebrow {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.34em !important;
+  text-transform: uppercase !important;
+  color: var(--d-gold) !important;
+  margin-bottom: 16px !important;
+}
+
+.d_testi_header__eyebrow-line {
+  display: block !important;
+  width: 30px !important;
+  height: 1px !important;
+  background: var(--d-gold) !important;
+  opacity: 0.45 !important;
+}
+
+.d_testi_header__title {
+  font-family: var(--d-font-serif) !important;
+  font-size: clamp(36px, 4.5vw, 56px) !important;
+  font-weight: 300 !important;
+  color: var(--d-text-1) !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.01em !important;
+  margin-bottom: 14px !important;
+}
+
+.d_testi_header__title em {
+  font-style: italic !important;
+  color: var(--d-gold-light) !important;
+}
+
+.d_testi_header__sub {
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-3) !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.70 !important;
+}
+
+/* ── AGGREGATE SCORE BAR ──────────────────────────────────── */
+.d_testi_score {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 40px !important;
+  margin-bottom: 64px !important;
+  position: relative !important;
+  z-index: 1 !important;
+  flex-wrap: wrap !important;
+}
+
+.d_testi_score__main {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.d_testi_score__num {
+  font-family: var(--d-font-serif) !important;
+  font-size: 64px !important;
+  font-weight: 300 !important;
+  color: var(--d-gold) !important;
+  line-height: 1 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.d_testi_score__stars {
+  display: flex !important;
+  gap: 3px !important;
+  font-size: 18px !important;
+  color: var(--d-gold) !important;
+}
+
+.d_testi_score__count {
+  font-size: 11px !important;
+  color: var(--d-text-4) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.d_testi_score__divider {
+  width: 1px !important;
+  height: 64px !important;
+  background: var(--d-border) !important;
+}
+
+.d_testi_score__platforms {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.d_testi_score__platform {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.d_testi_score__platform-name {
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  color: var(--d-text-3) !important;
+  min-width: 80px !important;
+}
+
+.d_testi_score__bar-track {
+  width: 120px !important;
+  height: 4px !important;
+  background: var(--d-surface-3) !important;
+  border-radius: 2px !important;
+  overflow: hidden !important;
+}
+
+.d_testi_score__bar-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, var(--d-gold-dark), var(--d-gold-light)) !important;
+  border-radius: 2px !important;
+  transition: width 1.2s var(--d-ease) !important;
+}
+
+.d_testi_score__platform-val {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--d-text-2) !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── SLIDER WRAPPER ───────────────────────────────────────── */
+.d_testi_slider {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.d_testi_track {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
+  margin-bottom: 40px !important;
+}
+
+@media (max-width: 960px) {
+  .d_testi_track { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+@media (max-width: 580px) {
+  .d_testi_track { grid-template-columns: 1fr !important; }
+}
+
+/* ── TESTIMONIAL CARD ─────────────────────────────────────── */
+.d_testi_card {
+  background: var(--d-surface) !important;
+  border: 1px solid var(--d-border) !important;
+  border-radius: var(--d-r-lg) !important;
+  padding: 32px 30px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  position: relative !important;
+  transition: all 0.36s var(--d-ease) !important;
+}
+
+.d_testi_card:hover {
+  border-color: rgba(200,150,90,0.28) !important;
+  transform: translateY(-5px) !important;
+  box-shadow: var(--d-shadow-md) !important;
+}
+
+/* Big quote mark */
+.d_testi_card__quote-mark {
+  position: absolute !important;
+  top: 22px !important;
+  right: 26px !important;
+  font-family: var(--d-font-serif) !important;
+  font-size: 80px !important;
+  line-height: 1 !important;
+  color: var(--d-gold) !important;
+  opacity: 0.08 !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  font-weight: 300 !important;
+}
+
+/* Stars */
+.d_testi_card__stars {
+  display: flex !important;
+  gap: 3px !important;
+}
+
+.d_testi_card__star {
+  font-size: 14px !important;
+  color: var(--d-gold) !important;
+}
+
+.d_testi_card__star--empty {
+  color: var(--d-surface-3) !important;
+}
+
+/* Review text */
+.d_testi_card__text {
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-2) !important;
+  line-height: 1.80 !important;
+  letter-spacing: 0.02em !important;
+  font-style: italic !important;
+  flex: 1 !important;
+}
+
+/* Category tag */
+.d_testi_card__tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 12px !important;
+  border-radius: var(--d-r-pill) !important;
+  font-size: 9px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  background: var(--d-gold-subtle) !important;
+  border: 1px solid var(--d-border) !important;
+  color: var(--d-gold) !important;
+  width: fit-content !important;
+}
+
+/* Author row */
+.d_testi_card__author {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding-top: 18px !important;
+  border-top: 1px solid var(--d-border) !important;
+}
+
+.d_testi_card__avatar {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid var(--d-border-hover) !important;
+  flex-shrink: 0 !important;
+}
+
+.d_testi_card__avatar-fallback {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: var(--d-surface-3) !important;
+  border: 1px solid var(--d-border) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: var(--d-font-serif) !important;
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  color: var(--d-gold) !important;
+  flex-shrink: 0 !important;
+}
+
+.d_testi_card__info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  flex: 1 !important;
+}
+
+.d_testi_card__name {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--d-text-1) !important;
+  letter-spacing: 0.02em !important;
+}
+
+.d_testi_card__meta {
+  font-size: 11px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-4) !important;
+  letter-spacing: 0.06em !important;
+}
+
+.d_testi_card__platform {
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  color: var(--d-text-4) !important;
+  padding: 3px 10px !important;
+  border-radius: var(--d-r-pill) !important;
+  background: var(--d-surface-2) !important;
+  border: 1px solid var(--d-border) !important;
+}
+
+/* ── PAGINATION DOTS ──────────────────────────────────────── */
+.d_testi_dots {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+
+.d_testi_dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: var(--d-surface-3) !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all var(--d-dur) var(--d-ease) !important;
+  padding: 0 !important;
+}
+
+.d_testi_dot--active {
+  background: var(--d-gold) !important;
+  width: 20px !important;
+  border-radius: 3px !important;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .d_testi_section { padding: 72px 0 80px !important; }
+  .d_testi_header { margin-bottom: 48px !important; }
+  .d_testi_score { gap: 24px !important; margin-bottom: 48px !important; }
+  .d_testi_score__divider { display: none !important; }
+}
+
+@media (max-width: 580px) {
+  .d_testi_section { padding: 52px 0 60px !important; }
+  .d_testi_score__num { font-size: 48px !important; }
+  .d_testi_score__bar-track { width: 90px !important; }
+  .d_testi_card { padding: 24px 22px !important; }
+}

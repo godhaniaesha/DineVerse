@@ -1,0 +1,446 @@
+/* ============================================================
+   tableReservation.css — Lumière  |  Table Reservation Section
+   Custom classes: d_resv_ prefix
+   Scope: .d_resv_section
+   ============================================================ */
+
+/* ── SECTION ROOT ─────────────────────────────────────────── */
+.d_resv_section {
+  position: relative !important;
+  background: var(--d-surface) !important;
+  padding: 110px 0 120px !important;
+  overflow: hidden !important;
+}
+
+.d_resv_section::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 900px !important;
+  height: 600px !important;
+  background: radial-gradient(ellipse, rgba(200,150,90,0.055) 0%, transparent 65%) !important;
+  pointer-events: none !important;
+}
+
+/* ── INNER LAYOUT: split ─────────────────────────────────── */
+.d_resv_layout {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0 !important;
+  border: 1px solid var(--d-border) !important;
+  border-radius: var(--d-r-xl) !important;
+  overflow: hidden !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ── LEFT — atmospheric image panel ──────────────────────── */
+.d_resv_visual {
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 560px !important;
+}
+
+.d_resv_visual__img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.80s var(--d-ease) !important;
+}
+
+.d_resv_layout:hover .d_resv_visual__img {
+  transform: scale(1.03) !important;
+}
+
+.d_resv_visual__overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(
+    135deg,
+    rgba(8,7,5,0.55) 0%,
+    rgba(8,7,5,0.25) 55%,
+    rgba(200,150,90,0.08) 100%
+  ) !important;
+  z-index: 1 !important;
+}
+
+/* Gold corner ornament */
+.d_resv_visual::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 100px !important; height: 1px !important;
+  background: linear-gradient(90deg, var(--d-gold), transparent) !important;
+  z-index: 3 !important;
+}
+
+.d_resv_visual::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 1px !important; height: 100px !important;
+  background: linear-gradient(180deg, var(--d-gold), transparent) !important;
+  z-index: 3 !important;
+}
+
+/* Content floating on top of image */
+.d_resv_visual__content {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  padding: 48px 44px !important;
+}
+
+.d_resv_visual__eyebrow {
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.34em !important;
+  text-transform: uppercase !important;
+  color: var(--d-gold) !important;
+  margin-bottom: 14px !important;
+}
+
+.d_resv_visual__title {
+  font-family: var(--d-font-serif) !important;
+  font-size: clamp(32px, 3.5vw, 50px) !important;
+  font-weight: 300 !important;
+  color: var(--d-text-1) !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.01em !important;
+  margin-bottom: 16px !important;
+}
+
+.d_resv_visual__title em {
+  font-style: italic !important;
+  color: var(--d-gold-light) !important;
+}
+
+.d_resv_visual__body {
+  font-size: 13px !important;
+  font-weight: 300 !important;
+  color: rgba(245, 240, 232, 0.65) !important;
+  line-height: 1.75 !important;
+  letter-spacing: 0.03em !important;
+  max-width: 320px !important;
+  margin-bottom: 32px !important;
+}
+
+/* Info pills */
+.d_resv_visual__pills {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.d_resv_visual__pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 14px !important;
+  border-radius: var(--d-r-pill) !important;
+  background: rgba(8,7,5,0.60) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(200,150,90,0.28) !important;
+  font-size: 11px !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--d-gold-pale) !important;
+}
+
+.d_resv_visual__pill-icon {
+  color: var(--d-gold) !important;
+  font-size: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* ── RIGHT — form panel ───────────────────────────────────── */
+.d_resv_form_panel {
+  background: var(--d-surface-2) !important;
+  padding: 56px 52px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  border-left: 1px solid var(--d-border) !important;
+  position: relative !important;
+}
+
+.d_resv_form_panel::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; right: 0 !important;
+  width: 80px !important; height: 1px !important;
+  background: linear-gradient(270deg, var(--d-gold), transparent) !important;
+}
+
+.d_resv_form_panel::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important; right: 0 !important;
+  width: 1px !important; height: 80px !important;
+  background: linear-gradient(180deg, var(--d-gold), transparent) !important;
+}
+
+.d_resv_form__heading {
+  font-family: var(--d-font-serif) !important;
+  font-size: 28px !important;
+  font-weight: 400 !important;
+  color: var(--d-text-1) !important;
+  letter-spacing: 0.02em !important;
+  margin-bottom: 6px !important;
+}
+
+.d_resv_form__sub {
+  font-size: 13px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-3) !important;
+  letter-spacing: 0.04em !important;
+  margin-bottom: 36px !important;
+  line-height: 1.65 !important;
+}
+
+/* Form grid */
+.d_resv_form {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+}
+
+.d_resv_form__group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+}
+
+.d_resv_form__group--full {
+  grid-column: 1 / -1 !important;
+}
+
+.d_resv_form__label {
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: var(--d-text-4) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.d_resv_form__label-icon {
+  font-size: 13px !important;
+  color: var(--d-gold) !important;
+  opacity: 0.70 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.d_resv_form__input,
+.d_resv_form__select {
+  background: var(--d-surface) !important;
+  border: 1px solid var(--d-border) !important;
+  border-radius: var(--d-r-sm) !important;
+  padding: 13px 16px !important;
+  font-family: var(--d-font-sans) !important;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-1) !important;
+  letter-spacing: 0.02em !important;
+  outline: none !important;
+  transition: all var(--d-dur) var(--d-ease) !important;
+  width: 100% !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+.d_resv_form__input::placeholder { color: var(--d-text-4) !important; }
+
+.d_resv_form__input:focus,
+.d_resv_form__select:focus {
+  border-color: rgba(200,150,90,0.55) !important;
+  background: var(--d-surface-2) !important;
+  box-shadow: 0 0 0 3px rgba(200,150,90,0.07) !important;
+}
+
+/* Select wrapper for custom arrow */
+.d_resv_form__select-wrap {
+  position: relative !important;
+}
+
+.d_resv_form__select-wrap::after {
+  content: '' !important;
+  position: absolute !important;
+  right: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-left: 4px solid transparent !important;
+  border-right: 4px solid transparent !important;
+  border-top: 5px solid var(--d-text-4) !important;
+  pointer-events: none !important;
+}
+
+.d_resv_form__select option {
+  background: var(--d-surface) !important;
+  color: var(--d-text-1) !important;
+}
+
+/* Special request textarea */
+.d_resv_form__textarea {
+  background: var(--d-surface) !important;
+  border: 1px solid var(--d-border) !important;
+  border-radius: var(--d-r-sm) !important;
+  padding: 13px 16px !important;
+  font-family: var(--d-font-sans) !important;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-1) !important;
+  letter-spacing: 0.02em !important;
+  outline: none !important;
+  transition: all var(--d-dur) var(--d-ease) !important;
+  width: 100% !important;
+  resize: vertical !important;
+  min-height: 90px !important;
+}
+
+.d_resv_form__textarea::placeholder { color: var(--d-text-4) !important; }
+.d_resv_form__textarea:focus {
+  border-color: rgba(200,150,90,0.55) !important;
+  background: var(--d-surface-2) !important;
+  box-shadow: 0 0 0 3px rgba(200,150,90,0.07) !important;
+}
+
+/* Submit */
+.d_resv_form__submit {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  padding: 16px !important;
+  border-radius: var(--d-r-pill) !important;
+  background: var(--d-gold) !important;
+  color: #080603 !important;
+  font-family: var(--d-font-sans) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  border: none !important;
+  cursor: pointer !important;
+  margin-top: 6px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all var(--d-dur) var(--d-ease) !important;
+}
+
+.d_resv_form__submit::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent) !important;
+  opacity: 0 !important;
+  transition: opacity var(--d-dur) !important;
+}
+
+.d_resv_form__submit:hover {
+  background: var(--d-gold-light) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 36px rgba(200,150,90,0.38) !important;
+}
+
+.d_resv_form__submit:hover::before { opacity: 1 !important; }
+.d_resv_form__submit:active { transform: translateY(0) !important; }
+
+/* Success state */
+.d_resv_success {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 16px !important;
+  padding: 40px 0 !important;
+  animation: d_resv_fadeIn 0.50s var(--d-ease) !important;
+}
+
+@keyframes d_resv_fadeIn {
+  from { opacity: 0 !important; transform: translateY(12px) !important; }
+  to   { opacity: 1 !important; transform: translateY(0) !important; }
+}
+
+.d_resv_success__icon {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  background: rgba(122, 184, 152, 0.14) !important;
+  border: 1px solid rgba(122, 184, 152, 0.38) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 28px !important;
+  color: var(--d-cafe) !important;
+}
+
+.d_resv_success__title {
+  font-family: var(--d-font-serif) !important;
+  font-size: 26px !important;
+  font-weight: 400 !important;
+  color: var(--d-text-1) !important;
+  letter-spacing: 0.02em !important;
+}
+
+.d_resv_success__msg {
+  font-size: 13px !important;
+  font-weight: 300 !important;
+  color: var(--d-text-3) !important;
+  line-height: 1.70 !important;
+  letter-spacing: 0.03em !important;
+  max-width: 280px !important;
+}
+
+.d_resv_success__reset {
+  margin-top: 8px !important;
+  padding: 10px 28px !important;
+  border-radius: var(--d-r-pill) !important;
+  background: transparent !important;
+  border: 1px solid var(--d-border-hover) !important;
+  color: var(--d-text-2) !important;
+  font-family: var(--d-font-sans) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all var(--d-dur) var(--d-ease) !important;
+}
+
+.d_resv_success__reset:hover {
+  border-color: var(--d-gold) !important;
+  color: var(--d-gold) !important;
+  background: var(--d-gold-subtle) !important;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .d_resv_layout { grid-template-columns: 1fr !important; }
+  .d_resv_visual { min-height: 340px !important; }
+  .d_resv_form_panel { border-left: none !important; border-top: 1px solid var(--d-border) !important; padding: 44px 36px !important; }
+}
+
+@media (max-width: 640px) {
+  .d_resv_section { padding: 56px 0 64px !important; }
+  .d_resv_form_panel { padding: 32px 22px !important; }
+  .d_resv_form { grid-template-columns: 1fr !important; }
+  .d_resv_form__group--full { grid-column: 1 !important; }
+  .d_resv_form__submit { grid-column: 1 !important; }
+  .d_resv_visual__content { padding: 32px 24px !important; }
+  .d_resv_visual { min-height: 280px !important; }
+}
