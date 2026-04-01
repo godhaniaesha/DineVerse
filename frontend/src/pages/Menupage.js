@@ -360,7 +360,7 @@ function Navbar({ activePage, setActivePage }) {
     <>
       <nav className={`h_navbar${scrolled ? " h_scrolled" : ""}`}>
         <div className="h_logo" onClick={() => nav("menu")} style={{ cursor: "pointer" }}>
-          <span>Aurum</span>
+          <span>DineVerse</span>
           Café & Bar
         </div>
         <ul className="h_nav_links">
@@ -409,7 +409,7 @@ function MenuPage() {
         <div className="h_menu_hero_bg" />
         <div className="container position-relative">
           <span className="h_menu_hero_eyebrow">Menu</span>
-          <div className="h_section_tag h_anim_up"><span>Aurum Café & Bar</span></div>
+          <div className="h_section_tag h_anim_up"><span>DineVerse Café & Bar</span></div>
           <h1 className="h_section_title h_anim_up_2" style={{ fontSize: "clamp(2.5rem,5vw,4.5rem)" }}>
             A Culinary<br /><em>Journey</em>
           </h1>
@@ -507,7 +507,7 @@ function AboutPage() {
           </h1>
           <div className="h_divider h_anim_up_3" />
           <p className="h_lead h_anim_up_4">
-            Aurum was born from a single belief — that a meal shared in a beautiful room, cooked with honest hands, is one of life's finest pleasures.
+            DineVerse was born from a single belief — that a meal shared in a beautiful room, cooked with honest hands, is one of life's finest pleasures.
           </p>
           <div className="d-flex gap-3 flex-wrap mt-4 h_anim_up_4">
             <button className="h_btn_gold"><span>Reserve a Table</span></button>
@@ -550,11 +550,11 @@ function AboutPage() {
               <div className="h_section_tag">Our Story</div>
               <h2 className="h_section_title">From a Dream to a<br /><em>Destination</em></h2>
               <div className="h_divider" />
-              <p>Aurum opened its doors in 2016 in the heart of Surat, born from the vision of chef Arjun Mehta and his partner Riya — a chef's notebook filled with memories of his grandmother's kitchen in Jodhpur and the starred kitchens of Paris.</p>
-              <p>The name Aurum — Latin for gold — speaks not to opulence but to warmth. The warmth of a room lit by candlelight. The warmth of a dish that arrives exactly right. The warmth you feel when a stranger behind the kitchen pass has cooked for you as if you were family.</p>
-              <p>Today Aurum has grown into a café, restaurant, and bar — each space distinct in character but unified by the same unhurried attention. We source our produce weekly from local farms, brew our coffee from single-origin beans, and age our cocktails in small-batch barrels.</p>
+              <p>DineVerse opened its doors in 2016 in the heart of Surat, born from the vision of chef Arjun Mehta and his partner Riya — a chef's notebook filled with memories of his grandmother's kitchen in Jodhpur and the starred kitchens of Paris.</p>
+              <p>The name DineVerse — Latin for gold — speaks not to opulence but to warmth. The warmth of a room lit by candlelight. The warmth of a dish that arrives exactly right. The warmth you feel when a stranger behind the kitchen pass has cooked for you as if you were family.</p>
+              <p>Today DineVerse has grown into a café, restaurant, and bar — each space distinct in character but unified by the same unhurried attention. We source our produce weekly from local farms, brew our coffee from single-origin beans, and age our cocktails in small-batch barrels.</p>
               <div className="h_timeline mt-4">
-                {[["2016","Aurum Opens","A 22-seat restaurant in a heritage Surat bungalow."],
+                {[["2016","DineVerse Opens","A 22-seat restaurant in a heritage Surat bungalow."],
                   ["2018","Bar & Cellar Added","Marco Rossetti joins; our curated bar programme launches."],
                   ["2020","Morning Café","We open our all-day café wing — specialty coffee and patisserie."],
                   ["2023","First Michelin Recognition","Awarded one Michelin star — a quiet, proud morning."],
@@ -653,7 +653,7 @@ function AboutPage() {
             <div className="h_divider h_divider_center" />
           </div>
           <p className="h_ambience_intro">
-            Warm teak, hand-thrown ceramics, the low hum of jazz, and the faint sweetness of beeswax — Aurum is designed to make the world outside grow quiet.
+            Warm teak, hand-thrown ceramics, the low hum of jazz, and the faint sweetness of beeswax — DineVerse is designed to make the world outside grow quiet.
           </p>
           <div className="h_gallery_grid">
             {[["🏛️","The Main Hall"],["🕯️","Candlelit Table"],["🍷","Wine Cellar"],["☕","Morning Café"],["🎵","Jazz Corner"],["🌿","Garden Terrace"]].map(([em,label],i)=>(
@@ -684,7 +684,7 @@ function AboutPage() {
         <div className="container text-center">
           <div className="h_section_tag" style={{ justifyContent:"center" }}>Come Find Us</div>
           <h2 className="h_section_title" style={{ fontSize:"2.5rem" }}>Your Table is<br /><em>Waiting</em></h2>
-          <p className="h_lead mx-auto text-center mb-4" style={{ maxWidth:400 }}>Lunch, dinner, a quiet morning coffee, or a celebratory evening — Aurum holds space for all of it.</p>
+          <p className="h_lead mx-auto text-center mb-4" style={{ maxWidth:400 }}>Lunch, dinner, a quiet morning coffee, or a celebratory evening — DineVerse holds space for all of it.</p>
           <div className="d-flex gap-3 justify-content-center flex-wrap mb-4">
             <button className="h_btn_gold"><span>Reserve Now</span></button>
             <button className="h_btn_outline">Contact Us</button>
@@ -707,7 +707,7 @@ function Footer({ setActivePage }) {
       <div className="container">
         <div className="row g-5">
           <div className="col-md-4">
-            <div className="h_footer_logo">Aurum</div>
+            <div className="h_footer_logo">DineVerse</div>
             <div className="h_footer_tagline">Café · Restaurant · Bar</div>
             <p style={{ fontSize:"0.78rem",color:"var(--h-text-muted)",lineHeight:1.8,marginTop:"1rem" }}>A warm room, honest food, and time well spent — this is what we offer, and we mean it entirely.</p>
             <div className="h_social_links">
@@ -730,13 +730,13 @@ function Footer({ setActivePage }) {
             <div className="h_footer_heading">Find Us</div>
             <p style={{ fontSize:"0.78rem",color:"var(--h-text-muted)",lineHeight:2 }}>
               12 Heritage Lane, Nanpura<br/>Surat, Gujarat 395001<br/><br/>
-              +91 98765 43210<br/>hello@aurumcafe.in<br/><br/>
+              +91 98765 43210<br/>hello@dineversecafe.in<br/><br/>
               Mon – Sun: 7:00 AM – 11:00 PM
             </p>
           </div>
         </div>
         <div className="h_footer_bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <div className="h_footer_copy">© 2024 Aurum Café & Bar. Crafted with care in Surat.</div>
+          <div className="h_footer_copy">© 2024 DineVerse Café & Bar. Crafted with care in Surat.</div>
           <div className="d-flex gap-3">
             {["Privacy","Terms","Accessibility"].map(l=>(
               <span key={l} className="h_footer_link" style={{ marginBottom:0,fontSize:"0.68rem" }}>{l}</span>

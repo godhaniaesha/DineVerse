@@ -247,7 +247,7 @@ export default function Contact() {
             <TbBrandWhatsapp className="x_quick_icon" />
             <span>WhatsApp</span>
           </a>
-          <a href="mailto:hello@aurum.in" className="x_quick_item">
+          <a href="mailto:hello@dineverse.in" className="x_quick_item">
             <FiMail className="x_quick_icon" />
             <span>Email</span>
           </a>
@@ -269,7 +269,7 @@ export default function Contact() {
                   <FiMapPin className="x_info_block_icon" /> Find Us
                 </h3>
                 <p className="x_info_addr">
-                  12, Aurum House, Ring Road<br />
+                  12, DineVerse House, Ring Road<br />
                   Vesu, Surat — 395007<br />
                   Gujarat, India
                 </p>
@@ -287,7 +287,7 @@ export default function Contact() {
               <div className="x_map_embed">
                 <div className="x_map_overlay">
                   <FiMapPin className="x_map_pin" />
-                  <span>Aurum, Surat</span>
+                  <span>DineVerse, Surat</span>
                   <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="x_map_open_btn">
                     View on Google Maps
                   </a>
@@ -312,12 +312,12 @@ export default function Contact() {
 
               {/* Social */}
               <div className="x_info_block">
-                <h3 className="x_info_block_title">Follow Aurum</h3>
+                <h3 className="x_info_block_title">Follow DineVerse</h3>
                 <div className="x_socials">
                   {[
-                    { icon: <FiInstagram />, label: "@aurumsurat", href: "#" },
-                    { icon: <FiFacebook />,  label: "Aurum Surat",  href: "#" },
-                    { icon: <FiTwitter />,   label: "@aurumsurat",  href: "#" },
+                    { icon: <FiInstagram />, label: "@dineversesurat", href: "#" },
+                    { icon: <FiFacebook />,  label: "DineVerse Surat",  href: "#" },
+                    { icon: <FiTwitter />,   label: "@dineversesurat",  href: "#" },
                     { icon: <TbBrandWhatsapp />, label: "WhatsApp", href: "#" },
                   ].map((s) => (
                     <a key={s.label} href={s.href} className="x_social_pill" target="_blank" rel="noreferrer">
