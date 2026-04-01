@@ -38,36 +38,6 @@ const GALLERY = [
     category: "Rooms", tag: "ambiance",
     img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
   },
-  {
-    id: 7, title: "Smoked Duck Breast",
-    category: "Signature Dish", tag: "food",
-    img: "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=600&q=80",
-  },
-  {
-    id: 8, title: "Private Dining Evening",
-    category: "Special Event", tag: "events",
-    img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=700&q=80",
-  },
-  {
-    id: 9, title: "Burrata & Heirloom",
-    category: "Signature Dish", tag: "food",
-    img: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&q=80",
-  },
-  {
-    id: 10, title: "Wine Cellar",
-    category: "Bar", tag: "bar",
-    img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80",
-  },
-  {
-    id: 11, title: "Table by the Window",
-    category: "Ambiance", tag: "ambiance",
-    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
-  },
-  {
-    id: 12, title: "Cardamom Latte Art",
-    category: "Café", tag: "food",
-    img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80",
-  },
 ];
 
 const TABS = [

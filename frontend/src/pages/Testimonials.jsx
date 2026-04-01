@@ -110,29 +110,6 @@ export default function Testimonials() {
           </p>
         </div>
 
-        {/* Aggregate score */}
-        <div className="d_testi_score">
-          <div className="d_testi_score__main">
-            <span className="d_testi_score__num">4.9</span>
-            <div className="d_testi_score__stars">
-              {[1,2,3,4,5].map(i => <MdStar key={i} />)}
-            </div>
-            <span className="d_testi_score__count">1,240+ Reviews</span>
-          </div>
-          <div className="d_testi_score__divider" />
-          <div className="d_testi_score__platforms">
-            {PLATFORMS.map(p => (
-              <div key={p.name} className="d_testi_score__platform">
-                <span className="d_testi_score__platform-name">{p.name}</span>
-                <div className="d_testi_score__bar-track">
-                  <div className="d_testi_score__bar-fill" style={{ width: `${p.pct}%` }} />
-                </div>
-                <span className="d_testi_score__platform-val">{p.score}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Review cards */}
         <div className="d_testi_slider">
           <div className="d_testi_track">

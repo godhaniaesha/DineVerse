@@ -7,17 +7,18 @@ import Auth from "../components/Auth";
 import Header from "../components/Header";
 import BookTable from "../components/BookTable";
 import BookRoom from "../components/BookRoom";
+import Home from "../pages/Home";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<Home />} />
 
         <Route path="/menu" element={<Menu />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/" element={<Navbar />} />
+        {/* <Route path="/" element={<Navbar />} /> */}
         {/* <Route path="/register" element={<Register />} /> */}
         <Route path="/auth" element={<Auth />} />
         {/* <Route path="/" element={<Home />} /> */}

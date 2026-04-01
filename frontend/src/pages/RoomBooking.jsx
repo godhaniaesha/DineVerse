@@ -64,40 +64,6 @@ const ROOMS = [
       { icon: <PiParkBold />,   label: "Garden View" },
     ],
   },
-  {
-    id: 4,
-    featured: false,
-    name: "Penthouse Loft",
-    type: "Penthouse",
-    desc: "Bi-level living with a private rooftop, full kitchen, in-room dining, and panoramic sunset views.",
-    price: "580",
-    rating: 5.0,
-    reviews: 54,
-    img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=700&q=80",
-    amenities: [
-      { icon: <MdWifi />,                label: "Wi-Fi" },
-      { icon: <TbToolsKitchen2 />,       label: "Kitchen" },
-      { icon: <MdOutlineBalcony />,      label: "Rooftop" },
-      { icon: <PiBathtubBold />,         label: "Jacuzzi" },
-    ],
-  },
-  {
-    id: 5,
-    featured: false,
-    name: "Lumière Twin Room",
-    type: "Twin Room",
-    desc: "Bright and spacious with two plush single beds, ideal for friends or colleagues travelling together.",
-    price: "140",
-    rating: 4.6,
-    reviews: 178,
-    img: "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=700&q=80",
-    amenities: [
-      { icon: <MdWifi />,      label: "Wi-Fi" },
-      { icon: <MdAcUnit />,    label: "Climate" },
-      { icon: <MdTv />,        label: "Smart TV" },
-      { icon: <IoSnowOutline />, label: "Minibar" },
-    ],
-  },
 ];
 
 const PERKS = [

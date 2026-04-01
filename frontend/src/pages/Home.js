@@ -8,6 +8,7 @@ import RoomBooking from './RoomBooking'
 import TableReservation from './TableReservation'
 import Testimonials from './Testimonials'
 import Gallery from './Gallery'
+import Footer from '../components/Footer'
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <TableReservation></TableReservation>
       <Testimonials></Testimonials>
       <Gallery></Gallery>
+      <Footer></Footer>
     </>
   )
 }
