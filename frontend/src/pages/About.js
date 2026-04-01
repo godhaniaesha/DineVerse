@@ -1,4 +1,12 @@
 import { useState } from "react";
+import { 
+  FaStar, FaAward, FaGlassMartiniAlt, FaMusic, FaLinkedinIn, FaInstagram, FaTwitter,
+  FaLeaf, FaWineBottle, FaRegLightbulb, FaGlobeAmericas, FaHandsHelping, FaConciergeBell
+} from 'react-icons/fa';
+import { IoRestaurantOutline, IoWineOutline, IoLeafOutline, IoMusicalNotesOutline } from 'react-icons/io5';
+import { MdOutlineTheaterComedy, MdOutlineLocalFlorist, MdOutlineOutdoorGrill } from 'react-icons/md';
+import { GiGrapes, GiWheat, GiSteak, GiCandleFlame } from 'react-icons/gi';
+import { HiOutlineGlobeAlt } from 'react-icons/hi2';
 import "../style/h_style.css";
 
 // ─────────────────────────────────────────────
@@ -13,6 +21,7 @@ const TEAM = [
     specialties: ["French Cuisine", "Molecular Gastronomy", "Seasonal Menus"],
     img: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80",
     featured: true,
+    socials: { linkedin: "#", twitter: "#", instagram: "#" }
   },
   {
     id: 2,
@@ -22,6 +31,7 @@ const TEAM = [
     specialties: ["Pastry Arts", "Chocolate Work", "Dessert Pairing"],
     img: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=600&q=80",
     featured: false,
+    socials: { linkedin: "#", twitter: "#", instagram: "#" }
   },
   {
     id: 3,
@@ -31,6 +41,7 @@ const TEAM = [
     specialties: ["Craft Cocktails", "Barrel Ageing", "Botanical Infusions"],
     img: "https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=600&q=80",
     featured: false,
+    socials: { linkedin: "#", twitter: "#", instagram: "#" }
   },
   {
     id: 4,
@@ -40,6 +51,7 @@ const TEAM = [
     specialties: ["Wine Curation", "Food Pairing", "Natural Wines"],
     img: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=600&q=80",
     featured: false,
+    socials: { linkedin: "#", twitter: "#", instagram: "#" }
   },
   {
     id: 5,
@@ -49,6 +61,7 @@ const TEAM = [
     specialties: ["Wood-Fire Cooking", "Charcuterie", "Regional French"],
     img: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=600&q=80",
     featured: false,
+    socials: { linkedin: "#", twitter: "#", instagram: "#" }
   },
   {
     id: 6,
@@ -58,6 +71,7 @@ const TEAM = [
     specialties: ["Guest Experience", "Event Curation", "Wine Service"],
     img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80",
     featured: false,
+    socials: { linkedin: "#", twitter: "#", instagram: "#" }
   },
 ];
 
@@ -70,40 +84,34 @@ const TIMELINE = [
 ];
 
 const VALUES = [
-  { icon: "🌿", title: "Farm to Table", text: "Every ingredient is sourced from trusted local farms and artisan producers. We visit our suppliers personally, ensuring the highest quality from soil to plate." },
-  { icon: "🍷", title: "Curated Cellars", text: "Our 800-bottle cellar spans celebrated châteaux and hidden gems. Each selection is curated to complement and elevate your dining experience." },
-  { icon: "🕯️", title: "Intimate Ambience", text: "Candlelit tables, bespoke acoustics, and a dedication to unhurried time. La Noirè is designed to make every evening feel like the only evening." },
-  { icon: "🎭", title: "Living Culture", text: "Monthly chef's table events, wine tastings, and culinary workshops ensure La Noirè remains a living, breathing cultural destination." },
-  { icon: "🌍", title: "Sustainable Craft", text: "From zero-waste kitchen practices to biodegradable packaging, our commitment to the planet is as serious as our commitment to flavour." },
-  { icon: "✨", title: "Exceptional Service", text: "Our team is trained to anticipate every need — warm, knowledgeable, and genuinely delighted to make your evening unforgettable." },
+  { icon: <IoLeafOutline />, title: "Farm to Table", text: "Every ingredient is sourced from trusted local farms and artisan producers. We visit our suppliers personally, ensuring the highest quality from soil to plate." },
+  { icon: <IoWineOutline />, title: "Curated Cellars", text: "Our 800-bottle cellar spans celebrated châteaux and hidden gems. Each selection is curated to complement and elevate your dining experience." },
+  { icon: <GiCandleFlame />, title: "Intimate Ambience", text: "Candlelit tables, bespoke acoustics, and a dedication to unhurried time. La Noirè is designed to make every evening feel like the only evening." },
+  { icon: <MdOutlineTheaterComedy />, title: "Living Culture", text: "Monthly chef's table events, wine tastings, and culinary workshops ensure La Noirè remains a living, breathing cultural destination." },
+  { icon: <HiOutlineGlobeAlt />, title: "Sustainable Craft", text: "From zero-waste kitchen practices to biodegradable packaging, our commitment to the planet is as serious as our commitment to flavour." },
+  { icon: <FaConciergeBell />, title: "Exceptional Service", text: "Our team is trained to anticipate every need — warm, knowledgeable, and genuinely delighted to make your evening unforgettable." },
 ];
 
 const AWARDS = [
-  { icon: "⭐", name: "Michelin ★★", year: "2023 — 2024" },
-  { icon: "🏆", name: "Best Restaurant", year: "Paris Eats 2022" },
-  { icon: "🍸", name: "Top 50 Bars", year: "World's Best 2023" },
-  { icon: "🌿", name: "Sustainable Dining", year: "Green Fork 2024" },
-];
-
-const TESTIMONIALS = [
-  { text: "An evening at La Noirè doesn't just satisfy the palate — it nourishes the soul. The most extraordinary restaurant experience of my life.", author: "Juliette M.", source: "TripAdvisor — 5 Stars", stars: "★★★★★" },
-  { text: "Chef Étienne's tasting menu is a journey through emotion and memory. Every course arrived as a surprise, every bite a revelation.", author: "Thomas B.", source: "Google Reviews — 5 Stars", stars: "★★★★★" },
-  { text: "The bar alone is worth the visit. Marco's cocktails are pure theatre. I've been back four times this year and will return for a fifth.", author: "Céline D.", source: "Yelp — 5 Stars", stars: "★★★★★" },
+  { icon: <FaStar />, name: "Michelin ★★", year: "2023 — 2024" },
+  { icon: <FaAward />, name: "Best Restaurant", year: "Paris Eats 2022" },
+  { icon: <FaGlassMartiniAlt />, name: "Top 50 Bars", year: "World's Best 2023" },
+  { icon: <IoLeafOutline />, name: "Sustainable Dining", year: "Green Fork 2024" },
 ];
 
 const AMBIENCE_IMAGES = [
   { img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80", label: "Main Dining Room" },
-  { img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", label: "Private Terrace" },
-  { img: "https://images.unsplash.com/photo-1550966871-3ed3cfd6fac9?w=800&q=80", label: "Bar Noirè" },
-  { img: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80", label: "Chef's Table" },
-  { img: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800&q=80", label: "Wine Cellar" },
-  { img: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80", label: "Garden Terrace" },
+  { img: "https://images.unsplash.com/photo-1600210492090-a159ffa3aeaf?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", label: "Private Terrace" },
+  { img: "https://images.unsplash.com/photo-1539639885136-56332d18071d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", label: "Bar Noirè" },
+  { img: "https://images.unsplash.com/photo-1572715376701-98568319fd0b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fHw%3D", label: "Chef's Table" },
+  { img: "https://images.unsplash.com/photo-1609238000857-303bf54099b1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", label: "Wine Cellar" },
+  { img: "https://images.unsplash.com/photo-1759164955435-98462e76bfca?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", label: "Garden Terrace" },
 ];
 
 const AMBIENCE_CARDS = [
-  { icon: "🕯️", title: "The Dining Room", text: "Vaulted ceilings, candlelit tables for two, and velvet booths for six. The main dining room seats 48 in an atmosphere of deep noir luxury, where every table feels like your own private world." },
-  { icon: "🌿", title: "The Open Terrace", text: "Draped in climbing jasmine and lit by a thousand fairy lights, our terrasse is Paris at its most romantic — the perfect setting for a summer evening beneath the stars." },
-  { icon: "🥂", title: "Bar Noirè", text: "Low-lit and deeply seductive, the bar lounge is a late-night world of rare cognacs, smoked old fashioneds, and jazz so close you can feel the bass. Open until 2AM Wednesday through Sunday." },
+  { icon: <GiCandleFlame />, title: "The Dining Room", text: "Vaulted ceilings, candlelit tables for two, and velvet booths for six. The main dining room seats 48 in an atmosphere of deep noir luxury, where every table feels like your own private world." },
+  { icon: <MdOutlineLocalFlorist />, title: "The Open Terrace", text: "Draped in climbing jasmine and lit by a thousand fairy lights, our terrasse is Paris at its most romantic — the perfect setting for a summer evening beneath the stars." },
+  { icon: <FaGlassMartiniAlt />, title: "Bar Noirè", text: "Low-lit and deeply seductive, the bar lounge is a late-night world of rare cognacs, smoked old fashioneds, and jazz so close you can feel the bass. Open until 2AM Wednesday through Sunday." },
 ];
 
 // ─────────────────────────────────────────────
@@ -122,37 +130,12 @@ export default function About() {
   });
 
   return (
-    <div className="h_about_page" style={{ backgroundColor: "#060c10" }}>
+    <div className="h_about_page">
 
       {/* ── Atmosphere ── */}
       <div className="h_ambient_bg" />
       <div className="h_grid_lines" />
       <div className="h_grain_overlay" />
-
-      {/* ══════════════════════════════════════
-          NAVBAR
-      ══════════════════════════════════════ */}
-      <nav className="h_navbar navbar navbar-expand-lg">
-        <div className="container">
-          <a className="h_nav_brand" href="#">La <span>Noirè</span></a>
-          <button className="h_nav_toggler navbar-toggler" type="button"
-            data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <div className="h_toggler_icon"><span /><span /><span /></div>
-          </button>
-          <div className="collapse navbar-collapse" id="navMenu">
-            <ul className="navbar-nav ms-auto gap-4 py-3 py-lg-0">
-              {["Menu", "Cocktails", "Events", "Reserve", "Contact"].map(n => (
-                <li key={n} className="nav-item">
-                  <a className="h_nav_link nav-link" href="#">{n}</a>
-                </li>
-              ))}
-              <li className="nav-item">
-                <a className="h_nav_link h_active nav-link" href="#">About</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
 
       {/* ══════════════════════════════════════
           HERO
@@ -212,7 +195,7 @@ export default function About() {
               <div className="h_story_img_wrap" style={{ paddingBottom: "1.25rem", paddingRight: "1.25rem" }}>
                 <div className="h_story_img_frame">
                   <img
-                    src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80"
+                    src="https://plus.unsplash.com/premium_photo-1663840277963-17291c6a0086?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                     alt="La Noirè dining room"
                   />
                 </div>
@@ -256,12 +239,12 @@ export default function About() {
 
                 <div className="h_story_features h_d3">
                   {[
-                    { icon: "🌾", text: "Locally Sourced Ingredients" },
-                    { icon: "🏅", text: "Two Michelin Stars" },
-                    { icon: "🍷", text: "800-Bottle Wine Cellar" },
-                    { icon: "🌍", text: "Zero-Waste Kitchen" },
-                    { icon: "🎶", text: "Live Jazz — Thursdays" },
-                    { icon: "🥩", text: "Aged In-House Charcuterie" },
+                    { icon: <GiWheat />, text: "Locally Sourced Ingredients" },
+                    { icon: <FaStar />, text: "Two Michelin Stars" },
+                    { icon: <IoWineOutline />, text: "800-Bottle Wine Cellar" },
+                    { icon: <HiOutlineGlobeAlt />, text: "Zero-Waste Kitchen" },
+                    { icon: <FaMusic />, text: "Live Jazz — Thursdays" },
+                    { icon: <GiSteak />, text: "Aged In-House Charcuterie" },
                   ].map(f => (
                     <div className="h_story_feat" key={f.text}>
                       <span className="h_story_feat_icon">{f.icon}</span>
@@ -368,34 +351,19 @@ export default function About() {
             <h2 className="h_section_title" style={{ textAlign: "center" }}>
               Meet Our <em>Extraordinary Team</em>
             </h2>
-            <p className="h_section_subtitle" style={{ margin: "0 auto", textAlign: "center" }}>
+            <p className="h_section_subtitle" style={{ margin: "0 auto", textAlign: "center", maxWidth: "600px" }}>
               Every great experience is built by extraordinary people. Ours combine classical training, bold creativity, and an unwavering passion for hospitality.
             </p>
           </div>
 
           {/* Filter Tabs */}
-          <div className="d-flex justify-content-center gap-2 flex-wrap mb-4 h_anim_up h_d2">
+          <div className="d-flex justify-content-center gap-2 flex-wrap mb-5 h_anim_up h_d2">
             {filters.map(f => (
               <button
                 key={f}
                 type="button"
                 onClick={() => setActiveTeamFilter(f)}
-                style={{
-                  padding: "0.4rem 1.2rem",
-                  borderRadius: "100px",
-                  border: `1px solid ${activeTeamFilter === f ? "var(--h-em)" : "rgba(0,201,138,0.16)"}`,
-                  background: activeTeamFilter === f ? "var(--h-em-dim)" : "transparent",
-                  color: activeTeamFilter === f ? "var(--h-em)" : "var(--h-muted)",
-                  fontSize: "0.68rem",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "all 0.25s",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontWeight: 400,
-                  boxShadow: activeTeamFilter === f ? "0 0 12px rgba(0,201,138,0.15)" : "none",
-                }}
-              >
+                className={`h_filter_btn ${activeTeamFilter === f ? 'h_active' : ''}`}>
                 {f}
               </button>
             ))}
@@ -413,18 +381,7 @@ export default function About() {
                   <span className="h_chef_role_tag">{member.title}</span>
                   <img src={member.img} alt={member.name} />
                   {member.featured && (
-                    <div style={{
-                      position: "absolute", bottom: "1rem", right: "1rem",
-                      zIndex: 5,
-                      background: "var(--h-em)",
-                      color: "var(--h-bg-root)",
-                      padding: "0.25rem 0.7rem",
-                      borderRadius: "100px",
-                      fontSize: "0.58rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                    }}>
+                    <div className="h_chef_featured_badge">
                       Featured
                     </div>
                   )}
@@ -439,9 +396,9 @@ export default function About() {
                     ))}
                   </div>
                   <div className="h_chef_social">
-                    {["in", "tw", "ig"].map(s => (
-                      <a key={s} href="#" className="h_social_btn">{s === "in" ? "𝐢𝐧" : s === "tw" ? "𝕏" : "📷"}</a>
-                    ))}
+                    <a href={member.socials.linkedin} className="h_social_btn"><FaLinkedinIn /></a>
+                    <a href={member.socials.twitter} className="h_social_btn"><FaTwitter /></a>
+                    <a href={member.socials.instagram} className="h_social_btn"><FaInstagram /></a>
                   </div>
                 </div>
               </div>
@@ -491,75 +448,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* ══════════════════════════════════════
-          TESTIMONIALS
-      ══════════════════════════════════════ */}
-      <section className="h_section h_section_alt">
-        <div className="container">
-          <div className="h_section_head text-center h_anim_up">
-            <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>Guest Stories</div>
-            <h2 className="h_section_title" style={{ textAlign: "center" }}>
-              Words That <em>Mean Everything</em>
-            </h2>
-          </div>
-          <div className="h_testimonials">
-            {TESTIMONIALS.map((t, i) => (
-              <div
-                className={`h_testi_card h_anim_up`}
-                style={{ animationDelay: `${0.12 * (i + 1)}s` }}
-                key={i}
-              >
-                <div className="h_testi_quote">"</div>
-                <div className="h_testi_stars">{t.stars}</div>
-                <p className="h_testi_text">{t.text}</p>
-                <div className="h_testi_author">
-                  <img
-                    className="h_testi_avatar"
-                    src={`https://i.pravatar.cc/80?img=${10 + i}`}
-                    alt={t.author}
-                  />
-                  <div>
-                    <div className="h_testi_name">{t.author}</div>
-                    <div className="h_testi_source">{t.source}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════
-          CTA BAND
-      ══════════════════════════════════════ */}
-      <div className="h_cta_band">
-        <div className="container">
-          <h2 className="h_cta_title h_anim_up">
-            Ready for Your <em>La Noirè Evening</em>?
-          </h2>
-          <p className="h_cta_subtitle h_anim_up h_d2">
-            Reserve your table today. Tasting menu available nightly — advance booking recommended.
-          </p>
-          <div className="h_cta_btns h_anim_up h_d3">
-            <a href="#" className="h_btn_primary">Reserve a Table →</a>
-            <a href="#" className="h_btn_secondary">View Our Menu</a>
-          </div>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════
-          FOOTER
-      ══════════════════════════════════════ */}
-      <footer className="h_footer">
-        <div className="h_footer_brand">La Noirè</div>
-        <div className="h_footer_text">© 2025 La Noirè · 12 Rue de la Paix, Paris</div>
-        <div className="h_footer_links">
-          {["Privacy", "Terms", "Accessibility", "Sitemap"].map(l => (
-            <a key={l} href="#" className="h_footer_link">{l}</a>
-          ))}
-        </div>
-      </footer>
 
     </div>
   );
