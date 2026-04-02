@@ -42,6 +42,24 @@ import AdminRestaurantMenu from "../admin/pages/AdminRestaurantMenu";
 import AdminBarBookings from "../admin/pages/AdminBarBookings";
 import AdminBarMenu from "../admin/pages/AdminBarMenu";
 import AdminRoomBookings from "../admin/pages/AdminRoomBookings";
+import AdminStaffManagement from "../admin/pages/AdminStaffManagement";
+import AdminCuisineManagement from "../admin/pages/AdminCuisineManagement";
+import AdminOrderManagement from "../admin/pages/AdminOrderManagement";
+import AdminInventoryManagement from "../admin/pages/AdminInventoryManagement";
+import AdminKDS from "../admin/pages/AdminKDS";
+import AdminWaiterPanel from "../admin/pages/AdminWaiterPanel";
+import AdminPOS from "../admin/pages/AdminPOS";
+import AdminRoleAccess from "../admin/pages/AdminRoleAccess";
+import AdminArchitecture from "../admin/pages/AdminArchitecture";
+import AdminCafeWaiterPanel from "../admin/pages/AdminCafeWaiterPanel";
+import AdminRestaurantWaiterPanel from "../admin/pages/AdminRestaurantWaiterPanel";
+import AdminBarWaiterPanel from "../admin/pages/AdminBarWaiterPanel";
+import AdminCafeChefPanel from "../admin/pages/AdminCafeChefPanel";
+import AdminRestaurantChefPanel from "../admin/pages/AdminRestaurantChefPanel";
+import AdminBarChefPanel from "../admin/pages/AdminBarChefPanel";
+import AdminBartenderPanel from "../admin/pages/AdminBartenderPanel";
+import AdminManagerPanel from "../admin/pages/AdminManagerPanel";
+import AdminHousekeepingPanel from "../admin/pages/AdminHousekeepingPanel";
 
 function AppRoutes() {
   return (
@@ -78,6 +96,22 @@ function AppRoutes() {
           <Route path="bar-bookings" element={<AdminBarBookings />} />
           <Route path="bar-menu" element={<AdminBarMenu />} />
           <Route path="room-bookings" element={<AdminRoomBookings />} />
+          <Route path="staff" element={<AdminStaffManagement />} />
+          <Route path="cuisines" element={<AdminCuisineManagement />} />
+          <Route path="orders" element={<AdminOrderManagement />} />
+          <Route path="inventory" element={<AdminInventoryManagement />} />
+          <Route path="kds" element={<AdminKDS />} />
+          <Route path="waiter-panel" element={<AdminWaiterPanel />} />
+          <Route path="cafe-waiter" element={<AdminCafeWaiterPanel />} />
+          <Route path="restaurant-waiter" element={<AdminRestaurantWaiterPanel />} />
+          <Route path="bar-waiter" element={<AdminBarWaiterPanel />} />
+          <Route path="cafe-chef" element={<AdminCafeChefPanel />} />
+          <Route path="restaurant-chef" element={<AdminRestaurantChefPanel />} />
+          <Route path="bar-chef" element={<AdminBarChefPanel />} />
+          <Route path="bartender-panel" element={<AdminBartenderPanel />} />
+          <Route path="manager-panel" element={<AdminManagerPanel />} />
+          <Route path="housekeeping-panel" element={<AdminHousekeepingPanel />} />
+          <Route path="pos" element={<AdminPOS />} />
           <Route path="guests" element={<AdminGuests />} />
           <Route path="menu" element={<AdminMenu />} />
           <Route path="tables" element={<AdminTables />} />
@@ -89,6 +123,8 @@ function AppRoutes() {
           <Route path="inquiries" element={<AdminInquiries />} />
           <Route path="content" element={<AdminContent />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="role-access" element={<AdminRoleAccess />} />
+          <Route path="architecture" element={<AdminArchitecture />} />
           <Route path="admin-users" element={<AdminUsers />} />
           <Route path="notifications" element={<AdminNotifications />} />
           <Route path="profile" element={<AdminProfile />} />

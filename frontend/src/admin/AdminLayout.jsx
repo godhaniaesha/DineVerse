@@ -107,6 +107,33 @@ const Icons = {
   notification: (
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
   ),
+  staff: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/></svg>
+  ),
+  cuisine: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 5h18M5 10h14M7 15h10M9 20h6"/></svg>
+  ),
+  order: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+  ),
+  inventory: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
+  ),
+  kds: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>
+  ),
+  waiter: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 3v8"/><path d="M8 7h8"/><path d="M10 11v10M14 11v10"/></svg>
+  ),
+  pos: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+  ),
+  role: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2l3 6 7 1-5 5 1 8-6-3-6 3 1-8-5-5 7-1z"/></svg>
+  ),
+  architecture: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+  ),
   bell: (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -147,6 +174,22 @@ const NAV_GROUPS = [
       { to: "/admin/bar-bookings", label: "Bar Bookings", icon: Icons.reservations },
       { to: "/admin/bar-menu", label: "Bar Menu", icon: Icons.menu_items },
       { to: "/admin/room-bookings", label: "Room Bookings", icon: Icons.rooms },
+      { to: "/admin/staff", label: "Staff Management", icon: Icons.staff },
+      { to: "/admin/cuisines", label: "Cuisine Management", icon: Icons.cuisine },
+      { to: "/admin/orders", label: "Order Management", icon: Icons.order },
+      { to: "/admin/inventory", label: "Inventory", icon: Icons.inventory },
+      { to: "/admin/kds", label: "Kitchen Display", icon: Icons.kds },
+      { to: "/admin/waiter-panel", label: "Waiter Panel", icon: Icons.waiter },
+      { to: "/admin/cafe-waiter", label: "Cafe Waiter", icon: Icons.waiter },
+      { to: "/admin/restaurant-waiter", label: "Rest Waiter", icon: Icons.waiter },
+      { to: "/admin/bar-waiter", label: "Bar Waiter", icon: Icons.waiter },
+      { to: "/admin/cafe-chef", label: "Cafe Chef", icon: Icons.kds },
+      { to: "/admin/restaurant-chef", label: "Rest Chef", icon: Icons.kds },
+      { to: "/admin/bar-chef", label: "Bar Chef", icon: Icons.kds },
+      { to: "/admin/bartender-panel", label: "Bartender", icon: Icons.offer },
+      { to: "/admin/manager-panel", label: "Manager", icon: Icons.admins },
+      { to: "/admin/housekeeping-panel", label: "Housekeeping", icon: Icons.rooms },
+      { to: "/admin/pos", label: "POS Billing", icon: Icons.pos },
       { to: "/admin/guests", label: "Guests", icon: Icons.guests },
       { to: "/admin/rooms", label: "Rooms", icon: Icons.rooms },
       { to: "/admin/menu", label: "Menu Items", icon: Icons.menu_items },
@@ -163,6 +206,8 @@ const NAV_GROUPS = [
     label: "System",
     links: [
       { to: "/admin/settings", label: "Settings", icon: Icons.settings },
+      { to: "/admin/role-access", label: "Role Access", icon: Icons.role },
+      { to: "/admin/architecture", label: "Architecture", icon: Icons.architecture },
       { to: "/admin/admin-users", label: "Admin Users", icon: Icons.admins },
       { to: "/admin/notifications", label: "Notifications", icon: Icons.notification },
       { to: "/admin/profile", label: "Profile", icon: Icons.profile },
@@ -183,6 +228,22 @@ const PAGE_TITLES = {
   "/admin/bar-bookings": { title: "Bar Bookings", sub: "Bar reservations" },
   "/admin/bar-menu": { title: "Bar Menu", sub: "Bar drinks menu" },
   "/admin/room-bookings": { title: "Room Bookings", sub: "Hotel room reservations" },
+  "/admin/staff": { title: "Staff Management", sub: "Employees and shifts" },
+  "/admin/cuisines": { title: "Cuisine Management", sub: "Cuisine and categories" },
+  "/admin/orders": { title: "Order Management", sub: "Kitchen order flow" },
+  "/admin/inventory": { title: "Inventory", sub: "Stock tracking" },
+  "/admin/kds": { title: "Kitchen Display", sub: "Chef order queue" },
+  "/admin/waiter-panel": { title: "Waiter Panel", sub: "Table and service control" },
+  "/admin/cafe-waiter": { title: "Cafe Waiter", sub: "Cafe tables and orders" },
+  "/admin/restaurant-waiter": { title: "Restaurant Waiter", sub: "Restaurant tables and service" },
+  "/admin/bar-waiter": { title: "Bar Waiter", sub: "Bar service and seat flow" },
+  "/admin/cafe-chef": { title: "Cafe Chef", sub: "Cafe kitchen queue" },
+  "/admin/restaurant-chef": { title: "Restaurant Chef", sub: "Main kitchen queue" },
+  "/admin/bar-chef": { title: "Bar Chef", sub: "Bar preparation queue" },
+  "/admin/bartender-panel": { title: "Bartender", sub: "Drink preparation" },
+  "/admin/manager-panel": { title: "Manager", sub: "Operations control" },
+  "/admin/housekeeping-panel": { title: "Housekeeping", sub: "Room cleaning tasks" },
+  "/admin/pos": { title: "POS Billing", sub: "Billing and payments" },
   "/admin/guests": { title: "Guests", sub: "Guest profiles" },
   "/admin/rooms": { title: "Rooms", sub: "Room management" },
   "/admin/menu": { title: "Menu Items", sub: "Food & beverage" },
@@ -194,6 +255,8 @@ const PAGE_TITLES = {
   "/admin/inquiries": { title: "Inquiries", sub: "Contact messages" },
   "/admin/content": { title: "Content", sub: "Static pages editor" },
   "/admin/settings": { title: "Settings", sub: "System preferences" },
+  "/admin/role-access": { title: "Role Access", sub: "RBAC permissions" },
+  "/admin/architecture": { title: "Architecture", sub: "Backend and deployment" },
   "/admin/admin-users": { title: "Admin Users", sub: "Roles & permissions" },
   "/admin/notifications": { title: "Notifications", sub: "Alerts & channels" },
   "/admin/profile": { title: "Profile", sub: "Account details" },
