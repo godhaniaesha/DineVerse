@@ -60,6 +60,9 @@ import AdminBarChefPanel from "../admin/pages/AdminBarChefPanel";
 import AdminBartenderPanel from "../admin/pages/AdminBartenderPanel";
 import AdminManagerPanel from "../admin/pages/AdminManagerPanel";
 import AdminHousekeepingPanel from "../admin/pages/AdminHousekeepingPanel";
+import GallerySlider from "../components/GallerySlider";
+import Bar from "../pages/Bar";
+import Profile from "../pages/Profile";
 
 function AppRoutes() {
   return (
@@ -83,6 +86,11 @@ function AppRoutes() {
         <Route path="/dish/:id" element={<DishDetailsPage />} />
         <Route path="/reservation-review" element={<ReservationReviewPage />} />
         <Route path="/gallerypage" element={<GalleryPage />} />
+        <Route path="/gallerySlide" element={<GallerySlider />} />
+        <Route path="/bar" element={<Bar />} />
+        <Route path="/profile" element={<Profile   />} />
+
+
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
