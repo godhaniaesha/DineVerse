@@ -8,7 +8,7 @@
 .d_resv_section {
   position: relative !important;
   background: var(--d-surface) !important;
-  padding: 110px 0 120px !important;
+  padding: 70px 0 80px  !important;
   overflow: hidden !important;
 }
 

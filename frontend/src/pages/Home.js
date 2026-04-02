@@ -8,6 +8,7 @@ import RoomBooking from './RoomBooking'
 import TableReservation from './TableReservation'
 import Testimonials from './Testimonials'
 import Gallery from './Gallery'
+import GallerySlider from '../components/GallerySlider'
 import Footer from '../components/Footer'
 
 export default function Home() {
@@ -21,7 +22,8 @@ export default function Home() {
       <RoomBooking></RoomBooking>
       <TableReservation></TableReservation>
       <Testimonials></Testimonials>
-      <Gallery></Gallery>
+      {/* <Gallery></Gallery> */}
+      <GallerySlider></GallerySlider>
       <Footer></Footer>
     </>
   )

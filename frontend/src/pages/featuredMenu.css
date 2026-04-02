@@ -7,7 +7,7 @@
 .d_featured {
   background: var(--d-bg) !important;
   position: relative !important;
-  padding: 100px 0 110px !important;
+  padding: 0px 0 80px  !important;
   overflow: hidden !important;
 }
 

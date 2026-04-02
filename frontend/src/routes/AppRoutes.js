@@ -8,6 +8,9 @@ import Header from "../components/Header";
 import BookTable from "../components/BookTable";
 import BookRoom from "../components/BookRoom";
 import Home from "../pages/Home";
+import GallerySlider from "../components/GallerySlider";
+import Bar from "../pages/Bar";
+import Profile from "../pages/Profile";
 
 function AppRoutes() {
   return (
@@ -26,6 +29,11 @@ function AppRoutes() {
         {/* <Route path="/" element={<Home />} /> */}
         <Route path="/bookTable" element={<BookTable />} />
         <Route path="/bookRoom" element={<BookRoom />} />
+        <Route path="/gallerySlide" element={<GallerySlider />} />
+        <Route path="/bar" element={<Bar />} />
+        <Route path="/profile" element={<Profile   />} />
+
+
 
       </Routes>
     </BrowserRouter>

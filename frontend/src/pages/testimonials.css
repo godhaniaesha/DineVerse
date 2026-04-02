@@ -8,7 +8,7 @@
 .d_testi_section {
   position: relative !important;
   background: var(--d-bg) !important;
-  padding: 110px 0 120px !important;
+  padding: 70px 0 80px  !important;
   overflow: hidden !important;
 }
 
@@ -26,7 +26,7 @@
 /* ── HEADER ───────────────────────────────────────────────── */
 .d_testi_header {
   text-align: center !important;
-  margin-bottom: 70px !important;
+  margin-bottom: 35px !important;
   position: relative !important;
   z-index: 1 !important;
 }
