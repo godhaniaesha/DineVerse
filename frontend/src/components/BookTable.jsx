@@ -332,7 +332,7 @@ export default function BookTable() {
                     ].map(({key,val})=>(
                       <div className="h_p_row" key={key}>
                         <span className="h_p_k">{key}</span>
-                        <span className={`h_p_v${!val?" h_empty":""}`}>{val||"Not selected"}</span>
+                        <span className={`h_p_v${!val?" h_empty":""}`}>{val||"_"}</span>
                       </div>
                     ))}
                     <div className="h_policy" style={{marginTop:"1.1rem"}}>
