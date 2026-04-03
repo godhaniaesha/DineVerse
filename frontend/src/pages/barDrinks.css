@@ -8,7 +8,7 @@
 .d_bar_section {
   position: relative !important;
   background: var(--d-surface) !important;
-  padding: 70px 0 80px  !important;
+  padding: 70px 0 80px !important;
   overflow: hidden !important;
 }
 
@@ -21,8 +21,8 @@
   width: 680px !important;
   height: 680px !important;
   background: radial-gradient(ellipse at center,
-    rgba(155, 143, 212, 0.07) 0%,
-    transparent 65%) !important;
+      rgba(155, 143, 212, 0.07) 0%,
+      transparent 65%) !important;
   pointer-events: none !important;
 }
 
@@ -34,8 +34,8 @@
   width: 500px !important;
   height: 500px !important;
   background: radial-gradient(ellipse at center,
-    rgba(200, 150, 90, 0.05) 0%,
-    transparent 65%) !important;
+      rgba(200, 150, 90, 0.05) 0%,
+      transparent 65%) !important;
   pointer-events: none !important;
 }
 
@@ -44,11 +44,12 @@
 .d_bar_hero {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 0 !important;
+  gap: 45px !important;
   align-items: stretch !important;
-  border: 1px solid var(--d-border) !important;
-  border-radius: var(--d-r-xl) !important;
-  overflow: hidden !important;
+  /* border: 1px solid var(--d-border) !important;
+  border-radius: var(--d-r-xl) !important; */
+  /* overflow: hidden !important; */
+  /* Removed to show overlap image */
   margin-bottom: 80px !important;
   position: relative !important;
   z-index: 1 !important;
@@ -69,16 +70,20 @@
 .d_bar_hero__left::before {
   content: '' !important;
   position: absolute !important;
-  top: 0 !important; left: 0 !important;
-  width: 120px !important; height: 1px !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 120px !important;
+  height: 1px !important;
   background: linear-gradient(90deg, var(--d-gold), transparent) !important;
 }
 
 .d_bar_hero__left::after {
   content: '' !important;
   position: absolute !important;
-  top: 0 !important; left: 0 !important;
-  width: 1px !important; height: 120px !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 1px !important;
+  height: 120px !important;
   background: linear-gradient(180deg, var(--d-gold), transparent) !important;
 }
 
@@ -205,35 +210,81 @@
   transform: translateX(3px) !important;
 }
 
-/* Right panel — full bleed hero image */
-.d_bar_hero__right {
-  position: relative !important;
-  min-height: 520px !important;
-  overflow: hidden !important;
-}
-
-.d_bar_hero__img {
-  width: 100% !important;
+/* Overrides for z_bar_media_container in BarDrinks */
+.d_bar_hero__right .z_bar_media_container {
+  padding: 30px !important;
   height: 100% !important;
-  object-fit: cover !important;
-  display: block !important;
-  transition: transform 0.80s var(--d-ease) !important;
+  align-items: center !important;
 }
 
-.d_bar_hero:hover .d_bar_hero__img {
-  transform: scale(1.04) !important;
+.d_bar_hero__right .z_bar_main_video {
+  width: 85% !important;
+  height: 606px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+  /* border: 1px solid rgba(155, 143, 212, 0.2) !important; */
+}
+
+.d_bar_hero__right .z_bar_overlap_img {
+  width: 173px !important;
+  height: 219px !important;
+  right: 0 !important;
+  bottom: 91px !important;
+  border: 1px solid #1a1a1a !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Ensure the float tag is above the media */
+.d_bar_hero__float-tag {
+  z-index: 10 !important;
+}
+
+@media (max-width: 860px) {
+  .d_bar_hero__right .z_bar_media_container {
+    padding: 20px !important;
+  }
+
+  .d_bar_hero__right .z_bar_main_video {
+    width: 73% !important;
+    height: 569px !important;
+  }
+
+  .d_bar_hero__right .z_bar_overlap_img {
+    width: 140px !important;
+    height: 180px !important;
+    right: 43px !important;
+    bottom: 69px !important;
+  }
+
+  .d_bar_hero__float-tag {
+    bottom: 15px !important;
+    right: 15px !important;
+    padding: 10px 14px !important;
+  }
+
+  .d_bar_hero__float-tag-name {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .z_bar_overlap_img {
+    display: none !important;
+  }
+
+  .d_bar_hero__right .z_bar_main_video {
+    width: 100% !important;
+    height: 450px !important;
+  }
 }
 
 /* Gradient over image for depth */
 .d_bar_hero__img-overlay {
   position: absolute !important;
   inset: 0 !important;
-  background: linear-gradient(
-    135deg,
-    rgba(8, 7, 5, 0.30) 0%,
-    transparent 60%,
-    rgba(155, 143, 212, 0.12) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(8, 7, 5, 0.30) 0%,
+      transparent 60%,
+      rgba(155, 143, 212, 0.12) 100%) !important;
   z-index: 1 !important;
 }
 
@@ -340,15 +391,23 @@
 }
 
 @media (max-width: 1200px) {
-  .d_bar_grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .d_bar_grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
 }
 
 @media (max-width: 860px) {
-  .d_bar_grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
+  .d_bar_grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
 }
 
 @media (max-width: 480px) {
-  .d_bar_grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .d_bar_grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
 }
 
 /* ── DRINK CARD ───────────────────────────────────────────── */
@@ -395,7 +454,7 @@
   content: '' !important;
   position: absolute !important;
   inset: 0 !important;
-  background: linear-gradient(to bottom, transparent 50%, rgba(8,7,5,0.78) 100%) !important;
+  background: linear-gradient(to bottom, transparent 50%, rgba(8, 7, 5, 0.78) 100%) !important;
   z-index: 1 !important;
 }
 
@@ -427,10 +486,12 @@
   justify-content: center !important;
   opacity: 0 !important;
   transition: opacity var(--d-dur) var(--d-ease) !important;
-  background: rgba(8,7,5,0.18) !important;
+  background: rgba(8, 7, 5, 0.18) !important;
 }
 
-.d_bar_card:hover .d_bar_card__overlay { opacity: 1 !important; }
+.d_bar_card:hover .d_bar_card__overlay {
+  opacity: 1 !important;
+}
 
 .d_bar_card__peek-btn {
   display: inline-flex !important;
@@ -452,7 +513,9 @@
   transition: all 0.26s var(--d-spring) !important;
 }
 
-.d_bar_card:hover .d_bar_card__peek-btn { transform: translateY(0) !important; }
+.d_bar_card:hover .d_bar_card__peek-btn {
+  transform: translateY(0) !important;
+}
 
 /* Body */
 .d_bar_card__body {
@@ -578,8 +641,13 @@
 }
 
 @keyframes d_bar_scroll {
-  from { transform: translateX(0) !important; }
-  to   { transform: translateX(-50%) !important; }
+  from {
+    transform: translateX(0) !important;
+  }
+
+  to {
+    transform: translateX(-50%) !important;
+  }
 }
 
 .d_bar_marquee__item {
@@ -614,16 +682,17 @@
   gap: 40px !important;
   padding: 48px 60px !important;
   background: linear-gradient(110deg,
-    var(--d-surface-2) 0%,
-    var(--d-surface) 50%,
-    rgba(155, 143, 212, 0.06) 100%
-  ) !important;
+      var(--d-surface-2) 0%,
+      var(--d-surface) 50%,
+      rgba(155, 143, 212, 0.06) 100%) !important;
 }
 
 .d_bar_banner::before {
   content: '' !important;
   position: absolute !important;
-  top: 0 !important; left: 0 !important; right: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
   height: 1px !important;
   background: linear-gradient(90deg, transparent, var(--d-bar), transparent) !important;
   opacity: 0.55 !important;
@@ -699,7 +768,7 @@
   content: '' !important;
   position: absolute !important;
   inset: 0 !important;
-  background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent) !important;
   opacity: 0 !important;
   transition: opacity var(--d-dur) !important;
 }
@@ -710,8 +779,13 @@
   box-shadow: 0 10px 32px rgba(155, 143, 212, 0.38) !important;
 }
 
-.d_bar_banner__btn-primary:hover::before { opacity: 1 !important; }
-.d_bar_banner__btn-primary:active { transform: translateY(0) !important; }
+.d_bar_banner__btn-primary:hover::before {
+  opacity: 1 !important;
+}
+
+.d_bar_banner__btn-primary:active {
+  transform: translateY(0) !important;
+}
 
 .d_bar_banner__btn-secondary {
   display: inline-flex !important;
@@ -729,7 +803,9 @@
   transition: color var(--d-dur) var(--d-ease) !important;
 }
 
-.d_bar_banner__btn-secondary:hover { color: var(--d-gold) !important; }
+.d_bar_banner__btn-secondary:hover {
+  color: var(--d-gold) !important;
+}
 
 .d_bar_banner__btn-arrow {
   font-size: 15px !important;
@@ -743,35 +819,85 @@
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 1100px) {
-  .d_bar_hero { grid-template-columns: 1fr 1fr !important; }
-  .d_bar_hero__left { padding: 48px 40px !important; }
-  .d_bar_banner { padding: 40px 44px !important; }
+  .d_bar_hero {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .d_bar_hero__left {
+    padding: 48px 40px !important;
+  }
+
+  .d_bar_banner {
+    padding: 40px 44px !important;
+  }
 }
 
 @media (max-width: 860px) {
-  .d_bar_section { padding: 80px 0 88px !important; }
+  .d_bar_section {
+    padding: 80px 0 88px !important;
+  }
+
   .d_bar_hero {
     grid-template-columns: 1fr !important;
     margin-bottom: 56px !important;
   }
-  .d_bar_hero__right { min-height: 300px !important; }
-  .d_bar_hero__left  { border-right: none !important; border-bottom: 1px solid var(--d-border) !important; }
-  .d_bar_hero__left  { padding: 40px 32px !important; }
-  .d_bar_hero__stats { gap: 24px !important; }
+
+  .d_bar_hero__right {
+    min-height: 300px !important;
+  }
+
+  .d_bar_hero__left {
+    border-right: none !important;
+    border-bottom: 1px solid var(--d-border) !important;
+  }
+
+  .d_bar_hero__left {
+    padding: 40px 32px !important;
+  }
+
+  .d_bar_hero__stats {
+    gap: 24px !important;
+  }
+
   .d_bar_banner {
     flex-direction: column !important;
     align-items: flex-start !important;
     padding: 36px 32px !important;
     gap: 28px !important;
   }
-  .d_bar_banner__actions { align-items: flex-start !important; flex-direction: row !important; flex-wrap: wrap !important; }
+
+  .d_bar_banner__actions {
+    align-items: flex-start !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+  }
 }
 
 @media (max-width: 600px) {
-  .d_bar_hero__left { padding: 32px 24px !important; }
-  .d_bar_hero__stats { flex-wrap: wrap !important; gap: 18px !important; }
-  .d_bar_banner { padding: 28px 22px !important; }
-  .d_bar_banner__actions { flex-direction: column !important; align-items: stretch !important; }
-  .d_bar_banner__btn-primary { justify-content: center !important; }
-  .d_bar_tab { padding: 8px 16px !important; font-size: 11px !important; }
+  .d_bar_hero__left {
+    padding: 32px 24px !important;
+  }
+
+  .d_bar_hero__stats {
+    flex-wrap: wrap !important;
+    gap: 18px !important;
+  }
+
+  .d_bar_banner {
+    padding: 28px 22px !important;
+  }
+
+  .d_bar_banner__actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .d_bar_banner__btn-primary {
+    justify-content: center !important;
+  }
+
+  .d_bar_tab {
+    padding: 8px 16px !important;
+    font-size: 11px !important;
+  }
 }

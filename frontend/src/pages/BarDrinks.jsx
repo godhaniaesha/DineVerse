@@ -6,6 +6,7 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import { MdOutlineLocalBar } from "react-icons/md";
 import { TbEye } from "react-icons/tb";
 import "./barDrinks.css";
+import "../style/z_style.css";
 import { GiMartini } from "react-icons/gi";   // cocktail glass replacement
 /* ── DRINKS DATA ──────────────────────────────────────────── */
 const DRINKS = [
@@ -58,11 +59,11 @@ const MARQUEE_ITEMS = [
 ];
 
 const TABS = [
-  { id: "all",       label: "All Drinks", icon: <MdOutlineLocalBar />, count: DRINKS.length },
-  { id: "cocktails", label: "Cocktails",  icon: <GiMartini  />,       count: DRINKS.filter(d => d.category === "cocktails").length },
-  { id: "wine",      label: "Wine",       icon: <IoWineOutline />,      count: DRINKS.filter(d => d.category === "wine").length },
-  { id: "beer",      label: "Beer",       icon: <PiBeerSteinBold />,    count: DRINKS.filter(d => d.category === "beer").length },
-  { id: "mocktails", label: "Mocktails",  icon: <PiLeafBold />,         count: DRINKS.filter(d => d.category === "mocktails").length },
+  { id: "all", label: "All Drinks", icon: <MdOutlineLocalBar />, count: DRINKS.length },
+  { id: "cocktails", label: "Cocktails", icon: <GiMartini />, count: DRINKS.filter(d => d.category === "cocktails").length },
+  { id: "wine", label: "Wine", icon: <IoWineOutline />, count: DRINKS.filter(d => d.category === "wine").length },
+  { id: "beer", label: "Beer", icon: <PiBeerSteinBold />, count: DRINKS.filter(d => d.category === "beer").length },
+  { id: "mocktails", label: "Mocktails", icon: <PiLeafBold />, count: DRINKS.filter(d => d.category === "mocktails").length },
 ];
 
 /* ── DRINK CARD ───────────────────────────────────────────── */
@@ -153,7 +154,31 @@ export default function BarDrinks() {
 
         {/* ── HERO SPLIT ── */}
         <div className="d_bar_hero">
+          {/* Right — hero media */}
+          <div className="d_bar_hero__right">
+            <div className="z_bar_media_container">
+              <div className="z_bar_main_video">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  src="/video/kfhg.mp4"
+                ></video>
+              </div>
+              <div className="z_bar_overlap_img z_slide_shape_arch">
+                <img src="https://i.pinimg.com/736x/ff/32/47/ff32474e9817eda52b828c15c64c9620.jpg" alt="Signature Cocktail" />
+              </div>
+            </div>
 
+            {/* <div className="d_bar_hero__float-tag">
+              <span className="d_bar_hero__float-tag-name">Open until 2 AM</span>
+              <span className="d_bar_hero__float-tag-sub">
+                <IoFlameOutline style={{ fontSize: 9, verticalAlign: 'middle', marginRight: 4 }} />
+                Happy Hour 5 – 7 PM
+              </span>
+            </div> */}
+          </div>
           {/* Left — editorial copy */}
           <div className="d_bar_hero__left">
             <p className="d_bar_hero__eyebrow">
@@ -194,23 +219,6 @@ export default function BarDrinks() {
                   <RiArrowRightSLine />
                 </span>
               </button>
-            </div>
-          </div>
-
-          {/* Right — hero image */}
-          <div className="d_bar_hero__right">
-            <img
-              src="https://images.unsplash.com/photo-1575444758702-4a6b9222336e?w=900&q=80"
-              alt="Bar at Lumière"
-              className="d_bar_hero__img"
-            />
-            <div className="d_bar_hero__img-overlay" />
-            <div className="d_bar_hero__float-tag">
-              <span className="d_bar_hero__float-tag-name">Open until 2 AM</span>
-              <span className="d_bar_hero__float-tag-sub">
-                <IoFlameOutline style={{ fontSize: 9, verticalAlign: 'middle', marginRight: 4 }} />
-                Happy Hour 5 – 7 PM
-              </span>
             </div>
           </div>
         </div>

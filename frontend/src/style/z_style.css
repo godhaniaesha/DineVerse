@@ -2532,7 +2532,7 @@ body {
   width: 75%;
   height: 643px;
   overflow: hidden;
-  border-radius: var(--d-r-md);
+  /* border-radius: var(--d-r-md); */
 }
 
 .z_bar_main_video video {
