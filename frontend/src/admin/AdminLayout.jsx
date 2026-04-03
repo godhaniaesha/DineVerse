@@ -90,49 +90,46 @@ const Icons = {
     </svg>
   ),
   review: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m12 17-5 3 1.5-5.5L4 10h5.5L12 4l2.5 6H20l-4.5 4.5L17 20Z"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m12 17-5 3 1.5-5.5L4 10h5.5L12 4l2.5 6H20l-4.5 4.5L17 20Z" /></svg>
   ),
   offer: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="7.5" cy="7.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/><path d="M4 12v7a1 1 0 0 0 1 1h7l8-8a2 2 0 0 0 0-3l-5-5a2 2 0 0 0-3 0z"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="7.5" cy="7.5" r="1.5" /><circle cx="16.5" cy="16.5" r="1.5" /><path d="M4 12v7a1 1 0 0 0 1 1h7l8-8a2 2 0 0 0 0-3l-5-5a2 2 0 0 0-3 0z" /></svg>
   ),
   inquiry: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
   ),
   content: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
   ),
   admins: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="9" cy="7" r="4" /><path d="M2 21a7 7 0 0 1 14 0" /><path d="M19 8v6M16 11h6" /></svg>
   ),
   notification: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></svg>
   ),
   staff: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="9" cy="7" r="4" /><path d="M2 21a7 7 0 0 1 14 0" /></svg>
   ),
   cuisine: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 5h18M5 10h14M7 15h10M9 20h6"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 5h18M5 10h14M7 15h10M9 20h6" /></svg>
   ),
   order: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-  ),
-  inventory: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
   ),
   kds: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8" /></svg>
   ),
   waiter: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 3v8"/><path d="M8 7h8"/><path d="M10 11v10M14 11v10"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 3v8" /><path d="M8 7h8" /><path d="M10 11v10M14 11v10" /></svg>
   ),
   pos: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 7h8M8 11h8M8 15h5" /></svg>
   ),
   role: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2l3 6 7 1-5 5 1 8-6-3-6 3 1-8-5-5 7-1z"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2l3 6 7 1-5 5 1 8-6-3-6 3 1-8-5-5 7-1z" /></svg>
   ),
   architecture: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2v20M2 12h20" /><circle cx="12" cy="12" r="9" /></svg>
   ),
   bell: (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -173,43 +170,30 @@ const NAV_GROUPS = [
       { to: "/admin/restaurant-menu", label: "Restaurant Menu", icon: Icons.menu_items },
       { to: "/admin/bar-bookings", label: "Bar Bookings", icon: Icons.reservations },
       { to: "/admin/bar-menu", label: "Bar Menu", icon: Icons.menu_items },
-      { to: "/admin/room-bookings", label: "Room Bookings", icon: Icons.rooms },
+      { to: "/admin/room-bookings", label: "Room Bookings", icon: Icons.reservations },
+      { to: "/admin/rooms", label: "Rooms", icon: Icons.rooms },
+      { to: "/admin/tables", label: "Tables", icon: Icons.table },
       { to: "/admin/staff", label: "Staff Management", icon: Icons.staff },
       { to: "/admin/cuisines", label: "Cuisine Management", icon: Icons.cuisine },
       { to: "/admin/orders", label: "Order Management", icon: Icons.order },
-      { to: "/admin/inventory", label: "Inventory", icon: Icons.inventory },
       { to: "/admin/kds", label: "Kitchen Display", icon: Icons.kds },
-      { to: "/admin/waiter-panel", label: "Waiter Panel", icon: Icons.waiter },
-      { to: "/admin/cafe-waiter", label: "Cafe Waiter", icon: Icons.waiter },
-      { to: "/admin/restaurant-waiter", label: "Rest Waiter", icon: Icons.waiter },
-      { to: "/admin/bar-waiter", label: "Bar Waiter", icon: Icons.waiter },
-      { to: "/admin/cafe-chef", label: "Cafe Chef", icon: Icons.kds },
-      { to: "/admin/restaurant-chef", label: "Rest Chef", icon: Icons.kds },
-      { to: "/admin/bar-chef", label: "Bar Chef", icon: Icons.kds },
       { to: "/admin/bartender-panel", label: "Bartender", icon: Icons.offer },
-      { to: "/admin/manager-panel", label: "Manager", icon: Icons.admins },
       { to: "/admin/housekeeping-panel", label: "Housekeeping", icon: Icons.rooms },
       { to: "/admin/pos", label: "POS Billing", icon: Icons.pos },
       { to: "/admin/guests", label: "Guests", icon: Icons.guests },
-      { to: "/admin/rooms", label: "Rooms", icon: Icons.rooms },
-      { to: "/admin/menu", label: "Menu Items", icon: Icons.menu_items },
-      { to: "/admin/tables", label: "Tables", icon: Icons.table },
       { to: "/admin/gallery", label: "Gallery", icon: Icons.gallery },
       { to: "/admin/blogs", label: "Blogs", icon: Icons.blog },
       { to: "/admin/reviews", label: "Reviews", icon: Icons.review },
       { to: "/admin/offers", label: "Offers", icon: Icons.offer },
       { to: "/admin/inquiries", label: "Inquiries", icon: Icons.inquiry },
-      { to: "/admin/content", label: "Content", icon: Icons.content },
     ],
   },
   {
     label: "System",
     links: [
-      { to: "/admin/settings", label: "Settings", icon: Icons.settings },
       { to: "/admin/role-access", label: "Role Access", icon: Icons.role },
       { to: "/admin/architecture", label: "Architecture", icon: Icons.architecture },
       { to: "/admin/admin-users", label: "Admin Users", icon: Icons.admins },
-      { to: "/admin/notifications", label: "Notifications", icon: Icons.notification },
       { to: "/admin/profile", label: "Profile", icon: Icons.profile },
     ],
   },
@@ -270,6 +254,156 @@ export default function AdminLayout() {
   const sidebarRef = useRef(null);
   const userMenuRef = useRef(null);
   const location = useLocation();
+
+  const adminRole = localStorage.getItem("adminRole") || "Super Admin";
+  const adminName = localStorage.getItem("adminName") || "Admin User";
+
+  const roleAllowedLinks = {
+    "Super Admin": [
+      "/admin",
+      "/admin/analytics",
+      "/admin/reservations",
+      "/admin/cafe-bookings",
+      "/admin/cafe-menu",
+      "/admin/restaurant-bookings",
+      "/admin/restaurant-menu",
+      "/admin/bar-bookings",
+      "/admin/bar-menu",
+      "/admin/room-bookings",
+      "/admin/staff",
+      "/admin/cuisines",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/bartender-panel",
+      "/admin/housekeeping-panel",
+      "/admin/pos",
+      "/admin/guests",
+      "/admin/tables",
+      "/admin/rooms",
+      "/admin/gallery",
+      "/admin/blogs",
+      "/admin/reviews",
+      "/admin/offers",
+      "/admin/inquiries",
+      "/admin/role-access",
+      "/admin/architecture",
+      "/admin/admin-users",
+      "/admin/profile",
+    ],
+    Manager: [
+      "/admin",
+      "/admin/analytics",
+      "/admin/reservations",
+      "/admin/cafe-bookings",
+      "/admin/cafe-menu",
+      "/admin/restaurant-bookings",
+      "/admin/restaurant-menu",
+      "/admin/bar-bookings",
+      "/admin/bar-menu",
+      "/admin/room-bookings",
+      "/admin/staff",
+      "/admin/cuisines",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/bartender-panel",
+      "/admin/housekeeping-panel",
+      "/admin/pos",
+      "/admin/guests",
+      "/admin/tables",
+      "/admin/rooms",
+      "/admin/gallery",
+      "/admin/blogs",
+      "/admin/reviews",
+      "/admin/offers",
+      "/admin/inquiries",
+      "/admin/role-access",
+      "/admin/architecture",
+      "/admin/admin-users",
+      "/admin/profile",
+    ],
+    "Cafe Chef": [
+      "/admin",
+      "/admin/cafe-bookings",
+      "/admin/cafe-menu",
+      "/admin/cafe-waiter",
+      "/admin/cafe-chef",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/profile",
+    ],
+    "Restaurant Chef": [
+      "/admin",
+      "/admin/restaurant-bookings",
+      "/admin/restaurant-menu",
+      "/admin/restaurant-waiter",
+      "/admin/restaurant-chef",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/profile",
+    ],
+    "Bar Chef": [
+      "/admin",
+      "/admin/bar-bookings",
+      "/admin/bar-menu",
+      "/admin/bar-waiter",
+      "/admin/bar-chef",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/profile",
+    ],
+    Waiter: [
+      "/admin",
+      "/admin/waiter-panel",
+      "/admin/cafe-waiter",
+      "/admin/restaurant-waiter",
+      "/admin/bar-waiter",
+      "/admin/orders",
+      "/admin/profile",
+    ],
+    "Cafe Waiter": [
+      "/admin",
+      "/admin/cafe-waiter",
+      "/admin/orders",
+      "/admin/profile",
+    ],
+    "Restaurant Waiter": [
+      "/admin",
+      "/admin/restaurant-waiter",
+      "/admin/orders",
+      "/admin/profile",
+    ],
+    "Bar Waiter": [
+      "/admin",
+      "/admin/bar-waiter",
+      "/admin/orders",
+      "/admin/profile",
+    ],
+    Bartender: [
+      "/admin",
+      "/admin/bartender-panel",
+      "/admin/bar-menu",
+      "/admin/bar-bookings",
+      "/admin/profile",
+    ],
+    Housekeeping: [
+      "/admin",
+      "/admin/housekeeping-panel",
+      "/admin/room-bookings",
+      "/admin/rooms",
+      "/admin/profile",
+    ],
+  };
+
+  const allowedLinks = roleAllowedLinks[adminRole] ?? [];
+
+  const filteredNavGroups = NAV_GROUPS
+    .map((group) => ({
+      ...group,
+      links: group.links.filter((link) =>
+        allowedLinks === null || allowedLinks.includes(link.to)
+      ),
+    }))
+    .filter((group) => group.links.length);
 
   const pageInfo = PAGE_TITLES[location.pathname] ?? { title: "Admin", sub: "Lumière" };
 
@@ -341,7 +475,7 @@ export default function AdminLayout() {
 
         {/* Nav body */}
         <div className="ad_sidebar__body">
-          {NAV_GROUPS.map((group) => (
+          {filteredNavGroups.map((group) => (
             <div className="ad_nav_group" key={group.label}>
               <span className="ad_nav_group__label">{group.label}</span>
               <nav className="ad_nav" aria-label={group.label}>
@@ -369,10 +503,10 @@ export default function AdminLayout() {
         {/* Footer user card */}
         <div className="ad_sidebar__foot">
           <div className="ad_user_card" role="button" tabIndex={0} aria-label="Account menu">
-            <div className="ad_user_avatar">AD</div>
+            <div className="ad_user_avatar">{adminName?.[0] || "A"}</div>
             <div className="ad_user_info">
-              <div className="ad_user_name">Admin User</div>
-              <div className="ad_user_role">Super Admin</div>
+              <div className="ad_user_name">{adminName}</div>
+              <div className="ad_user_role">{adminRole}</div>
             </div>
             <span className="ad_user_chevron">{Icons.chevron}</span>
           </div>

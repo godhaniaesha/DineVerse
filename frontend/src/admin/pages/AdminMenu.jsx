@@ -1,13 +1,14 @@
 import { useState } from "react";
 
+const DEFAULT_CUISINES = ["Italian", "Chinese", "Indian", "French", "Modern" ];
 const INITIAL_ITEMS = [
-  { id: 1, name: "Truffle Pasta", category: "Main Course", price: 680, image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80", available: true },
-  { id: 2, name: "Mushroom Soup", category: "Starter", price: 320, image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80", available: true },
-  { id: 3, name: "Chocolate Dome", category: "Dessert", price: 290, image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80", available: false },
-  { id: 4, name: "Citrus Cooler", category: "Beverage", price: 220, image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=600&q=80", available: true },
+  { id: 1, name: "Truffle Pasta", cuisine: "Italian", category: "Main Course", price: 680, image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80", available: true },
+  { id: 2, name: "Mushroom Soup", cuisine: "French", category: "Starter", price: 320, image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80", available: true },
+  { id: 3, name: "Chocolate Dome", cuisine: "French", category: "Dessert", price: 290, image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80", available: false },
+  { id: 4, name: "Citrus Cooler", cuisine: "Indian", category: "Beverage", price: 220, image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=600&q=80", available: true },
 ];
 
-const EMPTY_FORM = { name: "", category: "Starter", price: "", image: "" };
+const EMPTY_FORM = { name: "", cuisine: "Italian", category: "Starter", price: "", image: "" };
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
 const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
 function Modal({ title, onClose, children }) {
@@ -26,6 +27,8 @@ export default function AdminMenu() {
   const [items, setItems] = useState(INITIAL_ITEMS);
   const [form, setForm] = useState(EMPTY_FORM);
   const [modal, setModal] = useState(null);
+  const [filterCuisine, setFilterCuisine] = useState("All");
+  const [filterCategory, setFilterCategory] = useState("All");
 
   const setField = (field, value) => setForm((current) => ({ ...current, [field]: value }));
 
@@ -61,10 +64,27 @@ export default function AdminMenu() {
     ? Math.round(items.reduce((sum, item) => sum + item.price, 0) / items.length)
     : 0;
 
+  const filteredItems = items.filter((item) => {
+    const byCuisine = filterCuisine === "All" || item.cuisine === filterCuisine;
+    const byCategory = filterCategory === "All" || item.category === filterCategory;
+    return byCuisine && byCategory;
+  });
+
   return (
     <div className="ad_page">
       <h2 className="ad_h2">Menu Items</h2>
       <p className="ad_p">Create, update availability, and remove dishes from the catalog.</p>
+
+      <div className="ad_row_actions" style={{ margin: "10px 0" }}>
+        <select value={filterCuisine} onChange={(e) => setFilterCuisine(e.target.value)} className="ad_select" style={{ marginRight: 8 }}>
+          <option value="All">All Cuisines</option>
+          {DEFAULT_CUISINES.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="ad_select">
+          <option value="All">All Categories</option>
+          {Array.from(new Set(items.map((item) => item.category))).map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </div>
 
       <div className="ad_cards_grid">
         <article className="ad_card">
@@ -128,6 +148,7 @@ export default function AdminMenu() {
           <thead>
             <tr>
               <th>Dish</th>
+              <th>Cuisine</th>
               <th>Category</th>
               <th>Image</th>
               <th>Price</th>
@@ -136,9 +157,10 @@ export default function AdminMenu() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <tr key={item.id}>
                 <td>{item.name}</td>
+                <td>{item.cuisine}</td>
                 <td>{item.category}</td>
                 <td><img src={item.image} alt={item.name} className="ad_gallery_img" style={{ width: 70, height: 44, marginBottom: 0 }} /></td>
                 <td>₹{item.price.toLocaleString("en-IN")}</td>
@@ -173,6 +195,7 @@ export default function AdminMenu() {
       {(modal?.mode === "add" || modal?.mode === "edit") && (
         <Modal title={modal.mode === "add" ? "Add Menu Item" : "Edit Menu Item"} onClose={close}>
           <div className="rooms__form_row"><label className="rooms__form_label">Dish Name</label><input required className="rooms__form_input" value={form.name} onChange={(e) => setField("name", e.target.value)} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Cuisine</label><select className="rooms__form_select" value={form.cuisine} onChange={(e) => setField("cuisine", e.target.value)}>{DEFAULT_CUISINES.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
           <div className="rooms__form_row"><label className="rooms__form_label">Category</label><select className="rooms__form_select" value={form.category} onChange={(e) => setField("category", e.target.value)}><option value="Starter">Starter</option><option value="Main Course">Main Course</option><option value="Dessert">Dessert</option><option value="Beverage">Beverage</option></select></div>
           <div className="rooms__form_row"><label className="rooms__form_label">Price</label><input required type="number" className="rooms__form_input" min="0" value={form.price} onChange={(e) => setField("price", e.target.value)} /></div>
           <div className="rooms__form_row"><label className="rooms__form_label">Image URL</label><input required className="rooms__form_input" value={form.image} onChange={(e) => setField("image", e.target.value)} placeholder="https://..." /></div>

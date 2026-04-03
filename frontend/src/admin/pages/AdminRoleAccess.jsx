@@ -1,6 +1,9 @@
 const ROLE_PERMISSIONS = [
   ["Super Admin", "Full system access"],
-  ["Manager", "Manage orders, staff"],
+  ["Manager", "Full access to most modules with analytics and user management"],
+  ["Cafe Chef", "Cafe order queue and menu + cafe chef panel"],
+  ["Restaurant Chef", "Restaurant order queue and menu + restaurant chef panel"],
+  ["Bar Chef", "Bar order queue and menu + bar chef panel"],
   ["Chef", "View kitchen orders"],
   ["Waiter", "Manage tables & orders"],
   ["Bartender", "Prepare drinks"],

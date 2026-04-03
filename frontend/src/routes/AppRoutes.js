@@ -45,13 +45,13 @@ import AdminRoomBookings from "../admin/pages/AdminRoomBookings";
 import AdminStaffManagement from "../admin/pages/AdminStaffManagement";
 import AdminCuisineManagement from "../admin/pages/AdminCuisineManagement";
 import AdminOrderManagement from "../admin/pages/AdminOrderManagement";
-import AdminInventoryManagement from "../admin/pages/AdminInventoryManagement";
 import AdminKDS from "../admin/pages/AdminKDS";
 import AdminWaiterPanel from "../admin/pages/AdminWaiterPanel";
 import AdminPOS from "../admin/pages/AdminPOS";
 import AdminRoleAccess from "../admin/pages/AdminRoleAccess";
 import AdminArchitecture from "../admin/pages/AdminArchitecture";
 import AdminCafeWaiterPanel from "../admin/pages/AdminCafeWaiterPanel";
+import AdminRouteGuard from "../admin/AdminRouteGuard";
 import AdminRestaurantWaiterPanel from "../admin/pages/AdminRestaurantWaiterPanel";
 import AdminBarWaiterPanel from "../admin/pages/AdminBarWaiterPanel";
 import AdminCafeChefPanel from "../admin/pages/AdminCafeChefPanel";
@@ -95,47 +95,46 @@ function AppRoutes() {
         {/* Admin routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
-          <Route path="analytics" element={<AdminAnalytics />} />
-          <Route path="reservations" element={<AdminReservations />} />
-          <Route path="cafe-bookings" element={<AdminCafeBookings />} />
-          <Route path="cafe-menu" element={<AdminCafeMenu />} />
-          <Route path="restaurant-bookings" element={<AdminRestaurantBookings />} />
-          <Route path="restaurant-menu" element={<AdminRestaurantMenu />} />
-          <Route path="bar-bookings" element={<AdminBarBookings />} />
-          <Route path="bar-menu" element={<AdminBarMenu />} />
-          <Route path="room-bookings" element={<AdminRoomBookings />} />
-          <Route path="staff" element={<AdminStaffManagement />} />
-          <Route path="cuisines" element={<AdminCuisineManagement />} />
-          <Route path="orders" element={<AdminOrderManagement />} />
-          <Route path="inventory" element={<AdminInventoryManagement />} />
-          <Route path="kds" element={<AdminKDS />} />
-          <Route path="waiter-panel" element={<AdminWaiterPanel />} />
-          <Route path="cafe-waiter" element={<AdminCafeWaiterPanel />} />
-          <Route path="restaurant-waiter" element={<AdminRestaurantWaiterPanel />} />
-          <Route path="bar-waiter" element={<AdminBarWaiterPanel />} />
-          <Route path="cafe-chef" element={<AdminCafeChefPanel />} />
-          <Route path="restaurant-chef" element={<AdminRestaurantChefPanel />} />
-          <Route path="bar-chef" element={<AdminBarChefPanel />} />
-          <Route path="bartender-panel" element={<AdminBartenderPanel />} />
-          <Route path="manager-panel" element={<AdminManagerPanel />} />
-          <Route path="housekeeping-panel" element={<AdminHousekeepingPanel />} />
-          <Route path="pos" element={<AdminPOS />} />
-          <Route path="guests" element={<AdminGuests />} />
-          <Route path="menu" element={<AdminMenu />} />
-          <Route path="tables" element={<AdminTables />} />
-          <Route path="rooms" element={<AdminRooms />} />
-          <Route path="gallery" element={<AdminGallery />} />
-          <Route path="blogs" element={<AdminBlogs />} />
-          <Route path="reviews" element={<AdminReviews />} />
-          <Route path="offers" element={<AdminOffers />} />
-          <Route path="inquiries" element={<AdminInquiries />} />
-          <Route path="content" element={<AdminContent />} />
-          <Route path="settings" element={<AdminSettings />} />
-          <Route path="role-access" element={<AdminRoleAccess />} />
-          <Route path="architecture" element={<AdminArchitecture />} />
-          <Route path="admin-users" element={<AdminUsers />} />
-          <Route path="notifications" element={<AdminNotifications />} />
-          <Route path="profile" element={<AdminProfile />} />
+          <Route path="analytics" element={<AdminRouteGuard path="/admin/analytics"><AdminAnalytics /></AdminRouteGuard>} />
+          <Route path="reservations" element={<AdminRouteGuard path="/admin/reservations"><AdminReservations /></AdminRouteGuard>} />
+          <Route path="cafe-bookings" element={<AdminRouteGuard path="/admin/cafe-bookings"><AdminCafeBookings /></AdminRouteGuard>} />
+          <Route path="cafe-menu" element={<AdminRouteGuard path="/admin/cafe-menu"><AdminCafeMenu /></AdminRouteGuard>} />
+          <Route path="restaurant-bookings" element={<AdminRouteGuard path="/admin/restaurant-bookings"><AdminRestaurantBookings /></AdminRouteGuard>} />
+          <Route path="restaurant-menu" element={<AdminRouteGuard path="/admin/restaurant-menu"><AdminRestaurantMenu /></AdminRouteGuard>} />
+          <Route path="bar-bookings" element={<AdminRouteGuard path="/admin/bar-bookings"><AdminBarBookings /></AdminRouteGuard>} />
+          <Route path="bar-menu" element={<AdminRouteGuard path="/admin/bar-menu"><AdminBarMenu /></AdminRouteGuard>} />
+          <Route path="room-bookings" element={<AdminRouteGuard path="/admin/room-bookings"><AdminRoomBookings /></AdminRouteGuard>} />
+          <Route path="staff" element={<AdminRouteGuard path="/admin/staff"><AdminStaffManagement /></AdminRouteGuard>} />
+          <Route path="cuisines" element={<AdminRouteGuard path="/admin/cuisines"><AdminCuisineManagement /></AdminRouteGuard>} />
+          <Route path="orders" element={<AdminRouteGuard path="/admin/orders"><AdminOrderManagement /></AdminRouteGuard>} />
+          <Route path="kds" element={<AdminRouteGuard path="/admin/kds"><AdminKDS /></AdminRouteGuard>} />
+          <Route path="waiter-panel" element={<AdminRouteGuard path="/admin/waiter-panel"><AdminWaiterPanel /></AdminRouteGuard>} />
+          <Route path="cafe-waiter" element={<AdminRouteGuard path="/admin/cafe-waiter"><AdminCafeWaiterPanel /></AdminRouteGuard>} />
+          <Route path="restaurant-waiter" element={<AdminRouteGuard path="/admin/restaurant-waiter"><AdminRestaurantWaiterPanel /></AdminRouteGuard>} />
+          <Route path="bar-waiter" element={<AdminRouteGuard path="/admin/bar-waiter"><AdminBarWaiterPanel /></AdminRouteGuard>} />
+          <Route path="cafe-chef" element={<AdminRouteGuard path="/admin/cafe-chef"><AdminCafeChefPanel /></AdminRouteGuard>} />
+          <Route path="restaurant-chef" element={<AdminRouteGuard path="/admin/restaurant-chef"><AdminRestaurantChefPanel /></AdminRouteGuard>} />
+          <Route path="bar-chef" element={<AdminRouteGuard path="/admin/bar-chef"><AdminBarChefPanel /></AdminRouteGuard>} />
+          <Route path="bartender-panel" element={<AdminRouteGuard path="/admin/bartender-panel"><AdminBartenderPanel /></AdminRouteGuard>} />
+          <Route path="manager-panel" element={<AdminRouteGuard path="/admin/manager-panel"><AdminManagerPanel /></AdminRouteGuard>} />
+          <Route path="housekeeping-panel" element={<AdminRouteGuard path="/admin/housekeeping-panel"><AdminHousekeepingPanel /></AdminRouteGuard>} />
+          <Route path="pos" element={<AdminRouteGuard path="/admin/pos"><AdminPOS /></AdminRouteGuard>} />
+          <Route path="guests" element={<AdminRouteGuard path="/admin/guests"><AdminGuests /></AdminRouteGuard>} />
+          <Route path="menu" element={<AdminRouteGuard path="/admin/menu"><AdminMenu /></AdminRouteGuard>} />
+          <Route path="tables" element={<AdminRouteGuard path="/admin/tables"><AdminTables /></AdminRouteGuard>} />
+          <Route path="rooms" element={<AdminRouteGuard path="/admin/rooms"><AdminRooms /></AdminRouteGuard>} />
+          <Route path="gallery" element={<AdminRouteGuard path="/admin/gallery"><AdminGallery /></AdminRouteGuard>} />
+          <Route path="blogs" element={<AdminRouteGuard path="/admin/blogs"><AdminBlogs /></AdminRouteGuard>} />
+          <Route path="reviews" element={<AdminRouteGuard path="/admin/reviews"><AdminReviews /></AdminRouteGuard>} />
+          <Route path="offers" element={<AdminRouteGuard path="/admin/offers"><AdminOffers /></AdminRouteGuard>} />
+          <Route path="inquiries" element={<AdminRouteGuard path="/admin/inquiries"><AdminInquiries /></AdminRouteGuard>} />
+          <Route path="content" element={<AdminRouteGuard path="/admin/content"><AdminContent /></AdminRouteGuard>} />
+          <Route path="settings" element={<AdminRouteGuard path="/admin/settings"><AdminSettings /></AdminRouteGuard>} />
+          <Route path="role-access" element={<AdminRouteGuard path="/admin/role-access"><AdminRoleAccess /></AdminRouteGuard>} />
+          <Route path="architecture" element={<AdminRouteGuard path="/admin/architecture"><AdminArchitecture /></AdminRouteGuard>} />
+          <Route path="admin-users" element={<AdminRouteGuard path="/admin/admin-users"><AdminUsers /></AdminRouteGuard>} />
+          <Route path="notifications" element={<AdminRouteGuard path="/admin/notifications"><AdminNotifications /></AdminRouteGuard>} />
+          <Route path="profile" element={<AdminRouteGuard path="/admin/profile"><AdminProfile /></AdminRouteGuard>} />
         </Route>
       </Routes>
     </BrowserRouter>

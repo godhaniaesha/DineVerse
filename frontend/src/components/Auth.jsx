@@ -58,7 +58,7 @@ const Field = ({ label, id, icon, type = "text", placeholder, value, onChange, e
    LOGIN FORM
 ───────────────────────────────────────────── */
 const LoginForm = ({ onSuccess, onToast, onForgot }) => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", role: "Super Admin" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -81,6 +81,8 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
     setLoading(true);
     await new Promise(r => setTimeout(r, 1600));
     setLoading(false);
+    localStorage.setItem("adminRole", form.role);
+    localStorage.setItem("adminName", form.email || "Admin User");
     onSuccess("login");
     onToast("Welcome back! Redirecting…", "success");
   };
@@ -107,6 +109,26 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
       <Field label="Password" id="login_pw" icon={<FiLock />}
         isPassword placeholder="••••••••"
         value={form.password} onChange={set("password")} error={errors.password} />
+
+      <div className="z_field_group">
+        <label className="z_field_label" htmlFor="login_role">Role</label>
+        <select
+          id="login_role"
+          className="z_field_input"
+          value={form.role}
+          onChange={set("role")}
+          style={{ marginTop: 4 }}
+        >
+          <option>Super Admin</option>
+          <option>Manager</option>
+          <option>Cafe Chef</option>
+          <option>Restaurant Chef</option>
+          <option>Bar Chef</option>
+          <option>Waiter</option>
+          <option>Bartender</option>
+          <option>Housekeeping</option>
+        </select>
+      </div>
 
       <div className="z_forgot_row">
         <button type="button" className="z_forgot_link" onClick={onForgot}>Forgot password?</button>
@@ -139,7 +161,7 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
    REGISTER FORM
 ───────────────────────────────────────────── */
 const RegisterForm = ({ onSuccess, onToast }) => {
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "", role: "Super Admin" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -166,6 +188,8 @@ const RegisterForm = ({ onSuccess, onToast }) => {
     setLoading(true);
     await new Promise(r => setTimeout(r, 1800));
     setLoading(false);
+    localStorage.setItem("adminRole", form.role);
+    localStorage.setItem("adminName", form.name || form.email || "Admin User");
     onSuccess("register");
     onToast("Account created! Welcome aboard.", "success");
   };
@@ -187,6 +211,26 @@ const RegisterForm = ({ onSuccess, onToast }) => {
       <Field label="Confirm password" id="reg_cpw" icon={<FiLock />}
         isPassword placeholder="Repeat password"
         value={form.confirm} onChange={set("confirm")} error={errors.confirm} />
+
+      <div className="z_field_group">
+        <label className="z_field_label" htmlFor="reg_role">Role</label>
+        <select
+          id="reg_role"
+          className="z_field_input"
+          value={form.role}
+          onChange={set("role")}
+          style={{ marginTop: 4 }}
+        >
+          <option>Super Admin</option>
+          <option>Manager</option>
+          <option>Cafe Chef</option>
+          <option>Restaurant Chef</option>
+          <option>Bar Chef</option>
+          <option>Waiter</option>
+          <option>Bartender</option>
+          <option>Housekeeping</option>
+        </select>
+      </div>
 
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 20, marginTop: 4 }}>
         <input

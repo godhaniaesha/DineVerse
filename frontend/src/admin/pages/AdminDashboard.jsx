@@ -31,6 +31,15 @@ const TODAY_TABLE = [
   { id: "RM-203", guest: "Noah Johnson", slot: "2:00 PM", type: "Room", status: "Checked In" },
 ];
 
+const TABLE_OVERVIEW = [
+  { area: "Cafe", table: "T1", seats: 4, status: "Occupied" },
+  { area: "Cafe", table: "T2", seats: 4, status: "Available" },
+  { area: "Restaurant", table: "R1", seats: 6, status: "Occupied" },
+  { area: "Restaurant", table: "R2", seats: 4, status: "Available" },
+  { area: "Bar", table: "B1", seats: 4, status: "Occupied" },
+  { area: "Bar", table: "B2", seats: 2, status: "Available" },
+];
+
 export default function AdminDashboard() {
   return (
     <div className="ad_page">
@@ -94,6 +103,19 @@ export default function AdminDashboard() {
           </ul>
         </section>
       </div>
+
+      <section className="ad_card" style={{ marginTop: 16 }}>
+        <h3 className="ad_card__title">Table Status (Cafe / Restaurant / Bar)</h3>
+        <div className="ad_cards_grid" style={{ marginTop: 12 }}>
+          {TABLE_OVERVIEW.map((item) => (
+            <article key={`${item.area}-${item.table}`} className="ad_card">
+              <div className="ad_card__label">{item.area} - {item.table}</div>
+              <div className="ad_card__value">{item.seats} persons</div>
+              <div className="ad_card__meta">{item.status}</div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="ad_card" style={{ marginTop: 16 }}>
         <h3 className="ad_card__title">Today Live Bookings</h3>

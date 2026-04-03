@@ -159,7 +159,7 @@ export default function FeaturedMenu() {
             <span className="d_featured__eyebrow-line" />
           </p>
           <h2 className="d_featured__title">
-            Chef's <em>Signature</em> Dishes
+            Chef 's <em>Signature</em> Dishes
           </h2>
           <p className="d_featured__subtitle">
             Handpicked favourites from our kitchen — crafted with seasonal

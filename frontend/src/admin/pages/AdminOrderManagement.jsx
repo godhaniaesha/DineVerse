@@ -1,12 +1,15 @@
 import { useState } from "react";
 
 const INITIAL = [
-  { id: "ORD-101", table: "T3", customer: "Walk-in", items: "Pizza, Pasta", chef: "Rahul", waiter: "Neha", status: "New Order", time: "19:20" },
+  { id: "ORD-101", table: "T3", customer: "Walk-in", items: "Sandwich, Latte", chef: "Cafe Chef 1", waiter: "Neha", status: "New Order", area: "cafe", time: "19:20" },
+  { id: "ORD-102", table: "T8", customer: "Table 8", items: "Steak, Salad", chef: "Restaurant Chef 1", waiter: "Rohan", status: "Preparing", area: "restaurant", time: "19:35" },
+  { id: "ORD-103", table: "B2", customer: "Bar", items: "Mojito, Beer", chef: "Bar Chef 1", waiter: "Vikram", status: "Ready", area: "bar", time: "19:50" },
 ];
 const FLOW = ["New Order", "Preparing", "Ready", "Served", "Completed"];
 
 export default function AdminOrderManagement() {
   const [rows, setRows] = useState(INITIAL);
+  const role = localStorage.getItem("adminRole") || "Super Admin";
   const nextStatus = (status) => FLOW[Math.min(FLOW.indexOf(status) + 1, FLOW.length - 1)];
   return (
     <div className="ad_page">
@@ -16,12 +19,19 @@ export default function AdminOrderManagement() {
         <table className="ad_table">
           <thead><tr><th>Order ID</th><th>Table</th><th>Customer</th><th>Items</th><th>Chef</th><th>Waiter</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.id}>
-                <td>{row.id}</td><td>{row.table}</td><td>{row.customer}</td><td>{row.items}</td><td>{row.chef}</td><td>{row.waiter}</td><td><span className="ad_chip">{row.status}</span></td><td>{row.time}</td>
-                <td><button className="ad_btn ad_btn--primary" onClick={() => setRows((p) => p.map((x) => x.id === row.id ? { ...x, status: nextStatus(x.status) } : x))}>Next Status</button></td>
-              </tr>
-            ))}
+            {rows
+              .filter((row) => {
+                if (role === "Cafe Chef") return row.area === "cafe";
+                if (role === "Restaurant Chef") return row.area === "restaurant";
+                if (role === "Bar Chef") return row.area === "bar";
+                return true;
+              })
+              .map((row) => (
+                <tr key={row.id}>
+                  <td>{row.id}</td><td>{row.table}</td><td>{row.customer}</td><td>{row.items}</td><td>{row.chef}</td><td>{row.waiter}</td><td><span className="ad_chip">{row.status}</span></td><td>{row.time}</td>
+                  <td><button className="ad_btn ad_btn--primary" onClick={() => setRows((p) => p.map((x) => x.id === row.id ? { ...x, status: nextStatus(x.status) } : x))}>Next Status</button></td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

@@ -1,0 +1,134 @@
+import { Navigate } from "react-router-dom";
+
+const ROLE_ROUTE_MAP = {
+    "Super Admin": null,
+    "Manager": [
+      "/admin",
+      "/admin/analytics",
+      "/admin/reservations",
+      "/admin/cafe-bookings",
+      "/admin/cafe-menu",
+      "/admin/restaurant-bookings",
+      "/admin/restaurant-menu",
+      "/admin/bar-bookings",
+      "/admin/bar-menu",
+      "/admin/room-bookings",
+      "/admin/staff",
+      "/admin/cuisines",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/waiter-panel",
+      "/admin/cafe-waiter",
+      "/admin/restaurant-waiter",
+      "/admin/bar-waiter",
+      "/admin/cafe-chef",
+      "/admin/restaurant-chef",
+      "/admin/bar-chef",
+      "/admin/bartender-panel",
+      "/admin/manager-panel",
+      "/admin/housekeeping-panel",
+      "/admin/pos",
+      "/admin/guests",
+      "/admin/menu",
+      "/admin/tables",
+      "/admin/rooms",
+      "/admin/gallery",
+      "/admin/blogs",
+      "/admin/reviews",
+      "/admin/offers",
+      "/admin/inquiries",
+      "/admin/content",
+      "/admin/settings",
+      "/admin/role-access",
+      "/admin/architecture",
+      "/admin/admin-users",
+      "/admin/notifications",
+      "/admin/profile",
+    ],
+    "Cafe Chef": [
+        "/admin",
+        "/admin/cafe-bookings",
+        "/admin/cafe-menu",
+        "/admin/cafe-waiter",
+        "/admin/cafe-chef",
+        "/admin/orders",
+        "/admin/kds",
+        "/admin/profile",
+    ],
+    "Restaurant Chef": [
+        "/admin",
+        "/admin/restaurant-bookings",
+        "/admin/restaurant-menu",
+        "/admin/restaurant-waiter",
+        "/admin/restaurant-chef",
+        "/admin/orders",
+        "/admin/kds",
+        "/admin/profile",
+    ],
+    "Bar Chef": [
+        "/admin",
+        "/admin/bar-bookings",
+        "/admin/bar-menu",
+        "/admin/bar-waiter",
+        "/admin/bar-chef",
+        "/admin/orders",
+        "/admin/kds",
+        "/admin/profile",
+    ],
+    Waiter: [
+        "/admin",
+        "/admin/waiter-panel",
+        "/admin/cafe-waiter",
+        "/admin/restaurant-waiter",
+        "/admin/bar-waiter",
+        "/admin/orders",
+        "/admin/profile",
+    ],
+    "Cafe Waiter": [
+        "/admin",
+        "/admin/cafe-waiter",
+        "/admin/orders",
+        "/admin/profile",
+    ],
+    "Restaurant Waiter": [
+        "/admin",
+        "/admin/restaurant-waiter",
+        "/admin/orders",
+        "/admin/profile",
+    ],
+    "Bar Waiter": [
+        "/admin",
+        "/admin/bar-waiter",
+        "/admin/orders",
+        "/admin/profile",
+    ],
+    Bartender: [
+        "/admin",
+        "/admin/bartender-panel",
+        "/admin/bar-menu",
+        "/admin/bar-bookings",
+        "/admin/profile",
+    ],
+    Housekeeping: [
+        "/admin",
+        "/admin/housekeeping-panel",
+        "/admin/room-bookings",
+        "/admin/rooms",
+        "/admin/profile",
+    ],
+};
+
+export default function AdminRouteGuard({ path, children }) {
+    const role = localStorage.getItem("adminRole") || "Super Admin";
+
+    if (role === "Super Admin" || role === "Manager") {
+        return children;
+    }
+
+    const allowed = ROLE_ROUTE_MAP[role];
+    if (allowed && allowed.includes(path)) {
+        return children;
+    }
+
+    return <Navigate to="/admin" replace />;
+}

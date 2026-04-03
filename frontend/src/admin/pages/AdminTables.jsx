@@ -1,9 +1,12 @@
 import { useState } from "react";
 
 const INITIAL_TABLES = [
-  { id: 1, tableNo: "T1", area: "Window", capacity: 2, status: "available" },
-  { id: 2, tableNo: "T2", area: "Center", capacity: 4, status: "occupied" },
-  { id: 3, tableNo: "T3", area: "Private", capacity: 8, status: "reserved" },
+  { id: 1, tableNo: "T1", area: "Cafe", capacity: 4, status: "available" },
+  { id: 2, tableNo: "T2", area: "Cafe", capacity: 4, status: "reserved" },
+  { id: 3, tableNo: "R1", area: "Restaurant", capacity: 6, status: "occupied" },
+  { id: 4, tableNo: "R2", area: "Restaurant", capacity: 4, status: "available" },
+  { id: 5, tableNo: "B1", area: "Bar", capacity: 4, status: "occupied" },
+  { id: 6, tableNo: "B2", area: "Bar", capacity: 2, status: "available" },
 ];
 
 const EMPTY_FORM = { tableNo: "", area: "", capacity: "2", status: "available" };
@@ -30,6 +33,7 @@ export default function AdminTables() {
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
 
+  const [areaFilter, setAreaFilter] = useState("All");
   const openAdd = () => { setForm(EMPTY_FORM); setModal({ mode: "add" }); };
   const openEdit = (row) => { setForm({ ...row, capacity: String(row.capacity) }); setModal({ mode: "edit", row }); };
   const openDelete = (row) => setModal({ mode: "delete", row });
@@ -54,14 +58,25 @@ export default function AdminTables() {
         <div><h2 className="ad_h2">Restaurant Tables</h2><p className="ad_p">Manage table capacity and seating status.</p></div>
         <button className="rooms__add_btn" onClick={openAdd}>Add Table</button>
       </div>
+      <div className="ad_row_actions" style={{ marginBottom: 16 }}>
+        <label style={{ fontSize: 14, marginRight: 8 }}>Area:</label>
+        <select className="rooms__form_select" value={areaFilter} onChange={(e) => setAreaFilter(e.target.value)}>
+          <option value="All">All</option>
+          <option value="Cafe">Cafe</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Bar">Bar</option>
+        </select>
+      </div>
       <div className="ad_table_wrap">
         <table className="ad_table">
           <thead><tr><th>Table</th><th>Area</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.id}>
-                <td>{row.tableNo}</td><td>{row.area}</td><td>{row.capacity} members</td><td><span className="ad_chip">{row.status}</span></td>
-                <td className="rooms__actions_cell">
+            {rows
+              .filter((row) => areaFilter === "All" || row.area === areaFilter)
+              .map((row) => (
+                <tr key={row.id}>
+                  <td>{row.tableNo}</td><td>{row.area}</td><td>{row.capacity} members</td><td><span className="ad_chip">{row.status}</span></td>
+                  <td className="rooms__actions_cell">
                   <button className="rooms__icon_btn" title="Edit table" onClick={() => openEdit(row)}><IcEdit /></button>
                   <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete table" onClick={() => openDelete(row)}><IcTrash /></button>
                 </td>
