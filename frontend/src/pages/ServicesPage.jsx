@@ -1,5 +1,6 @@
 import React from 'react';
 import { Utensils, Wine, Building2, Ticket } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../style/ServicePage.css';
 
 const SERVICES = [
@@ -9,6 +10,7 @@ const SERVICES = [
     desc: 'A curated gastronomic journey featuring seasonal ingredients and avant-garde culinary techniques.',
     icon: <Utensils size={28} />,
     category: 'restaurant',
+    link: '/bookTable'
   },
   {
     id: '02',
@@ -16,6 +18,7 @@ const SERVICES = [
     desc: 'Expertly crafted cocktails and a selection of vintage labels served in an intimate, low-light setting.',
     icon: <Wine size={28} />,
     category: 'bar',
+    link: '/bar'
   },
   {
     id: '03',
@@ -23,6 +26,7 @@ const SERVICES = [
     desc: 'Luxury redefined with architectural elegance and bespoke service in our signature suites.',
     icon: <Building2 size={28} />,
     category: 'room',
+    link: '/bookRoom'
   },
   {
     id: '04',
@@ -30,6 +34,7 @@ const SERVICES = [
     desc: 'From corporate galas to intimate celebrations, we provide the perfect canvas for your milestones.',
     icon: <Ticket size={28} />,
     category: 'events',
+    link: '/contact'
   },
 ];
 
@@ -105,6 +110,8 @@ const FAQ = [
 ];
 
 const ServicePage = () => {
+  const navigate = useNavigate();
+
   return (
     <main className="sp_page">
       {/* HERO */}
@@ -123,8 +130,8 @@ const ServicePage = () => {
             </p>
 
             <div className="sp_hero_cta_row">
-              <button className="sp_btn_primary">View all services</button>
-              <button className="sp_btn_ghost">Plan your visit</button>
+              <button className="sp_btn_primary" onClick={() => navigate('/menu')}>View all services</button>
+              <button className="sp_btn_ghost" onClick={() => navigate('/bookTable')}>Plan your visit</button>
             </div>
 
             <div className="sp_highlights">
@@ -178,12 +185,17 @@ const ServicePage = () => {
 
                   <span className="d_serv_number">{service.id}</span>
 
-                  <h3 className="d_serv_card_title">{service.title}</h3>
-                  <p className="d_serv_card_desc">{service.desc}</p>
-
-                  <div className="d_serv_card_footer">
-                    <span className="d_serv_link">Explore more</span>
-                    <div className="d_serv_dot" />
+                  <div className="d_serv_content">
+                    <h3 className="d_serv_card_title">{service.title}</h3>
+                    <p className="d_serv_card_desc">{service.desc}</p>
+                    <button 
+                      className="d_serv_card_footer" 
+                      style={{ border: 'none', background: 'none', padding: 0, cursor: 'pointer' }} 
+                      onClick={() => navigate(service.link)}
+                    >
+                      <span className="d_serv_link">Explore Service</span>
+                      <div className="d_serv_dot" />
+                    </button>
                   </div>
                 </article>
               ))}

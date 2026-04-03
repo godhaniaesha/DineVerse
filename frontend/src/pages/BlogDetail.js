@@ -643,7 +643,7 @@ const TIMELINE = [
     img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80", color: "var(--d-bar)" },
   { year: "2023", season: "March", title: "Expansion & Private Dining", icon: <GiKnifeFork />,
     desc: "We add a private dining suite (18 seats), a rooftop terrace for sundowners, and a dedicated pastry kitchen. Rohan Shah joins to lead the café and pastry program. The croissant waitlist becomes a local phenomenon.",
-    img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=800&q=80", color: "var(--d-cafe)" },
+    img: "https://i.pinimg.com/736x/76/60/17/766017678c850c8b522adefa9a27eeaa.jpg", color: "var(--d-cafe)" },
   { year: "2024", season: "June", title: "12,000 Guests. Still Counting.", icon: <FiHeart />,
     desc: "DineVerse has now hosted over 12,000 guests across all three venues. A Michelin Guide inspector has visited twice (we know, because they always order the Wagyu). We still write handwritten birthday cards for every guest who books a celebration.",
     img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80", color: "var(--d-gold)" },

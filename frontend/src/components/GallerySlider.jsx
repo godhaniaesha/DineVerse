@@ -47,7 +47,7 @@ export default function GallerySlider() {
                 <span className="z_slide_subtitle">Visual Experience</span>
                 <h2 className="z_slide_title">A Symphony of <em>Flavors & Aesthetics</em></h2>
 
-                <Link to="/gallery">
+                <Link to="/gallerypage">
                     <button className="z_slide_view_gallery_btn">
                         View Full Gallery
                     </button>

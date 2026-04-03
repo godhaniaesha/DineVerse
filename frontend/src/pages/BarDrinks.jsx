@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { IoWineOutline, IoFlameOutline } from "react-icons/io5";
 import { PiBeerSteinBold, PiLeafBold } from "react-icons/pi";
 import { HiSparkles, HiHeart, HiOutlineHeart } from "react-icons/hi2";
@@ -139,14 +140,15 @@ function BarMarquee() {
 export default function BarDrinks() {
   const [activeTab, setActiveTab] = useState("all");
   const [favorites, setFavorites] = useState(new Set());
+  const navigate = useNavigate();
 
   const filtered =
     activeTab === "all"
       ? DRINKS
       : DRINKS.filter((d) => d.category === activeTab);
 
-  const handleExplore = () => alert("Full drinks menu — connect your routing here.");
-  const handleReserve = () => alert("Bar reservation — connect your modal here.");
+  const handleExplore = () => navigate("/bar");
+  const handleReserve = () => navigate("/bookTable");
 
   return (
     <section className="d_bar_section">

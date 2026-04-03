@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
   FiArrowRight, FiAward, FiHeart, FiUsers,
   FiStar, FiChevronDown, FiCoffee, FiZap
@@ -618,12 +619,12 @@ function HistoryCTA() {
           Book a table, explore the bar, or start your morning at the café.
         </p>
         <div className="x_cta_btns">
-          <a href="#" className="x_btn x_btn--gold">
+          <Link to="/bookTable" className="x_btn x_btn--gold">
             Reserve a Table <FiArrowRight />
-          </a>
-          <a href="#" className="x_btn x_btn--ghost">
+          </Link>
+          <Link to="/menu" className="x_btn x_btn--ghost">
             Explore Our Menu <GiKnifeFork />
-          </a>
+          </Link>
         </div>
       </div>
     </section>

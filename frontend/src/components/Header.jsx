@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 import { MdTableRestaurant, MdHotel } from "react-icons/md";
 import { IoWineOutline } from "react-icons/io5";
@@ -14,35 +15,35 @@ const NAV_LINKS = [
   {
     id: "cafe",
     label: "Café",
-    href: "#cafe",
+    href: "/cafe",
     icon: <PiCoffeeBold />,
     sub: "Artisan coffee & pastries",
   },
   {
     id: "restaurant",
     label: "Restaurant",
-    href: "#restaurant",
+    href: "/restaurant",
     icon: <RiRestaurantLine />,
     sub: "Fine dining experience",
   },
   {
     id: "bar",
     label: "Bar",
-    href: "#bar",
+    href: "/bar",
     icon: <IoWineOutline />,
     sub: "Craft cocktails & wine",
   },
   {
     id: "room",
     label: "Rooms",
-    href: "#rooms",
+    href: "/rooms",
     icon: <MdHotel />,
     sub: "Luxury stays",
   },
   {
     id: "menu",
     label: "Menu",
-    href: "#menu",
+    href: "/menu",
     icon: <PiKnifeBold />,
     sub: "Full seasonal menu",
   },
@@ -67,17 +68,17 @@ const SEARCH_TAGS = [
 /* ── LOGO ─────────────────────────────────────────────────── */
 function Logo({ onClick }) {
   return (
-    <a href="/" className="d_logo" onClick={onClick} aria-label="Lumière home">
+    <Link to="/" className="d_logo" onClick={onClick} aria-label="DineVerse home">
       <div className="d_logo__emblem">
         <div className="d_logo__emblem-bg">
           <span className="d_logo__emblem-icon"><HiSparkles /></span>
         </div>
       </div>
       <div className="d_logo__wordmark">
-        <span className="d_logo__name">Lumière</span>
+        <span className="d_logo__name">DineVerse</span>
         <span className="d_logo__sub">Café · Dining · Bar · Rooms</span>
       </div>
-    </a>
+    </Link>
   );
 }
 
@@ -178,9 +179,9 @@ function Drawer({ open, onClose, onBookTable, onBookRoom }) {
         {/* Nav links — NO dots, icon cards */}
         <nav className="d_drawer__body">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.id}
-              href={link.href}
+              to={link.href}
               className="d_drawer__link"
               onClick={onClose}
             >
@@ -192,7 +193,7 @@ function Drawer({ open, onClose, onBookTable, onBookRoom }) {
                 <div className="d_drawer__link-sub">{link.sub}</div>
               </div>
               <RiArrowRightSLine className="d_drawer__link-arrow" />
-            </a>
+            </Link>
           ))}
 
           <div className="d_drawer__sep" />
@@ -240,9 +241,11 @@ function Strip() {
 /* ── MAIN HEADER ──────────────────────────────────────────── */
 export default function Header() {
   const [scrolled,    setScrolled]    = useState(false);
-  const [activeNav,   setActiveNav]   = useState("cafe");
+  const [activeNav,   setActiveNav]   = useState("");
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [drawerOpen,  setDrawerOpen]  = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   /* Scroll listener */
   useEffect(() => {
@@ -250,6 +253,16 @@ export default function Header() {
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const activeLink = NAV_LINKS.find(link => link.href === currentPath);
+    if (activeLink) {
+      setActiveNav(activeLink.id);
+    } else {
+      setActiveNav("");
+    }
+  }, [location.pathname]);
 
   /* Lock body scroll */
   useEffect(() => {
@@ -269,8 +282,8 @@ export default function Header() {
     return () => document.removeEventListener("keydown", handler);
   }, []);
 
-  const handleBookTable = () => alert("Table booking — connect your modal here.");
-  const handleBookRoom  = () => alert("Room booking — connect your modal here.");
+  const handleBookTable = () => navigate("/bookTable");
+  const handleBookRoom  = () => navigate("/bookRoom");
 
   return (
     <>
@@ -285,26 +298,22 @@ export default function Header() {
           <nav className="d_nav" aria-label="Main navigation">
             <ul className="d_nav" style={{ padding: 0 }}>
               {NAV_LINKS.map((link, i) => (
-                <>
-                  <li key={link.id} className="d_nav__item">
-                    <a
-                      href={link.href}
+                <React.Fragment key={link.id}>
+                  <li className="d_nav__item">
+                    <Link
+                      to={link.href}
                       className={[
                         "d_nav__link",
                         `d_nav__link--${link.id}`,
                         activeNav === link.id ? "d_nav__link--active" : "",
                       ].filter(Boolean).join(" ")}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setActiveNav(link.id);
-                      }}
                       aria-current={activeNav === link.id ? "page" : undefined}
                     >
                       <span className="d_nav__link-icon" aria-hidden="true">
                         {link.icon}
                       </span>
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                   {/* Separator between items, not after last */}
                   {i < NAV_LINKS.length - 1 && (
@@ -312,7 +321,7 @@ export default function Header() {
                       <div className="d_nav__sep" />
                     </li>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </ul>
           </nav>

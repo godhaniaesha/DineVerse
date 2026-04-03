@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { TbMaximize } from "react-icons/tb";
@@ -14,6 +14,7 @@ const GALLERY = [
     category: "Restaurant",
     tag: "restaurant",
     img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
+    shape: "z_slide_shape_arch",
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ const GALLERY = [
     category: "Signature Dish",
     tag: "food",
     img: "https://recipes.net/wp-content/uploads/2023/05/chanterelle-mushroom-risotto_f34effca58384b447accde25b8a6adc1.jpeg",
+    shape: "z_slide_shape_square",
   },
   {
     id: 3,
@@ -28,6 +30,7 @@ const GALLERY = [
     category: "Bar & Lounge",
     tag: "bar",
     img: "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?w=700&q=80",
+    shape: "z_slide_shape_pill",
   },
   {
     id: 4,
@@ -35,6 +38,7 @@ const GALLERY = [
     category: "Events",
     tag: "events",
     img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&q=80",
+    shape: "z_slide_shape_diagonal",
   },
   {
     id: 5,
@@ -42,6 +46,7 @@ const GALLERY = [
     category: "Bar & Lounge",
     tag: "bar",
     img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
+    shape: "z_slide_shape_custom",
   },
   {
     id: 6,
@@ -49,6 +54,7 @@ const GALLERY = [
     category: "Rooms",
     tag: "rooms",
     img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
+    shape: "z_slide_shape_arch_bottom",
   },
   {
     id: 7,
@@ -56,6 +62,7 @@ const GALLERY = [
     category: "Signature Dish",
     tag: "food",
     img: "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=600&q=80",
+    shape: "z_slide_shape_pill",
   },
   {
     id: 8,
@@ -63,6 +70,7 @@ const GALLERY = [
     category: "Events",
     tag: "events",
     img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=700&q=80",
+    shape: "z_slide_shape_square",
   },
   {
     id: 9,
@@ -70,6 +78,7 @@ const GALLERY = [
     category: "Café & Small Plates",
     tag: "cafe",
     img: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&q=80",
+    shape: "z_slide_shape_arch",
   },
   {
     id: 10,
@@ -77,6 +86,7 @@ const GALLERY = [
     category: "Bar & Lounge",
     tag: "bar",
     img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80",
+    shape: "z_slide_shape_diagonal",
   },
   {
     id: 11,
@@ -84,6 +94,7 @@ const GALLERY = [
     category: "Restaurant",
     tag: "restaurant",
     img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    shape: "z_slide_shape_custom",
   },
   {
     id: 12,
@@ -91,6 +102,7 @@ const GALLERY = [
     category: "Café",
     tag: "cafe",
     img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80",
+    shape: "z_slide_shape_pill",
   },
 
   // extra restaurant / ambiance
@@ -100,6 +112,7 @@ const GALLERY = [
     category: "Restaurant",
     tag: "restaurant",
     img: "https://images.unsplash.com/photo-1544022613-8dac05c2e26b?w=700&q=80",
+    shape: "z_slide_shape_arch",
   },
   {
     id: 14,
@@ -107,6 +120,7 @@ const GALLERY = [
     category: "Restaurant",
     tag: "restaurant",
     img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=700&q=80",
+    shape: "z_slide_shape_square",
   },
 
   // extra café
@@ -116,6 +130,7 @@ const GALLERY = [
     category: "Café",
     tag: "cafe",
     img: "https://images.unsplash.com/photo-1483695028939-5bb13f8648b0?w=700&q=80",
+    shape: "z_slide_shape_pill",
   },
   {
     id: 16,
@@ -123,6 +138,7 @@ const GALLERY = [
     category: "Café",
     tag: "cafe",
     img: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=700&q=80",
+    shape: "z_slide_shape_diagonal",
   },
 
   // extra bar
@@ -132,13 +148,15 @@ const GALLERY = [
     category: "Bar & Lounge",
     tag: "bar",
     img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=700&q=80",
+    shape: "z_slide_shape_custom",
   },
   {
     id: 18,
     title: "Mixology in Motion",
     category: "Bar & Lounge",
     tag: "bar",
-    img: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=700&q=80",
+    img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
+    shape: "z_slide_shape_arch_bottom",
   },
 
   // extra rooms
@@ -148,6 +166,7 @@ const GALLERY = [
     category: "Rooms",
     tag: "rooms",
     img: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=800&q=80",
+    shape: "z_slide_shape_pill",
   },
   {
     id: 20,
@@ -155,6 +174,7 @@ const GALLERY = [
     category: "Rooms",
     tag: "rooms",
     img: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=700&q=80",
+    shape: "z_slide_shape_square",
   },
 
   // extra events
@@ -164,6 +184,7 @@ const GALLERY = [
     category: "Events",
     tag: "events",
     img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=700&q=80",
+    shape: "z_slide_shape_arch",
   },
   {
     id: 22,
@@ -171,6 +192,7 @@ const GALLERY = [
     category: "Events",
     tag: "events",
     img: "https://images.unsplash.com/photo-1519741497674-611481863552?w=700&q=80",
+    shape: "z_slide_shape_diagonal",
   },
 ];
 
@@ -251,6 +273,9 @@ function Lightbox({ items, index, onClose, onNav }) {
 export default function GalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
   const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+  const containerRef = useRef(null);
 
   const filtered =
     activeTab === "all"
@@ -269,6 +294,15 @@ export default function GalleryPage() {
 
   const navLightbox = (dir) =>
     setLightboxIdx((i) => (i + dir + filtered.length) % filtered.length);
+
+  const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setCursorPos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+  };
 
   return (
     <main className="gp_page">
@@ -306,35 +340,55 @@ export default function GalleryPage() {
             ))}
           </div>
 
-          {/* Masonry grid */}
-          <div className="gp_grid" role="tabpanel">
-            {filtered.map((item, idx) => (
-              <div
-                key={item.id}
-                className="gp_item"
-                onClick={() => openLightbox(idx)}
-                role="button"
-                tabIndex={0}
-                aria-label={`View ${item.title}`}
-                onKeyDown={(e) => e.key === "Enter" && openLightbox(idx)}
-              >
-                <img
-                  src={item.img}
-                  alt={item.title}
-                  className="gp_item_img"
-                  loading="lazy"
-                />
-                <div className="gp_item_overlay">
-                  <div className="gp_item_caption">
-                    <span className="gp_item_title">{item.title}</span>
-                    <span className="gp_item_cat">{item.category}</span>
+          {/* Masonry grid with custom cursor logic restricted to the grid area */}
+          <div 
+            className="gp_grid_area"
+            style={{ position: "relative" }}
+            ref={containerRef}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            {/* Custom Cursor Follower */}
+            <div
+              className={`z_slide_cursor_follower ${isHovering ? 'z_active' : ''}`}
+              style={{
+                left: `${cursorPos.x}px`,
+                top: `${cursorPos.y}px`
+              }}
+            >
+              <span>VIEW</span>
+            </div>
+
+            <div className="gp_grid" role="tabpanel">
+              {filtered.map((item, idx) => (
+                <div
+                  key={item.id}
+                  className={`gp_item ${item.shape}`}
+                  onClick={() => openLightbox(idx)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View ${item.title}`}
+                  onKeyDown={(e) => e.key === "Enter" && openLightbox(idx)}
+                >
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="gp_item_img"
+                    loading="lazy"
+                  />
+                  <div className="gp_item_overlay">
+                    <div className="gp_item_caption">
+                      <span className="gp_item_title">{item.title}</span>
+                      <span className="gp_item_cat">{item.category}</span>
+                    </div>
                   </div>
+                  <span className="gp_item_expand" aria-hidden="true">
+                    <TbMaximize />
+                  </span>
                 </div>
-                <span className="gp_item_expand" aria-hidden="true">
-                  <TbMaximize />
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
