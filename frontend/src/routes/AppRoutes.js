@@ -1,9 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Menu from "../pages/Menu";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Auth from "../components/Auth";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import BookTable from "../components/BookTable";
 import BookRoom from "../components/BookRoom";
 import Home from "../pages/Home";
@@ -62,82 +63,105 @@ import AdminManagerPanel from "../admin/pages/AdminManagerPanel";
 import AdminHousekeepingPanel from "../admin/pages/AdminHousekeepingPanel";
 import GallerySlider from "../components/GallerySlider";
 import Bar from "../pages/Bar";
+import ScrollToTop from "../components/ScrollToTop";
+import Cafe from "../pages/Cafe";
+import Restaurant from "../pages/Restaurant";
 import Profile from "../pages/Profile";
+import Rooms from "../pages/Rooms";
+
+function AppLayout({ children }) {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
+  const isAuth = location.pathname.startsWith('/auth');
+
+  const showHeaderFooter = !isAdmin && !isAuth;
+
+  return (
+    <>
+      {showHeaderFooter && <Header />}
+      {children}
+      {showHeaderFooter && <Footer />}
+    </>
+  );
+}
 
 function AppRoutes() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/header" element={<Header />} />
-        <Route path="/bookTable" element={<BookTable />} />
-        <Route path="/bookRoom" element={<BookRoom />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:id" element={<BlogPost />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/history" element={<OurHistory />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/privacy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms" element={<TermsAndConditionsPage />} />
-        <Route path="/dish/:id" element={<DishDetailsPage />} />
-        <Route path="/reservation-review" element={<ReservationReviewPage />} />
-        <Route path="/gallerypage" element={<GalleryPage />} />
-        <Route path="/gallerySlide" element={<GallerySlider />} />
-        <Route path="/bar" element={<Bar />} />
-        <Route path="/profile" element={<Profile   />} />
+      <ScrollToTop />
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/cafe" element={<Cafe />} />
+          <Route path="/restaurant" element={<Restaurant />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/bookTable" element={<BookTable />} />
+          <Route path="/bookRoom" element={<BookRoom />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/history" element={<OurHistory />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsAndConditionsPage />} />
+          <Route path="/dish/:id" element={<DishDetailsPage />} />
+          <Route path="/reservation-review" element={<ReservationReviewPage />} />
+          <Route path="/gallerypage" element={<GalleryPage />} />
+          <Route path="/gallerySlide" element={<GallerySlider />} />
+          <Route path="/bar" element={<Bar />} />
+          <Route path="/rooms" element={<Rooms />} />
+          <Route path="/profile" element={<Profile   />} />
 
-
-
-        {/* Admin routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="analytics" element={<AdminAnalytics />} />
-          <Route path="reservations" element={<AdminReservations />} />
-          <Route path="cafe-bookings" element={<AdminCafeBookings />} />
-          <Route path="cafe-menu" element={<AdminCafeMenu />} />
-          <Route path="restaurant-bookings" element={<AdminRestaurantBookings />} />
-          <Route path="restaurant-menu" element={<AdminRestaurantMenu />} />
-          <Route path="bar-bookings" element={<AdminBarBookings />} />
-          <Route path="bar-menu" element={<AdminBarMenu />} />
-          <Route path="room-bookings" element={<AdminRoomBookings />} />
-          <Route path="staff" element={<AdminStaffManagement />} />
-          <Route path="cuisines" element={<AdminCuisineManagement />} />
-          <Route path="orders" element={<AdminOrderManagement />} />
-          <Route path="inventory" element={<AdminInventoryManagement />} />
-          <Route path="kds" element={<AdminKDS />} />
-          <Route path="waiter-panel" element={<AdminWaiterPanel />} />
-          <Route path="cafe-waiter" element={<AdminCafeWaiterPanel />} />
-          <Route path="restaurant-waiter" element={<AdminRestaurantWaiterPanel />} />
-          <Route path="bar-waiter" element={<AdminBarWaiterPanel />} />
-          <Route path="cafe-chef" element={<AdminCafeChefPanel />} />
-          <Route path="restaurant-chef" element={<AdminRestaurantChefPanel />} />
-          <Route path="bar-chef" element={<AdminBarChefPanel />} />
-          <Route path="bartender-panel" element={<AdminBartenderPanel />} />
-          <Route path="manager-panel" element={<AdminManagerPanel />} />
-          <Route path="housekeeping-panel" element={<AdminHousekeepingPanel />} />
-          <Route path="pos" element={<AdminPOS />} />
-          <Route path="guests" element={<AdminGuests />} />
-          <Route path="menu" element={<AdminMenu />} />
-          <Route path="tables" element={<AdminTables />} />
-          <Route path="rooms" element={<AdminRooms />} />
-          <Route path="gallery" element={<AdminGallery />} />
-          <Route path="blogs" element={<AdminBlogs />} />
-          <Route path="reviews" element={<AdminReviews />} />
-          <Route path="offers" element={<AdminOffers />} />
-          <Route path="inquiries" element={<AdminInquiries />} />
-          <Route path="content" element={<AdminContent />} />
-          <Route path="settings" element={<AdminSettings />} />
-          <Route path="role-access" element={<AdminRoleAccess />} />
-          <Route path="architecture" element={<AdminArchitecture />} />
-          <Route path="admin-users" element={<AdminUsers />} />
-          <Route path="notifications" element={<AdminNotifications />} />
-          <Route path="profile" element={<AdminProfile />} />
-        </Route>
-      </Routes>
+          {/* Admin routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="reservations" element={<AdminReservations />} />
+            <Route path="cafe-bookings" element={<AdminCafeBookings />} />
+            <Route path="cafe-menu" element={<AdminCafeMenu />} />
+            <Route path="restaurant-bookings" element={<AdminRestaurantBookings />} />
+            <Route path="restaurant-menu" element={<AdminRestaurantMenu />} />
+            <Route path="bar-bookings" element={<AdminBarBookings />} />
+            <Route path="bar-menu" element={<AdminBarMenu />} />
+            <Route path="room-bookings" element={<AdminRoomBookings />} />
+            <Route path="staff" element={<AdminStaffManagement />} />
+            <Route path="cuisines" element={<AdminCuisineManagement />} />
+            <Route path="orders" element={<AdminOrderManagement />} />
+            <Route path="inventory" element={<AdminInventoryManagement />} />
+            <Route path="kds" element={<AdminKDS />} />
+            <Route path="waiter-panel" element={<AdminWaiterPanel />} />
+            <Route path="cafe-waiter" element={<AdminCafeWaiterPanel />} />
+            <Route path="restaurant-waiter" element={<AdminRestaurantWaiterPanel />} />
+            <Route path="bar-waiter" element={<AdminBarWaiterPanel />} />
+            <Route path="cafe-chef" element={<AdminCafeChefPanel />} />
+            <Route path="restaurant-chef" element={<AdminRestaurantChefPanel />} />
+            <Route path="bar-chef" element={<AdminBarChefPanel />} />
+            <Route path="bartender-panel" element={<AdminBartenderPanel />} />
+            <Route path="manager-panel" element={<AdminManagerPanel />} />
+            <Route path="housekeeping-panel" element={<AdminHousekeepingPanel />} />
+            <Route path="pos" element={<AdminPOS />} />
+            <Route path="guests" element={<AdminGuests />} />
+            <Route path="menu" element={<AdminMenu />} />
+            <Route path="tables" element={<AdminTables />} />
+            <Route path="rooms" element={<AdminRooms />} />
+            <Route path="gallery" element={<AdminGallery />} />
+            <Route path="blogs" element={<AdminBlogs />} />
+            <Route path="reviews" element={<AdminReviews />} />
+            <Route path="offers" element={<AdminOffers />} />
+            <Route path="inquiries" element={<AdminInquiries />} />
+            <Route path="content" element={<AdminContent />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="role-access" element={<AdminRoleAccess />} />
+            <Route path="architecture" element={<AdminArchitecture />} />
+            <Route path="admin-users" element={<AdminUsers />} />
+            <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="profile" element={<AdminProfile />} />
+          </Route>
+        </Routes>
+      </AppLayout>
     </BrowserRouter>
   );
 }

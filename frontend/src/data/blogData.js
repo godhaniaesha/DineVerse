@@ -72,7 +72,7 @@ export const POSTS = [
     readTime: "10 min read",
     views: "5.7k",
     likes: 439,
-    img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=800&q=80",
+    img: "https://i.pinimg.com/736x/76/60/17/766017678c850c8b522adefa9a27eeaa.jpg",
     avatar: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=80&q=80",
   },
   {

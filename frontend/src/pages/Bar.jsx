@@ -16,14 +16,14 @@ const COCKTAILS = [
         name: "Purple Rain",
         desc: "Gin-based with elderflower, lavender syrup, and a touch of magic.",
         price: "$16",
-        img: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800&q=80"
+        img: "https://i.pinimg.com/1200x/00/ff/a9/00ffa9058a23ab970de330254f7fed87.jpg"
     },
     {
         id: 3,
         name: "Spiced Margarita",
         desc: "Tequila Blanco with jalapeño, lime juice, and a tajin rim.",
         price: "$15",
-        img: "https://images.unsplash.com/photo-1556855810-ac404aa91f85?w=800&q=80"
+        img: "https://i.pinimg.com/1200x/79/13/fe/7913fe6a2072c30055993aa70815e86d.jpg"
     }
 ];
 
@@ -49,7 +49,6 @@ const TESTIMONIALS = [
 ];
 
 export default function Bar() {
-    const [isExpanded, setIsExpanded] = useState(false);
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
     useEffect(() => {
@@ -65,48 +64,44 @@ export default function Bar() {
     };
 
     return (
-        <div className="z_bar_page">
+        <div className="z_bar_page z_bar_theme">
             {/* Hero Section */}
-            <section className="z_bar_hero">
+            <section className="z_bar_hero" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1600&q=80')` }}>
                 <div className="z_bar_hero_overlay"></div>
                 <div className="z_bar_hero_content">
-                    <span className="z_bar_tag">Elevated Mixology</span>
-                    <h1 className="z_bar_title">The Art of <em>Liquid Alchemy</em></h1>
+                    <div className="z_bar_hero_badge">
+                        <div className="z_bar_badge_line"></div>
+                        <span className="z_bar_tag">Elevated Mixology</span>
+                        <div className="z_bar_badge_line"></div>
+                    </div>
+                    <h1 className="z_bar_title">The Art of <br /><em>Liquid Alchemy</em></h1>
                     <p className="z_bar_desc">
-                        Where every pour tells a story and every glass holds a masterpiece.
-                        Experience the finest spirits and craft cocktails in a setting designed for the soul.
+                        Where every pour tells a story and every glass holds a masterpiece. 
+                        Experience the finest spirits in a setting designed for the soul.
                     </p>
                     <div className="z_bar_hero_btns">
-                        <button className="z_bar_btn_primary">Reserve a Table</button>
-                        <button className="z_bar_btn_outline">View Full Menu</button>
+                        <Link to="/bookTable" className="z_bar_btn_primary" style={{ background: 'var(--d-bar)', borderColor: 'var(--d-bar)' }}>Reserve a Table</Link>
+                        <Link to="/menu" className="z_bar_btn_outline">View Menu</Link>
                     </div>
-                </div>
-                <div className="z_bar_hero_scroll">
-                    <div className="z_bar_scroll_line"></div>
                 </div>
             </section>
 
-            {/* Signature Cocktails Section */}
-            <section className="z_bar_section z_bar_cocktails">
+
+            {/* Signature Cocktails Section - Grid Layout */}
+            <section className="z_bar_section">
                 <div className="container">
                     <div className="z_bar_section_header">
-                        <span className="z_bar_subtitle">Signature Menu</span>
+                        <span className="z_bar_subtitle" style={{ color: 'var(--d-bar)' }}>Signature Menu</span>
                         <h2 className="z_bar_section_title">Our Crafted <em>Mixology</em></h2>
                     </div>
-                    <div className="row g-4">
+                    <div className="z_bar_grid_display">
                         {COCKTAILS.map((drink) => (
-                            <div key={drink.id} className="col-lg-4 col-md-6">
-                                <div className="z_bar_card">
-                                    <div className="z_bar_card_img">
-                                        <img src={drink.img} alt={drink.name} />
-                                        <div className="z_bar_card_overlay">
-                                            <span className="z_bar_card_price">{drink.price}</span>
-                                        </div>
-                                    </div>
-                                    <div className="z_bar_card_info">
-                                        <h3>{drink.name}</h3>
-                                        <p>{drink.desc}</p>
-                                    </div>
+                            <div key={drink.id} className="z_bar_item_card">
+                                <img src={drink.img} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <div className="z_bar_item_overlay">
+                                    <span style={{ color: 'var(--d-bar)', fontWeight: '700', fontSize: '1.2rem' }}>{drink.price}</span>
+                                    <h3 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>{drink.name}</h3>
+                                    <p style={{ color: 'var(--d-text-2)', fontSize: '0.9rem' }}>{drink.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -114,37 +109,59 @@ export default function Bar() {
                 </div>
             </section>
 
-            {/* A La Carte Menu Section */}
-            <section className="z_bar_menu_section">
+            {/* Immersive Video Section - Full Width */}
+            <section className="z_bar_video_immersive" style={{ height: '600px', position: 'relative', overflow: 'hidden' }}>
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    src="/video/3152-166336023.mp4"
+                ></video>
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
+                    <div className="container">
+                        <h2 className="z_bar_section_title" style={{ color: '#fff', fontSize: '4rem' }}>Crafted <em>With Passion</em></h2>
+                        <p style={{ color: 'var(--d-text-1)', fontSize: '1.2rem', maxWidth: '600px', margin: '1rem auto' }}>Watch our master mixologists create liquid poetry, one ingredient at a time.</p>
+                    </div>
+                </div>
+            </section>
+            {/* Mixology Experience - Two Column Dynamic */}
+            <section className="z_bar_experience_section" style={{ padding: '120px 0', background: 'var(--d-surface-2)' }}>
                 <div className="container">
-                    <div className="row align-items-center g-5">
-                        <div className="col-lg-7">
-                            <div className="z_bar_media_container">
-                                <div className="z_bar_main_video">
-                                    <video
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                        src="/video/kfhg.mp4"
-                                    ></video>
-                                </div>
-                                <div className="z_bar_overlap_img z_slide_shape_arch">
-                                    <img src="https://images.unsplash.com/photo-1536935338788-846bb9981813?w=800&q=80" alt="Signature Cocktail" />
+                    <div className="row g-5 align-items-center">
+                        <div className="col-lg-6">
+                            <div style={{ position: 'relative' }}>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80" 
+                                    alt="Mixology" 
+                                    style={{ width: '100%', borderRadius: 'var(--d-r-lg)', boxShadow: 'var(--d-shadow-lg)', filter: 'grayscale(30%)' }}
+                                />
+                                <div style={{ position: 'absolute', bottom: '-20px', right: '-20px', background: 'var(--d-bar)', padding: '2rem', borderRadius: 'var(--d-r-md)' }}>
+                                    <h4 style={{ color: '#000', margin: 0 }}>Join The Club</h4>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-5">
-                            <div className="z_bar_menu_content">
-                                <h2 className="z_bar_menu_title">A LA CARTE MENU</h2>
-                                <p className="z_bar_item_desc">
-                                    {isExpanded
-                                        ? "Venture beyond the ordinary with our A La Carte selections, a curated library of liquid artistry. Here, our master mixologists deconstruct classic recipes and forge new ones, using house-made infusions, rare bitters, and artisanal spirits. Each drink is a conversation piece, an exploration of flavor and aroma designed to surprise and delight the senses. Discover your new favorite."
-                                        : "Venture beyond the ordinary with our A La Carte selections, a curated library of liquid artistry. Here, our master mixologists deconstruct classic recipes and forge new ones..."}
-                                </p>
-                                <button onClick={() => setIsExpanded(!isExpanded)} className="z_bar_btn_outline" style={{ marginTop: '15px' }}>
-                                    {isExpanded ? "Read Less" : "Read More"}
-                                </button>
+                        <div className="col-lg-6">
+                            <span className="z_bar_subtitle" style={{ color: 'var(--current-accent)' }}>The Workshop</span>
+                            <h2 className="z_bar_section_title" style={{ textAlign: 'left', marginBottom: '2rem' }}>The <em>Mixologist's</em> Masterclass</h2>
+                            <p className="z_bar_desc" style={{ textAlign: 'left', margin: '0 0 2rem 0' }}>
+                                Step behind the bar and discover the secrets of high-end mixology. 
+                                Our experts will guide you through the history, techniques, and flavors of our signature drinks.
+                            </p>
+                            <div className="row g-4">
+                                <div className="col-6">
+                                    <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
+                                        <MdWineBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
+                                        <h5 style={{ marginTop: '1rem' }}>Rare Spirits</h5>
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
+                                        <MdLocalBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
+                                        <h5 style={{ marginTop: '1rem' }}>Botanicals</h5>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -152,31 +169,21 @@ export default function Bar() {
             </section>
 
             {/* Testimonial Slider Section */}
-            <section className="z_bar_testimonial_section">
+            <section className="z_bar_testimonial_section" style={{ background: 'var(--d-bg)', borderTop: '1px solid var(--d-border)' }}>
                 <div className="z_bar_testimonial_container">
                     <button className="z_bar_testimonial_nav z_bar_testimonial_prev" onClick={prevTestimonial}>
                         <FaChevronLeft />
                     </button>
                     
                     <div className="z_bar_testimonial_content">
-                        <h2 className="z_bar_testimonial_title">{TESTIMONIALS[currentTestimonial].title}</h2>
+                        <h2 className="z_bar_testimonial_title" style={{ fontSize: '3.5rem' }}>"{TESTIMONIALS[currentTestimonial].title}"</h2>
                         <p className="z_bar_testimonial_text">{TESTIMONIALS[currentTestimonial].content}</p>
-                        <p className="z_bar_testimonial_author">{TESTIMONIALS[currentTestimonial].author}</p>
+                        <p className="z_bar_testimonial_author" style={{ color: 'var(--d-bar)' }}>{TESTIMONIALS[currentTestimonial].author}</p>
                     </div>
                     
                     <button className="z_bar_testimonial_nav z_bar_testimonial_next" onClick={nextTestimonial}>
                         <FaChevronRight />
                     </button>
-                </div>
-                
-                <div className="z_bar_testimonial_dots">
-                    {TESTIMONIALS.map((_, index) => (
-                        <button
-                            key={index}
-                            className={`z_bar_testimonial_dot ${index === currentTestimonial ? 'active' : ''}`}
-                            onClick={() => setCurrentTestimonial(index)}
-                        />
-                    ))}
                 </div>
             </section>
 

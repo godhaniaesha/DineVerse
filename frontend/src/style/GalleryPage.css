@@ -134,6 +134,15 @@
 
 /* MASONRY GRID */
 
+.gp_grid_area {
+  position: relative;
+  overflow: hidden;
+}
+
+.gp_grid_area:hover {
+  cursor: none;
+}
+
 .gp_grid {
   columns: 4;
   column-gap: 16px;
@@ -144,12 +153,12 @@
   break-inside: avoid;
   margin-bottom: 16px;
   position: relative;
-  border-radius: var(--d-r-md);
   overflow: hidden;
   cursor: pointer;
   border: 1px solid var(--d-border);
   display: block;
   background: #000;
+  transition: all 0.4s var(--d-ease);
 }
 
 .gp_item_img {
@@ -265,7 +274,12 @@
   }
 }
 
-/* LIGHTBOX */
+/* CURSOR FOLLOWER */
+.z_slide_cursor_follower {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
 
 .gp_lightbox {
   position: fixed;

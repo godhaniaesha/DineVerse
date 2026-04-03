@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { PiCoffeeBold, PiKnifeBold } from "react-icons/pi";
 import { IoWineOutline } from "react-icons/io5";
 import { RiRestaurantLine } from "react-icons/ri";
@@ -21,7 +22,7 @@ const MENU_ITEMS = [
     badgeLabel: "Signature",
     rating: 4.9,
     reviews: 214,
-    img: "https://images.unsplash.com/photo-1673756853823-2db19e12e18f?w=600&q=80",
+    img: "https://i.pinimg.com/736x/76/60/17/766017678c850c8b522adefa9a27eeaa.jpg",
   },
   {
     id: 2,
@@ -95,6 +96,7 @@ function Badge({ type, label }) {
 
 /* ── MENU CARD ────────────────────────────────────────────── */
 function MenuCard({ item }) {
+  const navigate = useNavigate();
   return (
     <div className="d_featured__card">
       <Badge type={item.badge} label={item.badgeLabel} />
@@ -109,7 +111,7 @@ function MenuCard({ item }) {
         />
         {/* Hover quick-view */}
         <div className="d_featured__overlay">
-          <button className="d_featured__overlay-btn">
+          <button className="d_featured__overlay-btn" onClick={() => navigate(`/dish/${item.id}`)}>
             <PiKnifeBold style={{ fontSize: 13 }} />
             View Details
           </button>
@@ -192,15 +194,17 @@ export default function FeaturedMenu() {
 
         {/* CTA */}
         <div className="d_featured__cta-row">
-          <button
+          <Link
+            to="/menu"
             className="d_featured__cta"
             aria-label="View the full menu"
+            style={{ textDecoration: 'none' }}
           >
             View Full Menu
             <span className="d_featured__cta-icon">
               <RiArrowRightSLine />
             </span>
-          </button>
+          </Link>
         </div>
 
       </div>

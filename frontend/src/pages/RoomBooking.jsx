@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdHotel, MdWifi, MdAcUnit, MdTv, MdStar, MdOutlineKingBed, MdOutlineBalcony } from "react-icons/md";
 import { PiBathtubBold, PiCoffeeBold, PiParkBold } from "react-icons/pi";
 import { TbEye, TbMountain, TbToolsKitchen2 } from "react-icons/tb";
@@ -64,6 +65,25 @@ const ROOMS = [
       { icon: <PiParkBold />,   label: "Garden View" },
     ],
   },
+  {
+  id: 4,
+  featured: false,
+  name: "Ocean Grand Suite",
+  type: "Luxury Suite",
+  desc: "A luxurious suite designed for ultimate comfort with panoramic ocean views, a private lounge area, king-size bed, and a spacious marble bathroom with rainfall shower and bathtub.",
+  price: "360",
+  rating: 4.9,
+  reviews: 124,
+  img: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=700&q=80",
+  amenities: [
+    { icon: <MdWifi />,           label: "Wi-Fi" },
+    { icon: <MdAcUnit />,         label: "Climate" },
+    { icon: <MdOutlineBalcony />, label: "Balcony" },
+    { icon: <MdTv />,             label: "Smart TV" },
+    { icon: <IoWineOutline />,    label: "Minibar" },
+    { icon: <TbMountain />,       label: "Ocean View" },
+  ],
+}
 ];
 
 const PERKS = [
@@ -167,11 +187,10 @@ function RoomCard({ room, onBook }) {
 
 /* ── MAIN SECTION ─────────────────────────────────────────── */
 export default function RoomBooking() {
-  const handleBook = (room) =>
-    alert(`Booking flow for: ${room.name}\nConnect your modal or router here.`);
+  const navigate = useNavigate();
+  const handleBook = (room) => navigate("/bookRoom");
 
-  const handleCheckAvail = () =>
-    alert("Check availability — connect your booking engine here.");
+  const handleCheckAvail = () => navigate("/bookRoom");
 
   return (
     <section className="d_rooms_section">
@@ -198,7 +217,7 @@ export default function RoomBooking() {
             </p>
             <button
               className="d_rooms_header__cta"
-              onClick={() => alert("All rooms — connect your router here.")}
+              onClick={() => navigate("/bookRoom")}
             >
               View All Rooms
               <span className="d_rooms_header__cta-arrow">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Utensils, Wine, Building2, Ticket } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import '../style/services.css';
 
 const SERVICES = [
@@ -8,24 +9,28 @@ const SERVICES = [
     title: "Restaurant Dining",
     desc: "A curated gastronomic journey featuring seasonal ingredients and avant-garde culinary techniques.",
     icon: <Utensils size={32} />,
+    link: "/bookTable"
   },
   {
     id: "02",
     title: "Bar & Drinks",
     desc: "Expertly crafted cocktails and a selection of vintage labels served in an intimate, low-light setting.",
     icon: <Wine size={32} />,
+    link: "/bar"
   },
   {
     id: "03",
     title: "Room Booking",
     desc: "Luxury redefined. Experience architectural elegance and bespoke service in our signature suites.",
     icon: <Building2 size={32} />,
+    link: "/bookRoom"
   },
   {
     id: "04",
     title: "Private Events",
     desc: "From corporate galas to intimate celebrations, we provide the perfect canvas for your milestones.",
     icon: <Ticket size={32} />,
+    link: "/contact"
   }
 ];
 
@@ -63,10 +68,10 @@ const Services = () => {
 
                 <p className="d_serv_card_desc">{service.desc}</p>
 
-                <div className="d_serv_card_footer">
+                <Link to={service.link} className="d_serv_card_footer" style={{ textDecoration: 'none' }}>
                   <span className="d_serv_link">Explore More</span>
                   <div className="d_serv_dot"></div>
-                </div>
+                </Link>
 
               </div>
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { TbMaximize } from "react-icons/tb";
@@ -112,6 +113,7 @@ function Lightbox({ items, index, onClose, onNav }) {
 export default function Gallery() {
   const [activeTab, setActiveTab]     = useState("all");
   const [lightboxIdx, setLightboxIdx] = useState(null);
+  const navigate = useNavigate();
 
   const filtered = activeTab === "all"
     ? GALLERY
@@ -197,7 +199,7 @@ export default function Gallery() {
         <div className="d_gal_cta_row">
           <button
             className="d_gal_cta"
-            onClick={() => alert("Full gallery — connect your router here.")}
+            onClick={() => navigate("/gallerypage")}
           >
             <MdOutlinePhotoLibrary style={{ fontSize: 17 }} />
             View Full Gallery

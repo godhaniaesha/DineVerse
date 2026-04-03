@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HiArrowLongRight } from 'react-icons/hi2';
+import { useNavigate } from 'react-router-dom';
 import '../style/hero.css';
 
 const SLIDES = [
@@ -28,6 +29,7 @@ const SLIDES = [
 
 const Hero = () => {
   const [active, setActive] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -51,8 +53,8 @@ const Hero = () => {
             <p className="d_hero_sec_desc">{slide.desc}</p>
             
             <div className="d_hero_sec_cta_group">
-              <button className="d_hero_sec_btn d_hero_sec_btn--gold">Discover More</button>
-              <button className="d_hero_sec_btn">Virtual Tour</button>
+              <button className="d_hero_sec_btn d_hero_sec_btn--gold" onClick={() => navigate('/services')}>Discover More</button>
+              <button className="d_hero_sec_btn" onClick={() => navigate('/gallerypage')}>Virtual Tour</button>
             </div>
           </div>
 
