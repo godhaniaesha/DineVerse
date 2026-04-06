@@ -1,16 +1,30 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
-  FiArrowRight, FiAward, FiHeart, FiUsers,
-  FiStar, FiChevronDown, FiCoffee, FiZap
+  FiArrowRight,
+  FiAward,
+  FiHeart,
+  FiUsers,
+  FiStar,
+  FiChevronDown,
+  FiCoffee,
+  FiZap,
 } from "react-icons/fi";
 import {
-  GiWineGlass, GiKnifeFork, GiCoffeeCup,
-  GiVineLeaf, GiCook, GiLaurelCrown
+  GiWineGlass,
+  GiKnifeFork,
+  GiCoffeeCup,
+  GiVineLeaf,
+  GiCook,
+  GiLaurelCrown,
 } from "react-icons/gi";
 import {
-  TbSparkles, TbChefHat, TbFlame, TbQuote,
-  TbBuildingStore, TbStar
+  TbSparkles,
+  TbChefHat,
+  TbFlame,
+  TbQuote,
+  TbBuildingStore,
+  TbStar,
 } from "react-icons/tb";
 import { MdOutlineLocalBar } from "react-icons/md";
 
@@ -39,7 +53,8 @@ const TIMELINE = [
     icon: <TbChefHat />,
     title: "The First Chef's Table",
     body: "Eight courses. Fourteen guests. A dining room that fell silent between every plate. Arjun Mehta's inaugural chef's table was a manifesto — classical French technique dismantled and rebuilt with Indian flavour memory at its core. It received its first standing ovation that evening.",
-    detail: "8-course tasting menu · Hand-foraged ingredients · 4-hour experience",
+    detail:
+      "8-course tasting menu · Hand-foraged ingredients · 4-hour experience",
     img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=85",
     stat: { value: "4.9★", label: "Average Rating" },
   },
@@ -75,7 +90,8 @@ const TIMELINE = [
     icon: <GiWineGlass />,
     title: "Leila & The Bar Reborn",
     body: "Leila Nair — World Cocktail Champion 2022 — joined as Head Mixologist. The Midnight Empress debuted: a butterfly-pea gin cocktail that shifts colour as you drink it. Within three months the bar had a waitlist. Within six, it was a destination for guests flying in from Mumbai and Bengaluru.",
-    detail: "Midnight Empress viral · Bar fully booked Fri–Sat · 3 national awards",
+    detail:
+      "Midnight Empress viral · Bar fully booked Fri–Sat · 3 national awards",
     img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=900&q=85",
     stat: { value: "3", label: "National Bar Awards" },
   },
@@ -87,7 +103,8 @@ const TIMELINE = [
     icon: <GiCoffeeCup />,
     title: "Expansion & The Pastry Kitchen",
     body: "We added a private dining suite seating 18, a rooftop terrace for sundowners, and — most crucially — a dedicated pastry kitchen. Rohan Shah joined from Copenhagen. His cardamom croissant created Surat's first pastry waitlist. The city had not seen this before.",
-    detail: "Private suite · Rooftop terrace · Pastry kitchen · Croissant waitlist",
+    detail:
+      "Private suite · Rooftop terrace · Pastry kitchen · Croissant waitlist",
     img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=900&q=85",
     stat: { value: "6hr", label: "Average Croissant Queue" },
   },
@@ -104,7 +121,6 @@ const TIMELINE = [
     stat: { value: "12K+", label: "Happy Guests" },
   },
 ];
-
 
 const VALUES = [
   {
@@ -133,7 +149,6 @@ const VALUES = [
   },
 ];
 
-
 /* ══════════════════════════════════════════════════════
    HOOKS
 ══════════════════════════════════════════════════════ */
@@ -144,8 +159,13 @@ function useInView(threshold = 0.12) {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
-      { threshold }
+      ([e]) => {
+        if (e.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { threshold },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -158,7 +178,10 @@ function useCountUp(target, inView, duration = 1800) {
   useEffect(() => {
     if (!inView) return;
     const isNum = !isNaN(parseFloat(target));
-    if (!isNum) { setCount(target); return; }
+    if (!isNum) {
+      setCount(target);
+      return;
+    }
     const num = parseFloat(target);
     const start = performance.now();
     const raf = (now) => {
@@ -183,7 +206,10 @@ function GrainLayer({ opacity = 0.04 }) {
     <div
       className="x_grain"
       style={{
-        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 1,
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='${opacity}'/%3E%3C/svg%3E")`,
       }}
     />
@@ -193,7 +219,11 @@ function GrainLayer({ opacity = 0.04 }) {
 /* Stat card with count-up */
 function StatCard({ icon, value, label, delay }) {
   const [ref, inView] = useInView(0.2);
-  const isNumber = !isNaN(parseFloat(value)) && !value.includes("K") && !value.includes("★") && !value.includes("yr");
+  const isNumber =
+    !isNaN(parseFloat(value)) &&
+    !value.includes("K") &&
+    !value.includes("★") &&
+    !value.includes("yr");
   const count = useCountUp(isNumber ? parseFloat(value) : 0, inView);
 
   return (
@@ -207,7 +237,9 @@ function StatCard({ icon, value, label, delay }) {
       }}
     >
       <span className="x_stat_icon">{icon}</span>
-      <span className="x_stat_value">{isNumber ? count + (value.includes("+") ? "+" : "") : value}</span>
+      <span className="x_stat_value">
+        {isNumber ? count + (value.includes("+") ? "+" : "") : value}
+      </span>
       <span className="x_stat_label">{label}</span>
     </div>
   );
@@ -222,12 +254,21 @@ function TimelineCard({ item, index }) {
     <div
       ref={ref}
       className={`x_tl_card${isEven ? "" : " x_tl_card--rev"}${inView ? " x_tl_card--visible" : ""}`}
-      style={{ "--tc": item.color, "--td": item.dim, transitionDelay: `${index * 0.05}s` }}
+      style={{
+        "--tc": item.color,
+        "--td": item.dim,
+        transitionDelay: `${index * 0.05}s`,
+      }}
     >
       {/* Image column */}
       <div className="x_tl_img_col">
         <div className="x_tl_img_frame">
-          <img src={item.img} alt={item.title} className="x_tl_img" loading="lazy" />
+          <img
+            src={item.img}
+            alt={item.title}
+            className="x_tl_img"
+            loading="lazy"
+          />
           <div className="x_tl_img_color_wash" />
           <div className="x_tl_img_grad" />
 
@@ -295,7 +336,12 @@ function TeamCard({ member, delay }) {
       }}
     >
       <div className="x_team_img_wrap">
-        <img src={member.img} alt={member.name} className="x_team_img" loading="lazy" />
+        <img
+          src={member.img}
+          alt={member.name}
+          className="x_team_img"
+          loading="lazy"
+        />
         <div className="x_team_img_overlay" />
         <div className="x_team_accent_bar" />
       </div>
@@ -339,7 +385,7 @@ export default function OurHistory() {
           if (e.isIntersecting) setActiveYear(e.target.dataset.year);
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
     years.forEach((y) => {
       const el = document.getElementById(`x_year_anchor_${y}`);
@@ -357,7 +403,6 @@ export default function OurHistory() {
 
   return (
     <div className="x_history_wrapper">
-
       {/* ══ HERO ══ */}
       <section className="x_hero">
         <GrainLayer opacity={0.045} />
@@ -368,7 +413,9 @@ export default function OurHistory() {
         {/* Parallax background year */}
         <div
           className="x_hero_bg_year"
-          style={{ transform: `translateX(-50%) translateY(${scrollY * 0.25}px)` }}
+          style={{
+            transform: `translateX(-50%) translateY(${scrollY * 0.25}px)`,
+          }}
         >
           2019
         </div>
@@ -416,12 +463,11 @@ export default function OurHistory() {
 
           <p className="x_hero_sub">
             Five years. Three venues. Thousands of moments that
-            <br />reminded us why we opened our doors in the first place.
+            <br />
+            reminded us why we opened our doors in the first place.
           </p>
-
         </div>
       </section>
-
 
       {/* ══ YEAR NAV ══ */}
       <nav className="x_year_nav" ref={navRef}>
@@ -452,7 +498,12 @@ export default function OurHistory() {
           {years.map((year) => {
             const items = TIMELINE.filter((t) => t.year === year);
             return (
-              <div key={year} className="x_year_group" id={`x_year_anchor_${year}`} data-year={year}>
+              <div
+                key={year}
+                className="x_year_group"
+                id={`x_year_anchor_${year}`}
+                data-year={year}
+              >
                 {/* Year marker */}
                 <div className="x_year_marker">
                   <span className="x_year_marker_num">{year}</span>
@@ -464,7 +515,13 @@ export default function OurHistory() {
                 <div className="x_year_cards">
                   {items.map((item, i) => {
                     const globalIdx = TIMELINE.indexOf(item);
-                    return <TimelineCard key={`${year}-${i}`} item={item} index={globalIdx} />;
+                    return (
+                      <TimelineCard
+                        key={`${year}-${i}`}
+                        item={item}
+                        index={globalIdx}
+                      />
+                    );
                   })}
                 </div>
               </div>
@@ -482,7 +539,9 @@ export default function OurHistory() {
           <div className="x_section_head x_section_head--center">
             <span className="x_kicker">What We Stand For</span>
             <h2 className="x_section_title">
-              The Principles That<br /><em>Guide Everything</em>
+              The Principles That
+              <br />
+              <em>Guide Everything</em>
             </h2>
           </div>
           <div className="x_values_grid">
@@ -495,7 +554,6 @@ export default function OurHistory() {
 
       {/* ══ CTA ══ */}
       <HistoryCTA />
-
 
       {/* ══ STYLES ══ */}
       <style>{STYLES}</style>
@@ -548,7 +606,8 @@ function FoundersNote() {
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "none" : "translateY(28px)",
-        transition: "opacity 0.75s var(--d-ease), transform 0.75s var(--d-ease)",
+        transition:
+          "opacity 0.75s var(--d-ease), transform 0.75s var(--d-ease)",
       }}
     >
       <GrainLayer opacity={0.035} />
@@ -572,19 +631,19 @@ function FoundersNote() {
           <span className="x_kicker">A Note from the Kitchen</span>
           <TbQuote className="x_fn_quote_mark" />
           <blockquote className="x_fn_blockquote">
-            Food is memory. Every dish we serve carries a fingerprint — of
-            the farmer who grew it, the chef who cooked it, and the guest
-            who receives it. We cook so you never forget.
+            Food is memory. Every dish we serve carries a fingerprint — of the
+            farmer who grew it, the chef who cooked it, and the guest who
+            receives it. We cook so you never forget.
           </blockquote>
           <p className="x_fn_body">
             Five years ago we made a promise to ourselves: that DineVerse would
-            never be a place where excellence was rationed. The restaurant
-            would be as extraordinary as the bar. The café would be as
-            considered as both. Not one of them a compromise for the others.
+            never be a place where excellence was rationed. The restaurant would
+            be as extraordinary as the bar. The café would be as considered as
+            both. Not one of them a compromise for the others.
           </p>
           <p className="x_fn_body">
-            We have kept that promise. We intend to keep it for the next
-            fifty years.
+            We have kept that promise. We intend to keep it for the next fifty
+            years.
           </p>
           <div className="x_fn_sig">
             <div className="x_fn_sig_line" />
@@ -613,7 +672,9 @@ function HistoryCTA() {
       <div className="x_cta_inner">
         <TbSparkles className="x_cta_spark" />
         <h2 className="x_cta_title">
-          Be Part of the<br /><em>Next Chapter</em>
+          Be Part of the
+          <br />
+          <em>Next Chapter</em>
         </h2>
         <p className="x_cta_sub">
           Book a table, explore the bar, or start your morning at the café.
@@ -675,7 +736,7 @@ const STYLES = `
   --d-ease:cubic-bezier(0.25,0.46,0.45,0.94);
   --d-spring:cubic-bezier(0.34,1.56,0.64,1);
   --d-dur:0.30s;
-  --d-header-h:80px; --d-strip-h:38px;
+  --d-header-h: 70px; --d-strip-h:38px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1183,12 +1244,35 @@ const STYLES = `
 @media (max-width: 768px) {
   .x_stats_inner { grid-template-columns: repeat(2, 1fr); }
   .x_team_grid { grid-template-columns: 1fr; }
-  .x_values_grid { grid-template-columns: 1fr; }
   .x_year_marker_num { font-size: 44px; }
-  .x_hero_title_line--1 { font-size: clamp(56px, 16vw, 100px); }
-  .x_hero_title_line--2 { font-size: clamp(60px, 18vw, 110px); }
+  .x_hero_title_line--1 { font-size: clamp(56px, 13vw, 100px); }
+  .x_hero_title_line--2 { font-size: clamp(60px, 15vw, 110px); }
+  .x_values_section,.x_cta_section,.x_timeline_section {
+    padding:45px 24px;
+  }
+    .x_section_head {
+    margin-bottom: 30px;
 }
+    .x_timeline_inner{gap: 37px}
+    .x_hero{
+        padding: 62px 24px 62px;
+    }
+    .x_hero_bg_year {   bottom:-19px; font-size: clamp(134px, 26vw, 320px);}
+}
+    @media (max-width: 576px){
+    .x_hero_bg_year {   bottom:15px;}
+    }
 @media (max-width: 480px) {
+.x_hero_eyebrow{
+font-size: 11px;
+    letter-spacing: 0;
+}
+  .x_values_grid { grid-template-columns: 1fr; }
+    .x_section_head {
+        justify-content: center;
+
+  }
+
   .x_stats_inner { grid-template-columns: repeat(2, 1fr); }
   .x_cta_btns { flex-direction: column; }
   .x_btn { width: 100%; justify-content: center; }
