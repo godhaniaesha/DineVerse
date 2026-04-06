@@ -130,14 +130,15 @@ function RoomForm({ initial, onSave, onCancel }) {
         </select>
       </div>
 
+        <label className="rooms__form_label">Capacity (guests)</label>
       <div className="rooms__form_grid2">
         <div>
-          <label className="rooms__form_label">Capacity (guests)</label>
+          <label className="rooms__form_label">Adults</label>
           <input className="rooms__form_input" type="number" min="1" max="10" value={form.capacity} onChange={e => set("capacity", e.target.value)} />
         </div>
         <div>
-          <label className="rooms__form_label">Price / night (₹)</label>
-          <input className="rooms__form_input" type="number" min="0" value={form.price} onChange={e => set("price", e.target.value)} placeholder="0" />
+          <label className="rooms__form_label">Childs</label>
+          <input className="rooms__form_input" type="number" min="1" max="10" value={form.capacity} onChange={e => set("capacity", e.target.value)} />
         </div>
       </div>
 
@@ -146,21 +147,6 @@ function RoomForm({ initial, onSave, onCancel }) {
         <select className="rooms__form_select" value={form.status} onChange={e => set("status", e.target.value)}>
           {STATUSES.slice(1).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
         </select>
-      </div>
-
-      <div className="rooms__form_row">
-        <label className="rooms__form_label">Image URL</label>
-        <input className="rooms__form_input" value={form.img} onChange={e => set("img", e.target.value)} placeholder="https://example.com/image.jpg" />
-      </div>
-
-      <div className="rooms__form_row">
-        <label className="rooms__form_label">Description</label>
-        <textarea className="rooms__form_input" rows="3" value={form.description} onChange={e => set("description", e.target.value)} placeholder="Room description..." />
-      </div>
-
-      <div className="rooms__form_row">
-        <label className="rooms__form_label">Features (icon:title, comma-separated)</label>
-        <input className="rooms__form_input" value={form.features} onChange={e => set("features", e.target.value)} placeholder="bed:King Bed, view:Ocean View" />
       </div>
 
       <div className="rooms__form_actions">

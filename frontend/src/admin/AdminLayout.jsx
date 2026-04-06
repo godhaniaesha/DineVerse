@@ -128,9 +128,6 @@ const Icons = {
   waiter: (
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 3v8" /><path d="M8 7h8" /><path d="M10 11v10M14 11v10" /></svg>
   ),
-  pos: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 7h8M8 11h8M8 15h5" /></svg>
-  ),
   role: (
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2l3 6 7 1-5 5 1 8-6-3-6 3 1-8-5-5 7-1z" /></svg>
   ),
@@ -177,6 +174,7 @@ const NAV_GROUPS = [
       { to: "/admin/bar-bookings", label: "Bar Bookings", icon: Icons.reservations },
       { to: "/admin/bar-menu", label: "Bar Menu", icon: Icons.menu_items },
       { to: "/admin/room-bookings", label: "Room Bookings", icon: Icons.reservations },
+      { to: "/admin/room-types", label: "Room Types", icon: Icons.rooms },
       { to: "/admin/rooms", label: "Rooms", icon: Icons.rooms },
       { to: "/admin/tables", label: "Tables", icon: Icons.table },
       { to: "/admin/staff", label: "Staff Management", icon: Icons.staff },
@@ -237,11 +235,11 @@ const PAGE_TITLES = {
   "/admin/bartender-panel": { title: "Bartender", sub: "Drink preparation" },
   "/admin/manager-panel": { title: "Manager", sub: "Operations control" },
   "/admin/housekeeping-panel": { title: "Housekeeping", sub: "Room cleaning tasks" },
-  "/admin/pos": { title: "POS Billing", sub: "Billing and payments" },
   "/admin/guests": { title: "Guests", sub: "Guest profiles" },
   "/admin/rooms": { title: "Rooms", sub: "Room management" },
   "/admin/menu": { title: "Menu Items", sub: "Food & beverage" },
   "/admin/tables": { title: "Tables", sub: "Table capacity" },
+  "/admin/room-types": { title: "Room Types", sub: "Room categories & pricing" },
   "/admin/gallery": { title: "Gallery", sub: "Media library" },
   "/admin/blogs": { title: "Blogs", sub: "Content manager" },
   "/admin/reviews": { title: "Reviews", sub: "Ratings & feedback" },
@@ -281,10 +279,10 @@ export default function AdminLayout() {
       "/admin/bar-menu",
       "/admin/room-bookings",
       "/admin/staff",
-      "/admin/pos",
       "/admin/guests",
       "/admin/tables",
       "/admin/rooms",
+      "/admin/room-types",
       "/admin/blogs",
       "/admin/reviews",
       "/admin/inquiries",
@@ -310,10 +308,10 @@ export default function AdminLayout() {
       "/admin/orders",
       "/admin/bartender-panel",
       "/admin/housekeeping-panel",
-      "/admin/pos",
       "/admin/guests",
       "/admin/tables",
       "/admin/rooms",
+      "/admin/room-types",
       "/admin/gallery",
       "/admin/blogs",
       "/admin/reviews",
@@ -553,16 +551,16 @@ export default function AdminLayout() {
           </div>
 
           <div className="ad_topbar__actions">
-            <button className="ad_topbar__icon_btn" aria-label="Search">
+            {/* <button className="ad_topbar__icon_btn" aria-label="Search">
               {Icons.search}
             </button>
 
             <button className="ad_topbar__icon_btn" aria-label="Notifications">
               {Icons.bell}
               <span className="ad_topbar__notif_dot" />
-            </button>
+            </button> */}
 
-            <div className="ad_topbar__divider" aria-hidden="true" />
+            {/* <div className="ad_topbar__divider" aria-hidden="true" /> */}
 
             <button
               className="ad_topbar__user_btn"
@@ -573,8 +571,8 @@ export default function AdminLayout() {
               }}
             >
               <div className="ad_topbar__avatar">AD</div>
-              <span className="ad_topbar__user_name">Admin User</span>
-              {Icons.chevron}
+              {/* <span className="ad_topbar__user_name">Admin User</span> */}
+              {/* {Icons.chevron} */}
             </button>
             <div ref={userMenuRef} className={`ad_user_menu${userMenuOpen ? " ad_user_menu--open" : ""}`}>
               <NavLink className="ad_user_menu__item" to="/admin/profile">My Profile</NavLink>

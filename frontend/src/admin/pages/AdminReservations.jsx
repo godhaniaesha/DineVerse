@@ -156,25 +156,6 @@ export default function AdminReservations() {
           </tbody>
         </table>
       </div>
-
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Upcoming Priority Bookings</h3>
-        <ul className="ad_list">
-          {rows
-            .filter((row) => row.status !== "Cancelled")
-            .slice(0, 3)
-            .map((row) => (
-              <li key={row.id} className="ad_list__item ad_list__item--between">
-                <span>
-                  {row.id} - {row.guest} ({row.party} guests)
-                </span>
-                <span className="ad_chip">
-                  {row.date} {row.time}
-                </span>
-              </li>
-            ))}
-        </ul>
-      </section>
    
       {modal?.mode === "delete" && <Modal title="Delete Reservation" onClose={close}><p className="rooms__delete_msg">Delete {modal.row.id}?</p><div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={remove}>Delete</button></div></Modal>}
     </div>
