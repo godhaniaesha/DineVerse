@@ -16,7 +16,6 @@ import ServicesPage from "../pages/ServicesPage";
 import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
 import TermsAndConditionsPage from "../pages/TermsAndConditionsPage";
 import DishDetailsPage from "../pages/DishDetailsPage";
-import ReservationReviewPage from "../pages/ReservationReviewPage";
 import GalleryPage from "../pages/GalleryPage";
 import AdminLayout from "../admin/AdminLayout";
 import AdminReservations from "../admin/pages/AdminReservations";
@@ -45,6 +44,8 @@ import AdminBarMenu from "../admin/pages/AdminBarMenu";
 import AdminRoomBookings from "../admin/pages/AdminRoomBookings";
 import AdminStaffManagement from "../admin/pages/AdminStaffManagement";
 import AdminCuisineManagement from "../admin/pages/AdminCuisineManagement";
+import AdminCategoryManagement from "../admin/pages/AdminCategoryManagement";
+import AdminDishManagement from "../admin/pages/AdminDishManagement";
 import AdminOrderManagement from "../admin/pages/AdminOrderManagement";
 import AdminKDS from "../admin/pages/AdminKDS";
 import AdminWaiterPanel from "../admin/pages/AdminWaiterPanel";
@@ -108,7 +109,6 @@ function AppRoutes() {
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsAndConditionsPage />} />
           <Route path="/dish/:id" element={<DishDetailsPage />} />
-          <Route path="/reservation-review" element={<ReservationReviewPage />} />
           <Route path="/gallerypage" element={<GalleryPage />} />
           <Route path="/gallerySlide" element={<GallerySlider />} />
           <Route path="/bar" element={<Bar />} />
@@ -131,6 +131,8 @@ function AppRoutes() {
             <Route path="room-bookings" element={<AdminRouteGuard path="/admin/room-bookings"><AdminRoomBookings /></AdminRouteGuard>} />
             <Route path="staff" element={<AdminRouteGuard path="/admin/staff"><AdminStaffManagement /></AdminRouteGuard>} />
             <Route path="cuisines" element={<AdminRouteGuard path="/admin/cuisines"><AdminCuisineManagement /></AdminRouteGuard>} />
+            <Route path="categories" element={<AdminRouteGuard path="/admin/categories"><AdminCategoryManagement /></AdminRouteGuard>} />
+            <Route path="dishes" element={<AdminRouteGuard path="/admin/dishes"><AdminDishManagement /></AdminRouteGuard>} />
             <Route path="orders" element={<AdminRouteGuard path="/admin/orders"><AdminOrderManagement /></AdminRouteGuard>} />
             <Route path="kds" element={<AdminRouteGuard path="/admin/kds"><AdminKDS /></AdminRouteGuard>} />
             <Route path="waiter-panel" element={<AdminRouteGuard path="/admin/waiter-panel"><AdminWaiterPanel /></AdminRouteGuard>} />

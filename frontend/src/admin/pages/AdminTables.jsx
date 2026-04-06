@@ -58,8 +58,7 @@ export default function AdminTables() {
         <div><h2 className="ad_h2">Restaurant Tables</h2><p className="ad_p">Manage table capacity and seating status.</p></div>
         <button className="rooms__add_btn" onClick={openAdd}>Add Table</button>
       </div>
-      <div className="ad_row_actions" style={{ marginBottom: 16 }}>
-        <label style={{ fontSize: 14, marginRight: 8 }}>Area:</label>
+      <div className="ad_row_actions " style={{ marginBottom: 16, width:"max-content" }}>
         <select className="rooms__form_select" value={areaFilter} onChange={(e) => setAreaFilter(e.target.value)}>
           <option value="All">All</option>
           <option value="Cafe">Cafe</option>

@@ -4,26 +4,27 @@ import "../../styleadmin/AdminRooms.css";
 /* ─── DATA ─────────────────────────────────────────── */
 
 const INITIAL_ROOMS = [
-  { id: 1,  number: "101", type: "Deluxe Suite",  floor: 1, capacity: 2, price: 280, status: "available",   amenities: ["King Bed", "Ocean View", "Jacuzzi", "Mini Bar"] },
-  { id: 2,  number: "102", type: "Classic Room",  floor: 1, capacity: 2, price: 140, status: "occupied",    amenities: ["Queen Bed", "Garden View", "Mini Bar"] },
-  { id: 3,  number: "201", type: "Deluxe Suite",  floor: 2, capacity: 2, price: 290, status: "available",   amenities: ["King Bed", "City View", "Jacuzzi", "Mini Bar"] },
-  { id: 4,  number: "202", type: "Family Room",   floor: 2, capacity: 4, price: 340, status: "maintenance", amenities: ["Twin Beds", "Bunk Bed", "Garden View"] },
-  { id: 5,  number: "203", type: "Classic Room",  floor: 2, capacity: 2, price: 140, status: "available",   amenities: ["Double Bed", "City View"] },
-  { id: 6,  number: "301", type: "Penthouse",     floor: 3, capacity: 4, price: 620, status: "occupied",    amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace"] },
-  { id: 7,  number: "302", type: "Junior Suite",  floor: 3, capacity: 2, price: 380, status: "available",   amenities: ["King Bed", "Ocean View", "Lounge Area", "Mini Bar"] },
-  { id: 8,  number: "303", type: "Classic Room",  floor: 3, capacity: 1, price: 120, status: "reserved",    amenities: ["Single Bed", "City View"] },
-  { id: 9,  number: "401", type: "Penthouse",     floor: 4, capacity: 4, price: 650, status: "available",   amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace", "Chef"] },
-  { id: 10, number: "402", type: "Junior Suite",  floor: 4, capacity: 2, price: 390, status: "reserved",    amenities: ["King Bed", "Ocean View", "Lounge Area"] },
+  { id: 1,  number: "101", type: "Deluxe",  floor: 1, capacity: 2, price: 280, status: "available",   amenities: ["King Bed", "Ocean View", "Jacuzzi", "Mini Bar"], img: "", description: "A luxurious deluxe room with ocean view.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
+  { id: 2,  number: "102", type: "Suite",  floor: 1, capacity: 2, price: 140, status: "occupied",    amenities: ["Queen Bed", "Garden View", "Mini Bar"], img: "", description: "Comfortable suite with garden view.", features: [{ icon: "bed", title: "Queen Bed" }, { icon: "view", title: "Garden View" }] },
+  { id: 3,  number: "201", type: "Deluxe",  floor: 2, capacity: 2, price: 290, status: "available",   amenities: ["King Bed", "City View", "Jacuzzi", "Mini Bar"], img: "", description: "Deluxe room with city view.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "City View" }] },
+  { id: 4,  number: "202", type: "Presidential",   floor: 2, capacity: 4, price: 340, status: "maintenance", amenities: ["Twin Beds", "Bunk Bed", "Garden View"], img: "", description: "Presidential suite for special occasions.", features: [{ icon: "bed", title: "Twin Beds" }, { icon: "view", title: "Garden View" }] },
+  { id: 5,  number: "203", type: "Suite",  floor: 2, capacity: 2, price: 140, status: "available",   amenities: ["Double Bed", "City View"], img: "", description: "Standard suite with city view.", features: [{ icon: "bed", title: "Double Bed" }, { icon: "view", title: "City View" }] },
+  { id: 6,  number: "301", type: "Presidential",     floor: 3, capacity: 4, price: 620, status: "occupied",    amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace"], img: "", description: "Luxurious presidential room.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Panoramic View" }] },
+  { id: 7,  number: "302", type: "Suite",  floor: 3, capacity: 2, price: 380, status: "available",   amenities: ["King Bed", "Ocean View", "Lounge Area", "Mini Bar"], img: "", description: "Suite with ocean view and lounge.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
+  { id: 8,  number: "303", type: "Deluxe",  floor: 3, capacity: 1, price: 120, status: "reserved",    amenities: ["Single Bed", "City View"], img: "", description: "Deluxe single room.", features: [{ icon: "bed", title: "Single Bed" }, { icon: "view", title: "City View" }] },
+  { id: 9,  number: "401", type: "Presidential",     floor: 4, capacity: 4, price: 650, status: "available",   amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace", "Chef"], img: "", description: "Top presidential suite.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Panoramic View" }] },
+  { id: 10, number: "402", type: "Suite",  floor: 4, capacity: 2, price: 390, status: "reserved",    amenities: ["King Bed", "Ocean View", "Lounge Area"], img: "", description: "Suite with lounge area.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
 ];
 
-const TYPES    = ["All Types", "Classic Room", "Deluxe Suite", "Junior Suite", "Family Room", "Penthouse"];
+const TYPES    = ["All Types", "Deluxe", "Suite", "Presidential"];
 const STATUSES = ["All", "available", "occupied", "reserved", "maintenance"];
 const STATUS_LABELS = { available: "Available", occupied: "Occupied", reserved: "Reserved", maintenance: "Maintenance" };
 const STATUS_CYCLE  = ["available", "occupied", "reserved", "maintenance"];
 
 const EMPTY_FORM = {
-  number: "", type: "Classic Room", floor: "1",
+  number: "", type: "Deluxe", floor: "1",
   capacity: "2", price: "", status: "available", amenities: "",
+  img: "", description: "", features: "",
 };
 
 /* ─── ICONS ─────────────────────────────────────────── */
@@ -148,8 +149,18 @@ function RoomForm({ initial, onSave, onCancel }) {
       </div>
 
       <div className="rooms__form_row">
-        <label className="rooms__form_label">Amenities (comma-separated)</label>
-        <input className="rooms__form_input" value={form.amenities} onChange={e => set("amenities", e.target.value)} placeholder="King Bed, Ocean View, Jacuzzi" />
+        <label className="rooms__form_label">Image URL</label>
+        <input className="rooms__form_input" value={form.img} onChange={e => set("img", e.target.value)} placeholder="https://example.com/image.jpg" />
+      </div>
+
+      <div className="rooms__form_row">
+        <label className="rooms__form_label">Description</label>
+        <textarea className="rooms__form_input" rows="3" value={form.description} onChange={e => set("description", e.target.value)} placeholder="Room description..." />
+      </div>
+
+      <div className="rooms__form_row">
+        <label className="rooms__form_label">Features (icon:title, comma-separated)</label>
+        <input className="rooms__form_input" value={form.features} onChange={e => set("features", e.target.value)} placeholder="bed:King Bed, view:Ocean View" />
       </div>
 
       <div className="rooms__form_actions">
@@ -186,14 +197,18 @@ export default function AdminRooms() {
 
   /* modal helpers */
   const openAdd    = ()     => { setEditForm(EMPTY_FORM); setModal({ mode: "add" }); };
-  const openEdit   = (room) => { setEditForm({ ...room, amenities: room.amenities.join(", ") }); setModal({ mode: "edit", room }); };
+  const openEdit   = (room) => { setEditForm({ ...room, amenities: room.amenities.join(", "), features: room.features.map(f => `${f.icon}:${f.title}`).join(", ") }); setModal({ mode: "edit", room }); };
   const openDel    = (room) => setModal({ mode: "delete", room });
   const openView   = (room) => setModal({ mode: "view", room });
   const closeModal = ()     => setModal(null);
 
   const handleSave = (form) => {
     const amenities = form.amenities.split(",").map(a => a.trim()).filter(Boolean);
-    const base = { ...form, floor: Number(form.floor), capacity: Number(form.capacity), price: Number(form.price), amenities };
+    const features = form.features.split(",").map(f => {
+      const [icon, title] = f.split(":").map(s => s.trim());
+      return icon && title ? { icon, title } : null;
+    }).filter(Boolean);
+    const base = { ...form, floor: Number(form.floor), capacity: Number(form.capacity), price: Number(form.price), amenities, features };
     if (modal.mode === "add") {
       setRooms(rs => [...rs, { ...base, id: Date.now() }]);
     } else {

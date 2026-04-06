@@ -80,20 +80,7 @@ const DishDetailsPage = () => {
       </main>
     );
   }
-// inside DishDetailsPage component
-const handleAddToReservation = () => {
-  navigate('/reservation-review', {
-    state: {
-      dish: {
-        id: dish.id,
-        name: dish.name,
-        price: dish.price,
-        shortDesc: dish.shortDesc,
-        category: dish.category,
-      },
-    },
-  });
-};
+
   return (
     <main className="dd_page">
       <section className="dd_shell">
@@ -181,12 +168,7 @@ const handleAddToReservation = () => {
                 </div>
               </div>
 
-              <div className="dd_actions">
-  <button className="dd_primary_btn" onClick={handleAddToReservation}>
-    Add to reservation
-  </button>
-  <button className="dd_ghost_btn">Ask for variations</button>
-</div>
+         
             </div>
           </article>
         </div>

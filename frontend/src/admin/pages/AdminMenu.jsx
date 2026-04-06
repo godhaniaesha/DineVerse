@@ -107,7 +107,6 @@ export default function AdminMenu() {
 
       <div className="rooms__header">
         <div />
-        <button className="rooms__add_btn" onClick={openAdd}>Add Item</button>
       </div>
 
       <section className="ad_card">
@@ -137,9 +136,6 @@ export default function AdminMenu() {
             value={form.price}
             onChange={(event) => setField("price", event.target.value)}
           />
-          <button className="ad_btn ad_btn--primary" onClick={openAdd}>
-            Add Item
-          </button>
         </div>
       </section>
 

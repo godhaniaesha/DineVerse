@@ -111,7 +111,13 @@ const Icons = {
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="9" cy="7" r="4" /><path d="M2 21a7 7 0 0 1 14 0" /></svg>
   ),
   cuisine: (
-    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 5h18M5 10h14M7 15h10M9 20h6" /></svg>
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 2v20M8 6h8M6 10h12M7 14h10M8 18h8" /></svg>
+  ),
+  category: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="3" width="8" height="8" rx="1" /><rect x="13" y="3" width="8" height="8" rx="1" /><rect x="3" y="13" width="8" height="8" rx="1" /><rect x="13" y="13" width="8" height="8" rx="1" /></svg>
+  ),
+  dish: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18" /></svg>
   ),
   order: (
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
@@ -175,6 +181,8 @@ const NAV_GROUPS = [
       { to: "/admin/tables", label: "Tables", icon: Icons.table },
       { to: "/admin/staff", label: "Staff Management", icon: Icons.staff },
       { to: "/admin/cuisines", label: "Cuisine Management", icon: Icons.cuisine },
+      { to: "/admin/categories", label: "Categories", icon: Icons.category },
+      { to: "/admin/dishes", label: "Dishes", icon: Icons.dish },
       { to: "/admin/orders", label: "Order Management", icon: Icons.order },
       { to: "/admin/kds", label: "Kitchen Display", icon: Icons.kds },
       { to: "/admin/bartender-panel", label: "Bartender", icon: Icons.offer },
@@ -214,6 +222,8 @@ const PAGE_TITLES = {
   "/admin/room-bookings": { title: "Room Bookings", sub: "Hotel room reservations" },
   "/admin/staff": { title: "Staff Management", sub: "Employees and shifts" },
   "/admin/cuisines": { title: "Cuisine Management", sub: "Cuisine and categories" },
+  "/admin/categories": { title: "Category Management", sub: "Cuisine categories" },
+  "/admin/dishes": { title: "Dish Management", sub: "Menu dishes" },
   "/admin/orders": { title: "Order Management", sub: "Kitchen order flow" },
   "/admin/inventory": { title: "Inventory", sub: "Stock tracking" },
   "/admin/kds": { title: "Kitchen Display", sub: "Chef order queue" },
@@ -271,22 +281,14 @@ export default function AdminLayout() {
       "/admin/bar-menu",
       "/admin/room-bookings",
       "/admin/staff",
-      "/admin/cuisines",
-      "/admin/orders",
-      "/admin/kds",
-      "/admin/bartender-panel",
-      "/admin/housekeeping-panel",
       "/admin/pos",
       "/admin/guests",
       "/admin/tables",
       "/admin/rooms",
-      "/admin/gallery",
       "/admin/blogs",
       "/admin/reviews",
-      "/admin/offers",
       "/admin/inquiries",
       "/admin/role-access",
-      "/admin/architecture",
       "/admin/admin-users",
       "/admin/profile",
     ],
@@ -303,8 +305,9 @@ export default function AdminLayout() {
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
+      "/admin/categories",
+      "/admin/dishes",
       "/admin/orders",
-      "/admin/kds",
       "/admin/bartender-panel",
       "/admin/housekeeping-panel",
       "/admin/pos",
@@ -314,11 +317,7 @@ export default function AdminLayout() {
       "/admin/gallery",
       "/admin/blogs",
       "/admin/reviews",
-      "/admin/offers",
       "/admin/inquiries",
-      "/admin/role-access",
-      "/admin/architecture",
-      "/admin/admin-users",
       "/admin/profile",
     ],
     "Cafe Chef": [
@@ -327,6 +326,10 @@ export default function AdminLayout() {
       "/admin/cafe-menu",
       "/admin/cafe-waiter",
       "/admin/cafe-chef",
+      "/admin/cuisines",
+      "/admin/categories",
+      "/admin/dishes",
+      "/admin/menu",
       "/admin/orders",
       "/admin/kds",
       "/admin/profile",
@@ -337,6 +340,10 @@ export default function AdminLayout() {
       "/admin/restaurant-menu",
       "/admin/restaurant-waiter",
       "/admin/restaurant-chef",
+      "/admin/cuisines",
+      "/admin/categories",
+      "/admin/dishes",
+      "/admin/menu",
       "/admin/orders",
       "/admin/kds",
       "/admin/profile",
@@ -347,6 +354,10 @@ export default function AdminLayout() {
       "/admin/bar-menu",
       "/admin/bar-waiter",
       "/admin/bar-chef",
+      "/admin/cuisines",
+      "/admin/categories",
+      "/admin/dishes",
+      "/admin/menu",
       "/admin/orders",
       "/admin/kds",
       "/admin/profile",
@@ -361,20 +372,26 @@ export default function AdminLayout() {
       "/admin/profile",
     ],
     "Cafe Waiter": [
-      "/admin",
+      "/admin",      
+      "/admin/tables",
       "/admin/cafe-waiter",
+      "/admin/dishes",
       "/admin/orders",
       "/admin/profile",
     ],
     "Restaurant Waiter": [
       "/admin",
-      "/admin/restaurant-waiter",
+      "/admin/restaurant-waiter",      
+      "/admin/tables",
+      "/admin/dishes",
       "/admin/orders",
       "/admin/profile",
     ],
     "Bar Waiter": [
       "/admin",
-      "/admin/bar-waiter",
+      "/admin/bar-waiter",      
+      "/admin/tables",
+      "/admin/dishes",
       "/admin/orders",
       "/admin/profile",
     ],
@@ -485,8 +502,9 @@ export default function AdminLayout() {
                     to={link.to}
                     end={link.end}
                     className={({ isActive }) =>
-                      `ad_link${isActive ? " ad_link--active" : ""}`
+                      `ad_link${isActive ? " ad_link--active" : ""}${link.parent ? " ad_link--child" : ""}`
                     }
+                    style={link.parent ? { paddingLeft: "2.5rem" } : {}}
                   >
                     {link.icon}
                     {link.label}

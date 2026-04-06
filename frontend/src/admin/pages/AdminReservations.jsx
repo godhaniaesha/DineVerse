@@ -44,8 +44,6 @@ export default function AdminReservations() {
   const updateStatus = (id, nextStatus) => {
     setRows((current) => current.map((row) => (row.id === id ? { ...row, status: nextStatus } : row)));
   };
-  const openAdd = () => { setForm(EMPTY_FORM); setModal({ mode: "add" }); };
-  const openEdit = (row) => { setForm({ ...row, party: String(row.party) }); setModal({ mode: "edit", row }); };
   const openDelete = (row) => setModal({ mode: "delete", row });
   const close = () => setModal(null);
   const save = () => {
@@ -88,7 +86,6 @@ export default function AdminReservations() {
 
       <div className="rooms__header">
         <div />
-        <button className="rooms__add_btn" onClick={openAdd}>Add Reservation</button>
       </div>
       <div className="ad_toolbar">
         <input
@@ -150,7 +147,7 @@ export default function AdminReservations() {
                     </select>
                   </td>
                   <td className="rooms__actions_cell">
-                    <button className="rooms__icon_btn" title="Edit reservation" onClick={() => openEdit(row)}><IcEdit /></button>
+                    <button className="rooms__icon_btn" title="Edit reservation" ><IcEdit /></button>
                     <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete reservation" onClick={() => openDelete(row)}><IcTrash /></button>
                   </td>
                 </tr>
@@ -178,24 +175,7 @@ export default function AdminReservations() {
             ))}
         </ul>
       </section>
-      {(modal?.mode === "add" || modal?.mode === "edit") && (
-        <Modal title={modal.mode === "add" ? "Add Reservation" : "Edit Reservation"} onClose={close}>
-          <div className="rooms__form_grid2">
-            <div><label className="rooms__form_label">Reservation ID</label><input required className="rooms__form_input" value={form.id} onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))} /></div>
-            <div><label className="rooms__form_label">Guest</label><input required className="rooms__form_input" value={form.guest} onChange={(e) => setForm((f) => ({ ...f, guest: e.target.value }))} /></div>
-          </div>
-          <div className="rooms__form_grid2">
-            <div><label className="rooms__form_label">Date</label><input required type="date" className="rooms__form_input" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} /></div>
-            <div><label className="rooms__form_label">Time</label><input required type="time" className="rooms__form_input" value={form.time} onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} /></div>
-          </div>
-          <div className="rooms__form_grid2">
-            <div><label className="rooms__form_label">Party</label><input type="number" className="rooms__form_input" min="1" value={form.party} onChange={(e) => setForm((f) => ({ ...f, party: e.target.value }))} /></div>
-            <div><label className="rooms__form_label">Type</label><select className="rooms__form_select" value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}><option>Table</option><option>Room</option></select></div>
-          </div>
-          <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}>{STATUSES.slice(1).map((item) => <option key={item}>{item}</option>)}</select></div>
-          <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={save}>Save</button></div>
-        </Modal>
-      )}
+   
       {modal?.mode === "delete" && <Modal title="Delete Reservation" onClose={close}><p className="rooms__delete_msg">Delete {modal.row.id}?</p><div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={remove}>Delete</button></div></Modal>}
     </div>
   );
