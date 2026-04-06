@@ -180,4 +180,7 @@
   .tc_intro {
     font-size: 14px;
   }
+      .tc_hero {
+        padding: 30px 0 24px;
+    }
 }

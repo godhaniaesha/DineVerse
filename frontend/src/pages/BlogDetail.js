@@ -50,7 +50,7 @@ const ROOT_CSS = `
   --d-ease:   cubic-bezier(0.25,0.46,0.45,0.94);
   --d-spring: cubic-bezier(0.34,1.56,0.64,1);
   --d-dur:    0.30s;
-  --d-header-h: 80px;
+  --d-header-h: 70px;
   --d-strip-h:  38px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

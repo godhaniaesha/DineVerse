@@ -46,7 +46,7 @@ body {
   --d-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --d-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --d-dur: 0.30s;
-  --d-header-h: 80px;
+  --d-header-h: 70px;
   --d-strip-h: 38px;
 }
 
@@ -312,6 +312,7 @@ body {
   gap: 16px;
   margin-bottom: 36px;
   flex-wrap: wrap;
+  text-wrap: nowrap;
 }
 
 .x_section_kicker {
@@ -718,7 +719,7 @@ body {
 /* ── HERO ── */
 .x_faq_hero {
   position: relative;
-  padding: 110px 24px 80px;
+  padding: 50px 24px 80px;
   background: var(--d-surface);
   border-bottom: 1px solid var(--d-border);
   overflow: hidden;
@@ -2610,4 +2611,44 @@ body {
   .x_trending_card {
     max-width: 290px;
   }
+}
+
+
+.x_details_btn {
+  margin-top: 12px;
+  padding: 12px 20px;
+  background: transparent;
+  border: 1px solid var(--d-border-strong);
+  color: var(--d-gold-light);
+  border-radius: var(--d-r-md);
+  font-family: var(--d-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all var(--d-dur) var(--d-ease);
+  letter-spacing: 0.05em;
+}
+
+.x_details_btn svg {
+  transition: transform var(--d-dur) var(--d-ease);
+}
+
+.x_details_btn:hover {
+  background: var(--d-gold);
+  border-color: var(--d-gold);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(200, 150, 90, 0.25);
+}
+
+.x_details_btn:hover svg {
+  transform: translateX(4px);
+}
+
+.x_details_btn--sm {
+  padding: 10px 16px;
+  font-size: 12px;
 }
