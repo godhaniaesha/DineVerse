@@ -178,11 +178,11 @@
   margin-bottom: 40px !important;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 991px) {
   .d_testi_track { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
-@media (max-width: 580px) {
+@media (max-width: 640px) {
   .d_testi_track { grid-template-columns: 1fr !important; }
 }
 
@@ -356,16 +356,21 @@
 }
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
-@media (max-width: 860px) {
-  .d_testi_section { padding: 72px 0 80px !important; }
-  .d_testi_header { margin-bottom: 48px !important; }
-  .d_testi_score { gap: 24px !important; margin-bottom: 48px !important; }
+@media (max-width: 991px) {
+  .d_testi_section { padding: 60px 0 70px !important; }
+  .d_testi_header { margin-bottom: 40px !important; }
+  .d_testi_score { gap: 24px !important; margin-bottom: 40px !important; }
   .d_testi_score__divider { display: none !important; }
 }
 
-@media (max-width: 580px) {
-  .d_testi_section { padding: 52px 0 60px !important; }
+@media (max-width: 640px) {
+  .d_testi_section { padding: 40px 0 50px !important; }
   .d_testi_score__num { font-size: 48px !important; }
   .d_testi_score__bar-track { width: 90px !important; }
   .d_testi_card { padding: 24px 22px !important; }
+}
+@media (max-width: 576px) {
+      .d_testi_section {
+        padding: 22px 0 30px !important;
+    }
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdStar, MdStarBorder } from "react-icons/md";
 import { HiSparkles } from "react-icons/hi2";
 import "./testimonials.css";
@@ -72,8 +72,6 @@ const PLATFORMS = [
   { name: "Yelp",        score: "4.7", pct: 94 },
 ];
 
-const PER_PAGE = 3;
-
 function StarRow({ rating, max = 5 }) {
   return (
     <div className="d_testi_card__stars">
@@ -88,8 +86,31 @@ function StarRow({ rating, max = 5 }) {
 
 export default function Testimonials() {
   const [page, setPage] = useState(0);
-  const pages = Math.ceil(REVIEWS.length / PER_PAGE);
-  const visible = REVIEWS.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
+  const [perPage, setPerPage] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 640) {
+        setPerPage(1);
+      } else if (window.innerWidth <= 991) {
+        setPerPage(2);
+      } else {
+        setPerPage(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Reset page to 0 if perPage changes to avoid out of bounds
+  useEffect(() => {
+    setPage(0);
+  }, [perPage]);
+
+  const pages = Math.ceil(REVIEWS.length / perPage);
+  const visible = REVIEWS.slice(page * perPage, page * perPage + perPage);
 
   return (
     <section className="d_testi_section">

@@ -621,52 +621,65 @@
 
 /* ── MARQUEE DIVIDER ──────────────────────────────────────── */
 .d_bar_marquee {
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
   overflow: hidden !important;
   border-top: 1px solid var(--d-border) !important;
   border-bottom: 1px solid var(--d-border) !important;
-  height: 48px !important;
+  height: 52px !important;
   display: flex !important;
   align-items: center !important;
-  margin: 0 0 64px !important;
-  position: relative !important;
-  z-index: 1 !important;
+  justify-content: flex-start !important;
+  margin-bottom: 80px !important;
   background: var(--d-surface-2) !important;
+  z-index: 10 !important;
 }
 
 .d_bar_marquee__track {
   display: flex !important;
-  white-space: nowrap !important;
-  gap: 0 !important;
-  animation: d_bar_scroll 28s linear infinite !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  flex-shrink: 0 !important;
+  width: max-content !important;
+  animation: bar_marquee_infinite 35s linear infinite !important;
+  will-change: transform !important;
 }
 
-@keyframes d_bar_scroll {
-  from {
-    transform: translateX(0) !important;
-  }
+.d_bar_marquee:hover .d_bar_marquee__track {
+  animation-play-state: paused !important;
+}
 
-  to {
-    transform: translateX(-50%) !important;
+@keyframes bar_marquee_infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
 .d_bar_marquee__item {
-  display: inline-flex !important;
+  display: flex !important;
   align-items: center !important;
-  gap: 14px !important;
-  padding: 0 36px !important;
-  font-size: 10px !important;
+  gap: 16px !important;
+  padding: 0 40px !important;
+  font-size: 11px !important;
   font-weight: 400 !important;
-  letter-spacing: 0.26em !important;
+  letter-spacing: 0.25em !important;
   text-transform: uppercase !important;
-  color: var(--d-text-4) !important;
+  color: var(--d-text-3) !important;
   border-right: 1px solid var(--d-border) !important;
-  height: 48px !important;
+  height: 100% !important;
+  white-space: nowrap !important;
 }
 
 .d_bar_marquee__gem {
   color: var(--d-bar) !important;
-  font-size: 6px !important;
+  font-size: 7px !important;
 }
 
 /* ── CTA BANNER ───────────────────────────────────────────── */
@@ -790,6 +803,7 @@
 .d_bar_banner__btn-secondary {
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 8px !important;
   padding: 0 !important;
   background: transparent !important;
@@ -821,6 +835,7 @@
 @media (max-width: 1100px) {
   .d_bar_hero {
     grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
   }
 
   .d_bar_hero__left {
@@ -832,59 +847,117 @@
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 991px) {
   .d_bar_section {
-    padding: 80px 0 88px !important;
+    padding: 60px 0 80px !important;
   }
 
   .d_bar_hero {
     grid-template-columns: 1fr !important;
-    margin-bottom: 56px !important;
+    margin-bottom: 64px !important;
+    gap: 0 !important; /* Remove gap as we'll use padding */
+    border: 1px solid var(--d-border) !important;
+    border-radius: var(--d-r-xl) !important;
+    overflow: hidden !important;
   }
 
+  /* Image/Video section on top */
   .d_bar_hero__right {
-    min-height: 300px !important;
+    order: -1 !important;
+    min-height: 400px !important;
+    background: var(--d-surface-2) !important;
   }
 
+  .d_bar_hero__right .z_bar_media_container {
+    padding: 40px !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .d_bar_hero__right .z_bar_main_video {
+    width: 100% !important;
+    max-width: 500px !important;
+    height: 380px !important;
+  }
+
+  .d_bar_hero__right .z_bar_overlap_img {
+    width: 120px !important;
+    height: 160px !important;
+    right: 20px !important;
+    bottom: 20px !important;
+  }
+
+  /* Content section below */
   .d_bar_hero__left {
+    padding: 48px 32px !important;
     border-right: none !important;
-    border-bottom: 1px solid var(--d-border) !important;
+    border-top: 1px solid var(--d-border) !important;
+    align-items: center !important;
+    text-align: center !important;
   }
 
-  .d_bar_hero__left {
-    padding: 40px 32px !important;
+  .d_bar_hero__content {
+    align-items: center !important;
+    padding:0 !important;
+  }
+
+  .d_bar_hero__body {
+    max-width: 500px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
   .d_bar_hero__stats {
-    gap: 24px !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 500px !important;
   }
 
   .d_bar_banner {
     flex-direction: column !important;
-    align-items: flex-start !important;
-    padding: 36px 32px !important;
-    gap: 28px !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 48px 32px !important;
+    gap: 32px !important;
+  }
+
+  .d_bar_banner__sub {
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
   .d_bar_banner__actions {
-    align-items: flex-start !important;
+    align-items: center !important;
     flex-direction: row !important;
-    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
   }
 }
 
 @media (max-width: 600px) {
   .d_bar_hero__left {
-    padding: 32px 24px !important;
+    padding: 30px 14px !important;
+  }
+
+  .d_bar_hero__right .z_bar_media_container {
+    padding: 24px !important;
+  }
+
+  .d_bar_hero__right .z_bar_main_video {
+    height: 320px !important;
+  }
+
+  .z_bar_overlap_img {
+    display: none !important;
   }
 
   .d_bar_hero__stats {
     flex-wrap: wrap !important;
-    gap: 18px !important;
+    gap: 24px !important;
   }
 
   .d_bar_banner {
-    padding: 28px 22px !important;
+    padding: 40px 24px !important;
   }
 
   .d_bar_banner__actions {
@@ -899,5 +972,15 @@
   .d_bar_tab {
     padding: 8px 16px !important;
     font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .d_bar_hero__title {
+    font-size: 36px !important;
+  }
+
+  .d_bar_hero__stat-num {
+    font-size: 28px !important;
   }
 }

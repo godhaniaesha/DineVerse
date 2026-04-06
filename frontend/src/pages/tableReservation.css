@@ -261,6 +261,13 @@
 
 .d_resv_form__input::placeholder { color: var(--d-text-4) !important; }
 
+/* Custom calendar icon color for date input */
+.d_resv_form__input::-webkit-calendar-picker-indicator {
+  cursor: pointer !important;
+  filter: invert(65%) sepia(21%) saturate(1000%) hue-rotate(345deg) brightness(95%) contrast(90%) !important;
+  opacity: 0.70 !important;
+}
+
 .d_resv_form__input:focus,
 .d_resv_form__select:focus {
   border-color: rgba(200,150,90,0.55) !important;
@@ -431,16 +438,24 @@
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 @media (max-width: 960px) {
   .d_resv_layout { grid-template-columns: 1fr !important; }
-  .d_resv_visual { min-height: 340px !important; }
+  .d_resv_visual { min-height: 280px !important; } /* Reduced from 340px */
+ 
   .d_resv_form_panel { border-left: none !important; border-top: 1px solid var(--d-border) !important; padding: 44px 36px !important; }
 }
 
 @media (max-width: 640px) {
-  .d_resv_section { padding: 56px 0 64px !important; }
+  .d_resv_section { padding: 25px 0 41px !important; }
   .d_resv_form_panel { padding: 32px 22px !important; }
   .d_resv_form { grid-template-columns: 1fr !important; }
   .d_resv_form__group--full { grid-column: 1 !important; }
   .d_resv_form__submit { grid-column: 1 !important; }
   .d_resv_visual__content { padding: 32px 24px !important; }
-  .d_resv_visual { min-height: 280px !important; }
+  .d_resv_visual__pills { display: none !important; } /* Hide info pills */
+  .d_resv_visual { min-height: 200px !important; } /* Further reduced for mobile */
+  .d_resv_visual__title { font-size: 28px !important; }
+  .d_resv_visual__eyebrow { font-size: 9px !important; }
+}
+@media (max-width: 576px) {
+   .d_resv_visual__body { display: none !important; } /* Hide long body text */
+  
 }

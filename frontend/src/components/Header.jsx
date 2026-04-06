@@ -345,7 +345,7 @@ export default function Header() {
               aria-label="Book a room"
             >
               <MdHotel size={16} />
-              Book Room
+              <span className="d_btn-label">Book Room</span>
             </button>
 
             {/* Book Table — gold, desktop only */}
@@ -355,7 +355,7 @@ export default function Header() {
               aria-label="Reserve a table"
             >
               <MdTableRestaurant size={16} />
-              Reserve Table
+              <span className="d_btn-label">Reserve Table</span>
             </button>
 
             {/* Hamburger — mobile only */}

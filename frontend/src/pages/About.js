@@ -264,7 +264,7 @@ export default function About() {
       <section className="h_section h_section_alt">
         <div className="container">
           <div className="row">
-            <div className="col-lg-5 h_anim_up">
+            <div className="col-xl-5 h_anim_up">
               <div className="h_section_head">
                 <div className="h_section_eyebrow">Our Journey</div>
                 <h2 className="h_section_title">
@@ -293,7 +293,7 @@ export default function About() {
             </div>
 
             {/* Values */}
-            <div className="col-lg-7 h_anim_up h_d2" style={{ marginTop: "0" }}>
+            <div className="col-xl-7 h_anim_up h_d2" style={{ marginTop: "0" }}>
               <div className="h_section_head" style={{ marginTop: "0.5rem" }}>
                 <div className="h_section_eyebrow">Our Philosophy</div>
                 <h2 className="h_section_title">

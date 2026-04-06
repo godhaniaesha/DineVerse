@@ -121,7 +121,7 @@ function DrinkCard({ drink }) {
 
 /* ── MARQUEE DIVIDER ──────────────────────────────────────── */
 function BarMarquee() {
-  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
     <div className="d_bar_marquee" aria-hidden="true">
       <div className="d_bar_marquee__track">

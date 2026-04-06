@@ -236,7 +236,36 @@
 
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
+  .d_hero_sec_wrapper { height: 75vh !important; }
   .d_hero_sec_slide { grid-template-columns: 1fr !important; }
-  .d_hero_sec_visual { clip-path: none !important; position: absolute !important; inset: 0 !important; z-index: -1 !important; }
-  .d_hero_sec_content { padding: 40px !important; background: rgba(8, 7, 5, 0.85) !important; width: 100% !important; height: 100% !important; }
+  .d_hero_sec_visual { 
+    clip-path: none !important; 
+    position: absolute !important; 
+    inset: 0 !important; 
+    z-index: -1 !important; 
+  }
+  .d_hero_sec_content { 
+    padding: 60px 40px !important; 
+    background: linear-gradient(to bottom, rgba(8, 7, 5, 0.4) 0%, rgba(8, 7, 5, 0.9) 100%) !important; 
+    width: 100% !important; 
+    height: 100% !important;
+    justify-content: flex-end !important;
+    padding-bottom: 120px !important;
+  }
+  .d_hero_sec_title { font-size: clamp(38px, 6vw, 60px) !important; margin-bottom: 20px !important; }
+  .d_hero_sec_desc { font-size: 15px !important; max-width: 500px !important; margin-bottom: 30px !important; }
+  .d_hero_sec_controls { bottom: 40px !important; left: 40px !important; gap: 20px !important; }
+  .d_hero_sec_progress { width: 120px !important; }
+  .d_hero_sec_number { font-size: 32px !important; }
+}
+
+@media (max-width: 768px) {
+  .d_hero_sec_wrapper { height: 70vh !important; }
+  .d_hero_sec_content { padding: 40px 30px !important; padding-bottom: 110px !important; }
+  .d_hero_sec_eyebrow { font-size: 10px !important; margin-bottom: 16px !important; letter-spacing: 0.3em !important; }
+  .d_hero_sec_title { font-size: 36px !important; }
+  .d_hero_sec_desc { font-size: 14px !important; line-height: 1.6 !important; }
+  .d_hero_sec_btn { padding: 14px 28px !important; font-size: 11px !important; }
+  .d_hero_sec_controls { bottom: 30px !important; left: 30px !important; gap: 15px !important; }
+  .d_hero_sec_progress { width: 100px !important; }
 }

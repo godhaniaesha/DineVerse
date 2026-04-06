@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { MdTableRestaurant, MdPhone, MdPerson, MdAccessTime } from "react-icons/md";
-import { LuCalendarCheck } from "react-icons/lu";
+import { MdTableRestaurant, MdPhone, MdPerson, MdAccessTime, MdCalendarToday } from "react-icons/md";
 import { HiSparkles } from "react-icons/hi2";
 import { PiUsersThreeBold, PiCheckCircleBold } from "react-icons/pi";
 import { RiArrowRightSLine } from "react-icons/ri";
@@ -108,7 +107,7 @@ export default function TableReservation() {
                   {/* Date */}
                   <div className="d_resv_form__group">
                     <label className="d_resv_form__label">
-                      <span className="d_resv_form__label-icon"><LuCalendarCheck /></span>
+                      <span className="d_resv_form__label-icon"><MdCalendarToday /></span>
                       Date
                     </label>
                     <input
