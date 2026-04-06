@@ -6,10 +6,10 @@
   --h-deep: #181510;
   --h-panel: #201c16;
   --h-glass: rgba(16, 14, 11, 0.82);
-  --h-rim: rgba(200, 160, 90, 0.1);
+  --h-rim: rgba(200, 160, 90, 0.10);
   --h-champ: #c8965a;
   --h-champ-lt: #e8b878;
-  --h-champ-dim: rgba(200, 150, 90, 0.1);
+  --h-champ-dim: rgba(200, 150, 90, 0.10);
   --h-champ-glow: rgba(200, 150, 90, 0.22);
   --h-champ-brd: rgba(200, 160, 90, 0.18);
   --h-champ-focus: rgba(200, 160, 90, 0.42);
@@ -141,11 +141,13 @@ body {
   100% {
     transform: translate(0, 0) scale(1);
   }
+
   33% {
     transform: translate(1.5%, 2.5%) scale(1.04);
   }
+
   66% {
-    transform: translate(-1.5%, -1%) scale(0.97);
+    transform: translate(-1.5%, -1%) scale(.97);
   }
 }
 
@@ -168,18 +170,20 @@ body {
   justify-content: space-between;
   gap: 2rem;
 }
+
 .h_brand {
-  font-family: "Bodoni Moda", serif;
+  font-family: 'Bodoni Moda', serif;
   font-size: 1.55rem;
   font-weight: 400;
   color: var(--h-champ);
-  letter-spacing: 0.1em;
+  letter-spacing: .10em;
   text-decoration: none;
   display: flex;
   align-items: baseline;
-  gap: 0.3rem;
+  gap: .3rem;
   position: relative;
 }
+
 .h_brand em {
   font-style: italic;
   color: var(--h-crimson-lt);
@@ -236,17 +240,19 @@ body {
 .h_nav_a.h_active::after {
   width: 100%;
 }
+
 .h_nav_a.h_active {
   color: var(--h-champ);
 }
+
 .h_nav_reserve {
-  padding: 0.52rem 1.6rem;
+  padding: .52rem 1.6rem;
   border: 1px solid var(--h-crimson-brd);
   background: var(--h-crimson-dim);
   color: var(--h-crimson-lt);
-  font-family: "Jost", sans-serif;
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
+  font-family: 'Jost', sans-serif;
+  font-size: .68rem;
+  letter-spacing: .18em;
   text-transform: uppercase;
   border-radius: var(--h-r);
   cursor: pointer;
@@ -396,8 +402,8 @@ body {
 .h_main {
   position: relative;
   z-index: 10;
-  padding-bottom: 1rem;
 }
+
 .h_wrap {
   max-width: 1280px;
   margin: 0 auto;
@@ -423,61 +429,54 @@ body {
   overflow: hidden;
   box-shadow: var(--h-shadow);
   position: relative;
-  animation: h_up 0.7s var(--h-ease) both;
+  animation: h_up .7s var(--h-ease) both;
 }
+
 .h_card::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--h-champ) 28%,
-    var(--h-crimson-lt) 55%,
-    var(--h-champ) 78%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, var(--h-champ) 28%, var(--h-crimson-lt) 55%, var(--h-champ) 78%, transparent 100%);
   z-index: 2;
 }
+
 .h_card::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -100px;
   right: -100px;
   width: 260px;
   height: 260px;
-  background: radial-gradient(
-    circle,
-    rgba(212, 175, 114, 0.055) 0%,
-    transparent 65%
-  );
+  background: radial-gradient(circle, rgba(212, 175, 114, .055) 0%, transparent 65%);
   pointer-events: none;
 }
 
 .h_card_head {
   padding: 2.8rem 3rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, .04);
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
+
 .h_card_title {
-  font-family: "Bodoni Moda", serif;
+  font-family: 'Bodoni Moda', serif;
   font-size: 2rem;
   font-weight: 400;
   color: var(--h-ivory);
-  letter-spacing: 0.01em;
+  letter-spacing: .01em;
 }
+
 .h_card_sub {
-  font-size: 0.66rem;
-  letter-spacing: 0.24em;
+  font-size: .66rem;
+  letter-spacing: .24em;
   text-transform: uppercase;
   color: var(--h-champ);
   font-weight: 400;
-  margin-top: 0.3rem;
+  margin-top: .3rem;
 }
 
 /* STEP INDICATOR */
@@ -1633,6 +1632,7 @@ body {
   pointer-events: none;
   overflow: hidden;
 }
+
 .h_ambient_bg::before {
   content: "";
   position: absolute;
@@ -1648,6 +1648,7 @@ body {
   border-radius: 50%;
   animation: h_orb_drift 13s ease-in-out infinite;
 }
+
 .h_ambient_bg::after {
   content: "";
   position: absolute;
@@ -1663,6 +1664,7 @@ body {
   border-radius: 50%;
   animation: h_orb_drift 16s ease-in-out infinite reverse;
 }
+
 @keyframes h_orb_drift {
   0%,
   100% {
@@ -1747,6 +1749,7 @@ body {
   font-weight: 500;
   margin-bottom: 1.6rem;
 }
+
 .h_eyebrow_line {
   display: block;
   width: 36px;
@@ -1763,6 +1766,7 @@ body {
   color: var(--h-white);
   margin-bottom: 0.5rem;
 }
+
 .h_hero_title em {
   display: block;
   font-style: italic;
@@ -1804,6 +1808,7 @@ body {
   line-height: 1;
   display: block;
 }
+
 .h_stat_label {
   font-size: 0.65rem;
   letter-spacing: 0.16em;
@@ -1826,12 +1831,14 @@ body {
   gap: 0.5rem;
   z-index: 5;
 }
+
 .h_scroll_line {
   width: 1px;
   height: 50px;
   background: linear-gradient(to bottom, var(--h-em), transparent);
   animation: h_scroll_pulse 2s ease-in-out infinite;
 }
+
 .h_scroll_dot {
   width: 5px;
   height: 5px;
@@ -1840,6 +1847,7 @@ body {
   box-shadow: 0 0 8px var(--h-em-glow);
   animation: h_scroll_pulse 2s ease-in-out infinite 0.5s;
 }
+
 @keyframes h_scroll_pulse {
   0%,
   100% {
@@ -1869,6 +1877,7 @@ body {
 .h_section_head {
   margin-bottom: 3.5rem;
 }
+
 .h_section_eyebrow {
   display: inline-flex;
   align-items: center;
@@ -1889,6 +1898,7 @@ body {
   background: var(--h-em);
   opacity: 0.6;
 }
+
 .h_section_title {
   font-family: "Bodoni Moda", serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
@@ -1897,11 +1907,13 @@ body {
   line-height: 1.12;
   margin-bottom: 1rem;
 }
+
 .h_section_title em {
   font-style: italic;
   font-weight: 400;
   color: var(--h-rg);
 }
+
 .h_section_subtitle {
   font-size: 0.9rem;
   color: var(--h-silver);
@@ -1918,6 +1930,7 @@ body {
   gap: 0.75rem;
   margin: 1.25rem 0;
 }
+
 .h_ornament_line {
   flex: 1;
   height: 1px;
@@ -1935,6 +1948,7 @@ body {
   background: var(--h-em);
   box-shadow: 0 0 8px var(--h-em-glow);
 }
+
 .h_ornament_diamond {
   width: 7px;
   height: 7px;
@@ -1949,12 +1963,14 @@ body {
 .h_story_img_wrap {
   position: relative;
 }
+
 .h_story_img_frame {
   position: relative;
   border-radius: var(--h-radius-lg);
   overflow: hidden;
   aspect-ratio: 4/5;
 }
+
 .h_story_img_frame::before {
   content: "";
   position: absolute;
@@ -1964,6 +1980,7 @@ body {
     linear-gradient(to bottom, transparent 55%, rgba(6, 12, 16, 0.6) 100%),
     linear-gradient(to right, transparent 70%, rgba(6, 12, 16, 0.3) 100%);
 }
+
 .h_story_img_frame img {
   width: 100%;
   height: 100%;
@@ -1990,6 +2007,7 @@ body {
     0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(200, 150, 90, 0.05);
 }
+
 .h_img_badge_num {
   font-family: "Bodoni Moda", serif;
   font-size: 2rem;
@@ -2001,6 +2019,7 @@ body {
   line-height: 1;
   display: block;
 }
+
 .h_img_badge_text {
   font-size: 0.62rem;
   letter-spacing: 0.14em;
@@ -2072,6 +2091,7 @@ body {
   gap: 0.75rem;
   margin-top: 2rem;
 }
+
 .h_story_feat {
   display: flex;
   align-items: center;
@@ -2086,12 +2106,14 @@ body {
   letter-spacing: 0.03em;
   transition: all var(--h-t) var(--h-ease);
 }
+
 .h_story_feat:hover {
   background: rgba(200, 150, 90, 0.14);
   border-color: var(--h-em);
   color: var(--h-em);
   transform: translateX(3px);
 }
+
 .h_story_feat_icon {
   font-size: 1rem;
   flex-shrink: 0;
@@ -2102,6 +2124,7 @@ body {
   position: relative;
   margin-top: 3rem;
 }
+
 .h_timeline::before {
   content: "";
   position: absolute;
@@ -2112,12 +2135,14 @@ body {
   background: linear-gradient(to bottom, var(--h-em), var(--h-rg), transparent);
   opacity: 0.35;
 }
+
 .h_timeline_item {
   display: flex;
   gap: 1.5rem;
   padding-bottom: 2rem;
   position: relative;
 }
+
 .h_timeline_dot {
   width: 29px;
   height: 29px;
@@ -2131,6 +2156,7 @@ body {
   position: relative;
   z-index: 1;
 }
+
 .h_timeline_dot_inner {
   width: 9px;
   height: 9px;
@@ -2138,6 +2164,7 @@ body {
   background: var(--h-em);
   box-shadow: 0 0 10px var(--h-em-glow);
 }
+
 .h_timeline_year {
   font-family: "Bodoni Moda", serif;
   font-size: 0.85rem;
@@ -2146,12 +2173,14 @@ body {
   letter-spacing: 0.06em;
   margin-bottom: 0.25rem;
 }
+
 .h_timeline_event {
   font-size: 0.82rem;
   color: var(--h-silver);
   font-weight: 300;
   line-height: 1.65;
 }
+
 .h_timeline_event strong {
   color: var(--h-white);
   font-weight: 500;
@@ -2189,6 +2218,7 @@ body {
   transition: all var(--h-t) var(--h-ease);
   backdrop-filter: blur(10px);
 }
+
 .h_value_card::after {
   content: "";
   position: absolute;
@@ -2200,6 +2230,7 @@ body {
   );
   pointer-events: none;
 }
+
 .h_value_card:hover {
   border-color: var(--h-em-border);
   transform: translateY(-8px);
@@ -2207,6 +2238,7 @@ body {
     0 20px 60px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(200, 150, 90, 0.1);
 }
+
 .h_value_icon_wrap {
   width: 52px;
   height: 52px;
@@ -2220,10 +2252,12 @@ body {
   margin-bottom: 1.25rem;
   transition: all var(--h-t) var(--h-ease);
 }
+
 .h_value_card:hover .h_value_icon_wrap {
   background: rgba(200, 150, 90, 0.16);
   box-shadow: 0 0 20px var(--h-em-glow);
 }
+
 .h_value_title {
   font-family: "Bodoni Moda", serif;
   font-size: 1.1rem;
@@ -2231,6 +2265,7 @@ body {
   color: var(--h-white);
   margin-bottom: 0.6rem;
 }
+
 .h_value_text {
   font-size: 0.8rem;
   color: var(--h-silver);
@@ -2261,6 +2296,7 @@ body {
   transition: all var(--h-t) var(--h-ease);
   backdrop-filter: blur(10px);
 }
+
 .h_chef_card:hover {
   border-color: var(--h-em-border);
   transform: translateY(-12px);
@@ -2274,6 +2310,7 @@ body {
   aspect-ratio: 1 / 1.1;
   overflow: hidden;
 }
+
 .h_chef_img_wrap::after {
   content: "";
   position: absolute;
@@ -2285,6 +2322,7 @@ body {
     var(--h-bg-card) 100%
   );
 }
+
 .h_chef_img_wrap img {
   width: 100%;
   height: 100%;
@@ -2293,6 +2331,7 @@ body {
   transition: transform 0.7s var(--h-ease);
   filter: grayscale(20%) contrast(1.05);
 }
+
 .h_chef_card:hover .h_chef_img_wrap img {
   transform: scale(1.06);
   filter: grayscale(0%) contrast(1.08);
@@ -2363,11 +2402,13 @@ body {
   font-family: "Jost", sans-serif;
   font-weight: 500;
 }
+
 .h_filter_btn:hover {
   background: var(--h-em-dim);
   color: var(--h-em);
   border-color: var(--h-em);
 }
+
 .h_filter_btn.h_active {
   background: var(--h-em);
   color: var(--h-bg-root);
@@ -2381,6 +2422,7 @@ body {
   z-index: 2;
   text-align: center;
 }
+
 .h_chef_name {
   font-family: "Bodoni Moda", serif;
   font-size: 1.2rem;
@@ -2389,6 +2431,7 @@ body {
   margin-bottom: 0.2rem;
   letter-spacing: -0.01em;
 }
+
 .h_chef_title {
   font-size: 0.65rem;
   letter-spacing: 0.16em;
@@ -2397,6 +2440,7 @@ body {
   font-weight: 500;
   margin-bottom: 0.85rem;
 }
+
 .h_chef_bio {
   font-size: 0.78rem;
   color: var(--h-silver);
@@ -2405,12 +2449,14 @@ body {
   opacity: 0.8;
   margin-bottom: 1.1rem;
 }
+
 .h_chef_specialty {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   justify-content: center;
 }
+
 .h_chef_tag {
   padding: 0.28rem 0.75rem;
   border: 1px solid rgba(200, 150, 90, 0.18);
@@ -2422,6 +2468,7 @@ body {
   background: var(--h-em-dim);
   transition: all var(--h-t) var(--h-ease);
 }
+
 .h_chef_card:hover .h_chef_tag {
   border-color: var(--h-em-border);
   color: var(--h-em);
@@ -2434,6 +2481,7 @@ body {
   margin-top: 1.25rem;
   justify-content: center;
 }
+
 .h_social_btn {
   width: 36px;
   height: 36px;
@@ -2449,6 +2497,7 @@ body {
   transition: all var(--h-t) var(--h-ease);
   text-decoration: none;
 }
+
 .h_social_btn:hover {
   border-color: var(--h-em);
   color: var(--h-em);
@@ -2468,6 +2517,7 @@ body {
   flex-wrap: wrap;
   padding: 2rem 0;
 }
+
 .h_award_item {
   text-align: center;
   padding: 1.25rem 1.75rem;
@@ -2477,6 +2527,7 @@ body {
   min-width: 130px;
   transition: all var(--h-t) var(--h-ease);
 }
+
 .h_award_item:hover {
   border-color: var(--h-rg-border);
   transform: translateY(-3px);
@@ -2494,6 +2545,7 @@ body {
   font-weight: 400;
   margin-bottom: 0.2rem;
 }
+
 .h_award_year {
   font-size: 0.6rem;
   color: var(--h-muted);
@@ -2599,6 +2651,7 @@ body {
     grid-row: auto;
   }
 }
+
 @media (max-width: 575.98px) {
   .h_ambience_grid {
     grid-template-columns: 1fr;
@@ -2633,6 +2686,7 @@ body {
   overflow: hidden;
   transition: all var(--h-t) var(--h-ease);
 }
+
 .h_amb_desc_card::before {
   content: "";
   position: absolute;
@@ -2643,17 +2697,20 @@ body {
   background: radial-gradient(circle, var(--h-rg-dim) 0%, transparent 70%);
   pointer-events: none;
 }
+
 .h_amb_desc_card:hover {
   border-color: var(--h-rg-border);
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(154, 110, 58, 0.1);
 }
+
 .h_amb_desc_icon {
   font-size: 1.8rem;
   margin-bottom: 1rem;
   display: block;
   filter: drop-shadow(0 0 8px rgba(154, 110, 58, 0.35));
 }
+
 .h_amb_desc_title {
   font-family: "Bodoni Moda", serif;
   font-size: 1.15rem;
@@ -2661,6 +2718,7 @@ body {
   color: var(--h-white);
   margin-bottom: 0.7rem;
 }
+
 .h_amb_desc_text {
   font-size: 0.8rem;
   color: var(--h-silver);
@@ -2696,11 +2754,13 @@ body {
   position: relative;
   transition: all var(--h-t) var(--h-ease);
 }
+
 .h_testi_card:hover {
   border-color: var(--h-em-border);
   transform: translateY(-3px);
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
 }
+
 .h_testi_quote {
   font-size: 2.5rem;
   color: var(--h-em);
@@ -2709,6 +2769,7 @@ body {
   margin-bottom: 1rem;
   opacity: 0.5;
 }
+
 .h_testi_text {
   font-family: "Bodoni Moda", serif;
   font-size: 1rem;
@@ -2719,17 +2780,20 @@ body {
   margin-bottom: 1.5rem;
   opacity: 0.9;
 }
+
 .h_testi_stars {
   color: var(--h-rg);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   margin-bottom: 1rem;
 }
+
 .h_testi_author {
   display: flex;
   align-items: center;
   gap: 0.85rem;
 }
+
 .h_testi_avatar {
   width: 40px;
   height: 40px;
@@ -2738,12 +2802,14 @@ body {
   border: 1px solid var(--h-em-border);
   filter: grayscale(20%);
 }
+
 .h_testi_name {
   font-size: 0.82rem;
   color: var(--h-white);
   font-weight: 500;
   margin-bottom: 0.1rem;
 }
+
 .h_testi_source {
   font-size: 0.63rem;
   color: var(--h-muted);
@@ -2764,6 +2830,7 @@ body {
     transform: translateY(0);
   }
 }
+
 @keyframes h_fade_in {
   from {
     opacity: 0;
@@ -2772,6 +2839,7 @@ body {
     opacity: 1;
   }
 }
+
 @keyframes h_slide_right {
   from {
     opacity: 0;
@@ -2786,9 +2854,11 @@ body {
 .h_anim_up {
   animation: h_fade_up 0.7s var(--h-ease) both;
 }
+
 .h_anim_in {
   animation: h_fade_in 0.7s var(--h-ease) both;
 }
+
 .h_anim_right {
   animation: h_slide_right 0.7s var(--h-ease) both;
 }
@@ -2796,18 +2866,23 @@ body {
 .h_d1 {
   animation-delay: 0.08s;
 }
+
 .h_d2 {
   animation-delay: 0.18s;
 }
+
 .h_d3 {
   animation-delay: 0.28s;
 }
+
 .h_d4 {
   animation-delay: 0.38s;
 }
+
 .h_d5 {
   animation-delay: 0.48s;
 }
+
 .h_d6 {
   animation-delay: 0.58s;
 }
@@ -2824,6 +2899,7 @@ body {
     min-height: 70vh;
   }
 }
+
 @media (max-width: 767.98px) {
   .h_section {
     padding: 3rem 0;
@@ -2853,6 +2929,7 @@ body {
     gap: 1rem;
   }
 }
+
 @media (max-width: 479.98px) {
   .h_hero_title {
     font-size: 2.2rem;

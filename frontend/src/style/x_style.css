@@ -2601,6 +2601,9 @@ body {
     overflow-x: auto;
     width: 92vw;
   }
+  .x_section_head{
+    flex-direction: column;
+  }
 }
 
 @media(max-width:320px) {

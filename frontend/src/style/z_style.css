@@ -152,7 +152,7 @@
 }
 
 .z_bar_desc {
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   color: var(--d-text-2);
   max-width: 700px;
   margin: 0 auto 3rem;
@@ -2791,17 +2791,6 @@ body {
   color: var(--d-gold);
 }
 
-/* @media (max-width: 991px) {
-  .z_footer_col { margin-bottom: 2rem; }
-} */
-
-@media (max-width: 1024px) {
-
-  .z_footer {
-    padding: 60px 0 40px;
-  }
-}
-
 @media (max-width: 991px) {
   .z_footer_col {
     margin-bottom: 2rem;
@@ -2809,8 +2798,48 @@ body {
 }
 
 @media (max-width: 768px) {
- .z_footer_bottom {
-    margin-top: 30px;
+  .z_footer {
+    padding: 80px 0 40px;
+  }
+
+  .z_footer_logo {
+    justify-content: center;
+  }
+
+  .z_footer_about {
+    text-align: center;
+  }
+
+  .z_footer_socials {
+    justify-content: center;
+  }
+
+  .z_footer_heading {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    display: block;
+  }
+
+  .z_footer_heading::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .z_footer_links {
+    align-items: center;
+  }
+
+  .z_info_item {
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .z_footer_brand {
+    text-align: center;
   }
 
   .z_footer_logo {
@@ -3015,12 +3044,528 @@ body {
     font-style: italic;
   }
 
-  .z_bar_desc {
-    color: var(--d-text-2);
-    font-size: 1.2rem;
-    max-width: 700px;
-    margin: 0 auto 3rem;
-    line-height: 1.8;
+  .z_footer_info li {
+    justify-content: center;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 576px) {
+  .z_footer_col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  .z_footer_links,
+  .z_footer_info {
+    display: flex;
+    flex-direction: column;
+  }
+
+}
+
+@media (max-width: 576px) {
+
+  .z_footer_logo,
+  .z_footer_socials {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .z_footer_col {
+    text-align: start;
+  }
+
+  .z_footer_links,
+  .z_footer_info {
+    align-items: start;
+  }
+}
+
+@media (max-width: 425px) {
+
+  .z_footer_logo,
+  .z_footer_socials {
+    justify-content: center;
+  }
+
+  .z_res_wine_section {
+    padding: 45px 0 !important;
+  }
+
+  .z_res_testimonial_section {
+    padding: 38px 0;
+  }
+
+  .z_club_btn {
+    right: -3px;
+    padding: 1rem;
+  }
+
+  .z_bar_section {
+    padding: 90px 0px !important;
+  }
+}
+
+/* ── Bar Page Styles ─────────────────────────────────────── */
+.z_bar_page {
+  background-color: var(--d-bg);
+  color: var(--d-text-1);
+}
+
+.z_bar_hero {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: url('https://images.unsplash.com/photo-1574096079513-d8259312b785?w=1600&q=80') center/cover no-repeat;
+  overflow: hidden;
+}
+
+.z_bar_hero_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(8, 7, 5, 0.4), rgba(8, 7, 5, 0.9));
+  z-index: 1;
+}
+
+.z_bar_hero_content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 0 2rem;
+  animation: barFadeInUp 1s var(--d-ease);
+}
+
+@keyframes barFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.z_bar_tag {
+  color: var(--d-bar);
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.z_bar_title {
+  font-family: var(--d-font-serif);
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+
+.z_bar_title em {
+  color: var(--d-gold);
+  font-style: italic;
+}
+
+.z_bar_desc {
+  color: var(--d-text-2);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  line-height: 1.8;
+}
+
+.z_bar_hero_btns {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.z_bar_btn_primary,
+.z_bar_btn_outline,
+.z_bar_btn_gold {
+  padding: 15px 35px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: var(--d-r-pill);
+  transition: all 0.4s var(--d-spring);
+  cursor: pointer;
+}
+
+.z_bar_btn_primary {
+  background: var(--d-gold);
+  border: none;
+  color: var(--d-bg);
+}
+
+.z_bar_btn_primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px var(--d-gold-glow);
+  background: var(--d-gold-light);
+}
+
+.z_bar_btn_outline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.z_bar_btn_outline:hover {
+  border-color: var(--d-gold);
+  color: var(--d-gold);
+}
+
+.z_bar_hero_scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.z_bar_scroll_line {
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--d-gold), transparent);
+  animation: barScrollLine 2s infinite;
+}
+
+@keyframes barScrollLine {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+
+  51% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+/* ── Sections Common ── */
+.z_bar_section {
+  padding: 120px 0;
+}
+
+.z_bar_section_header {
+  text-align: center;
+  margin-bottom: 70px;
+}
+
+.z_bar_subtitle {
+  color: var(--d-bar);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.z_bar_section_title {
+  font-family: var(--d-font-serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--d-text-1);
+}
+
+.z_bar_section_title em {
+  color: var(--d-gold);
+}
+
+/* ── Cocktail Cards ── */
+.z_bar_card {
+  background: var(--d-surface-2);
+  border-radius: var(--d-r-lg);
+  overflow: hidden;
+  border: 1px solid var(--d-border);
+  transition: all 0.4s var(--d-ease);
+}
+
+.z_bar_card:hover {
+  transform: translateY(-15px);
+  border-color: var(--d-gold-subtle);
+  box-shadow: var(--d-shadow-lg);
+}
+
+.z_bar_card_img {
+  height: 350px;
+  position: relative;
+  overflow: hidden;
+}
+
+.z_bar_card_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--d-ease);
+}
+
+.z_bar_card:hover .z_bar_card_img img {
+  transform: scale(1.1);
+}
+
+.z_bar_card_overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+.z_bar_card_price {
+  background: var(--d-gold);
+  color: var(--d-bg);
+  padding: 8px 15px;
+  border-radius: var(--d-r-pill);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.z_bar_card_info {
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.z_bar_card_info h3 {
+  font-family: var(--d-font-serif);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--d-text-1);
+}
+
+.z_bar_card_info p {
+  color: var(--d-text-3);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ── Experience Section ── */
+.z_bar_exp_img {
+  position: relative;
+  padding: 20px;
+}
+
+.z_bar_exp_img img {
+  width: 100%;
+  border-radius: var(--d-r-lg);
+  position: relative;
+  z-index: 2;
+}
+
+.z_bar_exp_accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70%;
+  height: 70%;
+  border: 2px solid var(--d-bar);
+  border-radius: var(--d-r-lg);
+  z-index: 1;
+}
+
+.z_bar_exp_content {
+  padding-left: 2rem;
+}
+
+.z_bar_text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--d-text-2);
+  margin: 2rem 0;
+}
+
+.z_bar_features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.z_bar_feat_item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--d-text-1);
+}
+
+.z_bar_feat_icon {
+  color: var(--d-bar);
+  font-size: 1.5rem;
+}
+
+/* ── Banner ── */
+.z_bar_banner {
+  padding: 100px 0;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+  background: var(--d-surface-3);
+}
+
+.z_bar_banner_content {
+  position: relative;
+  z-index: 2;
+}
+
+.z_bar_banner_content h2 {
+  font-family: var(--d-font-serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin-bottom: 1.5rem;
+}
+
+.z_bar_banner_content h2 em {
+  color: var(--d-gold);
+}
+
+.z_bar_banner_highlight {
+  color: var(--d-bar);
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-size: 1.2rem;
+  margin: 2rem 0;
+}
+
+.z_bar_btn_gold {
+  background: transparent;
+  border: 2px solid var(--d-gold);
+  color: var(--d-gold);
+}
+
+.z_bar_btn_gold:hover {
+  background: var(--d-gold);
+  color: var(--d-bg);
+}
+
+/* ── A La Carte Menu Section ── */
+.z_bar_menu_section {
+  padding: 120px 0;
+  background-color: #000;
+  /* Dark green background as per image */
+}
+
+.z_bar_media_container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.z_bar_main_video {
+  width: 75%;
+  height: 643px;
+  overflow: hidden;
+  /* border-radius: var(--d-r-md); */
+}
+
+.z_bar_main_video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.z_bar_overlap_img {
+  position: absolute;
+  bottom: 25px;
+  right: -30px;
+  width: 250px;
+  height: 300px;
+  overflow: hidden;
+  z-index: 5;
+  box-shadow: var(--d-shadow-lg);
+  border: 5px solid #0c1c1a;
+  /* Matching the background to blend the edge */
+}
+
+.z_bar_overlap_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.z_bar_menu_content {
+  padding-left: 2rem;
+}
+
+.z_bar_menu_title {
+  font-family: var(--d-font-sans);
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  color: var(--d-text-1);
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.z_bar_menu_list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.z_bar_menu_item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1.5rem;
+}
+
+.z_bar_item_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.z_bar_item_name {
+  font-family: var(--d-font-sans);
+  font-size: 1.1rem;
+  color: var(--d-text-1);
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+.z_bar_item_price {
+  font-family: var(--d-font-sans);
+  color: var(--d-gold);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.z_bar_item_desc {
+  color: var(--d-text-3);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: 90%;
+}
+
+/* ── Responsive ── */
+@media (max-width: 992px) {
+  .z_bar_section {
+    padding: 80px 0;
+  }
+
+  .z_bar_exp_content {
+    padding-left: 0;
+    margin-top: 3rem;
   }
 
   .z_bar_hero_btns {
@@ -3171,18 +3716,286 @@ body {
     z-index: 2;
   }
 
-  .z_bar_card_price {
-    background: var(--d-gold);
-    color: var(--d-bg);
-    padding: 8px 15px;
-    border-radius: var(--d-r-pill);
-    font-weight: 700;
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Shapes based on the provided image */
+.z_slide_shape_arch {
+  border-radius: 125px 125px 0 0;
+}
+
+.z_slide_shape_arch_bottom {
+  border-radius: 0 0 125px 125px;
+}
+
+.z_slide_shape_square {
+  border-radius: 0;
+}
+
+.z_slide_shape_custom {
+  border-radius: 0 0 125px 0;
+}
+
+.z_slide_shape_pill {
+  border-radius: 125px;
+}
+
+.z_slide_shape_circle {
+  border-radius: 50%;
+}
+
+.z_slide_shape_diagonal {
+  border-radius: 125px 0 125px 0;
+}
+
+@media (max-width: 992px) {
+  .z_slide_item {
+    width: 200px;
+    height: 280px;
+  }
+
+  .z_slide_shape_arch {
+    border-radius: 100px 100px 0 0;
+  }
+
+  .z_slide_shape_arch_bottom {
+    border-radius: 0 0 100px 100px;
+  }
+
+  .z_slide_shape_custom {
+    border-radius: 0 0 100px 0;
+  }
+
+  .z_slide_shape_pill {
+    border-radius: 100px;
+  }
+
+  .z_slide_shape_diagonal {
+    border-radius: 100px 0 100px 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .z_slide_wrapper {
+    padding: 50px 0;
+  }
+
+  .z_slide_item {
+    width: 160px;
+    height: 220px;
+  }
+
+  .z_slide_shape_arch {
+    border-radius: 80px 80px 0 0;
+  }
+
+  .z_slide_shape_arch_bottom {
+    border-radius: 0 0 80px 80px;
+  }
+
+  .z_slide_shape_custom {
+    border-radius: 0 0 80px 0;
+  }
+
+  .z_slide_shape_pill {
+    border-radius: 80px;
+  }
+
+  .z_slide_shape_diagonal {
+    border-radius: 80px 0 80px 0;
+  }
+}
+
+/* Testimonial Slider Styles */
+.z_bar_testimonial_section {
+  background-color: #000000;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.z_bar_testimonial_container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.z_bar_testimonial_content {
+  flex: 1;
+  text-align: center;
+  padding: 0 60px;
+  color: #ffffff;
+}
+
+.z_bar_testimonial_title {
+  font-family: 'Brush Script MT', cursive;
+  font-size: 3.5rem;
+  color: #d4af37;
+  margin-bottom: 30px;
+  font-weight: normal;
+  line-height: 1.2;
+}
+
+.z_bar_testimonial_text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 25px;
+  color: #ffffff;
+  font-weight: 300;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.z_bar_testimonial_author {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.z_bar_testimonial_nav {
+  background: transparent;
+  border: 2px solid #d4af37;
+  color: #d4af37;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.z_bar_testimonial_nav:hover {
+  background-color: #d4af37;
+  color: #000000;
+  transition: all 0.3s ease;
+}
+
+.z_bar_testimonial_prev {
+  left: 20px;
+}
+
+.z_bar_testimonial_next {
+  right: 20px;
+}
+
+.z_bar_testimonial_dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.z_bar_testimonial_dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #d4af37;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.z_bar_testimonial_dot.active,
+.z_bar_testimonial_dot:hover {
+  background-color: #d4af37;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .z_bar_testimonial_section {
+    padding: 60px 0;
+  }
+
+  .z_bar_testimonial_content {
+    padding: 0 40px;
+  }
+
+  .z_bar_testimonial_title {
+    font-size: 2.8rem;
+  }
+
+  .z_bar_testimonial_text {
+    font-size: 1.1rem;
+  }
+
+  .z_bar_testimonial_nav {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  .z_bar_testimonial_prev {
+    left: 10px;
+  }
+
+  .z_bar_testimonial_next {
+    right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .z_bar_testimonial_section {
+    padding: 50px 0;
+  }
+
+  .z_bar_testimonial_content {
+    padding: 0 70px;
+  }
+
+  .z_bar_testimonial_title {
+    font-size: 2.5rem !important;
+    margin-bottom: 25px !important;
+  }
+
+  .z_bar_testimonial_text {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .z_bar_testimonial_author {
     font-size: 0.9rem;
   }
 
-  .z_bar_card_info {
-    padding: 2.5rem;
-    text-align: center;
+  .z_bar_testimonial_nav {
+    /* width: 40px;
+    height: 40px;
+    font-size: 14px; */
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .z_bar_testimonial_section {
+    padding: 40px 0;
   }
 
   .z_bar_card_info h3 {
@@ -3192,8 +4005,16 @@ body {
     color: var(--d-text-1);
   }
 
-  .z_bar_card_info p {
-    color: var(--d-text-3);
+  .z_bar_testimonial_content {
+    padding: 0;
+  }
+
+  .z_bar_testimonial_title {
+    font-size: 2rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .z_bar_testimonial_text {
     font-size: 0.95rem;
     line-height: 1.6;
   }
@@ -3911,126 +4732,279 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
   }
+}
 
-  .z_bar_testimonial_dot.active,
-  .z_bar_testimonial_dot:hover {
-    background-color: #d4af37;
-    transition: all 0.3s ease;
+/* ── Restaurant Page Responsiveness ─────────────────────── */
+.z_restaurant_hero {
+  background-attachment: scroll !important;
+  /* Better for mobile performance */
+}
+
+.z_res_dish_row {
+  margin-bottom: 80px;
+}
+
+.z_res_dish_img {
+  border-radius: var(--d-r-xl);
+  height: 450px;
+  overflow: hidden;
+}
+
+.z_res_dish_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.z_res_dish_price {
+  color: var(--d-restaurant);
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+}
+
+.z_res_dish_name {
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  margin: 0.5rem 0;
+  font-family: var(--d-font-serif);
+}
+
+.z_res_dish_desc {
+  color: var(--d-text-2);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.z_res_dish_btn {
+  border-color: var(--d-restaurant) !important;
+  color: var(--d-restaurant) !important;
+  padding: 0.8rem 2rem !important;
+}
+
+.z_res_dish_content_col {
+  z-index: 10;
+}
+
+/* Video Section */
+.z_res_video_section {
+  height: 70vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.z_res_video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.z_res_video_overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.z_res_video_title {
+  color: #fff;
+  font-size: clamp(2rem, 6vw, 3.5rem) !important;
+}
+
+.z_res_video_divider {
+  width: 80px;
+  height: 2px;
+  background: var(--d-restaurant);
+  margin: 1.5rem auto;
+}
+
+.z_res_video_desc {
+  color: var(--d-text-1);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Wine Section */
+.z_res_wine_section {
+  padding: 80px 0;
+  background: var(--d-surface-1);
+}
+
+.z_res_wine_header {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem !important;
+}
+
+.z_res_wine_title {
+  text-align: left;
+  font-size: clamp(2rem, 4vw, 2.5rem) !important;
+  margin-top: 1rem;
+}
+
+.z_res_wine_text {
+  color: var(--d-text-2);
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.z_res_wine_feature {
+  background: var(--d-surface-2) !important;
+  padding: 2.5rem !important;
+  border-radius: var(--d-r-lg) !important;
+  border: 1px solid var(--d-border) !important;
+}
+
+.z_res_wine_icon {
+  color: var(--d-restaurant);
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.z_res_wine_feat_title {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.z_res_wine_feat_desc {
+  color: var(--d-text-3);
+  font-size: 0.9rem;
+}
+
+/* Testimonial Section */
+.z_res_testimonial_section {
+  padding: 80px 0;
+  background: var(--d-bg);
+}
+
+.z_res_testimonial_quote {
+  font-size: clamp(4rem, 10vw, 6rem);
+  line-height: 1;
+  color: rgba(200, 150, 90, 0.1);
+  font-family: serif;
+  margin-bottom: -3rem;
+}
+
+.z_res_testimonial_content {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-style: italic;
+  color: var(--d-text-1);
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+.z_res_testimonial_author_wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.z_res_testimonial_line {
+  width: 40px;
+  height: 1px;
+  background: var(--d-restaurant);
+}
+
+.z_res_testimonial_author {
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--d-restaurant);
+  font-size: 0.8rem;
+}
+
+.z_res_testimonial_btns {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+}
+
+.z_res_testimonial_btn {
+  background: none;
+  border: 1px solid var(--d-border);
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Media Queries for Restaurant */
+@media (min-width: 992px) {
+  .z_res_dish_row:nth-child(odd) .z_res_dish_content_col {
+    margin-left: -60px;
   }
 
-  /* Responsive Styles */
-  @media (max-width: 992px) {
-    .z_bar_testimonial_section {
-      padding: 60px 0;
-    }
+  .z_res_dish_row:nth-child(even) .z_res_dish_content_col {
+    margin-right: -60px;
+  }
+}
 
-    .z_bar_testimonial_content {
-      padding: 0 40px;
-    }
-
-    .z_bar_testimonial_title {
-      font-size: 2.8rem;
-    }
-
-    .z_bar_testimonial_text {
-      font-size: 1.1rem;
-    }
-
-    .z_bar_testimonial_nav {
-      width: 45px;
-      height: 45px;
-      font-size: 16px;
-    }
-
-    .z_bar_testimonial_prev {
-      left: 10px;
-    }
-
-    .z_bar_testimonial_next {
-      right: 10px;
-    }
+@media (max-width: 991px) {
+  .z_res_dish_row {
+    margin-bottom: 60px;
+    text-align: center;
   }
 
-  @media (max-width: 768px) {
-    .z_bar_testimonial_section {
-      padding: 50px 0;
-    }
-
-    .z_bar_testimonial_content {
-      padding: 0 30px;
-    }
-
-    .z_bar_testimonial_title {
-      font-size: 2.5rem;
-      margin-bottom: 25px;
-    }
-
-    .z_bar_testimonial_text {
-      font-size: 1rem;
-      margin-bottom: 20px;
-    }
-
-    .z_bar_testimonial_author {
-      font-size: 0.9rem;
-    }
-
-    .z_bar_testimonial_nav {
-      width: 40px;
-      height: 40px;
-      font-size: 14px;
-    }
+  .z_res_dish_img {
+    height: 350px;
+    margin-bottom: 2rem;
   }
 
-  @media (max-width: 576px) {
-    .z_bar_testimonial_section {
-      padding: 40px 0;
-    }
-
-    .z_bar_testimonial_container {
-      padding: 0 15px;
-    }
-
-    .z_bar_testimonial_content {
-      padding: 0 20px;
-    }
-
-    .z_bar_testimonial_title {
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-
-    .z_bar_testimonial_text {
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .z_bar_testimonial_nav {
-      width: 35px;
-      height: 35px;
-      font-size: 12px;
-    }
-
-    .z_bar_testimonial_prev {
-      left: 5px;
-    }
-
-    .z_bar_testimonial_next {
-      right: 5px;
-    }
-
-    .z_bar_testimonial_dots {
-      margin-top: 30px;
-      gap: 8px;
-    }
-
-    .z_bar_testimonial_dot {
-      width: 10px;
-      height: 10px;
-    }
+  .z_res_dish_content_col {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 1rem;
   }
 
-  @media (max-width: 768px) {
-    .z_slide_wrapper {
-      padding: 23px 0 35px;
-    }
+  .z_floating_card {
+    padding: 2rem;
   }
+
+  .z_res_wine_header {
+    text-align: center;
+  }
+
+  .z_res_wine_title {
+    text-align: center;
+  }
+
+  .z_res_video_section {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .z_res_dish_img {
+    height: 250px;
+  }
+
+  .z_res_testimonial_author_wrap {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .z_res_testimonial_line {
+    display: none;
+  }
+
+  .z_res_wine_feature {
+    padding: 1.5rem !important;
+  }
+
+  .z_res_video_section {
+    height: 40vh;
+  }
+}

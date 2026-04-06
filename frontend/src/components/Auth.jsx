@@ -196,7 +196,7 @@ const RegisterForm = ({ onSuccess, onToast }) => {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="z_slide_in">
-      <div className="z_form_title">Create an <em>account.</em></div>
+      <div className="z_form_title">Create an <em>Account.</em></div>
       <div className="z_form_desc">Join us for exclusive dining, café &amp; bar access.</div>
 
       <Field label="Full name" id="reg_name" icon={<FiUser />}
