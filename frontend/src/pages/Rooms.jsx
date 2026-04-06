@@ -139,7 +139,7 @@ export default function Rooms() {
             </section>
 
             {/* Amenities Section - Minimal Icons */}
-            <section style={{ padding: '120px 0', background: 'var(--d-surface-2)' }}>
+            <section className="z_bar_section" style={{ padding: '120px 0', background: 'var(--d-surface-2)' }}>
                 <div className="container">
                     <div className="row g-5">
                         <div className="col-lg-3 col-md-6">

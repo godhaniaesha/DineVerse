@@ -204,7 +204,7 @@
 /* ── Form Side Section ─────────────────────── */
 .z_auth_form_side {
   flex: 1;
-  padding: 60px 50px;
+  padding: 36px 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   text-align: left;
 }
 
@@ -258,7 +258,7 @@
   background: var(--d-surface-2);
   border-radius: var(--d-r-md);
   padding: 4px;
-  margin-bottom: 36px;
+  margin-bottom: 15px;
   border: 1px solid var(--d-border);
   position: relative;
   isolation: isolate;
@@ -319,7 +319,7 @@
   font-weight: 400;
   color: var(--d-text-1);
   margin-bottom: 6px;
-  text-align: left;
+  text-align: center;
 }
 .z_form_title em {
   font-style: italic;
@@ -330,7 +330,7 @@
   color: var(--d-text-3);
   margin-bottom: 28px;
   line-height: 1.5;
-  text-align: left;
+  text-align: center;
 }
 
 /* ── Input group ─────────────────────────── */

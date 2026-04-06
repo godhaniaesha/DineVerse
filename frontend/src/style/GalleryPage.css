@@ -77,7 +77,7 @@
 
 @media (max-width: 600px) {
   .gp_hero {
-    padding: 72px 0 18px;
+    padding: 31px 0 18px;
   }
 }
 
@@ -262,6 +262,11 @@
   .gp_item {
     margin-bottom: 12px;
   }
+}
+@media (max-width: 576px) {
+  .gp_grid {
+    margin-bottom: 0;
+}
 }
 
 @media (max-width: 480px) {
