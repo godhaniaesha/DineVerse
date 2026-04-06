@@ -2565,6 +2565,9 @@ body {
   .x_trending_card {
     max-width: 305px;
   }
+  .x_blog_hero {
+        padding: 80px 24px 60px;
+  }
 }
 
 @media(max-width:680px) {
@@ -2577,11 +2580,14 @@ body {
   }
 
   .x_bh_title {
-    font-size: clamp(40px, 12vw, 60px);
+    font-size: clamp(40px, 10vw, 60px);
   }
 
   .x_feat_content {
     padding: 20px;
+  }
+  .x_blog_hero {
+        padding: 50px 24px 20px;
   }
 }
 

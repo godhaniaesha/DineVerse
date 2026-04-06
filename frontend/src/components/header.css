@@ -734,7 +734,6 @@ button { font-family: var(--d-font-sans) !important; }
 
 .d_drawer__cta--table {
   background: var(--d-gold) !important;
-  color: #08060300 !important;
   color: #080603 !important;
   position: relative !important;
   overflow: hidden !important;
@@ -771,18 +770,52 @@ button { font-family: var(--d-font-sans) !important; }
 }
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
-@media (max-width: 1100px) {
-  .d_btn-room { display: none !important; }
-  .d_header__bar,
-  .d_wrapper { padding-left: 28px !important; padding-right: 28px !important; }
+@media (max-width: 1440px) {
+  .d_header__bar {
+    padding: 0 32px !important;
+    gap: 20px !important;
+  }
+  .d_nav__link {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+  .d_actions {
+    gap: 8px !important;
+  }
+
+  /* Book buttons — Icon only from 1440px to 991px */
+  .d_btn-label { display: none !important; }
+  .d_btn-table, .d_btn-room {
+    width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+  }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1280px) {
+  .d_header__bar { gap: 16px !important; }
+  .d_nav__link { padding: 10px 12px !important; }
+}
+
+@media (max-width: 1100px) {
+  .d_header__bar,
+  .d_wrapper { padding-left: 24px !important; padding-right: 24px !important; }
+}
+
+@media (max-width: 991px) {
   .d_nav         { display: none !important; }
   .d_btn-table   { display: none !important; }
   .d_btn-room    { display: none !important; }
   .d_hamburger   { display: flex !important; }
   .d_header__bar { padding: 0 24px !important; }
+
+  /* Search Overlay adjustments for tablets */
+  .d_search { padding-top: 100px !important; }
+  .d_search__panel { width: min(600px, calc(100vw - 32px)) !important; }
+  .d_search__row { padding: 16px 20px !important; }
+  .d_search__tags { padding: 16px 20px !important; }
 }
 
 @media (max-width: 600px) {
@@ -795,6 +828,14 @@ button { font-family: var(--d-font-sans) !important; }
   .d_logo__name  { font-size: 22px !important; }
   .d_strip__item { padding: 0 22px !important; font-size: 10px !important; letter-spacing: 0.14em !important; }
   .d_drawer      { width: 100vw !important; }
+  
+  /* Search Responsive adjustments */
+  .d_search { padding-top: 80px !important; }
+  .d_search__row { padding: 14px 18px !important; gap: 12px !important; }
+  .d_search__input { font-size: 15px !important; }
+  .d_search__icon { font-size: 18px !important; }
+  .d_search__tags { padding: 14px 18px !important; gap: 6px !important; }
+  .d_search__tag { padding: 5px 12px !important; font-size: 12px !important; }
 }
 
 @media (max-width: 380px) {
