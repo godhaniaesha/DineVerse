@@ -27,6 +27,7 @@ import AdminAnalytics from "../admin/pages/AdminAnalytics";
 import AdminGuests from "../admin/pages/AdminGuests";
 import AdminSettings from "../admin/pages/AdminSettings";
 import AdminTables from "../admin/pages/AdminTables";
+import AdminRoomTypes from "../admin/pages/AdminRoomTypes";
 import AdminBlogs from "../admin/pages/AdminBlogs";
 import AdminProfile from "../admin/pages/AdminProfile";
 import AdminReviews from "../admin/pages/AdminReviews";
@@ -149,6 +150,7 @@ function AppRoutes() {
             <Route path="guests" element={<AdminRouteGuard path="/admin/guests"><AdminGuests /></AdminRouteGuard>} />
             <Route path="menu" element={<AdminRouteGuard path="/admin/menu"><AdminMenu /></AdminRouteGuard>} />
             <Route path="tables" element={<AdminRouteGuard path="/admin/tables"><AdminTables /></AdminRouteGuard>} />
+            <Route path="room-types" element={<AdminRouteGuard path="/admin/room-types"><AdminRoomTypes /></AdminRouteGuard>} />
             <Route path="rooms" element={<AdminRouteGuard path="/admin/rooms"><AdminRooms /></AdminRouteGuard>} />
             <Route path="gallery" element={<AdminRouteGuard path="/admin/gallery"><AdminGallery /></AdminRouteGuard>} />
             <Route path="blogs" element={<AdminRouteGuard path="/admin/blogs"><AdminBlogs /></AdminRouteGuard>} />

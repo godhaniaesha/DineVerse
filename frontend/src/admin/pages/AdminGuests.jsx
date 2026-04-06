@@ -49,7 +49,7 @@ export default function AdminGuests() {
     <div className="ad_page">
       <h2 className="ad_h2">Guests</h2>
       <p className="ad_p">Track frequent guests and manage VIP preferences.</p>
-      <div className="rooms__header"><div /><button className="rooms__add_btn" onClick={openAdd}>Add Guest</button></div>
+      <div className="rooms__header"><div /></div>
 
       <div className="ad_cards_grid">
         <article className="ad_card">
@@ -112,14 +112,14 @@ export default function AdminGuests() {
         </table>
       </div>
 
-      <section className="ad_card" style={{ marginTop: 16 }}>
+      {/* <section className="ad_card" style={{ marginTop: 16 }}>
         <h3 className="ad_card__title">Guest Engagement Suggestions</h3>
         <ul className="ad_list">
           <li className="ad_list__item">Offer loyalty coupons to guests with 3+ visits.</li>
           <li className="ad_list__item">Send personalized festive menus to VIP guests.</li>
           <li className="ad_list__item">Track birthdays and anniversaries for targeted offers.</li>
         </ul>
-      </section>
+      </section> */}
       {(modal?.mode === "add" || modal?.mode === "edit") && (
         <>
           <div className="rooms__modal_overlay" onClick={close} />

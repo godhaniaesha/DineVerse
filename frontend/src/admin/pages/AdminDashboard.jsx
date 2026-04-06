@@ -1,3 +1,5 @@
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 const KPI_CARDS = [
   { label: "Today's Reservations", value: 18, trend: "+12%" },
   { label: "Active Rooms", value: "26 / 34", trend: "+4%" },
@@ -12,17 +14,18 @@ const RECENT_ACTIVITY = [
   { id: 4, time: "09:30 AM", text: "Gallery image approved for homepage slider" },
 ];
 
+const TOP_ITEMS_CHART_DATA = [
+  { time: "12 AM", "Truffle Pasta": 5, "Signature Burger": 3, "Seafood Risotto": 2, "Chocolate Dome": 1 },
+  { time: "6 AM", "Truffle Pasta": 8, "Signature Burger": 6, "Seafood Risotto": 4, "Chocolate Dome": 2 },
+  { time: "12 PM", "Truffle Pasta": 18, "Signature Burger": 8, "Seafood Risotto": 10, "Chocolate Dome": 5 },
+  { time: "6 PM", "Truffle Pasta": 34, "Signature Burger": 29, "Seafood Risotto": 23, "Chocolate Dome": 19 },
+];
+
 const TOP_ITEMS = [
   { name: "Truffle Pasta", orders: 34 },
   { name: "Signature Burger", orders: 29 },
   { name: "Seafood Risotto", orders: 23 },
   { name: "Chocolate Dome", orders: 19 },
-];
-
-const ALERTS = [
-  { id: 1, text: "Room 202 is in maintenance for 2 days." },
-  { id: 2, text: "Low stock: Fresh salmon and imported cheese." },
-  { id: 3, text: "2 reservations awaiting manual confirmation." },
 ];
 
 const TODAY_TABLE = [
@@ -56,7 +59,7 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="ad_two_col" style={{ marginTop: 16 }}>
+      <div className="ad_two_col" style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(480px, 1fr))", gap: "16px" }}>
         <section className="ad_card">
           <h3 className="ad_card__title">Recent Activity</h3>
           <ul className="ad_list">
@@ -71,36 +74,21 @@ export default function AdminDashboard() {
 
         <section className="ad_card">
           <h3 className="ad_card__title">Top Menu Items</h3>
-          <ul className="ad_list">
-            {TOP_ITEMS.map((item) => (
-              <li key={item.name} className="ad_list__item ad_list__item--between">
-                <span>{item.name}</span>
-                <strong>{item.orders} orders</strong>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <div className="ad_two_col" style={{ marginTop: 16 }}>
-        <section className="ad_card">
-          <h3 className="ad_card__title">Quick Actions</h3>
-          <div className="ad_row_actions">
-            <button className="ad_btn ad_btn--primary">Create Reservation</button>
-            <button className="ad_btn ad_btn--ghost">Add Menu Item</button>
-            <button className="ad_btn ad_btn--ghost">Upload Gallery Photo</button>
+          <div style={{ width: "100%", height: "auto", minHeight: "300px" }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={TOP_ITEMS_CHART_DATA} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+                <XAxis dataKey="time" stroke="#666" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#666" tick={{ fontSize: 12 }} />
+                <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} />
+                <Legend wrapperStyle={{ fontSize: "12px" }} />
+                <Line type="monotone" dataKey="Truffle Pasta" stroke="#d4a373" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="Signature Burger" stroke="#ff6b6b" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="Seafood Risotto" stroke="#4ecdc4" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="Chocolate Dome" stroke="#a78bfa" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-        </section>
-        <section className="ad_card">
-          <h3 className="ad_card__title">Important Alerts</h3>
-          <ul className="ad_list">
-            {ALERTS.map((alert) => (
-              <li key={alert.id} className="ad_list__item">
-                <span className="ad_chip">Alert</span>
-                <span>{alert.text}</span>
-              </li>
-            ))}
-          </ul>
         </section>
       </div>
 

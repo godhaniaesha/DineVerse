@@ -116,8 +116,8 @@ export default function AdminProfile() {
                 <label className="rooms__form_label">Role</label>
                 <input
                   className="rooms__form_input"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  value={form.role}
+                  onChange={(e) => setForm({ ...form, role: e.target.value })}
                 />
               </div>
             </div>

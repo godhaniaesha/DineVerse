@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 const INITIAL_BLOGS = [
-  { id: 1, title: "Summer Dining Trends", author: "Admin", image: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80", status: "published" },
-  { id: 2, title: "Top 5 Signature Dishes", author: "Chef Team", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", status: "draft" },
+  { id: 1, title: "Summer Dining Trends", short_des: "Explore latest dining trends", des: "Detailed description...", author: "Admin", author_img: "https://images.unsplash.com/photo-1564564321837-a57b7a5e50d7?w=400&q=80", image: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80", like: 125, area: "Restaurant", status: "published" },
+  { id: 2, title: "Top 5 Signature Dishes", short_des: "Must-try dishes", des: "Detailed description...", author: "Chef Team", author_img: "https://images.unsplash.com/photo-1564564321837-a57b7a5e50d7?w=400&q=80", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", like: 89, area: "Cafe", status: "draft" },
 ];
 
-const EMPTY_FORM = { title: "", author: "", image: "", status: "draft" };
+const EMPTY_FORM = { title: "", short_des: "", des: "", author: "", author_img: "", image: "", like: 0, area: "Restaurant", status: "draft" };
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
 const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
 
@@ -32,7 +32,7 @@ export default function AdminBlogs() {
   const close = () => setModal(null);
 
   const save = () => {
-    if (!form.title.trim() || !form.author.trim() || !form.image.trim()) return;
+    if (!form.title.trim() || !form.author.trim() || !form.image.trim() || !form.short_des.trim() || !form.des.trim() || !form.author_img.trim()) return;
     if (modal.mode === "add") setBlogs((prev) => [...prev, { id: Date.now(), ...form }]);
     if (modal.mode === "edit") setBlogs((prev) => prev.map((b) => (b.id === modal.blog.id ? { ...b, ...form } : b)));
     close();
@@ -47,11 +47,11 @@ export default function AdminBlogs() {
       </div>
       <div className="ad_table_wrap">
         <table className="ad_table">
-          <thead><tr><th>Cover</th><th>Title</th><th>Author</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Cover</th><th>Title</th><th>Author</th><th>Area</th><th>Likes</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             {blogs.map((blog) => (
               <tr key={blog.id}>
-                <td><img src={blog.image} alt={blog.title} className="ad_gallery_img" style={{ width: 90, height: 52, marginBottom: 0 }} /></td><td>{blog.title}</td><td>{blog.author}</td><td><span className="ad_chip">{blog.status}</span></td>
+                <td><img src={blog.image} alt={blog.title} className="ad_gallery_img" style={{ width: 90, height: 52, marginBottom: 0 }} /></td><td>{blog.title}</td><td>{blog.author}</td><td>{blog.area}</td><td>{blog.like}</td><td><span className="ad_chip">{blog.status}</span></td>
                 <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit blog" onClick={() => openEdit(blog)}><IcEdit /></button><button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete blog" onClick={() => openDelete(blog)}><IcTrash /></button></td>
               </tr>
             ))}
@@ -61,8 +61,15 @@ export default function AdminBlogs() {
       {(modal?.mode === "add" || modal?.mode === "edit") && (
         <Modal title={modal.mode === "add" ? "Add Blog" : "Edit Blog"} onClose={close}>
           <div className="rooms__form_row"><label className="rooms__form_label">Title</label><input required className="rooms__form_input" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Short Description</label><input className="rooms__form_input" value={form.short_des} onChange={(e) => setForm((f) => ({ ...f, short_des: e.target.value }))} placeholder="Brief summary..." /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Full Description</label><textarea className="rooms__form_input" value={form.des} onChange={(e) => setForm((f) => ({ ...f, des: e.target.value }))} placeholder="Detailed content..." rows="3" /></div>
           <div className="rooms__form_row"><label className="rooms__form_label">Author</label><input required className="rooms__form_input" value={form.author} onChange={(e) => setForm((f) => ({ ...f, author: e.target.value }))} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Author Image URL</label><input className="rooms__form_input" value={form.author_img} onChange={(e) => setForm((f) => ({ ...f, author_img: e.target.value }))} placeholder="https://..." /></div>
           <div className="rooms__form_row"><label className="rooms__form_label">Cover Image URL</label><input required className="rooms__form_input" value={form.image} onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))} placeholder="https://..." /></div>
+          <div className="rooms__form_grid2">
+            <div><label className="rooms__form_label">Likes</label><input type="number" className="rooms__form_input" value={form.like} onChange={(e) => setForm((f) => ({ ...f, like: Number(e.target.value) }))} /></div>
+            <div><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}><option value="Restaurant">Restaurant</option><option value="Cafe">Cafe</option><option value="Bar">Bar</option></select></div>
+          </div>
           <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option value="draft">Draft</option><option value="published">Published</option></select></div>
           <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={save}>Save</button></div>
         </Modal>

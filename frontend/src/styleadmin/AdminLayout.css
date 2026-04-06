@@ -460,7 +460,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 10px 5px 5px;
+  padding: 5px 5px 5px 5px;
   border-radius: var(--ad-r-full);
   border: 1px solid var(--ad-border);
   background: transparent;

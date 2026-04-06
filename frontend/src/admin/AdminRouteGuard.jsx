@@ -27,7 +27,6 @@ const ROLE_ROUTE_MAP = {
       "/admin/bartender-panel",
       "/admin/manager-panel",
       "/admin/housekeeping-panel",
-      "/admin/pos",
       "/admin/guests",
       "/admin/menu",
       "/admin/tables",
