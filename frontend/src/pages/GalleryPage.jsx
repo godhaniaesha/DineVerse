@@ -34,7 +34,7 @@ const GALLERY = [
   },
   {
     id: 4,
-    title: "Anniversary Celebration",
+    title: "Celebration",
     category: "Events",
     tag: "events",
     img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&q=80",
@@ -111,7 +111,7 @@ const GALLERY = [
     title: "Chef’s Counter",
     category: "Restaurant",
     tag: "restaurant",
-    img: "https://images.unsplash.com/photo-1544022613-8dac05c2e26b?w=700&q=80",
+    img: "https://www.vmcdn.ca/f/files/via/images/food/folietta-restaurant-chefs-counter-kitchen.jpeg;w=960",
     shape: "z_slide_shape_arch",
   },
   {
@@ -197,12 +197,12 @@ const GALLERY = [
 ];
 
 const TABS = [
-  { id: "all",        label: "All",        icon: <MdOutlinePhotoLibrary /> },
+  { id: "all", label: "All", icon: <MdOutlinePhotoLibrary /> },
   { id: "restaurant", label: "Restaurant", icon: <HiSparkles /> },
-  { id: "cafe",       label: "Café",       icon: <HiSparkles /> },
-  { id: "bar",        label: "Bar",        icon: <PiFrameCornersBold /> },
-  { id: "rooms",      label: "Rooms",      icon: <HiSparkles /> },
-  { id: "events",     label: "Events",     icon: <HiSparkles /> },
+  { id: "cafe", label: "Café", icon: <HiSparkles /> },
+  { id: "bar", label: "Bar", icon: <PiFrameCornersBold /> },
+  { id: "rooms", label: "Rooms", icon: <HiSparkles /> },
+  { id: "events", label: "Events", icon: <HiSparkles /> },
 ];
 
 /* ── LIGHTBOX ─────────────────────────────────────────────── */
@@ -341,7 +341,7 @@ export default function GalleryPage() {
           </div>
 
           {/* Masonry grid with custom cursor logic restricted to the grid area */}
-          <div 
+          <div
             className="gp_grid_area"
             style={{ position: "relative" }}
             ref={containerRef}
@@ -381,11 +381,11 @@ export default function GalleryPage() {
                     <div className="gp_item_caption">
                       <span className="gp_item_title">{item.title}</span>
                       <span className="gp_item_cat">{item.category}</span>
+                      <span className="gp_item_expand" aria-hidden="true">
+                        <TbMaximize />
+                      </span>
                     </div>
                   </div>
-                  <span className="gp_item_expand" aria-hidden="true">
-                    <TbMaximize />
-                  </span>
                 </div>
               ))}
             </div>

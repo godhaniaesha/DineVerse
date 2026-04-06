@@ -180,10 +180,11 @@
   transition: background 0.36s var(--d-ease);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: 18px 18px;
   z-index: 2;
+  text-align: center;
 }
 
 .gp_item:hover .gp_item_overlay {
@@ -196,6 +197,8 @@
   transition: all 0.32s var(--d-ease);
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 4px;
 }
 
@@ -221,10 +224,11 @@
 /* EXPAND ICON */
 
 .gp_item_expand {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 3;
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+  /* z-index: 3; */
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -237,13 +241,13 @@
   font-size: 15px;
   color: var(--d-gold-light);
   opacity: 0;
-  transform: scale(0.85);
+  /* transform: scale(0.85); */
   transition: all 0.28s var(--d-spring);
 }
 
 .gp_item:hover .gp_item_expand {
   opacity: 1;
-  transform: scale(1);
+  /* transform: scale(1); */
 }
 
 /* GRID RESPONSIVE */
@@ -259,6 +263,7 @@
     columns: 2;
     column-gap: 12px;
   }
+
   .gp_item {
     margin-bottom: 12px;
   }
@@ -269,6 +274,7 @@
     columns: 1;
     column-gap: 0;
   }
+
   .gp_item {
     margin-bottom: 10px;
   }
@@ -319,13 +325,17 @@
   border: 1px solid var(--d-border-strong);
   position: relative;
   background: #000;
+  width: 100%;
+  height: 60vh;
+  max-width: 100vw;
+  max-height: 90vh;
 }
 
 .gp_lightbox__img {
   width: 100%;
+  height: 100%;
   display: block;
-  max-height: 75vh;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .gp_lightbox__img-wrap::after {
@@ -398,9 +408,9 @@
 }
 
 .gp_lightbox__close {
-  position: fixed;
-  top: 24px;
-  right: 28px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -435,9 +445,11 @@
   .gp_container {
     padding: 0 16px;
   }
+
   .gp_lightbox__nav--prev {
     left: -14px;
   }
+
   .gp_lightbox__nav--next {
     right: -14px;
   }

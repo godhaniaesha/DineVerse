@@ -514,6 +514,7 @@
 
 .sp_bottom_cta_actions {
   display: flex;
+  justify-content: end;
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -537,7 +538,7 @@
 
 @media (max-width: 900px) {
   .sp_hero {
-    padding: 80px 16px 32px;
+    padding: 38px 16px 32px;
   }
 
   .sp_hero_inner {
@@ -606,6 +607,9 @@
 
   .d_serv_card {
     padding: 36px 26px !important;
+  }
+  .sp_bottom_cta_actions {
+    justify-content: start;
   }
 }
 
@@ -859,10 +863,6 @@
   .sp_timeline_track {
     grid-template-columns: 1fr;
     row-gap: 18px;
-  }
-
-  .sp_timeline_line {
-    display: none;
   }
 
   .sp_timeline_item {
