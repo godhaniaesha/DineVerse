@@ -5,6 +5,7 @@ import { TbMaximize } from "react-icons/tb";
 import { PiFrameCornersBold } from "react-icons/pi";
 import { MdOutlinePhotoLibrary } from "react-icons/md";
 import "../style/GalleryPage.css";
+import "../style/z_style.css";
 
 /* ── GALLERY DATA ─────────────────────────────────────────── */
 const GALLERY = [

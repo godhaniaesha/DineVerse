@@ -42,11 +42,11 @@ export default function Footer() {
                             {/* Quick Links */}
                             <div className="col-md-3 col-6 z_footer_col">
                                 <h4 className="z_footer_heading">Explore</h4>
-                                <ul className="z_footer_links list-unstyled">
+                                <ul className="z_footer_links list-unstyled mb-0">
                                     <li><Link to="/"><MdArrowForward className="z_link_icon" /> Home</Link></li>
                                     <li><Link to="/about"><MdArrowForward className="z_link_icon" /> About Us</Link></li>
                                     <li><Link to="/services"><MdArrowForward className="z_link_icon" /> Services</Link></li>
-                                    <li><Link to="/menu"><MdArrowForward className="z_link_icon" /> Our Menu</Link></li>
+                                    <li><Link to="/blog"><MdArrowForward className="z_link_icon" />Blog</Link></li>
                                     <li><Link to="/gallerypage"><MdArrowForward className="z_link_icon" /> Gallery</Link></li>
                                 </ul>
                             </div>
@@ -54,7 +54,7 @@ export default function Footer() {
                             {/* Booking Links */}
                             <div className="col-md-3 col-6 z_footer_col">
                                 <h4 className="z_footer_heading">Reservations</h4>
-                                <ul className="z_footer_links list-unstyled">
+                                <ul className="z_footer_links list-unstyled mb-0">
                                     <li><Link to="/bookTable"><MdArrowForward className="z_link_icon" /> Book a Table</Link></li>
                                     <li><Link to="/bookRoom"><MdArrowForward className="z_link_icon" /> Book a Room</Link></li>
                                     <li><Link to="/bar"><MdArrowForward className="z_link_icon" /> Bar Access</Link></li>

@@ -201,6 +201,7 @@ button { font-family: var(--d-font-sans) !important; }
   flex: 1 !important;
   justify-content: center !important;
   list-style: none !important;
+  margin-bottom: 0px !important;
 }
 
 /* Nav items — NO dots, clean text links with underline reveal */

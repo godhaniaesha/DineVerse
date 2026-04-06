@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdClose } from "react-icons/md";
 import { Link } from "react-router-dom";
+import "../style/z_style.css";
 
 const GALLERY_IMAGES = [
     { id: 1, url: "https://i.pinimg.com/736x/70/e2/4d/70e24d7713367a5e5ca1f908ef72d617.jpg", shape: "z_slide_shape_arch" }, // Restaurant Interior
