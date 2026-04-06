@@ -238,7 +238,8 @@ const ServicePage = () => {
             {TIMELINE.map((slot, index) => (
               <div key={slot.time} className="sp_timeline_item">
                 <div className="sp_timeline_point" />
-                {index < TIMELINE.length - 1 && <div className="sp_timeline_line" />}
+                <div className="sp_timeline_line" />
+                {/* {index < TIMELINE.length - 1 && } */}
                 <div className="sp_timeline_content">
                   <span className="sp_timeline_time">{slot.time}</span>
                   <h3 className="sp_timeline_label">{slot.label}</h3>
