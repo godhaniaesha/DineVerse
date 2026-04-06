@@ -83,12 +83,12 @@ function DrinkCard({ drink }) {
         <span className="d_bar_card__abv">{drink.abv}</span>
 
         {/* Hover overlay */}
-        <div className="d_bar_card__overlay">
+        {/* <div className="d_bar_card__overlay">
           <button className="d_bar_card__peek-btn">
             <TbEye style={{ fontSize: 13 }} />
             View Drink
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="d_bar_card__body">

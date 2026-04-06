@@ -1,74 +1,16 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../style/DishDetailsPage.css';
-
-const DISHES = [
-  {
-    id: '1',
-    name: 'Truffle Risotto',
-    category: 'Main Course',
-    price: '₹1,450',
-    badge: 'Chef’s signature',
-    image:
-      'https://images.pexels.com/photos/3298180/pexels-photo-3298180.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    shortDesc:
-      'Creamy arborio rice finished with shaved black truffle and aged parmesan.',
-    description:
-      'Slow-cooked arborio rice, layered with house vegetable stock, mascarpone, and aged parmesan, then finished with hand-shaved black truffle and a drizzle of truffle oil for depth and aroma.',
-    serves: '1 guest',
-    prepTime: '25–30 min',
-    spiceLevel: 'Mild',
-    chefNote:
-      'We recommend enjoying this risotto as soon as it reaches your table for the ideal texture.',
-    ingredients: [
-      'Arborio rice',
-      'Black truffle',
-      'Parmesan',
-      'Mascarpone',
-      'White wine',
-      'Vegetable stock',
-      'Fresh herbs',
-    ],
-    allergens: ['Milk / Dairy'],
-    bestPairedWith: ['Old-world Chardonnay', 'Sparkling water'],
-  },
-  {
-    id: '2',
-    name: 'Charred Sea Bass',
-    category: 'Main Course',
-    price: '₹1,850',
-    badge: 'Limited availability',
-    image:
-      'https://images.pexels.com/photos/46239/salmon-dish-food-meal-46239.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    shortDesc:
-      'Pan-roasted sea bass with smoked butter sauce and citrus fennel salad.',
-    description:
-      'Line-caught sea bass pan-roasted and kissed by charcoal, served with a smoked butter jus, charred lemon, and a refreshing fennel–citrus salad to balance richness.',
-    serves: '1 guest',
-    prepTime: '20–25 min',
-    spiceLevel: 'Medium',
-    chefNote:
-      'Best enjoyed medium-well; please let us know if you prefer a different doneness.',
-    ingredients: [
-      'Sea bass',
-      'Smoked butter',
-      'Fennel',
-      'Citrus',
-      'Charcoal oil',
-      'Fresh herbs',
-    ],
-    allergens: ['Fish', 'Milk / Dairy'],
-    bestPairedWith: ['Dry Riesling', 'Citrus spritz'],
-  },
-];
+import { MENU_ITEMS, BADGE_META } from './Menu';
 
 const DishDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const dish = DISHES.find((d) => d.id === id);
+  // Find dish from MENU_ITEMS. Handle both string and number ID comparison.
+  const foundItem = MENU_ITEMS.find((d) => d.id.toString() === id);
 
-  if (!dish) {
+  if (!foundItem) {
     return (
       <main className="dd_page">
         <section className="dd_container dd_not_found">
@@ -81,98 +23,122 @@ const DishDetailsPage = () => {
     );
   }
 
-  return (
-    <main className="dd_page">
-      <section className="dd_shell">
-        <div className="dd_container">
+  // Map MENU_ITEMS structure to the expected dish structure
+  const dish = {
+    ...foundItem,
+    image: foundItem.img,
+    description: foundItem.desc,
+    shortDesc: foundItem.tag || foundItem.category,
+    serves: foundItem.serves || '1 guest',
+    prepTime: foundItem.time || '20 min',
+    spiceLevel: foundItem.badges?.includes('spicy') ? 'Spicy' : 'Mild',
+    chefNote: foundItem.chefNote || 'Chef’s special preparation for the evening.',
+    ingredients: foundItem.ingredients || ['Fresh ingredients', 'House-made sauce', 'Organic herbs'],
+    allergens: foundItem.allergens || (foundItem.badges?.includes('veg') ? ['None'] : ['Check with server']),
+    bestPairedWith: foundItem.bestPairedWith || ['House White Wine', 'Sparkling Water'],
+    badge: foundItem.badges?.[0] ? BADGE_META[foundItem.badges[0]]?.label : null
+   };
+ 
+   return (
+     <main className="dd_page">
+      <div className="dd_canvas">
+        {/* Navigation */}
+        <nav className="dd_nav">
           <button className="dd_back_link" onClick={() => navigate(-1)}>
-            ← Back to menu
+            <span className="dd_arrow">←</span> Return to Selection
           </button>
+        </nav>
 
-          <article className="dd_card">
-            {/* IMAGE */}
-            <div className="dd_media">
-              <div className="dd_media_inner">
-                <img src={dish.image} alt={dish.name} className="dd_image" />
-                {dish.badge && <span className="dd_badge">{dish.badge}</span>}
+        <div className="dd_grid_layout">
+          {/* Hero Media Section */}
+          <section className="dd_hero">
+            <div className="dd_media_frame">
+              <img src={dish.image} alt={dish.name} className="dd_hero_img" />
+              {dish.badge && <div className="dd_hero_badge">{dish.badge}</div>}
+              <div className="dd_img_overlay"></div>
+            </div>
+          </section>
+
+          {/* Detailed Info Section */}
+          <section className="dd_info_panel">
+            <header className="dd_header">
+              <span className="dd_pre_title">{dish.category}</span>
+              <h1 className="dd_main_title">{dish.name}</h1>
+              <div className="dd_price_tag">{dish.price}</div>
+            </header>
+
+            <div className="dd_divider_ornament">
+              <span className="dd_line"></span>
+              <span className="dd_dot"></span>
+              <span className="dd_line"></span>
+            </div>
+
+            <div className="dd_description_block">
+              <p className="dd_intro">{dish.shortDesc}</p>
+              <p className="dd_full_desc">{dish.description}</p>
+            </div>
+
+            <div className="dd_meta_grid">
+              <div className="dd_meta_box">
+                <span className="dd_meta_key">Portion</span>
+                <span className="dd_meta_val">{dish.serves}</span>
+              </div>
+              <div className="dd_meta_box">
+                <span className="dd_meta_key">Duration</span>
+                <span className="dd_meta_val">{dish.prepTime}</span>
+              </div>
+              <div className="dd_meta_box">
+                <span className="dd_meta_key">Intensity</span>
+                <span className="dd_meta_val">{dish.spiceLevel}</span>
               </div>
             </div>
 
-            {/* TEXT CONTENT */}
-            <div className="dd_body">
-              <span className="dd_category">{dish.category}</span>
-              <h1 className="dd_title">{dish.name}</h1>
-              <p className="dd_short">{dish.shortDesc}</p>
+            {dish.chefNote && (
+              <blockquote className="dd_chef_quote">
+                <span className="dd_quote_icon">“</span>
+                <p className="dd_quote_text">{dish.chefNote}</p>
+                <cite className="dd_quote_author">— Executive Chef</cite>
+              </blockquote>
+            )}
 
-              <div className="dd_meta_row">
-                <div className="dd_meta_item">
-                  <span className="dd_meta_label">Price</span>
-                  <span className="dd_meta_value dd_price">{dish.price}</span>
-                </div>
-                <div className="dd_meta_item">
-                  <span className="dd_meta_label">Serving</span>
-                  <span className="dd_meta_value">{dish.serves}</span>
-                </div>
-                <div className="dd_meta_item">
-                  <span className="dd_meta_label">Prep time</span>
-                  <span className="dd_meta_value">{dish.prepTime}</span>
-                </div>
-                <div className="dd_meta_item">
-                  <span className="dd_meta_label">Spice</span>
-                  <span className="dd_meta_value">{dish.spiceLevel}</span>
-                </div>
+            <div className="dd_details_columns">
+              <div className="dd_column">
+                <h3 className="dd_column_title">Composition</h3>
+                <ul className="dd_classic_list">
+                  {dish.ingredients.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
 
-              <p className="dd_description">{dish.description}</p>
-
-              {dish.chefNote && (
-                <div className="dd_chef_note">
-                  <span className="dd_chef_label">Chef&apos;s note</span>
-                  <p className="dd_chef_text">{dish.chefNote}</p>
-                </div>
-              )}
-
-              <div className="dd_grid">
-                <div>
-                  <h2 className="dd_subtitle">Ingredients</h2>
-                  <ul className="dd_tag_list">
-                    {dish.ingredients.map((item) => (
-                      <li className="dd_tag" key={item}>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h2 className="dd_subtitle">Allergens</h2>
-                  <ul className="dd_tag_list">
-                    {dish.allergens.map((item) => (
-                      <li className="dd_tag" key={item}>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  {dish.bestPairedWith?.length > 0 && (
-                    <>
-                      <h2 className="dd_subtitle dd_subtitle_mt">Best enjoyed with</h2>
-                      <ul className="dd_tag_list dd_tag_list--wrap">
-                        {dish.bestPairedWith.map((item) => (
-                          <li className="dd_tag" key={item}>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                </div>
+              <div className="dd_column">
+                <h3 className="dd_column_title">Affinities</h3>
+                <ul className="dd_classic_list">
+                  {dish.allergens.map((item) => (
+                    <li key={item} className="dd_allergen">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                {dish.bestPairedWith?.length > 0 && (
+                  <div className="dd_pairing_section">
+                    <h3 className="dd_column_title">Accompaniment</h3>
+                    <ul className="dd_classic_list">
+                      {dish.bestPairedWith.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-
-         
             </div>
-          </article>
+
+            {/* <footer className="dd_actions">
+              <button className="dd_order_btn">Experience this dish</button>
+            </footer> */}
+          </section>
         </div>
-      </section>
+      </div>
     </main>
   );
 };

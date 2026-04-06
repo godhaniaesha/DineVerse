@@ -58,27 +58,35 @@ export default function Profile() {
                             <h3 className="z_prof_user_name">John Doe</h3>
                             <div className="z_prof_user_tag">Elite Member</div>
                         </div>
-                        <div className="z_prof_grid">
-                            <div className="z_prof_field_group">
-                                <label className="z_prof_label">Legal Name</label>
-                                <input type="text" className="z_prof_input" defaultValue="John Doe" />
+                        <div className="row g-4">
+                            <div className="col-md-6 col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">Legal Name</label>
+                                    <input type="text" className="z_prof_input" defaultValue="John Doe" />
+                                </div>
                             </div>
-                            <div className="z_prof_field_group">
-                                <label className="z_prof_label">Email Identity</label>
-                                <input type="email" className="z_prof_input" defaultValue="john.doe@example.com" />
+                            <div className="col-md-6 col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">Email Identity</label>
+                                    <input type="email" className="z_prof_input" defaultValue="john.doe@example.com" />
+                                </div>
                             </div>
-                            <div className="z_prof_field_group">
-                                <label className="z_prof_label">Contact Number</label>
-                                <input type="tel" className="z_prof_input" defaultValue="+91 98765 43210" />
+                            <div className="col-md-6 col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">Contact Number</label>
+                                    <input type="tel" className="z_prof_input" defaultValue="+91 98765 43210" />
+                                </div>
                             </div>
-                            <div className="z_prof_field_group">
-                                <label className="z_prof_label">Current City</label>
-                                <input type="text" className="z_prof_input" defaultValue="Mumbai, India" />
+                            <div className="col-md-6 col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">Current City</label>
+                                    <input type="text" className="z_prof_input" defaultValue="Mumbai, India" />
+                                </div>
                             </div>
                         </div>
-                            <div className="w-100 justify-content-center d-flex mt-3">
-                                <button className="z_prof_save_btn">Update Profile</button>
-                            </div>
+                        <div className="w-100 justify-content-center d-flex mt-3">
+                            <button className="z_prof_save_btn">Update Profile</button>
+                        </div>
                     </div>
                 );
             case "bookings":
@@ -154,59 +162,67 @@ export default function Profile() {
                 return (
                     <div className="z_prof_section">
                         <h2 className="z_prof_section_title">Security <span>Access</span></h2>
-                        <div className="z_prof_grid">
-                            <div className="z_prof_field_group" style={{ gridColumn: "span 2" }}>
-                                <label className="z_prof_label">Current Credentials</label>
-                                <div className="z_prof_pass_wrapper">
-                                    <input
-                                        type={showPasswords.current ? "text" : "password"}
-                                        className="z_prof_input"
-                                        placeholder="Enter current password"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="z_prof_eye_btn"
-                                        onClick={() => togglePasswordVisibility('current')}
-                                    >
-                                        {showPasswords.current ? <FiEyeOff /> : <FiEye />}
-                                    </button>
+                        <div className="row g-4">
+                            <div className="col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">Current Credentials</label>
+                                    <div className="z_prof_pass_wrapper">
+                                        <input
+                                            type={showPasswords.current ? "text" : "password"}
+                                            className="z_prof_input"
+                                            placeholder="Enter current password"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="z_prof_eye_btn"
+                                            onClick={() => togglePasswordVisibility('current')}
+                                        >
+                                            {showPasswords.current ? <FiEyeOff /> : <FiEye />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="z_prof_field_group">
-                                <label className="z_prof_label">New Key</label>
-                                <div className="z_prof_pass_wrapper">
-                                    <input
-                                        type={showPasswords.new ? "text" : "password"}
-                                        className="z_prof_input"
-                                        placeholder="New password"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="z_prof_eye_btn"
-                                        onClick={() => togglePasswordVisibility('new')}
-                                    >
-                                        {showPasswords.new ? <FiEyeOff /> : <FiEye />}
-                                    </button>
+                            <div className="col-md-6 col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">New Key</label>
+                                    <div className="z_prof_pass_wrapper">
+                                        <input
+                                            type={showPasswords.new ? "text" : "password"}
+                                            className="z_prof_input"
+                                            placeholder="New password"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="z_prof_eye_btn"
+                                            onClick={() => togglePasswordVisibility('new')}
+                                        >
+                                            {showPasswords.new ? <FiEyeOff /> : <FiEye />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="z_prof_field_group">
-                                <label className="z_prof_label">Verify Key</label>
-                                <div className="z_prof_pass_wrapper">
-                                    <input
-                                        type={showPasswords.confirm ? "text" : "password"}
-                                        className="z_prof_input"
-                                        placeholder="Confirm password"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="z_prof_eye_btn"
-                                        onClick={() => togglePasswordVisibility('confirm')}
-                                    >
-                                        {showPasswords.confirm ? <FiEyeOff /> : <FiEye />}
-                                    </button>
+                            <div className="col-md-6 col-12">
+                                <div className="z_prof_field_group">
+                                    <label className="z_prof_label">Verify Key</label>
+                                    <div className="z_prof_pass_wrapper">
+                                        <input
+                                            type={showPasswords.confirm ? "text" : "password"}
+                                            className="z_prof_input"
+                                            placeholder="Confirm password"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="z_prof_eye_btn"
+                                            onClick={() => togglePasswordVisibility('confirm')}
+                                        >
+                                            {showPasswords.confirm ? <FiEyeOff /> : <FiEye />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <button className="z_prof_save_btn">Change Access Key</button>
+                            <div className="col-12 justify-content-center d-flex ">
+                                <button className="z_prof_save_btn ">Change Access Key</button>
+                            </div>
                         </div>
                     </div>
                 );
@@ -319,8 +335,6 @@ export default function Profile() {
                     </div>
                 </div>
             )}
-
-            <Footer />
         </div>
     );
 }
