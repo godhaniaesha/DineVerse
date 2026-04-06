@@ -1,20 +1,21 @@
 import { useState, useEffect, useRef } from "react";
-import { FiSearch, FiX, FiStar, FiClock, FiLeaf } from "react-icons/fi";
+import { FiSearch, FiX, FiStar, FiClock, FiLeaf, FiArrowRight } from "react-icons/fi";
 import { FaFire } from "react-icons/fa";
 import { GiWineGlass, GiCoffeeCup, GiKnifeFork, GiBeerStein } from "react-icons/gi";
 import { TbSparkles, TbChefHat } from "react-icons/tb";
 import { MdOutlineLocalBar } from "react-icons/md";
 import { forwardRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 /* ─────────── DATA ─────────── */
-const CATEGORIES = [
+export const CATEGORIES = [
     { id: "all", label: "All", icon: <TbSparkles /> },
     { id: "restaurant", label: "Restaurant", icon: <GiKnifeFork />, accent: "var(--d-restaurant)" },
     { id: "bar", label: "Bar", icon: <MdOutlineLocalBar />, accent: "var(--d-bar)" },
     { id: "cafe", label: "Cafe", icon: <GiCoffeeCup />, accent: "var(--d-cafe)" },
 ];
 
-const RESTAURANT_SUBCATEGORIES = [
+export const RESTAURANT_SUBCATEGORIES = [
     { id: "appetizers", label: "Appetizers", icon: <GiKnifeFork /> },
     { id: "mains", label: "Mains", icon: <GiKnifeFork /> },
     { id: "sides", label: "Sides", icon: <GiKnifeFork /> },
@@ -22,7 +23,7 @@ const RESTAURANT_SUBCATEGORIES = [
     { id: "drinks", label: "Drinks", icon: <GiWineGlass /> },
 ];
 
-const BAR_SUBCATEGORIES = [
+export const BAR_SUBCATEGORIES = [
     { id: "cocktails", label: "Cocktails", icon: <MdOutlineLocalBar /> },
     { id: "spirits", label: "Spirits", icon: <GiBeerStein /> },
     { id: "wine", label: "Wine", icon: <GiWineGlass /> },
@@ -31,7 +32,7 @@ const BAR_SUBCATEGORIES = [
     { id: "signature", label: "Signature", icon: <TbSparkles /> },
 ];
 
-const CAFE_SUBCATEGORIES = [
+export const CAFE_SUBCATEGORIES = [
     { id: "toasts", label: "Toasts", icon: <GiCoffeeCup /> },
     { id: "light-meals", label: "Light Meals", icon: <GiCoffeeCup /> },
     { id: "salads", label: "Salads", icon: <GiCoffeeCup /> },
@@ -39,7 +40,7 @@ const CAFE_SUBCATEGORIES = [
     { id: "tonics", label: "Tonics", icon: <GiCoffeeCup /> },
 ];
 
-const MENU_ITEMS = [
+export const MENU_ITEMS = [
     /* ── RESTAURANT ── */
     {
         id: 1, category: "restaurant", subcategory: "appetizers", tag: "Chef's Special", featured: true,
@@ -277,7 +278,7 @@ const MENU_ITEMS = [
     }
 ];
 
-const BADGE_META = {
+export const BADGE_META = {
     signature: { label: "Signature", color: "var(--d-gold)", bg: "var(--d-gold-subtle)" },
     spicy: { label: "🌶 Spicy", color: "#e87070", bg: "rgba(232,112,112,0.10)" },
     veg: { label: "🌿 Veg", color: "var(--d-cafe)", bg: "var(--d-cafe-dim)" },
@@ -288,6 +289,7 @@ const BADGE_META = {
 
 /* ─────────── COMPONENT ─────────── */
 export default function Menu() {
+    const navigate = useNavigate();
     const [activeCategory, setActiveCategory] = useState("all");
     const [activeSubcategory, setActiveSubcategory] = useState(null);
     const [search, setSearch] = useState("");
@@ -409,6 +411,29 @@ export default function Menu() {
                 {/* ── MAIN CONTENT ── */}
                 <main className="x_main">
 
+                    {/* FEATURED SECTION */}
+                    {featured.length > 0 && (
+                        <section className="x_section">
+                            <div className="x_section_head">
+                                <span className="x_section_kicker">Selected</span>
+                                <h2 className="x_section_title">Chef&apos;s <em>Featured</em></h2>
+                            </div>
+                            <div className="x_featured_grid">
+                                {featured.map((item) => (
+                                    <FeaturedCard
+                                        key={item.id}
+                                        item={item}
+                                        hovered={hoveredId === item.id}
+                                        visible={visibleIds.has(item.id)}
+                                        onHover={setHoveredId}
+                                        onDetails={() => navigate(`/dish/${item.id}`)}
+                                        ref={(el) => { cardRefs.current[item.id] = el; }}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
                     {/* REGULAR GRID */}
                     {regular.length > 0 && (
                         <section className="x_section">
@@ -430,6 +455,7 @@ export default function Menu() {
                                         hovered={hoveredId === item.id}
                                         visible={visibleIds.has(item.id)}
                                         onHover={setHoveredId}
+                                        onDetails={() => navigate(`/dish/${item.id}`)}
                                         ref={(el) => { cardRefs.current[item.id] = el; }}
                                     />
                                 ))}
@@ -455,7 +481,7 @@ export default function Menu() {
 /* ─────────── FEATURED CARD ─────────── */
 
 
-const FeaturedCard = forwardRef(function FeaturedCard({ item, hovered, visible, onHover }, ref) {
+const FeaturedCard = forwardRef(function FeaturedCard({ item, hovered, visible, onHover, onDetails }, ref) {
     const accent = item.category === "bar" ? "var(--d-bar)" : "var(--d-restaurant)";
     return (
         <article
@@ -489,13 +515,16 @@ const FeaturedCard = forwardRef(function FeaturedCard({ item, hovered, visible, 
                     </div>
                     <span className="x_feat_price">{item.price}</span>
                 </div>
+                <button className="x_details_btn" onClick={onDetails}>
+                    View Details <FiArrowRight />
+                </button>
             </div>
         </article>
     );
 });
 
 /* ─────────── MENU CARD ─────────── */
-const MenuCard = forwardRef(function MenuCard({ item, hovered, visible, onHover }, ref) {
+const MenuCard = forwardRef(function MenuCard({ item, hovered, visible, onHover, onDetails }, ref) {
     const accent = item.category === "bar" ? "var(--d-bar)" : "var(--d-restaurant)";
     return (
         <article
@@ -528,6 +557,9 @@ const MenuCard = forwardRef(function MenuCard({ item, hovered, visible, onHover 
                         <span><FiClock /> {item.time}</span>
                     </div>
                 </div>
+                <button className="x_details_btn x_details_btn--sm" onClick={onDetails}>
+                    View Details <FiArrowRight />
+                </button>
             </div>
         </article>
     );

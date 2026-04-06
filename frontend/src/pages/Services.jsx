@@ -27,10 +27,10 @@ const SERVICES = [
   },
   {
     id: "04",
-    title: "Private Events",
-    desc: "From corporate galas to intimate celebrations, we provide the perfect canvas for your milestones.",
+    title: "Takeaway Service",
+    desc: "Quick and convenient takeaway options for those on the go. Freshly prepared and packed with care.",
     icon: <Ticket size={32} />,
-    link: "/contact"
+    link: "/services"
   }
 ];
 
@@ -69,7 +69,7 @@ const Services = () => {
                 <p className="d_serv_card_desc">{service.desc}</p>
 
                 <Link to={service.link} className="d_serv_card_footer" style={{ textDecoration: 'none' }}>
-                  <span className="d_serv_link">Explore More</span>
+                  <span className="d_serv_link">View Details</span>
                   <div className="d_serv_dot"></div>
                 </Link>
 

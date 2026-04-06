@@ -111,6 +111,12 @@ const PERKS = [
 
 /* ── ROOM CARD ────────────────────────────────────────────── */
 function RoomCard({ room, onBook }) {
+  // Truncate description to 20 words
+  const words = room.desc.split(" ");
+  const truncatedDesc = words.length > 14 
+    ? words.slice(0, 14).join(" ") + "..." 
+    : room.desc;
+
   return (
     <div className={`d_rooms_card${room.featured ? " d_rooms_card--featured" : ""}`}>
 
@@ -137,19 +143,19 @@ function RoomCard({ room, onBook }) {
         </span>
 
         {/* Hover overlay */}
-        <div className="d_rooms_card__overlay">
+        {/* <div className="d_rooms_card__overlay">
           <button className="d_rooms_card__peek-btn">
             <TbEye style={{ fontSize: 13 }} />
             View Room
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Body */}
       <div className="d_rooms_card__body">
         <div>
           <h3 className="d_rooms_card__name">{room.name}</h3>
-          <p className="d_rooms_card__desc">{room.desc}</p>
+          <p className="d_rooms_card__desc">{truncatedDesc}</p>
         </div>
 
         {/* Amenities */}

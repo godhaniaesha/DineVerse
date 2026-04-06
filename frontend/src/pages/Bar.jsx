@@ -137,9 +137,9 @@ export default function Bar() {
                                     alt="Mixology" 
                                     style={{ width: '100%', borderRadius: 'var(--d-r-lg)', boxShadow: 'var(--d-shadow-lg)', filter: 'grayscale(30%)' }}
                                 />
-                                <div className="z_club_btn" style={{ position: 'absolute', bottom: '-20px', right: '-20px', background: 'var(--d-bar)', padding: '2rem', borderRadius: 'var(--d-r-md)' }}>
+                                {/* <div className="z_club_btn" style={{ position: 'absolute', bottom: '-20px', right: '-20px', background: 'var(--d-bar)', padding: '2rem', borderRadius: 'var(--d-r-md)' }}>
                                     <h4 style={{ color: '#000', margin: 0 }}>Join The Club</h4>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         <div className="col-lg-6">
