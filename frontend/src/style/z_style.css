@@ -678,9 +678,9 @@ body {
   padding: 3.5rem;
 }
 
- .z_footer_info{
-        align-items: flex-start;
-  }
+.z_footer_info {
+  align-items: flex-start;
+}
 
 @media (max-width: 1024px) {
   .z_prof_history_table_wrap {
@@ -1878,7 +1878,7 @@ body {
 
 .z_prof_eye_btn {
   position: absolute;
-  right: 1rem;
+  right: 6px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--d-border);
   border-radius: var(--d-r-sm);
@@ -1953,7 +1953,7 @@ body {
   box-shadow:
     0 0 20px rgba(200, 150, 90, 0.1),
     inset 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
 }
 
 .z_prof_input::placeholder {
@@ -2758,7 +2758,7 @@ body {
 .z_footer {
   background-color: var(--d-bg);
   color: var(--d-text-1);
-  padding: 100px 0 60px;
+  padding: 64px 0 60px;
   position: relative;
   border-top: 1px solid var(--d-border);
   font-family: var(--d-font-sans);
@@ -3001,6 +3001,10 @@ body {
 
   .z_footer_socials {
     justify-content: center;
+  }
+
+  .z_footer_bottom {
+    margin-top: 0px;
   }
 
   .z_footer_heading {
@@ -5067,7 +5071,7 @@ body {
 
 /* Testimonial Section */
 .z_res_testimonial_section {
-  padding: 0px 0px 80px 0px ;
+  padding: 0px 0px 80px 0px;
   background: var(--d-bg);
 }
 
@@ -5526,9 +5530,9 @@ body {
 }
 
 @media (max-width: 576px) {
-      .z_slide_wrapper {
-        padding: 13px 0;
-    }
+  .z_slide_wrapper {
+    padding: 13px 0;
+  }
 
   .z_slide_item {
     width: 160px;

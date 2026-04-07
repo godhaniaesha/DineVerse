@@ -34,7 +34,7 @@
 /* HERO */
 
 .tc_hero {
-  padding: 96px 0 32px;
+  padding: 60px 0 32px;
 }
 
 .tc_eyebrow {
@@ -115,7 +115,7 @@
 /* CONTENT */
 
 .tc_content {
-  padding: 10px 0 60px;
+  padding: 10px 0 28px;
 }
 
 .tc_block {
@@ -164,7 +164,7 @@
   }
 
   .tc_hero {
-    padding: 80px 0 24px;
+    padding: 48px 0 24px;
   }
 
   .tc_index_inner {

@@ -127,7 +127,7 @@ export default function Bar() {
                 </div>
             </section>
             {/* Mixology Experience - Two Column Dynamic */}
-            <section className="z_bar_experience_section" style={{ padding: '120px 0', background: 'var(--d-surface-2)' }}>
+            <section className="z_bar_experience_section" style={{ padding: '60px 0', background: 'var(--d-surface-2)' }}>
                 <div className="container">
                     <div className="row g-5 align-items-center">
                         <div className="col-lg-6">
