@@ -26,16 +26,6 @@ export default function RoleOperationsPanel({
           </article>
         ))}
       </div>
-
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Quick Actions</h3>
-        <div className="ad_row_actions">
-          {actions.map((action) => (
-            <button key={action} className="ad_btn ad_btn--ghost">{action}</button>
-          ))}
-        </div>
-      </section>
-
       <section className="ad_card" style={{ marginTop: 16 }}>
         <h3 className="ad_card__title">{tableTitle}</h3>
         <div className="ad_table_wrap">
