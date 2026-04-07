@@ -3288,7 +3288,7 @@ body {
   }
 
   .z_bar_section {
-    padding: 90px 0px !important;
+    padding: 10px 0px !important;
   }
 
   .z_prof_save_btn {
@@ -5526,9 +5526,9 @@ body {
 }
 
 @media (max-width: 576px) {
-  .z_slide_wrapper {
-    padding: 50px 0;
-  }
+      .z_slide_wrapper {
+        padding: 13px 0;
+    }
 
   .z_slide_item {
     width: 160px;

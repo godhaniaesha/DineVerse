@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@400;500;600&display=swap");
 
 /* ROOT (mirror your services.css) */
 :root {
@@ -36,8 +36,8 @@
   --d-r-xl: 32px;
   --d-r-pill: 999px;
 
-  --d-font-serif: 'Cormorant Garamond', 'Georgia', serif;
-  --d-font-sans: 'DM Sans', system-ui, sans-serif;
+  --d-font-serif: "Cormorant Garamond", "Georgia", serif;
+  --d-font-sans: "DM Sans", system-ui, sans-serif;
 
   --d-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --d-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -48,7 +48,12 @@
 
 .sp_page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, #15110b 0, #080705 55%, #050403 100%);
+  background: radial-gradient(
+    circle at top,
+    #15110b 0,
+    #080705 55%,
+    #050403 100%
+  );
   color: var(--d-text-1);
   font-family: var(--d-font-sans);
 }
@@ -119,7 +124,11 @@
 }
 
 .sp_btn_primary {
-  background: linear-gradient(135deg, var(--d-gold) 0%, var(--d-gold-light) 70%);
+  background: linear-gradient(
+    135deg,
+    var(--d-gold) 0%,
+    var(--d-gold-light) 70%
+  );
   color: #120f0b;
   box-shadow: var(--d-shadow-sm), var(--d-glow-gold);
 }
@@ -160,7 +169,11 @@
 .sp_highlight_item {
   border-radius: var(--d-r-md);
   border: 1px solid rgba(200, 150, 90, 0.08);
-  background: radial-gradient(circle at top left, rgba(200, 150, 90, 0.12), transparent 60%);
+  background: radial-gradient(
+    circle at top left,
+    rgba(200, 150, 90, 0.12),
+    transparent 60%
+  );
   padding: 14px 16px;
 }
 
@@ -196,7 +209,11 @@
 .sp_hero_panel_inner {
   border-radius: var(--d-r-xl);
   border: 1px solid var(--d-border);
-  background: linear-gradient(145deg, rgba(16, 14, 11, 0.9), rgba(40, 32, 20, 0.9));
+  background: linear-gradient(
+    145deg,
+    rgba(16, 14, 11, 0.9),
+    rgba(40, 32, 20, 0.9)
+  );
   box-shadow: var(--d-shadow-md);
   padding: 24px 22px;
 }
@@ -344,7 +361,11 @@
 .d_serv_card_glow {
   position: absolute !important;
   inset: 0 !important;
-  background: radial-gradient(circle at center, var(--d-gold-glow) 0%, transparent 60%) !important;
+  background: radial-gradient(
+    circle at center,
+    var(--d-gold-glow) 0%,
+    transparent 60%
+  ) !important;
   opacity: 0 !important;
   transition: opacity 0.6s var(--d-ease) !important;
   pointer-events: none !important;
@@ -490,7 +511,11 @@
   margin: 0 auto;
   border-radius: var(--d-r-xl);
   border: 1px solid rgba(200, 150, 90, 0.22);
-  background: radial-gradient(circle at top left, rgba(200, 150, 90, 0.18), rgba(8, 7, 5, 0.98));
+  background: radial-gradient(
+    circle at top left,
+    rgba(200, 150, 90, 0.18),
+    rgba(8, 7, 5, 0.98)
+  );
   padding: 20px 26px;
   display: flex;
   align-items: center;
@@ -595,6 +620,9 @@
 }
 
 @media (max-width: 600px) {
+  .d_serv_wrapper {
+    padding: 40px 16px 39px !important;
+  }
   .sp_highlights {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -622,6 +650,9 @@
 
   .sp_bottom_cta_inner {
     padding: 18px 16px;
+  }
+  .d_serv_header {
+    margin-bottom: 25px !important;
   }
 }
 
@@ -669,7 +700,11 @@
 .sp_why_card {
   border-radius: var(--d-r-lg);
   border: 1px solid rgba(200, 150, 90, 0.24);
-  background: radial-gradient(circle at top left, rgba(200, 150, 90, 0.16), rgba(8, 7, 5, 0.96));
+  background: radial-gradient(
+    circle at top left,
+    rgba(200, 150, 90, 0.16),
+    rgba(8, 7, 5, 0.96)
+  );
   padding: 16px 18px;
 }
 
@@ -800,7 +835,11 @@
 
 .sp_faq_item[open] {
   border-color: var(--d-gold);
-  background: radial-gradient(circle at top left, rgba(200, 150, 90, 0.16), rgba(8, 7, 5, 0.96));
+  background: radial-gradient(
+    circle at top left,
+    rgba(200, 150, 90, 0.16),
+    rgba(8, 7, 5, 0.96)
+  );
 }
 
 .sp_faq_question {
@@ -816,7 +855,7 @@
 }
 
 .sp_faq_question::after {
-  content: '+';
+  content: "+";
   float: right;
   font-size: 14px;
   color: var(--d-text-3);
@@ -824,7 +863,7 @@
 }
 
 .sp_faq_item[open] .sp_faq_question::after {
-  content: '–';
+  content: "–";
   transform: translateY(-1px);
 }
 
