@@ -1717,7 +1717,7 @@ body {
   }
 
   .z_prof_nav {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
   }
 

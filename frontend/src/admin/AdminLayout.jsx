@@ -372,6 +372,7 @@ export default function AdminLayout() {
     "Cafe Waiter": [
       "/admin",      
       "/admin/tables",
+      "/admin/cafe-menu",
       "/admin/cafe-waiter",
       "/admin/dishes",
       "/admin/orders",
@@ -381,6 +382,7 @@ export default function AdminLayout() {
       "/admin",
       "/admin/restaurant-waiter",      
       "/admin/tables",
+      "/admin/restaurant-menu",
       "/admin/dishes",
       "/admin/orders",
       "/admin/profile",
@@ -389,6 +391,7 @@ export default function AdminLayout() {
       "/admin",
       "/admin/bar-waiter",      
       "/admin/tables",
+      "/admin/bar-menu",
       "/admin/dishes",
       "/admin/orders",
       "/admin/profile",

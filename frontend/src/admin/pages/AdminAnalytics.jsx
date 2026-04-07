@@ -1,4 +1,14 @@
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useEffect, useState } from 'react';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+
+const THEME_COLORS = [
+  "#d4a373", // Primary Gold
+  "#b38b59", // Darker Gold
+  "#e8c878", // Lighter Gold
+  "#a0a0a0", // Muted Silver
+  "#8c6a40", // Bronze
+  "#d4af37", // Metallic Gold
+];
 
 const WEEKLY_REVENUE = [
   { day: "Mon", amount: 42000 },
@@ -46,6 +56,20 @@ const TOP_SLOTS = [
 ];
 
 export default function AdminAnalytics() {
+  const [isCompactMobile, setIsCompactMobile] = useState(() => window.innerWidth <= 425);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 425px)");
+    const handleViewportChange = (event) => setIsCompactMobile(event.matches);
+
+    setIsCompactMobile(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleViewportChange);
+
+    return () => mediaQuery.removeEventListener("change", handleViewportChange);
+  }, []);
+
+  const mobileChartWidth = Math.max(MONTHLY_REVENUE.length * 56, 640);
+
   return (
     <div className="ad_page">
       <h2 className="ad_h2">Analytics</h2>
@@ -61,21 +85,21 @@ export default function AdminAnalytics() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(480px, 1fr))", gap: "16px", marginTop: 16 }}>
-        <section className="ad_card">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))", gap: "16px", marginTop: 16 }}>
+        <section className="ad_card" style={{ overflow: "hidden" }}>
           <h3 className="ad_card__title">Weekly Revenue</h3>
-          <div style={{ width: "100%", height: "auto", minHeight: "300px" }}>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={WEEKLY_REVENUE} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
+          <div style={{ width: "100%", height: 300 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={WEEKLY_REVENUE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#d4a373" stopOpacity={0.8}/>
                     <stop offset="95%" stopColor="#d4a373" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
-                <XAxis dataKey="day" stroke="#666" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#666" tick={{ fontSize: 12 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
+                <XAxis dataKey="day" stroke="#666" tick={{ fontSize: 10 }} />
+                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} formatter={(value) => `₹${value.toLocaleString("en-IN")}`} />
                 <Area type="monotone" dataKey="amount" stroke="#d4a373" fillOpacity={1} fill="url(#colorAmount)" />
               </AreaChart>
@@ -83,18 +107,35 @@ export default function AdminAnalytics() {
           </div>
         </section>
 
-        <section className="ad_card">
+        <section className="ad_card" style={{ overflow: "hidden" }}>
           <h3 className="ad_card__title">Monthly Revenue Trend</h3>
-          <div style={{ width: "100%", height: "auto", minHeight: "300px" }}>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={MONTHLY_REVENUE} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
-                <XAxis dataKey="month" stroke="#666" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#666" tick={{ fontSize: 12 }} />
+          <div style={{ width: "100%", overflowX: isCompactMobile ? "auto" : "hidden", WebkitOverflowScrolling: "touch" }}>
+            <div style={{ width: isCompactMobile ? mobileChartWidth : "100%", minWidth: isCompactMobile ? mobileChartWidth : "auto", height: 300 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={MONTHLY_REVENUE}
+                  margin={{ top: 10, right: 10, left: isCompactMobile ? 0 : -20, bottom: 0 }}
+                  barSize={isCompactMobile ? 22 : 16}
+                  barCategoryGap={isCompactMobile ? 18 : undefined}
+                >
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
+                  <XAxis
+                    dataKey="month"
+                    stroke="#666"
+                    interval={0}
+                    tickMargin={8}
+                    tick={{ fontSize: isCompactMobile ? 11 : 10 }}
+                  />
+                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} formatter={(value) => `₹${value.toLocaleString("en-IN")}`} />
-                <Bar dataKey="revenue" fill="#d4a373" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+                <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
+                  {MONTHLY_REVENUE.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={THEME_COLORS[index % THEME_COLORS.length]} />
+                  ))}
+                </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </section>
       </div>

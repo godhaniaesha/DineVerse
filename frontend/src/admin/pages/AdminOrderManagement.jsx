@@ -1,23 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const ORDER_QUEUE_KEY = "admin-order-queue";
 
 const INITIAL = [
-  { id: "ORD-101", table: "T3", customer: "Walk-in", items: "Sandwich, Latte", chef: "Cafe Chef 1", waiter: "Neha", status: "New Order", area: "cafe", time: "19:20" },
-  { id: "ORD-102", table: "T8", customer: "Table 8", items: "Steak, Salad", chef: "Restaurant Chef 1", waiter: "Rohan", status: "Preparing", area: "restaurant", time: "19:35" },
-  { id: "ORD-103", table: "B2", customer: "Bar", items: "Mojito, Beer", chef: "Bar Chef 1", waiter: "Vikram", status: "Ready", area: "bar", time: "19:50" },
+  { id: "ORD-101", table: "T3", customer: "Walk-in", items: "Sandwich, Latte", chef: "Cafe Chef 1", waiter: "Neha", status: "New Order", area: "cafe", time: "19:20", note: "-", total: 360 },
+  { id: "ORD-102", table: "T8", customer: "Table 8", items: "Steak, Salad", chef: "Restaurant Chef 1", waiter: "Rohan", status: "Preparing", area: "restaurant", time: "19:35", note: "Medium rare", total: 980 },
+  { id: "ORD-103", table: "B2", customer: "Bar", items: "Mojito, Beer", chef: "Bar Chef 1", waiter: "Vikram", status: "Ready", area: "bar", time: "19:50", note: "Less ice", total: 420 },
 ];
 const FLOW = ["New Order", "Preparing", "Ready", "Served", "Completed"];
 
 export default function AdminOrderManagement() {
-  const [rows, setRows] = useState(INITIAL);
+  const [rows, setRows] = useState(() => {
+    const savedOrders = localStorage.getItem(ORDER_QUEUE_KEY);
+    console.log(savedOrders,"savedOrders");
+    
+    if (savedOrders) {
+      console.log(savedOrders,"savedOrders");
+      try {
+        return JSON.parse(savedOrders);
+      } catch (error) {
+        localStorage.removeItem(ORDER_QUEUE_KEY);
+      }
+    }
+
+    return savedOrders;
+  });
   const role = localStorage.getItem("adminRole") || "Super Admin";
   const nextStatus = (status) => FLOW[Math.min(FLOW.indexOf(status) + 1, FLOW.length - 1)];
+
+  useEffect(() => {
+   const ord = localStorage.getItem("admin-order-queue");
+   console.log(ord,"ord");
+   
+  }, [rows]);
+
   return (
     <div className="ad_page">
       <h2 className="ad_h2">Order Management</h2>
       <p className="ad_p">Track order flow from creation to completion.</p>
       <div className="ad_table_wrap">
         <table className="ad_table">
-          <thead><tr><th>Order ID</th><th>Table</th><th>Customer</th><th>Items</th><th>Chef</th><th>Waiter</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+          <thead><tr><th>Order ID</th><th>Table</th><th>Customer</th><th>Items</th><th>Chef</th><th>Waiter</th><th>Status</th><th>Time</th><th>Note</th><th>Total</th><th>Action</th></tr></thead>
           <tbody>
             {rows
               .filter((row) => {
@@ -28,7 +51,7 @@ export default function AdminOrderManagement() {
               })
               .map((row) => (
                 <tr key={row.id}>
-                  <td>{row.id}</td><td>{row.table}</td><td>{row.customer}</td><td>{row.items}</td><td>{row.chef}</td><td>{row.waiter}</td><td><span className="ad_chip">{row.status}</span></td><td>{row.time}</td>
+                  <td>{row.id}</td><td>{row.table}</td><td>{row.customer}</td><td>{row.items}</td><td>{row.chef}</td><td>{row.waiter}</td><td><span className="ad_chip">{row.status}</span></td><td>{row.time}</td><td>{row.note || "-"}</td><td>₹{(row.total ?? 0).toLocaleString("en-IN")}</td>
                   <td><button className="ad_btn ad_btn--primary" onClick={() => setRows((p) => p.map((x) => x.id === row.id ? { ...x, status: nextStatus(x.status) } : x))}>Next Status</button></td>
                 </tr>
               ))}

@@ -865,3 +865,12 @@
     display: none;
   }
 }
+
+.ad_custom-scroll {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE & Edge */
+}
+
+.ad_custom-scroll::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari */
+}

@@ -59,8 +59,8 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="ad_two_col" style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(480px, 1fr))", gap: "16px" }}>
-        <section className="ad_card">
+      <div className="ad_two_col" style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))", gap: "16px" }}>
+        <section className="ad_card" style={{ overflow: "hidden" }}>
           <h3 className="ad_card__title">Recent Activity</h3>
           <ul className="ad_list">
             {RECENT_ACTIVITY.map((entry) => (
@@ -72,16 +72,16 @@ export default function AdminDashboard() {
           </ul>
         </section>
 
-        <section className="ad_card">
+        <section className="ad_card" style={{ overflow: "hidden" }}>
           <h3 className="ad_card__title">Top Menu Items</h3>
-          <div style={{ width: "100%", height: "auto", minHeight: "300px" }}>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={TOP_ITEMS_CHART_DATA} margin={{ top: 10, right: 20, left: -20, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
-                <XAxis dataKey="time" stroke="#666" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#666" tick={{ fontSize: 12 }} />
+          <div style={{ width: "100%", height: 300 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={TOP_ITEMS_CHART_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
+                <XAxis dataKey="time" stroke="#666" tick={{ fontSize: 10 }} />
+                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} />
-                <Legend wrapperStyle={{ fontSize: "12px" }} />
+                <Legend wrapperStyle={{ fontSize: "10px" }} />
                 <Line type="monotone" dataKey="Truffle Pasta" stroke="#d4a373" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                 <Line type="monotone" dataKey="Signature Burger" stroke="#ff6b6b" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                 <Line type="monotone" dataKey="Seafood Risotto" stroke="#4ecdc4" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />

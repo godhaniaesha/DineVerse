@@ -233,7 +233,6 @@ export default function Profile() {
 
     return (
         <div className="z_prof_page_wrapper">
-            <Header />
 
             <div className="z_prof_hero_banner"></div>
 
