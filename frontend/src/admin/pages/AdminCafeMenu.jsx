@@ -247,7 +247,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
             onChange={(event) => setSearch(event.target.value)}
           />
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 }}>
+        <div className="ad_scroll_cat" style={{ display: "flex", gap: 10, marginTop: 12 }}>
           {config.categories.map((category) => (
             <button
               key={category}
@@ -405,8 +405,46 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
               ))}
             </ul>
           ) : (
-            <div className="ad_p" style={{ marginBottom: 0 }}>
-              No dishes selected. Please select your dish from the menu and click "Add to Order".
+            <div className="ad_p" style={{ marginBottom: 0, textAlign: "center" }}>
+
+              <svg
+                width="120"
+                height="120"
+                viewBox="0 0 64 64"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ marginBottom: "10px", opacity: 0.7 }}
+              >
+                {/* Plate */}
+                <circle cx="32" cy="32" r="20" stroke="#999" strokeWidth="2" />
+                <circle cx="32" cy="32" r="12" stroke="#ccc" strokeWidth="2" />
+
+                {/* Fork */}
+                <path
+                  d="M18 10V26M15 10V18M21 10V18"
+                  stroke="#888"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+
+                {/* Spoon */}
+                <path
+                  d="M46 10C44 10 42 12 42 14C42 16 44 18 46 18C48 18 50 16 50 14C50 12 48 10 46 10Z"
+                  stroke="#888"
+                  strokeWidth="2"
+                />
+                <line
+                  x1="46" y1="18" x2="46" y2="28"
+                  stroke="#888"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+
+              <p style={{ margin: 0 }}>
+                No dishes selected. Please select your dish from the menu and click <b>"Add to Order"</b>.
+              </p>
+
             </div>
           )}
         </section>

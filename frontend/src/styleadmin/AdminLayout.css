@@ -28,7 +28,9 @@
   --ad-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -63,8 +65,13 @@
 }
 
 @keyframes ad_fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ─── SIDEBAR ─────────────────────────────────────────────── */
@@ -545,7 +552,7 @@
 .ad_card {
   border-radius: var(--ad-r-lg);
   border: 1px solid var(--ad-border-soft);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0)) , var(--ad-surface);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0)), var(--ad-surface);
   padding: 18px 20px;
 }
 
@@ -577,7 +584,7 @@
 
 .ad_card__value {
   margin-top: 8px;
-  font-size: 30px;
+  font-size: 23px;
   font-weight: 600;
   color: var(--ad-gold-light);
 }
@@ -679,6 +686,7 @@
   border: 1px solid var(--ad-border-soft);
   border-radius: var(--ad-r-lg);
   background: var(--ad-surface);
+  white-space: nowrap;
 }
 
 .ad_table {
@@ -853,6 +861,33 @@
   .ad_content {
     padding: 14px 14px;
   }
+
+  .ad_scroll_cat {
+    flex-wrap: nowrap;
+    overflow: scroll;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .ad_list {
+    padding-left: 0 !important;
+  }
+
+  .ad_chip {
+    white-space: nowrap;
+  }
+
+}
+
+@media (max-width: 425px) {
+  .ad_card__value {
+    font-size: 24px;
+  }
+
+  .ad_h2 {
+    font-size: 29px;
+  }
 }
 
 /* Very small screens */
@@ -867,10 +902,13 @@
 }
 
 .ad_custom-scroll {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE & Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE & Edge */
 }
 
 .ad_custom-scroll::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari */
+  display: none !important;
+  /* Chrome, Safari */
 }

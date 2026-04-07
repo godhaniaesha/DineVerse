@@ -7,13 +7,6 @@ const KPI_CARDS = [
   { label: "Gallery Uploads", value: 6, trend: "+2 new" },
 ];
 
-const RECENT_ACTIVITY = [
-  { id: 1, time: "10:25 AM", text: "Reservation #RV-918 confirmed for 7:30 PM" },
-  { id: 2, time: "10:12 AM", text: "Room 203 marked as occupied" },
-  { id: 3, time: "09:48 AM", text: "New dish added: Smoked Truffle Pasta" },
-  { id: 4, time: "09:30 AM", text: "Gallery image approved for homepage slider" },
-];
-
 const TOP_ITEMS_CHART_DATA = [
   { time: "12 AM", "Truffle Pasta": 5, "Signature Burger": 3, "Seafood Risotto": 2, "Chocolate Dome": 1 },
   { time: "6 AM", "Truffle Pasta": 8, "Signature Burger": 6, "Seafood Risotto": 4, "Chocolate Dome": 2 },
@@ -61,12 +54,15 @@ export default function AdminDashboard() {
 
       <div className="ad_two_col" style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))", gap: "16px" }}>
         <section className="ad_card" style={{ overflow: "hidden" }}>
-          <h3 className="ad_card__title">Recent Activity</h3>
+          <h3 className="ad_card__title">Best Selling Dishes</h3>
           <ul className="ad_list">
-            {RECENT_ACTIVITY.map((entry) => (
-              <li key={entry.id} className="ad_list__item">
-                <span className="ad_list__time">{entry.time}</span>
-                <span>{entry.text}</span>
+            {TOP_ITEMS.map((item, index) => (
+              <li key={item.name} className="ad_list__item ad_list__item--between">
+                <div>
+                  <div style={{ color: "#f3ede2", fontWeight: 600 }}>#{index + 1} {item.name}</div>
+                  <div className="ad_card__meta">High demand during prime service hours</div>
+                </div>
+                <span className="ad_chip">{item.orders} orders</span>
               </li>
             ))}
           </ul>
@@ -93,7 +89,7 @@ export default function AdminDashboard() {
       </div>
 
       <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Table Status (Cafe / Restaurant / Bar)</h3>
+        <h3 className="ad_card__title">Table Status</h3>
         <div className="ad_cards_grid" style={{ marginTop: 12 }}>
           {TABLE_OVERVIEW.map((item) => (
             <article key={`${item.area}-${item.table}`} className="ad_card">
