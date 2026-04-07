@@ -5,9 +5,23 @@ const INITIAL_IMAGES = [
   { id: 2, title: "Chef Special Plating", url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=900&q=80", visible: true },
   { id: 3, title: "Private Dining Room", url: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=900&q=80", visible: false },
 ];
-const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
+const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
+const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="m6 6 1 14h10l1-14" /></svg>;
+const IcEye = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
 
+const IcEyeOff = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 1l22 22" />
+    <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.77 21.77 0 0 1 5.06-6.94" />
+    <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-3.24 4.5" />
+    <path d="M14.12 14.12A3 3 0 0 1 9.88 9.88" />
+  </svg>
+);
 export default function AdminGallery() {
   const [images, setImages] = useState(INITIAL_IMAGES);
   const [title, setTitle] = useState("");
@@ -37,8 +51,15 @@ export default function AdminGallery() {
 
   return (
     <div className="ad_page">
-      <h2 className="ad_h2">Gallery</h2>
-      <p className="ad_p">Upload images, control visibility, and keep your media library updated.</p>
+      <div className="rooms__header">
+        <div>
+          <h2 className="ad_h2">Gallery</h2>
+          <p className="ad_p">Upload images, control visibility, and keep your media library updated.</p>
+        </div>
+        <div>
+          <button className="rooms__add_btn" onClick={() => setModal({ mode: "add" })}>Add Image</button>
+        </div>
+      </div>
 
       <div className="ad_cards_grid">
         <article className="ad_card">
@@ -59,20 +80,25 @@ export default function AdminGallery() {
         </article>
       </div>
 
-      <div className="rooms__header"><div /><button className="rooms__add_btn" onClick={() => setModal({ mode: "add" })}>Add Image</button></div>
 
       <div className="ad_table_wrap" style={{ marginTop: 16 }}>
         <table className="ad_table">
-          <thead><tr><th>Title</th><th>Preview</th><th>Visibility</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Preview</th><th>Title</th><th>Visibility</th><th>Actions</th></tr></thead>
           <tbody>
             {images.map((image) => (
               <tr key={image.id}>
-                <td>{image.title}</td>
                 <td><img src={image.url} alt={image.title} className="ad_gallery_img" style={{ width: 120, height: 72, marginBottom: 0 }} /></td>
+                <td>{image.title}</td>
                 <td><span className="ad_chip">{image.visible ? "Visible" : "Hidden"}</span></td>
-                <td className="rooms__actions_cell">
+                <td>
                   <button className="rooms__icon_btn" title="Edit image" onClick={() => setModal({ mode: "edit", image })}><IcEdit /></button>
-                  <button className="rooms__icon_btn" onClick={() => toggleImage(image.id)}>{image.visible ? "Hide" : "Show"}</button>
+                  <button
+                    className="rooms__icon_btn"
+                    title={image.visible ? "Hide" : "Show"}
+                    onClick={() => toggleImage(image.id)}
+                  >
+                    {image.visible ? <IcEye /> : <IcEyeOff />}
+                  </button>
                   <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete image" onClick={() => setModal({ mode: "delete", image })}><IcTrash /></button>
                 </td>
               </tr>
@@ -81,31 +107,7 @@ export default function AdminGallery() {
         </table>
       </div>
 
-      <div className="ad_gallery_grid" style={{ marginTop: 16 }}>
-        {images.map((image) => (
-          <article key={image.id} className="ad_card">
-            <img src={image.url} alt={image.title} className="ad_gallery_img" />
-            <h4 className="ad_card__title">{image.title}</h4>
-            <div className="ad_row_actions">
-              <button className="ad_btn ad_btn--ghost" onClick={() => toggleImage(image.id)}>
-                {image.visible ? "Visible" : "Hidden"}
-              </button>
-              <button className="ad_btn ad_btn--danger" onClick={() => removeImage(image.id)}>
-                Delete
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
 
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Gallery Guidelines</h3>
-        <ul className="ad_list">
-          <li className="ad_list__item">Use landscape images for hero sections.</li>
-          <li className="ad_list__item">Prefer bright and warm ambiance photos.</li>
-          <li className="ad_list__item">Keep dish close-ups high resolution and clean plated.</li>
-        </ul>
-      </section>
       {modal?.mode === "add" && (
         <>
           <div className="rooms__modal_overlay" onClick={() => setModal(null)} />

@@ -51,7 +51,7 @@ export default function AdminGuests() {
       <p className="ad_p">Track frequent guests and manage VIP preferences.</p>
       <div className="rooms__header"><div /></div>
 
-      <div className="ad_cards_grid">
+      {/* <div className="ad_cards_grid">
         <article className="ad_card">
           <div className="ad_card__label">Total guests</div>
           <div className="ad_card__value">{guests.length}</div>
@@ -68,11 +68,11 @@ export default function AdminGuests() {
           <div className="ad_card__label">Retention score</div>
           <div className="ad_card__value">82%</div>
         </article>
-      </div>
+      </div> */}
 
       <div className="ad_toolbar">
         <input
-          className="ad_input"
+          className="ad_input w-25"
           placeholder="Search guest by name or phone"
           value={query}
           onChange={(event) => setQuery(event.target.value)}

@@ -286,7 +286,6 @@ export default function AdminLayout() {
       "/admin/blogs",
       "/admin/reviews",
       "/admin/inquiries",
-      "/admin/role-access",
       "/admin/admin-users",
       "/admin/profile",
     ],
@@ -306,7 +305,6 @@ export default function AdminLayout() {
       "/admin/categories",
       "/admin/dishes",
       "/admin/orders",
-      "/admin/bartender-panel",
       "/admin/housekeeping-panel",
       "/admin/guests",
       "/admin/tables",
@@ -407,7 +405,6 @@ export default function AdminLayout() {
       "/admin",
       "/admin/housekeeping-panel",
       "/admin/room-bookings",
-      "/admin/rooms",
       "/admin/profile",
     ],
   };
@@ -579,8 +576,6 @@ export default function AdminLayout() {
             </button>
             <div ref={userMenuRef} className={`ad_user_menu${userMenuOpen ? " ad_user_menu--open" : ""}`}>
               <NavLink className="ad_user_menu__item" to="/admin/profile">My Profile</NavLink>
-              <button className="ad_user_menu__item" type="button">Login</button>
-              <button className="ad_user_menu__item" type="button">Register</button>
               <button className="ad_user_menu__item" type="button">Logout</button>
             </div>
           </div>
