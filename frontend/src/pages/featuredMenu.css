@@ -483,7 +483,11 @@
     font-size: 20px !important;
   }
 }
-
+@media (max-width: 576px) {
+  .d_featured {
+    padding: 72px 0 26px !important;
+  }
+}
 @media (max-width: 520px) {
   .d_featured {
     padding: 26px 0 34px !important;
@@ -503,5 +507,13 @@
   }
   .d_featured__card:hover {
     transform: translateY(-3px) !important;
+  }
+}
+@media (max-width: 375px) {
+  .d_featured {
+    padding: 8px 0 34px !important;
+  }
+  .d_featured {
+    padding: 72px 0 5px !important;
   }
 }
