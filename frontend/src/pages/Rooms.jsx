@@ -142,28 +142,28 @@ export default function Rooms() {
             <section className="z_bar_section" style={{ padding: '120px 0', background: 'var(--d-surface-2)' }}>
                 <div className="container">
                     <div className="row g-5">
-                        <div className="col-lg-3 col-md-6">
+                        <div className="col-xl-3 col-sm-6">
                             <div style={{ textAlign: 'center' }}>
                                 <FaSwimmingPool style={{ color: 'var(--d-room)', fontSize: '3rem', marginBottom: '1rem' }} />
                                 <h4 style={{ fontSize: '1.5rem' }}>Infinity Pool</h4>
                                 <p style={{ color: 'var(--d-text-3)' }}>A refreshing escape with city views.</p>
                             </div>
                         </div>
-                        <div className="col-lg-3 col-md-6">
+                        <div className="col-xl-3 col-sm-6">
                             <div style={{ textAlign: 'center' }}>
                                 <MdHotel style={{ color: 'var(--d-room)', fontSize: '3rem', marginBottom: '1rem' }} />
                                 <h4 style={{ fontSize: '1.5rem' }}>24/7 Service</h4>
                                 <p style={{ color: 'var(--d-text-3)' }}>We are here for your every need.</p>
                             </div>
                         </div>
-                        <div className="col-lg-3 col-md-6">
+                        <div className="col-xl-3 col-sm-6">
                             <div style={{ textAlign: 'center' }}>
                                 <FaParking style={{ color: 'var(--d-room)', fontSize: '3rem', marginBottom: '1rem' }} />
                                 <h4 style={{ fontSize: '1.5rem' }}>Valet Parking</h4>
                                 <p style={{ color: 'var(--d-text-3)' }}>Secure and hassle-free arrival.</p>
                             </div>
                         </div>
-                        <div className="col-lg-3 col-md-6">
+                        <div className="col-xl-3 col-sm-6">
                             <div style={{ textAlign: 'center' }}>
                                 <FaWifi style={{ color: 'var(--d-room)', fontSize: '3rem', marginBottom: '1rem' }} />
                                 <h4 style={{ fontSize: '1.5rem' }}>High-Speed Wi-Fi</h4>
