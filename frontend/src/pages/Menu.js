@@ -412,7 +412,7 @@ export default function Menu() {
                 <main className="x_main">
 
                     {/* FEATURED SECTION */}
-                    {featured.length > 0 && (
+                    {/* {featured.length > 0 && (
                         <section className="x_section">
                             <div className="x_section_head">
                                 <span className="x_section_kicker">Selected</span>
@@ -432,7 +432,7 @@ export default function Menu() {
                                 ))}
                             </div>
                         </section>
-                    )}
+                    )} */}
 
                     {/* REGULAR GRID */}
                     {regular.length > 0 && (
