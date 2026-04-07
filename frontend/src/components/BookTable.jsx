@@ -45,7 +45,7 @@ function GuestSelector({ value, onChange }) {
         <div className="h_g_num">{value}</div>
         <div className="h_g_txt">Guest{value !== 1 ? "s" : ""}</div>
       </div>
-      <button className="h_g_btn" type="button" onClick={() => onChange(Math.min(20, value + 1))}>+</button>
+      <button className="h_g_btn" type="button" onClick={() => onChange(Math.min(30, value + 1))}>+</button>
     </div>
   );
 }

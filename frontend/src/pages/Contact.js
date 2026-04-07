@@ -421,7 +421,7 @@ const STYLES = `
 /* ── HERO ── */
 .x_contact_hero{
   position:relative;
-  padding:120px 24px 100px;
+  padding:80px 24px 80px;
   text-align:center;
   overflow:hidden;
   background:var(--d-surface);
@@ -497,7 +497,7 @@ const STYLES = `
 /* ── MAIN ── */
 .x_contact_main{
   max-width:1200px;margin:0 auto;
-  padding:64px 24px 80px;
+  padding:52px 24px 60px;
 }
 .x_contact_grid{
   display:grid;grid-template-columns:420px 1fr;gap:60px;align-items:flex-start;
@@ -690,4 +690,6 @@ const STYLES = `
   .x_form_panel{padding:28px 20px 32px;}
   .x_ch_title{font-size:clamp(42px,12vw,60px);}
 }
+@media(max-width: 576px){
+  .x_form_row{gap:0px}
 `;

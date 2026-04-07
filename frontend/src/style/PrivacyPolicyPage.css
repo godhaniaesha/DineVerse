@@ -50,7 +50,7 @@
 /* HERO */
 
 .pp_hero {
-  padding: 96px 0 32px;
+  padding: 60px 0 32px;
 }
 
 .pp_eyebrow {
@@ -131,7 +131,7 @@
 /* CONTENT */
 
 .pp_content {
-  padding: 10px 0 60px;
+  padding: 10px 0 28px;
 }
 
 .pp_block {
@@ -200,7 +200,7 @@
   }
 
   .pp_hero {
-    padding: 80px 0 24px;
+    padding: 48px 0 24px;
   }
 
   .pp_index_inner {
