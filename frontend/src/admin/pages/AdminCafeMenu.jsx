@@ -69,6 +69,23 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
   const [search, setSearch] = useState("");
   const [lineQuantities, setLineQuantities] = useState({});
   const [lastSubmitted, setLastSubmitted] = useState(null);
+  const [occupiedTables, setOccupiedTables] = useState([]);
+
+  useEffect(() => {
+    const tableKeyMap = {
+      cafe: "admin-cafe-tables",
+      restaurant: "admin-res-tables",
+      bar: "admin-bar-tables",
+    };
+    const tableKey = tableKeyMap[variant] || `admin-${variant}-tables`;
+    const savedTables = localStorage.getItem(tableKey);
+    if (savedTables) {
+      const allTables = JSON.parse(savedTables);
+      const occupied = allTables.filter(t => t.status === "occupied");
+      setOccupiedTables(occupied);
+    }
+  }, [variant]);
+
   const [orderDraft, setOrderDraft] = useState(() => {
     const savedDraft = localStorage.getItem(storageKey);
     if (savedDraft) {
@@ -342,12 +359,18 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
               value={orderDraft.customerName}
               onChange={(event) => setOrderDraft((current) => ({ ...current, customerName: event.target.value }))}
             />
-            <input
+            <select
               className="ad_input"
-              placeholder={targetLabel}
               value={orderDraft.target}
               onChange={(event) => setOrderDraft((current) => ({ ...current, target: event.target.value }))}
-            />
+            >
+              <option value="">Select {targetLabel}</option>
+              {occupiedTables.map((table) => (
+                <option key={table.id} value={table.tableNo}>
+                  {table.tableNo} (Waiter: {table.waiter})
+                </option>
+              ))}
+            </select>
           </div>
           <div className="rooms__form_row" style={{ marginTop: 12 }}>
             <textarea

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { FiEdit2 } from "react-icons/fi";
 
 const INITIAL_TASKS = [
-  { id: 1, room: "302", task: "Deep Cleaning", assigned: "HK-01", status: "checkout", hasBooking: true, clean_status: "Pending", housekeeper_name: "" },
-  { id: 2, room: "110", task: "Checkout Cleaning", assigned: "HK-03", status: "checkout", hasBooking: true, clean_status: "In Progress", housekeeper_name: "John Doe" },
-  { id: 3, room: "205", task: "Standard Cleaning", assigned: "HK-02", status: "occupied", hasBooking: true, clean_status: "Clean", housekeeper_name: "Jane Smith" },
-  { id: 4, room: "401", task: "Deep Cleaning", assigned: "HK-01", status: "checkout", hasBooking: false, clean_status: "Pending", housekeeper_name: "" },
+  { id: 1, room: "302", task: "deluxe", assigned: "HK-01", status: "checkout", hasBooking: true, clean_status: "Pending", housekeeper_name: "" },
+  { id: 2, room: "110", task: "suite", assigned: "HK-03", status: "checkout", hasBooking: true, clean_status: "In Progress", housekeeper_name: "John Doe" },
+  { id: 3, room: "205", task: "deluxe", assigned: "HK-02", status: "occupied", hasBooking: true, clean_status: "Clean", housekeeper_name: "Jane Smith" },
+  { id: 4, room: "401", task: "suite", assigned: "HK-01", status: "checkout", hasBooking: false, clean_status: "Pending", housekeeper_name: "" },
 ];
 
 function Modal({ title, onClose, children }) {

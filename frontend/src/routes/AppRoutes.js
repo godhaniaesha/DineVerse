@@ -28,6 +28,9 @@ import AdminGuests from "../admin/pages/AdminGuests";
 import AdminSettings from "../admin/pages/AdminSettings";
 import AdminTables from "../admin/pages/AdminTables";
 import AdminRoomTypes from "../admin/pages/AdminRoomTypes";
+import CafeBookTable from "../admin/pages/CafeBookTable";
+import ResBookTable from "../admin/pages/ResBookTable";
+import BarBookTable from "../admin/pages/BarBookTable";
 import AdminBlogs from "../admin/pages/AdminBlogs";
 import AdminProfile from "../admin/pages/AdminProfile";
 import AdminReviews from "../admin/pages/AdminReviews";
@@ -48,6 +51,11 @@ import AdminCuisineManagement from "../admin/pages/AdminCuisineManagement";
 import AdminCategoryManagement from "../admin/pages/AdminCategoryManagement";
 import AdminDishManagement from "../admin/pages/AdminDishManagement";
 import AdminOrderManagement from "../admin/pages/AdminOrderManagement";
+import AdminBilling from "../admin/pages/AdminBilling";
+import AdminSalesHistory from "../admin/pages/AdminSalesHistory";
+import CafeOrderManage from "../admin/pages/CafeOrderManage";
+import ResOrderManage from "../admin/pages/ResOrderManage";
+import BarOrderManage from "../admin/pages/BarOrderManage";
 import AdminKDS from "../admin/pages/AdminKDS";
 import AdminWaiterPanel from "../admin/pages/AdminWaiterPanel";
 import AdminPOS from "../admin/pages/AdminPOS";
@@ -135,6 +143,11 @@ function AppRoutes() {
             <Route path="categories" element={<AdminRouteGuard path="/admin/categories"><AdminCategoryManagement /></AdminRouteGuard>} />
             <Route path="dishes" element={<AdminRouteGuard path="/admin/dishes"><AdminDishManagement /></AdminRouteGuard>} />
             <Route path="orders" element={<AdminRouteGuard path="/admin/orders"><AdminOrderManagement /></AdminRouteGuard>} />
+            <Route path="billing" element={<AdminRouteGuard path="/admin/billing"><AdminBilling /></AdminRouteGuard>} />
+            <Route path="sales-history" element={<AdminRouteGuard path="/admin/sales-history"><AdminSalesHistory /></AdminRouteGuard>} />
+            <Route path="cafe-order-manage" element={<AdminRouteGuard path="/admin/cafe-order-manage"><CafeOrderManage /></AdminRouteGuard>} />
+            <Route path="res-order-manage" element={<AdminRouteGuard path="/admin/res-order-manage"><ResOrderManage /></AdminRouteGuard>} />
+            <Route path="bar-order-manage" element={<AdminRouteGuard path="/admin/bar-order-manage"><BarOrderManage /></AdminRouteGuard>} />
             <Route path="kds" element={<AdminRouteGuard path="/admin/kds"><AdminKDS /></AdminRouteGuard>} />
             <Route path="waiter-panel" element={<AdminRouteGuard path="/admin/waiter-panel"><AdminWaiterPanel /></AdminRouteGuard>} />
             <Route path="cafe-waiter" element={<AdminRouteGuard path="/admin/cafe-waiter"><AdminCafeWaiterPanel /></AdminRouteGuard>} />
@@ -149,7 +162,9 @@ function AppRoutes() {
             <Route path="pos" element={<AdminRouteGuard path="/admin/pos"><AdminPOS /></AdminRouteGuard>} />
             <Route path="guests" element={<AdminRouteGuard path="/admin/guests"><AdminGuests /></AdminRouteGuard>} />
             <Route path="menu" element={<AdminRouteGuard path="/admin/menu"><AdminMenu /></AdminRouteGuard>} />
-            <Route path="tables" element={<AdminRouteGuard path="/admin/tables"><AdminTables /></AdminRouteGuard>} />
+            <Route path="cafe-book-table" element={<AdminRouteGuard path="/admin/cafe-book-table"><CafeBookTable /></AdminRouteGuard>} />
+            <Route path="res-book-table" element={<AdminRouteGuard path="/admin/res-book-table"><ResBookTable /></AdminRouteGuard>} />
+            <Route path="bar-book-table" element={<AdminRouteGuard path="/admin/bar-book-table"><BarBookTable /></AdminRouteGuard>} />
             <Route path="room-types" element={<AdminRouteGuard path="/admin/room-types"><AdminRoomTypes /></AdminRouteGuard>} />
             <Route path="rooms" element={<AdminRouteGuard path="/admin/rooms"><AdminRooms /></AdminRouteGuard>} />
             <Route path="gallery" element={<AdminRouteGuard path="/admin/gallery"><AdminGallery /></AdminRouteGuard>} />
