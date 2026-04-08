@@ -30,8 +30,8 @@ const ROOT_CSS = `
   --d-gold-subtle:    rgba(200,150,90,0.08);
   --d-text-1:         #f5f0e8;
   --d-text-2:         #b8b0a0;
-  --d-text-3:         #7a7060;
-  --d-text-4:         #4a4438;
+  --d-text-3:         #9e988c;
+  --d-text-4:         #ebd19f;
   --d-cafe:           #7ab898;
   --d-cafe-dim:       rgba(122,184,152,0.10);
   --d-restaurant:     #c8965a;

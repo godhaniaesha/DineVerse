@@ -644,6 +644,7 @@
   font-size: 15px;
   outline: none;
 }
+
 .ad_select {
   width: auto;
   border-radius: var(--ad-r-md);
@@ -865,6 +866,13 @@
     width: 30px;
     height: 30px;
     font-size: 11px;
+  }
+
+  .truncate {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .ad_content {

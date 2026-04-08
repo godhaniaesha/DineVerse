@@ -9,6 +9,13 @@ const CAFE_SEED_ROWS = [
   { id: "ORD-110", table: "C7", customer: "Cafe Corner", items: "Muffin, Espresso", waiter: "Asha", time: "20:22", status: "Cooking", area: "cafe" },
 ];
 
+function truncateText(value, maxChars) {
+  if (value === null || value === undefined) return "";
+  const str = String(value);
+  if (str.length <= maxChars) return str;
+  return str.slice(0, maxChars) + "...";
+}
+
 export default function CafeOrderManage() {
   const role = localStorage.getItem("adminRole") || "Super Admin";
   const [rows, setRows] = useState(() => {
@@ -69,7 +76,9 @@ export default function CafeOrderManage() {
                 <tr key={row.id}>
                   <td>{row.id}</td>
                   <td>{row.table}</td>
-                  <td style={{ maxWidth: "200px" }}>{row.items}</td>
+                  <td style={{ maxWidth: "200px" }} title={String(row.items)}>
+                    {truncateText(row.items, 15)}
+                  </td>
                   <td>{row.status === "Ready" || row.status === "Served / Delivered" ? row.waiter : "Not Assigned"}</td>
                   <td>
                     <span className={`ad_chip ad_chip--${row.status.toLowerCase().replace(" ", "-")}`}>

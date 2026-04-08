@@ -17,12 +17,12 @@ export default function AdminArchitecture() {
         <section className="ad_card"><h3 className="ad_card__title">Security System</h3><ul className="ad_list">{SECURITY.map((item) => <li key={item} className="ad_list__item">{item}</li>)}</ul></section>
       </div>
       <div className="ad_two_col" style={{ marginTop: 16 }}>
-        <section className="ad_card"><h3 className="ad_card__title">Deployment</h3><p className="ad_p">Frontend (React) -> Vercel/Netlify, Backend (Node) -> AWS EC2, DB -> MongoDB Atlas, Images -> Cloudinary/S3.</p></section>
+        {/* <section className="ad_card"><h3 className="ad_card__title">Deployment</h3><p className="ad_p">Frontend (React) -> Vercel/Netlify, Backend (Node) -> AWS EC2, DB -> MongoDB Atlas, Images -> Cloudinary/S3.</p></section> */}
         <section className="ad_card"><h3 className="ad_card__title">Advanced Features</h3><ul className="ad_list">{ADVANCED.map((item) => <li key={item} className="ad_list__item">{item}</li>)}</ul></section>
       </div>
       <section className="ad_card" style={{ marginTop: 16 }}>
         <h3 className="ad_card__title">Full Workflow</h3>
-        <p className="ad_p">Customer books -> waiter seats -> order placed -> chefs prepare -> order ready -> waiter serves -> POS bill -> customer pays.</p>
+        {/* <p className="ad_p">Customer books -> waiter seats -> order placed -> chefs prepare -> order ready -> waiter serves -> POS bill -> customer pays.</p> */}
       </section>
     </div>
   );
