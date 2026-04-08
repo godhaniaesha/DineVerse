@@ -326,7 +326,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
                 </div>
 
                 <div style={{ marginTop: "auto", display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {!isOrderingRole && (
+                  {/* {!isOrderingRole && (
                     <button className="ad_btn ad_btn--primary" type="button" onClick={() => toggleFeatured(item.id)}>
                       {item.featured ? "Remove Featured" : "Make Featured"}
                     </button>
@@ -335,7 +335,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
                     <button className="ad_btn" type="button" onClick={() => toggleAvailability(item.id)}>
                       {item.available ? "Hide Item" : "Show Item"}
                     </button>
-                  )}
+                  )} */}
                   <button className="ad_btn" type="button" onClick={() => addToOrder(item)} disabled={!item.available}>
                     Add to Order
                   </button>
