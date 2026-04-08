@@ -75,10 +75,12 @@ export default function AdminHousekeepingPanel() {
                 <td><span className="ad_chip">{task.status}</span></td>
                 <td><span className="ad_chip">{task.clean_status}</span></td>
                 <td>{task.housekeeper_name || "N/A"}</td>
-                <td className="rooms__actions_cell">
-                  <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
-                    <FiEdit2 />
-                  </button>
+                <td>
+                  <div className="d-flex" style={{ gap: "6px" }}>
+                    <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
+                      <FiEdit2 />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

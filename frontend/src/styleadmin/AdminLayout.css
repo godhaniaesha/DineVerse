@@ -28,7 +28,30 @@
   --ad-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*,
+/* ─── ICONS COLOR ─── */
+ input[type="date"]::-webkit-calendar-picker-indicator,
+ input[type="time"]::-webkit-calendar-picker-indicator {
+   filter: invert(1);
+ }
+ 
+ /* ─── SELECT DROPDOWN FIX ─── */
+ .ad_select, .ad_input {
+   max-width: 100%;
+ }
+ 
+ @media (min-width: 2000px) {
+   .ad_select, .ad_input, select.ad_input {
+     width: auto !important;
+     min-width: 200px;
+   }
+   
+   /* Prevents the native dropdown from expanding too wide on ultra-wide screens */
+   select {
+     max-width: 400px;
+   }
+ }
+ 
+ *,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -574,6 +597,18 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
+}
+
+.menu_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
+  gap: 16px;
+  justify-content: start;
+}
+@media (max-width: 640px) {
+  .menu_grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 220px));
+  }
 }
 
 .ad_card__label,

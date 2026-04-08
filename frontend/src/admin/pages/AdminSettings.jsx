@@ -113,7 +113,12 @@ export default function AdminSettings() {
               {configRows.map((row) => (
                 <tr key={row.id}>
                   <td>{row.key}</td><td>{row.value}</td><td>{row.type}</td>
-                  <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit config" onClick={() => openEdit(row)}><IcEdit /></button><DeleteIconButton title="Delete config" onClick={() => openDelete(row)} /></td>
+                  <td>
+                    <div className="d-flex" style={{ gap: "6px" }}>
+                      <button className="rooms__icon_btn" title="Edit config" onClick={() => openEdit(row)}><IcEdit /></button>
+                      <DeleteIconButton title="Delete config" onClick={() => openDelete(row)} />
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

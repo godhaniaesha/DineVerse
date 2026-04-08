@@ -38,7 +38,11 @@ export default function AdminStaffManagement() {
   return (
     <div className="ad_page">
       <div className="rooms__header"><div><h2 className="ad_h2">Staff Management</h2><p className="ad_p">Manage staff details, department and role allocation.</p></div><button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>Add Staff</button></div>
-      <div className="ad_table_wrap"><table className="ad_table"><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Cuisine</th><th>Phone</th><th>Shift</th><th>Status</th><th>Actions</th></tr></thead><tbody>{rows.map((r) => <tr key={r.id}><td>{r.name}</td><td>{r.role}</td><td>{r.department}</td><td>{r.cuisine || "-"}</td><td>{r.phone}</td><td>{r.shift}</td><td><span className="ad_chip">{r.status}</span></td><td className="rooms__actions_cell"><button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button><DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} /></td></tr>)}</tbody></table></div>
+      <div className="ad_table_wrap"><table className="ad_table"><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Cuisine</th><th>Phone</th><th>Shift</th><th>Status</th><th>Actions</th></tr></thead><tbody>{rows.map((r) => <tr key={r.id}><td>{r.name}</td><td>{r.role}</td><td>{r.department}</td><td>{r.cuisine || "-"}</td><td>{r.phone}</td><td>{r.shift}</td><td><span className="ad_chip">{r.status}</span></td><td>
+        <div className="d-flex" style={{gap:"6px"}}>
+        <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
+        <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
+          </div></td></tr>)}</tbody></table></div>
       {(modal?.mode === "add" || modal?.mode === "edit") && <>
         <div className="rooms__modal_overlay" onClick={close} />
         <div className="rooms__modal_box">

@@ -1,8 +1,10 @@
-  import { useState } from "react";
+import { useState } from "react";
 import { FiEye, FiEdit2 } from "react-icons/fi";
 import DeleteIconButton from "../components/DeleteIconButton";
 
 const DATA = [{ id: 1, name: "Sophia", email: "sophia@mail.com", message: "Need table for 12 people.", date: "2026-04-01", status: "Open" }];
+const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
+const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
 function Modal({ title, onClose, children }) {
   return (
@@ -40,10 +42,12 @@ export default function AdminInquiries() {
                 <td style={{ maxWidth: "150px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.message}</td>
                 <td>{r.date}</td>
                 <td><span className="ad_chip">{r.status}</span></td>
-                <td className="rooms__actions_cell">
-                  <button className="rooms__icon_btn" title="View" onClick={() => openView(r)}><FiEye /></button>
-                  <button className="rooms__icon_btn" title="Mark as Resolved" onClick={() => toggleStatus(r.id)}><FiEdit2 /></button>
-                  <DeleteIconButton title="Delete" onClick={() => deleteRow(r.id)} />
+                <td>
+                  <div className="d-flex" style={{ gap: "6px" }}>
+                    <button className="rooms__icon_btn" onClick={() => toggleStatus(r.id)} title="Edit Review"><IcEdit /></button>
+                    <button className="rooms__icon_btn" onClick={() => openView(r)} title="View Review"><IcView /></button>
+                    <DeleteIconButton title="Delete" onClick={() => deleteRow(r.id)}  />
+                  </div>
                 </td>
               </tr>
             ))}
@@ -78,6 +82,6 @@ export default function AdminInquiries() {
           </div>
         </Modal>
       )}
-      </div>
+    </div>
   );
 }

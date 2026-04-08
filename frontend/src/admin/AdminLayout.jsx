@@ -155,7 +155,7 @@ const Icons = {
       <polyline points="6 9 12 15 18 9" />
     </svg>
   ),
-  pos:( <FaMoneyBillWave />), // ✅ make sure this exists
+  pos: (<FaMoneyBillWave />), // ✅ make sure this exists
 
 };
 
@@ -305,6 +305,9 @@ export default function AdminLayout() {
       "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
+      "/admin/cafe-bookings",
+      "/admin/restaurant-bookings",
+      "/admin/bar-bookings",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/guests",
@@ -325,6 +328,9 @@ export default function AdminLayout() {
       "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
+      "/admin/cafe-bookings",
+      "/admin/restaurant-bookings",
+      "/admin/bar-bookings",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
@@ -356,7 +362,7 @@ export default function AdminLayout() {
       "/admin/profile",
     ],
     "Cafe Waiter": [
-      "/admin",      
+      "/admin",
       "/admin/cafe-book-table",
       "/admin/cafe-menu",
       "/admin/cafe-waiter",
@@ -368,7 +374,7 @@ export default function AdminLayout() {
       "/admin",
       "/admin/res-book-table",
       "/admin/restaurant-menu",
-      "/admin/restaurant-waiter",      
+      "/admin/restaurant-waiter",
       "/admin/orders",
       "/admin/billing",
       "/admin/profile",
@@ -377,7 +383,7 @@ export default function AdminLayout() {
       "/admin",
       "/admin/bar-book-table",
       "/admin/bar-menu",
-      "/admin/bar-waiter",      
+      "/admin/bar-waiter",
       "/admin/orders",
       "/admin/billing",
       "/admin/profile",

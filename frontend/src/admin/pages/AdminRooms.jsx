@@ -5,22 +5,22 @@ import DeleteIconButton from "../components/DeleteIconButton";
 /* ─── DATA ─────────────────────────────────────────── */
 
 const INITIAL_ROOMS = [
-  { id: 1,  number: "101", type: "Deluxe",  floor: 1, capacity: 2, price: 280, status: "available",   amenities: ["King Bed", "Ocean View", "Jacuzzi", "Mini Bar"], img: "", description: "A luxurious deluxe room with ocean view.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
-  { id: 2,  number: "102", type: "Suite",  floor: 1, capacity: 2, price: 140, status: "occupied",    amenities: ["Queen Bed", "Garden View", "Mini Bar"], img: "", description: "Comfortable suite with garden view.", features: [{ icon: "bed", title: "Queen Bed" }, { icon: "view", title: "Garden View" }] },
-  { id: 3,  number: "201", type: "Deluxe",  floor: 2, capacity: 2, price: 290, status: "available",   amenities: ["King Bed", "City View", "Jacuzzi", "Mini Bar"], img: "", description: "Deluxe room with city view.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "City View" }] },
-  { id: 4,  number: "202", type: "Presidential",   floor: 2, capacity: 4, price: 340, status: "maintenance", amenities: ["Twin Beds", "Bunk Bed", "Garden View"], img: "", description: "Presidential suite for special occasions.", features: [{ icon: "bed", title: "Twin Beds" }, { icon: "view", title: "Garden View" }] },
-  { id: 5,  number: "203", type: "Suite",  floor: 2, capacity: 2, price: 140, status: "available",   amenities: ["Double Bed", "City View"], img: "", description: "Standard suite with city view.", features: [{ icon: "bed", title: "Double Bed" }, { icon: "view", title: "City View" }] },
-  { id: 6,  number: "301", type: "Presidential",     floor: 3, capacity: 4, price: 620, status: "occupied",    amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace"], img: "", description: "Luxurious presidential room.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Panoramic View" }] },
-  { id: 7,  number: "302", type: "Suite",  floor: 3, capacity: 2, price: 380, status: "available",   amenities: ["King Bed", "Ocean View", "Lounge Area", "Mini Bar"], img: "", description: "Suite with ocean view and lounge.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
-  { id: 8,  number: "303", type: "Deluxe",  floor: 3, capacity: 1, price: 120, status: "reserved",    amenities: ["Single Bed", "City View"], img: "", description: "Deluxe single room.", features: [{ icon: "bed", title: "Single Bed" }, { icon: "view", title: "City View" }] },
-  { id: 9,  number: "401", type: "Presidential",     floor: 4, capacity: 4, price: 650, status: "available",   amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace", "Chef"], img: "", description: "Top presidential suite.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Panoramic View" }] },
-  { id: 10, number: "402", type: "Suite",  floor: 4, capacity: 2, price: 390, status: "reserved",    amenities: ["King Bed", "Ocean View", "Lounge Area"], img: "", description: "Suite with lounge area.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
+  { id: 1, number: "101", type: "Deluxe", floor: 1, capacity: 2, price: 280, status: "available", amenities: ["King Bed", "Ocean View", "Jacuzzi", "Mini Bar"], img: "", description: "A luxurious deluxe room with ocean view.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
+  { id: 2, number: "102", type: "Suite", floor: 1, capacity: 2, price: 140, status: "occupied", amenities: ["Queen Bed", "Garden View", "Mini Bar"], img: "", description: "Comfortable suite with garden view.", features: [{ icon: "bed", title: "Queen Bed" }, { icon: "view", title: "Garden View" }] },
+  { id: 3, number: "201", type: "Deluxe", floor: 2, capacity: 2, price: 290, status: "available", amenities: ["King Bed", "City View", "Jacuzzi", "Mini Bar"], img: "", description: "Deluxe room with city view.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "City View" }] },
+  { id: 4, number: "202", type: "Presidential", floor: 2, capacity: 4, price: 340, status: "maintenance", amenities: ["Twin Beds", "Bunk Bed", "Garden View"], img: "", description: "Presidential suite for special occasions.", features: [{ icon: "bed", title: "Twin Beds" }, { icon: "view", title: "Garden View" }] },
+  { id: 5, number: "203", type: "Suite", floor: 2, capacity: 2, price: 140, status: "available", amenities: ["Double Bed", "City View"], img: "", description: "Standard suite with city view.", features: [{ icon: "bed", title: "Double Bed" }, { icon: "view", title: "City View" }] },
+  { id: 6, number: "301", type: "Presidential", floor: 3, capacity: 4, price: 620, status: "occupied", amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace"], img: "", description: "Luxurious presidential room.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Panoramic View" }] },
+  { id: 7, number: "302", type: "Suite", floor: 3, capacity: 2, price: 380, status: "available", amenities: ["King Bed", "Ocean View", "Lounge Area", "Mini Bar"], img: "", description: "Suite with ocean view and lounge.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
+  { id: 8, number: "303", type: "Deluxe", floor: 3, capacity: 1, price: 120, status: "reserved", amenities: ["Single Bed", "City View"], img: "", description: "Deluxe single room.", features: [{ icon: "bed", title: "Single Bed" }, { icon: "view", title: "City View" }] },
+  { id: 9, number: "401", type: "Presidential", floor: 4, capacity: 4, price: 650, status: "available", amenities: ["King Bed", "Panoramic View", "Jacuzzi", "Butler", "Terrace", "Chef"], img: "", description: "Top presidential suite.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Panoramic View" }] },
+  { id: 10, number: "402", type: "Suite", floor: 4, capacity: 2, price: 390, status: "reserved", amenities: ["King Bed", "Ocean View", "Lounge Area"], img: "", description: "Suite with lounge area.", features: [{ icon: "bed", title: "King Bed" }, { icon: "view", title: "Ocean View" }] },
 ];
 
-const TYPES    = ["All Types", "Deluxe", "Suite", "Presidential"];
+const TYPES = ["All Types", "Deluxe", "Suite", "Presidential"];
 const STATUSES = ["All", "available", "occupied", "reserved", "maintenance"];
 const STATUS_LABELS = { available: "Available", occupied: "Occupied", reserved: "Reserved", maintenance: "Maintenance" };
-const STATUS_CYCLE  = ["available", "occupied", "reserved", "maintenance"];
+const STATUS_CYCLE = ["available", "occupied", "reserved", "maintenance"];
 
 const EMPTY_FORM = {
   number: "", type: "Deluxe", floor: "1",
@@ -32,35 +32,35 @@ const EMPTY_FORM = {
 
 const IcEdit = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
   </svg>
 );
 
 
 const IcPlus = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-    <line x1="12" y1="5" x2="12" y2="19"/>
-    <line x1="5" y1="12" x2="19" y2="12"/>
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
   </svg>
 );
 
 const IcClose = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <line x1="18" y1="6" x2="6" y2="18"/>
-    <line x1="6" y1="6" x2="18" y2="18"/>
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
 const IcRoom = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 21h18M3 21V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v16M9 21V11h6v10"/>
+    <path d="M3 21h18M3 21V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v16M9 21V11h6v10" />
   </svg>
 );
 
 const IcFilter = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
   </svg>
 );
 
@@ -123,7 +123,7 @@ function RoomForm({ initial, onSave, onCancel }) {
         </select>
       </div>
 
-        <label className="rooms__form_label">Capacity (guests)</label>
+      <label className="rooms__form_label">Capacity (guests)</label>
       <div className="rooms__form_grid2">
         <div>
           <label className="rooms__form_label">Adults</label>
@@ -153,33 +153,33 @@ function RoomForm({ initial, onSave, onCancel }) {
 /* ─── MAIN PAGE ─────────────────────────────────────── */
 
 export default function AdminRooms() {
-  const [rooms, setRooms]               = useState(INITIAL_ROOMS);
-  const [filterType, setFilterType]     = useState("All Types");
+  const [rooms, setRooms] = useState(INITIAL_ROOMS);
+  const [filterType, setFilterType] = useState("All Types");
   const [filterStatus, setFilterStatus] = useState("All");
-  const [search, setSearch]             = useState("");
-  const [modal, setModal]               = useState(null);
-  const [editForm, setEditForm]         = useState(EMPTY_FORM);
+  const [search, setSearch] = useState("");
+  const [modal, setModal] = useState(null);
+  const [editForm, setEditForm] = useState(EMPTY_FORM);
 
   /* stats */
-  const total     = rooms.length;
+  const total = rooms.length;
   const available = rooms.filter(r => r.status === "available").length;
-  const occupied  = rooms.filter(r => r.status === "occupied").length;
-  const revenue   = rooms.filter(r => r.status === "occupied").reduce((s, r) => s + Number(r.price), 0);
+  const occupied = rooms.filter(r => r.status === "occupied").length;
+  const revenue = rooms.filter(r => r.status === "occupied").reduce((s, r) => s + Number(r.price), 0);
 
   /* filtered list */
   const filtered = rooms.filter(r => {
-    const matchType   = filterType === "All Types" || r.type === filterType;
+    const matchType = filterType === "All Types" || r.type === filterType;
     const matchStatus = filterStatus === "All" || r.status === filterStatus;
     const matchSearch = !search || r.number.includes(search) || r.type.toLowerCase().includes(search.toLowerCase());
     return matchType && matchStatus && matchSearch;
   });
 
   /* modal helpers */
-  const openAdd    = ()     => { setEditForm(EMPTY_FORM); setModal({ mode: "add" }); };
-  const openEdit   = (room) => { setEditForm({ ...room, amenities: room.amenities.join(", "), features: room.features.map(f => `${f.icon}:${f.title}`).join(", ") }); setModal({ mode: "edit", room }); };
-  const openDel    = (room) => setModal({ mode: "delete", room });
-  const openView   = (room) => setModal({ mode: "view", room });
-  const closeModal = ()     => setModal(null);
+  const openAdd = () => { setEditForm(EMPTY_FORM); setModal({ mode: "add" }); };
+  const openEdit = (room) => { setEditForm({ ...room, amenities: room.amenities.join(", "), features: room.features.map(f => `${f.icon}:${f.title}`).join(", ") }); setModal({ mode: "edit", room }); };
+  const openDel = (room) => setModal({ mode: "delete", room });
+  const openView = (room) => setModal({ mode: "view", room });
+  const closeModal = () => setModal(null);
 
   const handleSave = (form) => {
     const amenities = form.amenities.split(",").map(a => a.trim()).filter(Boolean);
@@ -314,7 +314,7 @@ export default function AdminRooms() {
                     <StatusBadge status={room.status} />
                   </td>
                   <td onClick={e => e.stopPropagation()}>
-                    <div className="rooms__actions_cell">
+                    <div className="d-flex" style={{ gap: "6px" }}>
                       <button className="rooms__icon_btn" title="Edit room" onClick={() => openEdit(room)}>
                         <IcEdit />
                       </button>
@@ -369,10 +369,10 @@ export default function AdminRooms() {
           <Modal title={`Room #${r.number} — ${r.type}`} onClose={closeModal}>
             <div className="rooms__detail_grid">
               {[
-                ["Floor",         r.floor],
-                ["Capacity",      `${r.capacity} guest${r.capacity > 1 ? "s" : ""}`],
+                ["Floor", r.floor],
+                ["Capacity", `${r.capacity} guest${r.capacity > 1 ? "s" : ""}`],
                 ["Price / night", `₹${Number(r.price).toLocaleString("en-IN")}`],
-                ["Status",        <StatusBadge key="s" status={r.status} />],
+                ["Status", <StatusBadge key="s" status={r.status} />],
               ].map(([label, val]) => (
                 <div key={label} className="rooms__detail_card">
                   <div className="rooms__detail_card_label">{label}</div>

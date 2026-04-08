@@ -32,6 +32,8 @@ export default function AdminReservations() {
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
 
+  const [editingId, setEditingId] = useState(null);
+
   const filtered = useMemo(() => {
     return rows.filter((row) => {
       const statusMatch = status === "All" || row.status === status;
@@ -43,6 +45,7 @@ export default function AdminReservations() {
 
   const updateStatus = (id, nextStatus) => {
     setRows((current) => current.map((row) => (row.id === id ? { ...row, status: nextStatus } : row)));
+    setEditingId(null);
   };
   const openAdd = () => { setForm(EMPTY_FORM); setModal({ mode: "add" }); };
   const openEdit = (row) => { setForm({ ...row, party: String(row.party) }); setModal({ mode: "edit", row }); };
@@ -64,6 +67,11 @@ export default function AdminReservations() {
 
   return (
     <div className="ad_page">
+        <div className="rooms__header">
+        <div><h2 className="ad_h2">Reservations</h2><p className="ad_p">Manage table and room bookings with quick status updates.</p></div>
+        {/* <button className="rooms__add_btn" onClick={openAdd}>Add Reservation</button> */}
+      </div>
+
       <div className="ad_cards_grid">
         <article className="ad_card">
           <div className="ad_card__label">Total bookings</div>
@@ -83,10 +91,7 @@ export default function AdminReservations() {
         </article>
       </div>
 
-      <div className="rooms__header">
-        <div><h2 className="ad_h2">Reservations</h2><p className="ad_p">Manage table and room bookings with quick status updates.</p></div>
-        <button className="rooms__add_btn" onClick={openAdd}>Add Reservation</button>
-      </div>
+    
       <div className="ad_toolbar">
         <input
           className="ad_input"
@@ -134,21 +139,35 @@ export default function AdminReservations() {
                   <td>{row.party}</td>
                   <td>{row.type}</td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    <select
-                      className="ad_select ad_select--small"
-                      value={row.status}
-                      onChange={(event) => updateStatus(row.id, event.target.value)}
-                    >
-                      {STATUSES.slice(1).map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
+                    {editingId === row.id ? (
+                      <select
+                        className="ad_select ad_select--small"
+                        value={row.status}
+                        onChange={(event) => updateStatus(row.id, event.target.value)}
+                        autoFocus
+                        onBlur={() => setEditingId(null)}
+                      >
+                        {STATUSES.slice(1).map((item) => (
+                          <option key={item} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="ad_chip">{row.status}</span>
+                    )}
                   </td>
-                  <td className="rooms__actions_cell">
-                    <button className="rooms__icon_btn" title="Edit reservation" ><IcEdit /></button>
-                    <DeleteIconButton title="Delete reservation" onClick={() => openDelete(row)} />
+                  <td>
+                    <div className="d-flex" style={{ gap: "6px" }}>
+                      <button 
+                        className="rooms__icon_btn" 
+                        title="Edit status" 
+                        onClick={() => setEditingId(row.id)}
+                      >
+                        <IcEdit />
+                      </button>
+                      <DeleteIconButton title="Delete reservation" onClick={() => openDelete(row)} />
+                    </div>
                   </td>
                 </tr>
               ))

@@ -9,7 +9,7 @@ const INITIAL_TABLES = [
 ];
 
 const EMPTY_FORM = { tableNo: "", area: "Bar", capacity: "2", status: "reserved", phone: "" };
-const IcCheck = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20 6L9 17l-5-5"/></svg>;
+const IcCheck = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20 6L9 17l-5-5" /></svg>;
 
 function Modal({ title, onClose, children }) {
   return (
@@ -78,11 +78,13 @@ export default function BarBookTable() {
               .map((row) => (
                 <tr key={row.id}>
                   <td>{row.tableNo}</td><td>{row.capacity} members</td><td><span className="ad_chip">{row.status}</span></td>
-                 <td className="rooms__actions_cell">
-                    {row.status === "reserved" && (
-                      <button className="rooms__icon_btn rooms__icon_btn--primary" title="Accept Booking" onClick={() => acceptBooking(row.id)}><IcCheck /></button>
-                    )}
-                   {row.waiter} </td>
+                  <td>
+                    <div className="d-flex" style={{ gap: "6px" }}>
+                      {row.status === "reserved" && (
+                        <button className="rooms__icon_btn rooms__icon_btn--primary" title="Accept Booking" onClick={() => acceptBooking(row.id)}><IcCheck /></button>
+                      )}
+                      {row.waiter}
+                    </div> </td>
                 </tr>
               ))}
           </tbody>

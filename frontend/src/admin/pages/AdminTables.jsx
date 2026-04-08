@@ -75,9 +75,11 @@ export default function AdminTables() {
               .map((row) => (
                 <tr key={row.id}>
                   <td>{row.tableNo}</td><td>{row.area}</td><td>{row.capacity} members</td><td><span className="ad_chip">{row.status}</span></td>
-                  <td className="rooms__actions_cell">
-                  <button className="rooms__icon_btn" title="Edit table" onClick={() => openEdit(row)}><IcEdit /></button>
-                  <DeleteIconButton title="Delete table" onClick={() => openDelete(row)} />
+                  <td>
+                    <div className="d-flex" style={{ gap: "6px" }}>
+                      <button className="rooms__icon_btn" title="Edit table" onClick={() => openEdit(row)}><IcEdit /></button>
+                      <DeleteIconButton title="Delete table" onClick={() => openDelete(row)} />
+                    </div>
                 </td>
               </tr>
             ))}

@@ -91,15 +91,17 @@ export default function AdminGallery() {
                 <td>{image.title}</td>
                 <td><span className="ad_chip">{image.visible ? "Visible" : "Hidden"}</span></td>
                 <td>
-                  <button className="rooms__icon_btn" title="Edit image" onClick={() => setModal({ mode: "edit", image })}><IcEdit /></button>
-                  <button
-                    className="rooms__icon_btn"
-                    title={image.visible ? "Hide" : "Show"}
-                    onClick={() => toggleImage(image.id)}
-                  >
-                    {image.visible ? <IcEye /> : <IcEyeOff />}
-                  </button>
-                  <DeleteIconButton title="Delete image" onClick={() => setModal({ mode: "delete", image })} />
+                  <div className="d-flex" style={{gap:"6px"}}>
+                    <button className="rooms__icon_btn" title="Edit image" onClick={() => setModal({ mode: "edit", image })}><IcEdit /></button>
+                    <button
+                      className="rooms__icon_btn"
+                      title={image.visible ? "Hide" : "Show"}
+                      onClick={() => toggleImage(image.id)}
+                    >
+                      {image.visible ? <IcEye /> : <IcEyeOff />}
+                    </button>
+                    <DeleteIconButton title="Delete image" onClick={() => setModal({ mode: "delete", image })} />
+                  </div>
                 </td>
               </tr>
             ))}

@@ -119,7 +119,8 @@ export default function AdminCuisineManagement() {
                 <td title={r.description}>{truncate(r.description)}</td>
                 <td>{r.area}</td>
                 <td><span className="ad_chip">{r.status}</span></td>
-                <td className="rooms__actions_cell">
+                <td>
+                  <div className="d-flex" style={{gap:"6px"}}>
                   {!isChefRole ? (
                     <>
                       <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
@@ -128,6 +129,7 @@ export default function AdminCuisineManagement() {
                   ) : (
                     <span className="ad_chip">View only</span>
                   )}
+                  </div>
                 </td>
               </tr>
             ))}

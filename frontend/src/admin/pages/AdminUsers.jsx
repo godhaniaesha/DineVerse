@@ -123,9 +123,11 @@ export default function AdminUsers() {
             <td>{r.email}</td>
             <td>{r.role}</td>
             <td><span className="ad_chip">{r.status}</span></td>
-            <td className="rooms__actions_cell">
-              <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
-              <DeleteIconButton onClick={() => setRows((p) => p.filter((x) => x.id !== r.id))} />
+            <td>
+              <div className="d-flex" style={{ gap: "6px" }}>
+                <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
+                <DeleteIconButton onClick={() => setRows((p) => p.filter((x) => x.id !== r.id))} />
+              </div>
             </td>
           </tr>)}
             {sorted.length === 0 && (

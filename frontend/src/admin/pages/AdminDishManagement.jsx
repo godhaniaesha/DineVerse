@@ -182,7 +182,8 @@ export default function AdminDishManagement() {
                                 <td>{r.area}</td>
                                 <td>{Array.isArray(r.assignedChefs) && r.assignedChefs.length ? r.assignedChefs.join(", ") : "-"}</td>
                                 <td><span className="ad_chip">{r.status}</span></td>
-                                <td className="rooms__actions_cell">
+                                <td>
+                                  <div className="d-flex" style={{gap:"6px"}}>
                                     {!isChefRole ? (
                                         <>
                                             <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, ingredients: r.ingredients.join(", "), assignedChefs: Array.isArray(r.assignedChefs) ? r.assignedChefs : [] }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
@@ -191,6 +192,7 @@ export default function AdminDishManagement() {
                                     ) : (
                                         <span className="ad_chip">View only</span>
                                     )}
+                                  </div>
                                 </td>
                             </tr>
                         ))}

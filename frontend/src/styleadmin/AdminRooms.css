@@ -15,7 +15,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 1.5rem;
+  /* margin-bottom: 1.5rem; */
 }
 
 .rooms__header_left {
@@ -364,12 +364,6 @@
 }
 
 /* ─── ACTION BUTTONS (TABLE) ────────────────────────────────── */
-
-.rooms__actions_cell {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
 
 .rooms__icon_btn {
   display: inline-flex;

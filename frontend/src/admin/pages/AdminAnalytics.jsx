@@ -35,12 +35,7 @@ const MONTHLY_REVENUE = [
   { month: "Dec", revenue: 620000 },
 ];
 
-const CHANNEL_SPLIT = [
-  { label: "Website", value: 46 },
-  { label: "Walk-in", value: 29 },
-  { label: "Phone", value: 15 },
-  { label: "Partner Apps", value: 10 },
-];
+
 
 const KPI = [
   { label: "Weekly Revenue", value: "₹3.9L", trend: "+8%" },
@@ -49,11 +44,6 @@ const KPI = [
   { label: "No-show Rate", value: "4.2%", trend: "-1.1%" },
 ];
 
-const TOP_SLOTS = [
-  { slot: "7:00 PM - 8:00 PM", bookings: 28, utilization: "91%" },
-  { slot: "8:00 PM - 9:00 PM", bookings: 31, utilization: "96%" },
-  { slot: "9:00 PM - 10:00 PM", bookings: 22, utilization: "74%" },
-];
 
 export default function AdminAnalytics() {
   const [isCompactMobile, setIsCompactMobile] = useState(() => window.innerWidth <= 425);
@@ -93,14 +83,25 @@ export default function AdminAnalytics() {
               <AreaChart data={WEEKLY_REVENUE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#d4a373" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#d4a373" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#d4a373" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#d4a373" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
                 <XAxis dataKey="day" stroke="#666" tick={{ fontSize: 10 }} />
                 <YAxis stroke="#666" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} formatter={(value) => `₹${value.toLocaleString("en-IN")}`} />
+                <Tooltip contentStyle={{
+                  backgroundColor: "transparent",
+                  border: "none",
+                  boxShadow: "none",
+                  padding: 0,
+                  whiteSpace: "nowrap"
+                }}
+                  itemStyle={{
+                    color: "#fff",
+                    fontSize: "12px"
+                  }}
+                   formatter={(value) => `₹${value.toLocaleString("en-IN")}`} />
                 <Area type="monotone" dataKey="amount" stroke="#d4a373" fillOpacity={1} fill="url(#colorAmount)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -114,11 +115,11 @@ export default function AdminAnalytics() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={MONTHLY_REVENUE}
-                  margin={{ top: 10, right: 10, left: isCompactMobile ? 0 : -20, bottom: 0 }}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                   barSize={isCompactMobile ? 22 : 16}
-                  barCategoryGap={isCompactMobile ? 18 : undefined}
                 >
-                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
+
                   <XAxis
                     dataKey="month"
                     stroke="#666"
@@ -126,56 +127,40 @@ export default function AdminAnalytics() {
                     tickMargin={8}
                     tick={{ fontSize: isCompactMobile ? 11 : 10 }}
                   />
-                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} formatter={(value) => `₹${value.toLocaleString("en-IN")}`} />
-                <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
-                  {MONTHLY_REVENUE.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={THEME_COLORS[index % THEME_COLORS.length]} />
-                  ))}
-                </Bar>
+
+                  <YAxis
+                    stroke="#666"
+                    tick={{ fontSize: 10 }}
+                    tickFormatter={(value) => `${value / 100000}L`}
+                  />
+
+                  <Tooltip
+                    cursor={{ fill: "transparent" }}
+                    contentStyle={{
+                      backgroundColor: "transparent",
+                      border: "none",
+                      boxShadow: "none",
+                      padding: 0,
+                      whiteSpace: "nowrap"
+                    }}
+                    itemStyle={{
+                      color: "#fff",
+                      fontSize: "12px"
+                    }}
+                    formatter={(value) => [`₹${(value / 100000).toFixed(1)}L`, ""]}
+                  />
+
+                  <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
+                    {MONTHLY_REVENUE.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={THEME_COLORS[index % THEME_COLORS.length]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
         </section>
       </div>
-
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Reservation Source</h3>
-        <ul className="ad_list">
-          {CHANNEL_SPLIT.map((channel) => (
-            <li key={channel.label} className="ad_list__item ad_list__item--between">
-              <span>{channel.label}</span>
-              <strong>{channel.value}%</strong>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Insight Notes</h3>
-        <ul className="ad_list">
-          <li className="ad_list__item">Friday and weekend slots are driving most revenue growth.</li>
-          <li className="ad_list__item">Website conversions improved after menu photo updates.</li>
-          <li className="ad_list__item">Phone bookings are stable and mostly for larger parties.</li>
-        </ul>
-      </section>
-
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Peak Time Analysis</h3>
-        <div className="ad_table_wrap">
-          <table className="ad_table">
-            <thead><tr><th>Slot</th><th>Bookings</th><th>Utilization</th></tr></thead>
-            <tbody>
-              {TOP_SLOTS.map((row) => (
-                <tr key={row.slot}>
-                  <td>{row.slot}</td><td>{row.bookings}</td><td><span className="ad_chip">{row.utilization}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
     </div>
   );
 }
