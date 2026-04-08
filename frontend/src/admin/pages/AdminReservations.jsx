@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const INITIAL_RESERVATIONS = [
   { id: "RV-101", guest: "Aarav Sharma", date: "2026-04-02", time: "19:30", party: 2, type: "Table", status: "Confirmed" },
@@ -11,7 +12,6 @@ const INITIAL_RESERVATIONS = [
 const STATUSES = ["All", "Pending", "Confirmed", "Checked In", "Cancelled"];
 const EMPTY_FORM = { id: "", guest: "", date: "", time: "", party: "2", type: "Table", status: "Pending" };
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
 
 function Modal({ title, onClose, children }) {
   return (
@@ -148,7 +148,7 @@ export default function AdminReservations() {
                   </td>
                   <td className="rooms__actions_cell">
                     <button className="rooms__icon_btn" title="Edit reservation" ><IcEdit /></button>
-                    <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete reservation" onClick={() => openDelete(row)}><IcTrash /></button>
+                    <DeleteIconButton title="Delete reservation" onClick={() => openDelete(row)} />
                   </td>
                 </tr>
               ))

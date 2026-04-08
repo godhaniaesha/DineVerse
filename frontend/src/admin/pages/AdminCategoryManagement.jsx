@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
 
 const AREAS = ["Restaurant", "Cafe", "Bar"];
 const SORT_OPTIONS = ["None", "Name A–Z", "Name Z–A", "Area"];
@@ -20,8 +19,11 @@ const INITIAL = [
 ];
 
 const EMPTY = { cuisineId: 1, name: "", image: "", area: "Restaurant", status: "Active" };
+const CHEF_ROLES = new Set(["Cafe Chef", "Restaurant Chef", "Bar Chef"]);
 
 export default function AdminCategoryManagement() {
+  const adminRole = localStorage.getItem("adminRole") || "Super Admin";
+  const isChefRole = CHEF_ROLES.has(adminRole);
   const [rows, setRows] = useState(INITIAL);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
@@ -60,7 +62,10 @@ export default function AdminCategoryManagement() {
 
   return (
     <div className="ad_page">
-      <div className="rooms__header"><div><h2 className="ad_h2">Category Management</h2><p className="ad_p">Manage categories in the system by cuisine and area.</p></div><button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>Add Category</button></div>
+      <div className="rooms__header">
+        <div><h2 className="ad_h2">Category Management</h2><p className="ad_p">Manage categories in the system by cuisine and area.</p></div>
+        {!isChefRole && <button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>Add Category</button>}
+      </div>
 
       <div className="rooms__filters" style={{ marginBottom: 12 }}>
         <input
@@ -100,8 +105,14 @@ export default function AdminCategoryManagement() {
                 <td>{r.area}</td>
                 <td><span className="ad_chip">{r.status}</span></td>
                 <td className="rooms__actions_cell">
-                  <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
-                  <button className="rooms__icon_btn rooms__icon_btn--danger" onClick={() => setRows((p) => p.filter((x) => x.id !== r.id))}><IcTrash /></button>
+                  {!isChefRole ? (
+                    <>
+                      <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
+                      <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
+                    </>
+                  ) : (
+                    <span className="ad_chip">View only</span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -110,7 +121,7 @@ export default function AdminCategoryManagement() {
         </table>
       </div>
 
-      {(modal?.mode === "add" || modal?.mode === "edit") && (
+      {!isChefRole && (modal?.mode === "add" || modal?.mode === "edit") && (
         <>
           <div className="rooms__modal_overlay" onClick={close} />
           <div className="rooms__modal_box">
@@ -126,6 +137,22 @@ export default function AdminCategoryManagement() {
             <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option>Active</option><option>Inactive</option></select></div>
 
             <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={save}>Save</button></div>
+          </div>
+        </>
+      )}
+      {!isChefRole && modal?.mode === "delete" && (
+        <>
+          <div className="rooms__modal_overlay" onClick={close} />
+          <div className="rooms__modal_box">
+            <div className="rooms__modal_head">
+              <span className="rooms__modal_title">Delete Category</span>
+              <button className="rooms__modal_close" onClick={close}>x</button>
+            </div>
+            <p className="rooms__delete_msg">Delete {modal.row.name}?</p>
+            <div className="rooms__form_actions">
+              <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
+              <button className="rooms__btn rooms__btn--danger" onClick={() => { setRows((p) => p.filter((x) => x.id !== modal.row.id)); close(); }}>Delete</button>
+            </div>
           </div>
         </>
       )}

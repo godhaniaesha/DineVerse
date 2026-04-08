@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const INITIAL_BLOGS = [
   { id: 1, title: "Summer Dining Trends", short_des: "Explore latest dining trends", des: "Detailed description...", author: "Admin", author_img: "https://images.unsplash.com/photo-1564564321837-a57b7a5e50d7?w=400&q=80", image: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80", like: 125, area: "Restaurant", status: "published" },
@@ -7,7 +8,6 @@ const INITIAL_BLOGS = [
 
 const EMPTY_FORM = { title: "", short_des: "", des: "", author: "", author_img: "", image: "", like: 0, area: "Restaurant", status: "draft" };
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
 
 function Modal({ title, onClose, children }) {
   return (
@@ -52,7 +52,7 @@ export default function AdminBlogs() {
             {blogs.map((blog) => (
               <tr key={blog.id}>
                 <td><img src={blog.image} alt={blog.title} className="ad_gallery_img" style={{ width: 90, height: 52, marginBottom: 0 }} /></td><td>{blog.title}</td><td>{blog.author}</td><td>{blog.area}</td><td>{blog.like}</td><td><span className="ad_chip">{blog.status}</span></td>
-                <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit blog" onClick={() => openEdit(blog)}><IcEdit /></button><button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete blog" onClick={() => openDelete(blog)}><IcTrash /></button></td>
+                <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit blog" onClick={() => openEdit(blog)}><IcEdit /></button><DeleteIconButton title="Delete blog" onClick={() => openDelete(blog)} /></td>
               </tr>
             ))}
           </tbody>

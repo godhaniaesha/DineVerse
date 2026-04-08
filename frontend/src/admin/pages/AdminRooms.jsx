@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../../styleadmin/AdminRooms.css";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 /* ─── DATA ─────────────────────────────────────────── */
 
@@ -36,14 +37,6 @@ const IcEdit = () => (
   </svg>
 );
 
-const IcTrash = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="3 6 5 6 21 6"/>
-    <path d="M19 6l-1 14H6L5 6"/>
-    <path d="M10 11v6"/><path d="M14 11v6"/>
-    <path d="M9 6V4h6v2"/>
-  </svg>
-);
 
 const IcPlus = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -326,9 +319,7 @@ export default function AdminRooms() {
                       <button className="rooms__icon_btn" title="Edit room" onClick={() => openEdit(room)}>
                         <IcEdit />
                       </button>
-                      <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete room" onClick={() => openDel(room)}>
-                        <IcTrash />
-                      </button>
+                      <DeleteIconButton title="Delete room" onClick={() => openDel(room)} />
                     </div>
                   </td>
                 </tr>

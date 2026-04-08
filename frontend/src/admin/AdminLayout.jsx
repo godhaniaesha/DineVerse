@@ -170,6 +170,7 @@ const NAV_GROUPS = [
     label: "Manage",
     links: [
       { to: "/admin/reservations", label: "Reservations", icon: Icons.reservations, badge: "12" },
+      { to: "/admin/admin-menu", label: "Menu Items", icon: Icons.menu_items },
       { to: "/admin/cafe-bookings", label: "Cafe Bookings", icon: Icons.reservations },
       { to: "/admin/cafe-menu", label: "Cafe Menu", icon: Icons.menu_items },
       { to: "/admin/restaurant-bookings", label: "Restaurant Bookings", icon: Icons.reservations },
@@ -215,6 +216,17 @@ const NAV_GROUPS = [
   },
 ];
 
+const CHEF_ALLOWED_LINKS = [
+  "/admin",
+  "/admin/cuisines",
+  "/admin/categories",
+  "/admin/dishes",
+  "/admin/admin-menu",
+  "/admin/orders",
+  "/admin/kds",
+  "/admin/profile",
+];
+
 /* ─── PAGE TITLE MAP ─────────────────────────────────────────── */
 
 const PAGE_TITLES = {
@@ -251,7 +263,7 @@ const PAGE_TITLES = {
   "/admin/housekeeping-panel": { title: "Housekeeping", sub: "Room cleaning tasks" },
   "/admin/guests": { title: "Guests", sub: "Guest profiles" },
   "/admin/rooms": { title: "Rooms", sub: "Room management" },
-  "/admin/menu": { title: "Menu Items", sub: "Food & beverage" },
+  "/admin/admin-menu": { title: "Menu Items", sub: "Food & beverage" },
   "/admin/cafe-book-table": { title: "Cafe Book Table", sub: "Cafe table bookings" },
   "/admin/res-book-table": { title: "Restaurant Book Table", sub: "Restaurant table bookings" },
   "/admin/bar-book-table": { title: "Bar Book Table", sub: "Bar table bookings" },
@@ -282,18 +294,14 @@ export default function AdminLayout() {
 
   const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const adminName = localStorage.getItem("adminName") || "Admin User";
+  const isChefRole = adminRole === "Cafe Chef" || adminRole === "Restaurant Chef" || adminRole === "Bar Chef";
 
   const roleAllowedLinks = {
     "Super Admin": [
       "/admin",
+      "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
-      "/admin/cafe-bookings",
-      "/admin/cafe-menu",
-      "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
-      "/admin/bar-bookings",
-      "/admin/bar-menu",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/guests",
@@ -306,31 +314,20 @@ export default function AdminLayout() {
       "/admin/reviews",
       "/admin/inquiries",
       "/admin/admin-users",
-      "/admin/cafe-order-manage",
-      "/admin/res-order-manage",
-      "/admin/bar-order-manage",
       "/admin/profile",
       "/admin/sales-history",
     ],
     Manager: [
       "/admin",
+      "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
-      "/admin/cafe-bookings",
-      "/admin/cafe-menu",
-      "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
-      "/admin/bar-bookings",
-      "/admin/bar-menu",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
       "/admin/categories",
       "/admin/dishes",
       "/admin/orders",
-      "/admin/cafe-order-manage",
-      "/admin/res-order-manage",
-      "/admin/bar-order-manage",
       "/admin/housekeeping-panel",
       "/admin/guests",
       "/admin/cafe-book-table",
@@ -344,51 +341,6 @@ export default function AdminLayout() {
       "/admin/inquiries",
       "/admin/profile",
       "/admin/sales-history",
-    ],
-    "Cafe Chef": [
-      "/admin",
-      "/admin/cafe-bookings",
-      "/admin/cafe-menu",
-      "/admin/cafe-waiter",
-      "/admin/cafe-chef",
-      "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
-      "/admin/menu",
-      "/admin/orders",
-      "/admin/cafe-order-manage",
-      "/admin/res-order-manage",
-      "/admin/bar-order-manage",
-      "/admin/kds",
-      "/admin/profile",
-    ],
-    "Restaurant Chef": [
-      "/admin",
-      "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
-      "/admin/restaurant-waiter",
-      "/admin/restaurant-chef",
-      "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
-      "/admin/menu",
-      "/admin/orders",
-      "/admin/kds",
-      "/admin/profile",
-    ],
-    "Bar Chef": [
-      "/admin",
-      "/admin/bar-bookings",
-      "/admin/bar-menu",
-      "/admin/bar-waiter",
-      "/admin/bar-chef",
-      "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
-      "/admin/menu",
-      "/admin/orders",
-      "/admin/kds",
-      "/admin/profile",
     ],
     Waiter: [
       "/admin",
@@ -442,7 +394,7 @@ export default function AdminLayout() {
     ],
   };
 
-  const allowedLinks = roleAllowedLinks[adminRole] ?? [];
+  const allowedLinks = isChefRole ? CHEF_ALLOWED_LINKS : roleAllowedLinks[adminRole] ?? [];
 
   const filteredNavGroups = NAV_GROUPS
     .map((group) => ({

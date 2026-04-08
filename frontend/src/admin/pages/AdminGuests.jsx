@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const INITIAL_GUESTS = [
   { id: 1, name: "Aarav Sharma", phone: "+91 98765 43210", email: "aarav@example.com", image: "https://i.pravatar.cc/80?img=11", visits: 7, vip: true },
@@ -8,7 +9,6 @@ const INITIAL_GUESTS = [
 ];
 const EMPTY_FORM = { name: "", phone: "", email: "", image: "", visits: "1", vip: false };
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
 
 export default function AdminGuests() {
   const [guests, setGuests] = useState(INITIAL_GUESTS);
@@ -105,7 +105,7 @@ export default function AdminGuests() {
                     {guest.vip ? "VIP" : "Regular"}
                   </button>
                 </td>
-                <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit guest" onClick={() => openEdit(guest)}><IcEdit /></button><button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete guest" onClick={() => openDelete(guest)}><IcTrash /></button></td>
+                <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit guest" onClick={() => openEdit(guest)}><IcEdit /></button><DeleteIconButton title="Delete guest" onClick={() => openDelete(guest)} /></td>
               </tr>
             ))}
           </tbody>
