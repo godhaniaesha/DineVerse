@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const INITIAL_ROOM_TYPES = [
     { id: 1, name: "Standard Room", roomType: "Standard", description: "Comfortable room with basic amenities", price: 4500, image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&q=80", features: [{ icon: "🛏️", name: "Queen Bed" }, { icon: "📺", name: "Smart TV" }, { icon: "❄️", name: "AC" }] },
@@ -83,7 +84,7 @@ export default function AdminRoomTypes() {
                         </div>
                         <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "auto" }}>
                             <button className="rooms__icon_btn" title="Edit" onClick={() => openEdit(room)}><FiEdit2 /></button>
-                            <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete" onClick={() => openDelete(room)}><FiTrash2 /></button>
+                            <DeleteIconButton title="Delete" onClick={() => openDelete(room)} />
                         </div>
                     </div>
                 ))}

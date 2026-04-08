@@ -1,203 +1,171 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { FiClock } from "react-icons/fi";
+import "../../style/x_style.css";
+import {
+  BADGE_META,
+  BAR_SUBCATEGORIES,
+  CAFE_SUBCATEGORIES,
+  CATEGORIES,
+  MENU_ITEMS,
+  RESTAURANT_SUBCATEGORIES,
+} from "../../pages/Menu";
 
-const DEFAULT_CUISINES = ["Italian", "Chinese", "Indian", "French", "Modern" ];
-const INITIAL_ITEMS = [
-  { id: 1, name: "Truffle Pasta", cuisine: "Italian", category: "Main Course", price: 680, image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80", available: true },
-  { id: 2, name: "Mushroom Soup", cuisine: "French", category: "Starter", price: 320, image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80", available: true },
-  { id: 3, name: "Chocolate Dome", cuisine: "French", category: "Dessert", price: 290, image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80", available: false },
-  { id: 4, name: "Citrus Cooler", cuisine: "Indian", category: "Beverage", price: 220, image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=600&q=80", available: true },
-];
+function MenuCard({ item, hovered, visible, onHover, registerRef }) {
+  const accent = item.category === "bar" ? "var(--d-bar)" : "var(--d-restaurant)";
 
-const EMPTY_FORM = { name: "", cuisine: "Italian", category: "Starter", price: "", image: "" };
-const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
-function Modal({ title, onClose, children }) {
   return (
-    <>
-      <div className="rooms__modal_overlay" onClick={onClose} />
-      <div className="rooms__modal_box">
-        <div className="rooms__modal_head"><span className="rooms__modal_title">{title}</span><button className="rooms__modal_close" onClick={onClose}>x</button></div>
-        {children}
+    <article
+      ref={registerRef}
+      data-id={item.id}
+      className={`x_menu_card${visible ? " x_visible" : ""}${hovered ? " x_hovered" : ""}`}
+      style={{ "--accent": accent }}
+      onMouseEnter={() => onHover(item.id)}
+      onMouseLeave={() => onHover(null)}
+    >
+      <div className="x_mc_img_wrap">
+        <img src={item.img} alt={item.name} className="x_mc_img" loading="lazy" />
+        <span className="x_mc_tag">{item.tag}</span>
       </div>
-    </>
+      <div className="x_mc_body">
+        <div className="x_mc_top">
+          <h3 className="x_mc_name">{item.name}</h3>
+          <span className="x_mc_price">{item.price}</span>
+        </div>
+        <p className="x_mc_desc">{item.desc}</p>
+        <div className="x_mc_foot">
+          <div className="x_mc_badges">
+            {item.badges.map((badge) => (
+              <span
+                key={badge}
+                className="x_badge x_badge--sm"
+                style={{ color: BADGE_META[badge]?.color, background: BADGE_META[badge]?.bg }}
+              >
+                {BADGE_META[badge]?.label}
+              </span>
+            ))}
+          </div>
+          <div className="x_mc_meta">
+            <span><FiClock /> {item.time}</span>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
 
 export default function AdminMenu() {
-  const [items, setItems] = useState(INITIAL_ITEMS);
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [modal, setModal] = useState(null);
-  const [filterCuisine, setFilterCuisine] = useState("All");
-  const [filterCategory, setFilterCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeSubcategory, setActiveSubcategory] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+  const [visibleIds, setVisibleIds] = useState(new Set());
+  const cardRefs = useRef({});
 
-  const setField = (field, value) => setForm((current) => ({ ...current, [field]: value }));
+  useEffect(() => {
+    setActiveSubcategory(null);
+  }, [activeCategory]);
 
-  const saveItem = () => {
-    if (!form.name.trim() || !form.price || !form.image.trim()) return;
-    const next = {
-      id: modal?.item?.id ?? Date.now(),
-      name: form.name.trim(),
-      category: form.category,
-      price: Number(form.price),
-      image: form.image.trim(),
-      available: true,
-    };
-    if (modal?.mode === "edit") setItems((current) => current.map((item) => (item.id === modal.item.id ? { ...next, available: item.available } : item)));
-    else setItems((current) => [next, ...current]);
-    setForm(EMPTY_FORM);
-    setModal(null);
-  };
-  const openAdd = () => { setForm(EMPTY_FORM); setModal({ mode: "add" }); };
-  const openEdit = (item) => { setForm({ ...item, price: String(item.price) }); setModal({ mode: "edit", item }); };
-  const close = () => setModal(null);
-
-  const removeItem = (id) => setItems((current) => current.filter((item) => item.id !== id));
-  const toggleAvailability = (id) => {
-    setItems((current) =>
-      current.map((item) => (item.id === id ? { ...item, available: !item.available } : item))
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleIds((previous) => new Set([...previous, Number(entry.target.dataset.id)]));
+          }
+        });
+      },
+      { threshold: 0.12 }
     );
+
+    Object.values(cardRefs.current).forEach((element) => element && observer.observe(element));
+    return () => observer.disconnect();
+  }, [activeCategory, activeSubcategory]);
+
+  const getCurrentSubcategories = () => {
+    if (activeCategory === "restaurant") return RESTAURANT_SUBCATEGORIES;
+    if (activeCategory === "bar") return BAR_SUBCATEGORIES;
+    if (activeCategory === "cafe") return CAFE_SUBCATEGORIES;
+    return [];
   };
 
-  const availableCount = items.filter((item) => item.available).length;
-  const hiddenCount = items.length - availableCount;
-  const avgPrice = items.length
-    ? Math.round(items.reduce((sum, item) => sum + item.price, 0) / items.length)
-    : 0;
-
-  const filteredItems = items.filter((item) => {
-    const byCuisine = filterCuisine === "All" || item.cuisine === filterCuisine;
-    const byCategory = filterCategory === "All" || item.category === filterCategory;
-    return byCuisine && byCategory;
+  const filteredItems = MENU_ITEMS.filter((item) => {
+    const categoryMatch = activeCategory === "all" || item.category === activeCategory;
+    const subcategoryMatch = !activeSubcategory || item.subcategory === activeSubcategory;
+    return categoryMatch && subcategoryMatch;
   });
 
   return (
-    <div className="ad_page">
-      <h2 className="ad_h2">Menu Items</h2>
-      <p className="ad_p">Create, update availability, and remove dishes from the catalog.</p>
-
-      <div className="ad_row_actions" style={{ margin: "10px 0" }}>
-        <select value={filterCuisine} onChange={(e) => setFilterCuisine(e.target.value)} className="ad_select" style={{ marginRight: 8 }}>
-          <option value="All">All Cuisines</option>
-          {DEFAULT_CUISINES.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="ad_select">
-          <option value="All">All Categories</option>
-          {Array.from(new Set(items.map((item) => item.category))).map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-      </div>
-
-      <div className="ad_cards_grid">
-        <article className="ad_card">
-          <div className="ad_card__label">Total items</div>
-          <div className="ad_card__value">{items.length}</div>
-        </article>
-        <article className="ad_card">
-          <div className="ad_card__label">Available now</div>
-          <div className="ad_card__value">{availableCount}</div>
-        </article>
-        <article className="ad_card">
-          <div className="ad_card__label">Hidden items</div>
-          <div className="ad_card__value">{hiddenCount}</div>
-        </article>
-        <article className="ad_card">
-          <div className="ad_card__label">Average price</div>
-          <div className="ad_card__value">₹{avgPrice}</div>
-        </article>
-      </div>
-
-      <div className="rooms__header">
-        <div />
-      </div>
-
-      <section className="ad_card">
-        <h3 className="ad_card__title">Add New Item</h3>
-        <div className="ad_form_grid">
-          <input
-            className="ad_input"
-            placeholder="Dish name"
-            value={form.name}
-            onChange={(event) => setField("name", event.target.value)}
-          />
-          <select
-            className="ad_select"
-            value={form.category}
-            onChange={(event) => setField("category", event.target.value)}
-          >
-            <option value="Starter">Starter</option>
-            <option value="Main Course">Main Course</option>
-            <option value="Dessert">Dessert</option>
-            <option value="Beverage">Beverage</option>
-          </select>
-          <input
-            className="ad_input"
-            type="number"
-            min="0"
-            placeholder="Price"
-            value={form.price}
-            onChange={(event) => setField("price", event.target.value)}
-          />
+    <div className="x_wrapper">
+      <nav className="x_cat_strip">
+        <div className="x_cat_inner">
+          {CATEGORIES.map((category) => (
+            <button
+              key={category.id}
+              className={`x_cat_btn${activeCategory === category.id ? " x_cat_btn--active" : ""}`}
+              style={activeCategory === category.id && category.accent ? { "--cat-accent": category.accent } : {}}
+              onClick={() => setActiveCategory(category.id)}
+            >
+              <span className="x_cat_btn_icon">{category.icon}</span>
+              {category.label}
+            </button>
+          ))}
         </div>
-      </section>
+      </nav>
 
-      <div className="ad_table_wrap" style={{ marginTop: 16 }}>
-        <table className="ad_table">
-          <thead>
-            <tr>
-              <th>Dish</th>
-              <th>Cuisine</th>
-              <th>Category</th>
-              <th>Image</th>
-              <th>Price</th>
-              <th>Availability</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.cuisine}</td>
-                <td>{item.category}</td>
-                <td><img src={item.image} alt={item.name} className="ad_gallery_img" style={{ width: 70, height: 44, marginBottom: 0 }} /></td>
-                <td>₹{item.price.toLocaleString("en-IN")}</td>
-                <td>
-                  <button className="ad_btn ad_btn--ghost" onClick={() => toggleAvailability(item.id)}>
-                    {item.available ? "Available" : "Hidden"}
-                  </button>
-                </td>
-                <td>
-                  <button className="rooms__icon_btn" title="Edit item" onClick={() => openEdit(item)}><IcEdit /></button>
-                  <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete item" onClick={() => removeItem(item.id)}><IcTrash /></button>
-                </td>
-              </tr>
+      {activeCategory !== "all" && getCurrentSubcategories().length > 0 && (
+        <nav className="x_subcat_strip">
+          <div className="x_subcat_inner">
+            <button
+              className={`x_subcat_btn${!activeSubcategory ? " x_subcat_btn--active" : ""}`}
+              onClick={() => setActiveSubcategory(null)}
+            >
+              All {activeCategory === "restaurant" ? "Kitchen" : activeCategory === "cafe" ? "Cafe" : "Bar"} Items
+            </button>
+            {getCurrentSubcategories().map((subcategory) => (
+              <button
+                key={subcategory.id}
+                className={`x_subcat_btn${activeSubcategory === subcategory.id ? " x_subcat_btn--active" : ""}`}
+                onClick={() => setActiveSubcategory(subcategory.id)}
+              >
+                <span className="x_subcat_btn_icon">{subcategory.icon}</span>
+                {subcategory.label}
+              </button>
             ))}
-          </tbody>
-        </table>
-      </div>
-
-      <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Pricing Notes</h3>
-        <ul className="ad_list">
-          <li className="ad_list__item ad_list__item--between">
-            <span>Recommended premium range</span>
-            <span className="ad_chip">₹550 - ₹900</span>
-          </li>
-          <li className="ad_list__item ad_list__item--between">
-            <span>Recommended starter range</span>
-            <span className="ad_chip">₹220 - ₹420</span>
-          </li>
-        </ul>
-      </section>
-      {(modal?.mode === "add" || modal?.mode === "edit") && (
-        <Modal title={modal.mode === "add" ? "Add Menu Item" : "Edit Menu Item"} onClose={close}>
-          <div className="rooms__form_row"><label className="rooms__form_label">Dish Name</label><input required className="rooms__form_input" value={form.name} onChange={(e) => setField("name", e.target.value)} /></div>
-          <div className="rooms__form_row"><label className="rooms__form_label">Cuisine</label><select className="rooms__form_select" value={form.cuisine} onChange={(e) => setField("cuisine", e.target.value)}>{DEFAULT_CUISINES.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
-          <div className="rooms__form_row"><label className="rooms__form_label">Category</label><select className="rooms__form_select" value={form.category} onChange={(e) => setField("category", e.target.value)}><option value="Starter">Starter</option><option value="Main Course">Main Course</option><option value="Dessert">Dessert</option><option value="Beverage">Beverage</option></select></div>
-          <div className="rooms__form_row"><label className="rooms__form_label">Price</label><input required type="number" className="rooms__form_input" min="0" value={form.price} onChange={(e) => setField("price", e.target.value)} /></div>
-          <div className="rooms__form_row"><label className="rooms__form_label">Image URL</label><input required className="rooms__form_input" value={form.image} onChange={(e) => setField("image", e.target.value)} placeholder="https://..." /></div>
-          <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={saveItem}>Save Item</button></div>
-        </Modal>
+          </div>
+        </nav>
       )}
+
+      <main className="x_main">
+        <section className="x_section">
+          <div className="x_section_head">
+            <span className="x_section_kicker">Admin Menu</span>
+            <h2 className="x_section_title">
+              {activeCategory === "bar"
+                ? "Drinks & Cocktails"
+                : activeCategory === "restaurant"
+                  ? "Kitchen Selections"
+                  : activeCategory === "cafe"
+                    ? "Cafe Delights"
+                    : "All Items"}
+            </h2>
+            <span className="x_section_count">{filteredItems.length} items</span>
+          </div>
+
+          <div className="x_menu_grid">
+            {filteredItems.map((item) => (
+              <MenuCard
+                key={item.id}
+                item={item}
+                hovered={hoveredId === item.id}
+                visible={visibleIds.has(item.id)}
+                onHover={setHoveredId}
+                registerRef={(element) => {
+                  cardRefs.current[item.id] = element;
+                }}
+              />
+            ))}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

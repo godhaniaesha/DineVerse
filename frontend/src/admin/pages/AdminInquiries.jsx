@@ -1,5 +1,6 @@
   import { useState } from "react";
-import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiEdit2 } from "react-icons/fi";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const DATA = [{ id: 1, name: "Sophia", email: "sophia@mail.com", message: "Need table for 12 people.", date: "2026-04-01", status: "Open" }];
 
@@ -42,7 +43,7 @@ export default function AdminInquiries() {
                 <td className="rooms__actions_cell">
                   <button className="rooms__icon_btn" title="View" onClick={() => openView(r)}><FiEye /></button>
                   <button className="rooms__icon_btn" title="Mark as Resolved" onClick={() => toggleStatus(r.id)}><FiEdit2 /></button>
-                  <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete" onClick={() => deleteRow(r.id)}><FiTrash2 /></button>
+                  <DeleteIconButton title="Delete" onClick={() => deleteRow(r.id)} />
                 </td>
               </tr>
             ))}

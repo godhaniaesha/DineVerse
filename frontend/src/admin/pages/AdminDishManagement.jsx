@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
+import { useEffect, useMemo, useState } from "react";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="m6 6 1 14h10l1-14" /></svg>;
 
 const CATEGORIES = [
     { id: 1, name: "Pizza", cuisineId: 1 },
@@ -47,19 +46,47 @@ const EMPTY = {
     prepTime: "",
     ingredients: "",
     note: "",
+    assignedChefs: [],
     area: "Restaurant",
     status: "Active",
 };
+const DISHES_STORAGE_KEY = "adminDishRows";
+const CHEF_ROLES = new Set(["Cafe Chef", "Restaurant Chef", "Bar Chef"]);
+const CHEF_NAMES = [
+    "Cafe Chef 1",
+    "Cafe Chef 2",
+    "Restaurant Chef 1",
+    "Restaurant Chef 2",
+    "Bar Chef 1",
+    "Bar Chef 2",
+];
 
 export default function AdminDishManagement() {
-    const [rows, setRows] = useState(INITIAL);
+    const adminRole = localStorage.getItem("adminRole") || "Super Admin";
+    const adminName = localStorage.getItem("adminName") || "";
+    const isChefRole = CHEF_ROLES.has(adminRole);
+    const [rows, setRows] = useState(() => {
+        try {
+            const stored = localStorage.getItem(DISHES_STORAGE_KEY);
+            if (!stored) return INITIAL;
+            const parsed = JSON.parse(stored);
+            return Array.isArray(parsed) ? parsed : INITIAL;
+        } catch {
+            return INITIAL;
+        }
+    });
     const [modal, setModal] = useState(null);
     const [form, setForm] = useState(EMPTY);
     const [search, setSearch] = useState("");
     const [areaFilter, setAreaFilter] = useState("All");
     const [sortBy, setSortBy] = useState("None");
+    const [chefOptions] = useState(CHEF_NAMES);
 
     const close = () => setModal(null);
+
+    useEffect(() => {
+        localStorage.setItem(DISHES_STORAGE_KEY, JSON.stringify(rows));
+    }, [rows]);
 
     const save = () => {
         if (!form.name.trim()) return;
@@ -69,6 +96,7 @@ export default function AdminDishManagement() {
             price: Number(form.price),
             image: form.image.trim() || "https://via.placeholder.com/140",
             ingredients: form.ingredients.split(",").map((i) => i.trim()).filter(Boolean),
+            assignedChefs: Array.isArray(form.assignedChefs) ? form.assignedChefs : [],
         };
 
         if (modal?.mode === "add") {
@@ -82,8 +110,10 @@ export default function AdminDishManagement() {
 
     const filtered = rows.filter((r) => {
         const matchArea = areaFilter === "All" || r.area === areaFilter;
-        const text = `${r.name} ${r.inShortDesc} ${r.description} ${r.course} ${r.meal} ${r.area}`.toLowerCase();
-        return matchArea && (!search || text.includes(search.toLowerCase()));
+        const assignedChefs = Array.isArray(r.assignedChefs) ? r.assignedChefs : [];
+        const matchChefAssignment = !isChefRole || assignedChefs.length === 0 || (adminName && assignedChefs.includes(adminName));
+        const text = `${r.name} ${r.inShortDesc} ${r.description} ${r.course} ${r.meal} ${r.area} ${assignedChefs.join(" ")}`.toLowerCase();
+        return matchArea && matchChefAssignment && (!search || text.includes(search.toLowerCase()));
     });
 
     const sorted = useMemo(() => {
@@ -97,7 +127,17 @@ export default function AdminDishManagement() {
 
     return (
         <div className="ad_page">
-            <div className="rooms__header"><div><h2 className="ad_h2">Dish Management</h2><p className="ad_p">Manage dishes with full course, meal, ingredient and area controls.</p></div><button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>Add Dish</button></div>
+            <div className="rooms__header">
+                <div>
+                    <h2 className="ad_h2">Dish Management</h2>
+                    <p className="ad_p">Manage dishes with full course, meal, ingredient and area controls.</p>
+                </div>
+                {!isChefRole && (
+                    <button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>
+                        Add Dish
+                    </button>
+                )}
+            </div>
 
             <div className="rooms__filters" style={{ marginBottom: 12 }}>
                 <input
@@ -126,6 +166,7 @@ export default function AdminDishManagement() {
                             <th>Meal</th>
                             <th>Price</th>
                             <th>Area</th>
+                            <th>Chefs</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -139,19 +180,26 @@ export default function AdminDishManagement() {
                                 <td>{r.meal}</td>
                                 <td>₹{r.price.toLocaleString("en-IN")}</td>
                                 <td>{r.area}</td>
+                                <td>{Array.isArray(r.assignedChefs) && r.assignedChefs.length ? r.assignedChefs.join(", ") : "-"}</td>
                                 <td><span className="ad_chip">{r.status}</span></td>
                                 <td className="rooms__actions_cell">
-                                    <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, ingredients: r.ingredients.join(", ") }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
-                                    <button className="rooms__icon_btn rooms__icon_btn--danger" onClick={() => setRows((p) => p.filter((x) => x.id !== r.id))}><IcTrash /></button>
+                                    {!isChefRole ? (
+                                        <>
+                                            <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, ingredients: r.ingredients.join(", "), assignedChefs: Array.isArray(r.assignedChefs) ? r.assignedChefs : [] }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
+                                            <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
+                                        </>
+                                    ) : (
+                                        <span className="ad_chip">View only</span>
+                                    )}
                                 </td>
                             </tr>
                         ))}
-                        {sorted.length === 0 && <tr><td colSpan={8} className="rooms__empty">No dishes found</td></tr>}
+                        {sorted.length === 0 && <tr><td colSpan={9} className="rooms__empty">No dishes found</td></tr>}
                     </tbody>
                 </table>
             </div>
 
-            {(modal?.mode === "add" || modal?.mode === "edit") && (
+            {!isChefRole && (modal?.mode === "add" || modal?.mode === "edit") && (
                 <>
                     <div className="rooms__modal_overlay" onClick={close} />
                     <div className="rooms__modal_box">
@@ -187,10 +235,42 @@ export default function AdminDishManagement() {
                         </div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Ingredients (comma-separated)</label><input className="rooms__form_input" value={form.ingredients} onChange={(e) => setForm((f) => ({ ...f, ingredients: e.target.value }))} /></div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Note</label><input className="rooms__form_input" value={form.note} onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))} /></div>
+                        <div className="rooms__form_row">
+                            <label className="rooms__form_label">Assign Chefs</label>
+                            <select
+                                className="rooms__form_select"
+                                multiple
+                                value={Array.isArray(form.assignedChefs) ? form.assignedChefs : []}
+                                onChange={(e) => {
+                                    const selected = Array.from(e.target.selectedOptions).map((option) => option.value);
+                                    setForm((f) => ({ ...f, assignedChefs: selected }));
+                                }}
+                            >
+                                {chefOptions.map((chefName) => (
+                                    <option key={chefName} value={chefName}>{chefName}</option>
+                                ))}
+                            </select>
+                        </div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select></div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option>Active</option><option>Inactive</option></select></div>
 
                         <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={save}>Save</button></div>
+                    </div>
+                </>
+            )}
+            {!isChefRole && modal?.mode === "delete" && (
+                <>
+                    <div className="rooms__modal_overlay" onClick={close} />
+                    <div className="rooms__modal_box">
+                        <div className="rooms__modal_head">
+                            <span className="rooms__modal_title">Delete Dish</span>
+                            <button className="rooms__modal_close" onClick={close}>x</button>
+                        </div>
+                        <p className="rooms__delete_msg">Delete {modal.row.name}?</p>
+                        <div className="rooms__form_actions">
+                            <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
+                            <button className="rooms__btn rooms__btn--danger" onClick={() => { setRows((p) => p.filter((x) => x.id !== modal.row.id)); close(); }}>Delete</button>
+                        </div>
                     </div>
                 </>
             )}

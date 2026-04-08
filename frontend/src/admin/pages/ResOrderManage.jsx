@@ -1,9 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
-const FLOW = ["New Order", "Preparing", "Ready", "Served", "Completed"];
+const FLOW = ["Pending", "Accepted by Chef", "Cooking", "Ready", "Served / Delivered"];
+const RES_SEED_ROWS = [
+  { id: "ORD-102", table: "T8", customer: "Table 8", items: "Steak, Salad", waiter: "Rohan", time: "19:35", status: "Cooking", area: "restaurant" },
+  { id: "ORD-105", table: "R4", customer: "Table 4", items: "Paneer Tikka, Butter Naan", waiter: "Karan", time: "20:10", status: "Pending", area: "restaurant" },
+  { id: "ORD-108", table: "R9", customer: "Room 304", items: "Dal Fry, Jeera Rice", waiter: "Rohan", time: "20:16", status: "Ready", area: "restaurant" },
+  { id: "ORD-111", table: "R6", customer: "Family Table", items: "Manchurian, Hakka Noodles", waiter: "Karan", time: "20:25", status: "Accepted by Chef", area: "restaurant" },
+];
 
 export default function ResOrderManage() {
+  const role = localStorage.getItem("adminRole") || "Super Admin";
   const [rows, setRows] = useState(() => {
     const savedOrders = localStorage.getItem(ORDER_QUEUE_KEY);
     if (savedOrders) {
@@ -11,18 +18,21 @@ export default function ResOrderManage() {
         return JSON.parse(savedOrders);
       } catch (error) {
         localStorage.removeItem(ORDER_QUEUE_KEY);
-        return [];
+        return RES_SEED_ROWS;
       }
     }
-    return [];
+    return RES_SEED_ROWS;
   });
+
+  const [viewOrder, setViewOrder] = useState(null);
 
   const nextStatus = (id) => {
     setRows((prev) => {
       const updated = prev.map((row) => {
         if (row.id === id) {
           const currentIndex = FLOW.indexOf(row.status);
-          const nextIndex = Math.min(currentIndex + 1, FLOW.length - 1);
+          const nextByRole = role === "Restaurant Chef" ? 3 : FLOW.length - 1;
+          const nextIndex = Math.min(currentIndex + 1, nextByRole);
           return { ...row, status: FLOW[nextIndex] };
         }
         return row;
@@ -46,10 +56,8 @@ export default function ResOrderManage() {
             <tr>
               <th>Order ID</th>
               <th>Table</th>
-              <th>Customer</th>
               <th>Items</th>
               <th>Waiter</th>
-              <th>Time</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -61,30 +69,37 @@ export default function ResOrderManage() {
                 <tr key={row.id}>
                   <td>{row.id}</td>
                   <td>{row.table}</td>
-                  <td>{row.customer}</td>
                   <td style={{ maxWidth: "200px" }}>{row.items}</td>
-                  <td>{row.waiter}</td>
-                  <td>{row.time}</td>
+                  <td>{row.status === "Ready" || row.status === "Served / Delivered" ? row.waiter : "Not Assigned"}</td>
                   <td>
                     <span className={`ad_chip ad_chip--${row.status.toLowerCase().replace(" ", "-")}`}>
                       {row.status}
                     </span>
                   </td>
                   <td>
-                    {row.status !== "Completed" && (
-                      <button
-                        className="ad_btn ad_btn--primary"
-                        onClick={() => nextStatus(row.id)}
-                      >
-                        Next Status
-                      </button>
-                    )}
+                    <button
+                      className="rooms__icon_btn"
+                      title="View order"
+                      onClick={() => setViewOrder(row)}
+                    >
+                      👁
+                    </button>
+                    {row.status !== "Served / Delivered" &&
+                      (role !== "Restaurant Chef" || row.status !== "Ready") && (
+                        <button
+                          className="ad_btn ad_btn--primary"
+                          onClick={() => nextStatus(row.id)}
+                          style={{ marginLeft: 8 }}
+                        >
+                          {role === "Restaurant Chef" ? "Move Kitchen Stage" : "Next Status"}
+                        </button>
+                      )}
                   </td>
                 </tr>
               ))}
             {rows.filter((row) => row.area === "restaurant").length === 0 && (
               <tr>
-                <td colSpan="8" style={{ textAlign: "center", padding: "2rem" }}>
+                <td colSpan="6" style={{ textAlign: "center", padding: "2rem" }}>
                   No active restaurant orders.
                 </td>
               </tr>
@@ -92,6 +107,44 @@ export default function ResOrderManage() {
           </tbody>
         </table>
       </div>
+      {viewOrder && (
+        <>
+          <div className="rooms__modal_overlay" onClick={() => setViewOrder(null)} />
+          <div className="rooms__modal_box">
+            <div className="rooms__modal_head">
+              <span className="rooms__modal_title">Order Details - {viewOrder.id}</span>
+              <button className="rooms__modal_close" onClick={() => setViewOrder(null)}>x</button>
+            </div>
+            <div className="rooms__detail_grid">
+              <div className="rooms__detail_card">
+                <div className="rooms__detail_card_label">Table</div>
+                <div className="rooms__detail_card_value">{viewOrder.table}</div>
+              </div>
+              <div className="rooms__detail_card">
+                <div className="rooms__detail_card_label">Customer</div>
+                <div className="rooms__detail_card_value">{viewOrder.customer}</div>
+              </div>
+              <div className="rooms__detail_card">
+                <div className="rooms__detail_card_label">Time</div>
+                <div className="rooms__detail_card_value">{viewOrder.time}</div>
+              </div>
+              <div className="rooms__detail_card">
+                <div className="rooms__detail_card_label">Status</div>
+                <div className="rooms__detail_card_value">
+                  <span className={`ad_chip ad_chip--${viewOrder.status.toLowerCase().replace(" ", "-")}`}>
+                    {viewOrder.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="rooms__detail_amenities_label">Items</div>
+            <p style={{ padding: "0 20px 20px" }}>{viewOrder.items}</p>
+            <div className="rooms__form_actions">
+              <button className="rooms__btn rooms__btn--primary" onClick={() => setViewOrder(null)}>Close</button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

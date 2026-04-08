@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="m6 6 1 14h10l1-14" /></svg>;
 
 const ROLES = ["Super Admin", "Manager", "Staff", "Cafe Chef", "Restaurant Chef", "Bar Chef", "Waiter"];
 const STATUSES = ["Active", "Inactive"];
@@ -13,6 +13,7 @@ const DATA = [
   { id: 3, name: "Cafe Chef", email: "chef@cafe.com", role: "Cafe Chef", status: "Active" },
   { id: 4, name: "Waiter John", email: "waiter@restaurant.com", role: "Waiter", status: "Active" },
 ];
+const ADMIN_USERS_STORAGE_KEY = "adminUsersRows";
 const EMPTY = {
   name: "",
   email: "",
@@ -22,7 +23,16 @@ const EMPTY = {
   status: "Active"
 };
 export default function AdminUsers() {
-  const [rows, setRows] = useState(DATA);
+  const [rows, setRows] = useState(() => {
+    try {
+      const stored = localStorage.getItem(ADMIN_USERS_STORAGE_KEY);
+      if (!stored) return DATA;
+      const parsed = JSON.parse(stored);
+      return Array.isArray(parsed) ? parsed : DATA;
+    } catch {
+      return DATA;
+    }
+  });
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [search, setSearch] = useState("");
@@ -30,6 +40,10 @@ export default function AdminUsers() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("None");
   const close = () => { setModal(null); setForm(EMPTY); };
+
+  useEffect(() => {
+    localStorage.setItem(ADMIN_USERS_STORAGE_KEY, JSON.stringify(rows));
+  }, [rows]);
 
   const save = () => {
     if (!form.name.trim() || !form.email.trim()) return;
@@ -111,7 +125,7 @@ export default function AdminUsers() {
             <td><span className="ad_chip">{r.status}</span></td>
             <td className="rooms__actions_cell">
               <button className="rooms__icon_btn" onClick={() => { setForm(r); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
-              <button className="rooms__icon_btn rooms__icon_btn--danger" onClick={() => setRows((p) => p.filter((x) => x.id !== r.id))}><IcTrash /></button>
+              <DeleteIconButton onClick={() => setRows((p) => p.filter((x) => x.id !== r.id))} />
             </td>
           </tr>)}
             {sorted.length === 0 && (
