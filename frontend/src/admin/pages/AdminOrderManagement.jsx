@@ -15,6 +15,13 @@ const INITIAL = [
 ];
 const FLOW = ["Pending", "Accepted by Chef", "Cooking", "Ready", "Served / Delivered"];
 
+function truncateText(value, maxChars) {
+  if (value === null || value === undefined) return "";
+  const str = String(value);
+  if (str.length <= maxChars) return str;
+  return str.slice(0, maxChars) + "...";
+}
+
 export default function AdminOrderManagement() {
   const [rows, setRows] = useState(() => {
     const savedOrders = localStorage.getItem(ORDER_QUEUE_KEY);
@@ -81,7 +88,9 @@ export default function AdminOrderManagement() {
                 <tr key={row.id}>
                   <td>{row.id}</td>
                   <td>{row.table}</td>
-                  <td>{row.items}</td>
+                  <td title={String(row.items)} style={{ maxWidth: "200px" }}>
+                    {truncateText(row.items, 15)}
+                  </td>
                   <td>{row.chef}</td>
                   <td>{row.waiter}</td>
                   <td>
