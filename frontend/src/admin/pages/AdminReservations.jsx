@@ -44,11 +44,13 @@ export default function AdminReservations() {
   const updateStatus = (id, nextStatus) => {
     setRows((current) => current.map((row) => (row.id === id ? { ...row, status: nextStatus } : row)));
   };
+  const openAdd = () => { setForm(EMPTY_FORM); setModal({ mode: "add" }); };
+  const openEdit = (row) => { setForm({ ...row, party: String(row.party) }); setModal({ mode: "edit", row }); };
   const openDelete = (row) => setModal({ mode: "delete", row });
   const close = () => setModal(null);
   const save = () => {
-    if (!form.id.trim() || !form.guest.trim() || !form.date || !form.time || !form.party) return;
-    const payload = { ...form, party: Number(form.party) };
+    if (!form.guest.trim() || !form.date || !form.time || !form.party) return;
+    const payload = { ...form, id: form.id || `RV-${Date.now().toString().slice(-6)}`, party: Number(form.party) };
     if (modal.mode === "add") setRows((prev) => [...prev, payload]);
     if (modal.mode === "edit") setRows((prev) => prev.map((row) => (row.id === modal.row.id ? payload : row)));
     close();
@@ -62,9 +64,6 @@ export default function AdminReservations() {
 
   return (
     <div className="ad_page">
-      <h2 className="ad_h2">Reservations</h2>
-      <p className="ad_p">Manage table and room bookings with quick status updates.</p>
-
       <div className="ad_cards_grid">
         <article className="ad_card">
           <div className="ad_card__label">Total bookings</div>
@@ -85,7 +84,8 @@ export default function AdminReservations() {
       </div>
 
       <div className="rooms__header">
-        <div />
+        <div><h2 className="ad_h2">Reservations</h2><p className="ad_p">Manage table and room bookings with quick status updates.</p></div>
+        <button className="rooms__add_btn" onClick={openAdd}>Add Reservation</button>
       </div>
       <div className="ad_toolbar">
         <input
@@ -147,7 +147,7 @@ export default function AdminReservations() {
                     </select>
                   </td>
                   <td className="rooms__actions_cell">
-                    <button className="rooms__icon_btn" title="Edit reservation" ><IcEdit /></button>
+                    <button className="rooms__icon_btn" title="Edit reservation" onClick={() => openEdit(row)}><IcEdit /></button>
                     <button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete reservation" onClick={() => openDelete(row)}><IcTrash /></button>
                   </td>
                 </tr>
@@ -158,6 +158,19 @@ export default function AdminReservations() {
       </div>
    
       {modal?.mode === "delete" && <Modal title="Delete Reservation" onClose={close}><p className="rooms__delete_msg">Delete {modal.row.id}?</p><div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={remove}>Delete</button></div></Modal>}
+      {(modal?.mode === "add" || modal?.mode === "edit") && (
+        <Modal title={modal.mode === "add" ? "Add Reservation" : "Edit Reservation"} onClose={close}>
+          <div className="rooms__form_row"><label className="rooms__form_label">Guest Name</label><input required className="rooms__form_input" value={form.guest} onChange={(e) => setForm((f) => ({ ...f, guest: e.target.value }))} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Date</label><input required type="date" className="rooms__form_input" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Time</label><input required type="time" className="rooms__form_input" value={form.time} onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Party Size</label><input required type="number" className="rooms__form_input" value={form.party} onChange={(e) => setForm((f) => ({ ...f, party: e.target.value }))} /></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Type</label><select className="rooms__form_select" value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}><option value="Table">Table</option><option value="Room">Room</option></select></div>
+          <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}>
+            {STATUSES.slice(1).map(s => <option key={s} value={s}>{s}</option>)}
+          </select></div>
+          <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={save}>Save</button></div>
+        </Modal>
+      )}
     </div>
   );
 }

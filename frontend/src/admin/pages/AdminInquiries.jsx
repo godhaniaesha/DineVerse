@@ -54,23 +54,23 @@ export default function AdminInquiries() {
         <Modal title="Inquiry Details" onClose={close}>
           <div style={{ padding: "20px" }}>
             <div style={{ marginBottom: "16px" }}>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Name</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.inquiry.name}</p>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#6a6278" }}>Name</label>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#b5b5b5" }}>{modal.inquiry.name}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Email</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.inquiry.email}</p>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#6a6278" }}>Email</label>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#b5b5b5" }}>{modal.inquiry.email}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Message</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333", lineHeight: "1.6" }}>{modal.inquiry.message}</p>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#6a6278" }}>Message</label>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#b5b5b5", lineHeight: "1.6" }}>{modal.inquiry.message}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Date</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.inquiry.date}</p>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#6a6278" }}>Date</label>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#b5b5b5" }}>{modal.inquiry.date}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
-              <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Status</label>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#6a6278" }}>Status</label>
               <p style={{ margin: "6px 0 0 0", fontSize: "14px" }}><span className="ad_chip">{modal.inquiry.status}</span></p>
             </div>
             <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Close</button></div>

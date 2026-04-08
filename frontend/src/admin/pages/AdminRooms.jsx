@@ -221,7 +221,6 @@ export default function AdminRooms() {
       {/* PAGE HEADER */}
       <div className="rooms__header">
         <div className="rooms__header_left">
-          <div className="rooms__header_icon"><IcRoom /></div>
           <div>
             <h2 className="rooms__header_title">Rooms</h2>
             <p className="rooms__header_sub">Manage room types, pricing and availability</p>
