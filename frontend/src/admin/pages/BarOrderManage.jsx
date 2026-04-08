@@ -8,6 +8,8 @@ const BAR_SEED_ROWS = [
   { id: "ORD-109", table: "B4", customer: "Bar Table 4", items: "Virgin Mojito, Nachos", waiter: "Vikram", time: "20:18", status: "Accepted by Chef", area: "bar" },
   { id: "ORD-112", table: "B8", customer: "Couple Table", items: "Blue Lagoon, Cheese Balls", waiter: "Meera", time: "20:28", status: "Pending", area: "bar" },
 ];
+const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
+
 
 function truncateText(value, maxChars) {
   if (value === null || value === undefined) return "";
@@ -88,10 +90,9 @@ export default function BarOrderManage() {
                   <td>
                     <button
                       className="rooms__icon_btn"
-                      title="View order"
                       onClick={() => setViewOrder(row)}
                     >
-                      👁
+                      <IcView />
                     </button>
                     {row.status !== "Served / Delivered" &&
                       (role !== "Bar Chef" || row.status !== "Ready") && (

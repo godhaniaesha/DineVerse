@@ -81,7 +81,7 @@ export default function AdminStaffManagement() {
 
           <div className="rooms__form_grid2">
             <div>
-              <label className="rooms__form_label">Password {modal.mode === "add" ? "(required)" : "(leave blank to keep current)"}</label>
+              <label className="rooms__form_label">Password </label>
               <input
                 type="password"
                 className="rooms__form_input"

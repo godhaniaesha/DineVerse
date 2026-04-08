@@ -93,11 +93,11 @@ export default function AdminHousekeepingPanel() {
           <div style={{ padding: "20px" }}>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Room</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.task.room}</p>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.room}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Current Clean Status</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.task.clean_status}</p>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.clean_status}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label htmlFor="clean_status" style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>New Clean Status</label>

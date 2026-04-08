@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
 
+const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
+
 const INITIAL = [
   { id: "ORD-101", table: "T3", customer: "Walk-in", items: "Sandwich, Latte", chef: "Cafe Chef 1", waiter: "Neha", status: "Pending", area: "cafe", time: "19:20", note: "-", total: 360 },
   { id: "ORD-102", table: "T8", customer: "Table 8", items: "Steak, Salad", chef: "Restaurant Chef 1", waiter: "Rohan", status: "Cooking", area: "restaurant", time: "19:35", note: "Medium rare", total: 980 },
@@ -117,10 +119,9 @@ export default function AdminOrderManagement() {
                   <td>
                     <button
                       className="rooms__icon_btn"
-                      title="View order"
                       onClick={() => setViewOrder(row)}
                     >
-                      👁
+                      <IcView />
                     </button>
                     {editingId === row.id ? (
                       <button className="ad_btn" onClick={() => setEditingId(null)} style={{ marginLeft: 8 }}>
@@ -169,7 +170,7 @@ export default function AdminOrderManagement() {
                 </div>
               </div>
             </div>
-            <div className="rooms__detail_amenities_label">Items</div>
+            <div className="rooms__detail_amenities_label text-nowrap">Items</div>
             <p style={{ padding: "0 20px" }}>{viewOrder.items}</p>
             {viewOrder.note && (
               <p style={{ padding: "0 20px 20px", color: "#999" }}>Note: {viewOrder.note}</p>

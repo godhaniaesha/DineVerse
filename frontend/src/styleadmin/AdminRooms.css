@@ -15,7 +15,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  /* margin-bottom: 1.5rem; */
+  margin-bottom: 1.5rem;
 }
 
 .rooms__header_left {
@@ -290,7 +290,6 @@
 
 .rooms__amenities {
   display: flex;
-  flex-wrap: wrap;
   gap: 4px;
   align-items: center;
 }

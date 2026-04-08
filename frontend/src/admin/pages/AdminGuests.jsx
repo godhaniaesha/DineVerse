@@ -6,14 +6,14 @@ const INITIAL_GUESTS = [
   { id: 3, name: "Noah Johnson", phone: "+1 212 555 0151", email: "noah@example.com", image: "https://i.pravatar.cc/80?img=16", visits: 5 },
   { id: 4, name: "Riya Patel", phone: "+91 99887 65432", email: "riya@example.com", image: "https://i.pravatar.cc/80?img=23", visits: 2 },
 ];
-const EMPTY_FORM = { 
-  name: "", 
-  phone: "", 
-  email: "", 
-  image: "", 
+const EMPTY_FORM = {
+  name: "",
+  phone: "",
+  email: "",
+  image: "",
   visits: "1"
 };
-const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
+const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 
 export default function AdminGuests() {
   const [guests, setGuests] = useState(INITIAL_GUESTS);
@@ -50,9 +50,10 @@ export default function AdminGuests() {
       </div>
 
 
-      <div className="ad_toolbar">
+      <div>
         <input
-          className="ad_input w-25"
+          className="rooms__search w-100 my-2"
+          style={{ maxWidth: "320px" }}
           placeholder="Search guest by name or phone"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -78,7 +79,7 @@ export default function AdminGuests() {
                 <td>{guest.phone}</td>
                 <td>{guest.email}</td>
                 <td>{guest.visits}</td>
-                </tr>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -107,7 +108,7 @@ export default function AdminGuests() {
           </div>
         </>
       )}
-      
+
     </div>
   );
 }

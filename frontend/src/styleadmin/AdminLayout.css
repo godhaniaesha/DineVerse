@@ -732,6 +732,7 @@
   border-radius: var(--ad-r-lg);
   background: var(--ad-surface);
   white-space: nowrap;
+  margin-top: 12px;
 }
 
 .ad_table {

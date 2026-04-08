@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
 const FLOW = ["Pending", "Accepted by Chef", "Cooking", "Ready", "Served / Delivered"];
+const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 const RES_SEED_ROWS = [
   { id: "ORD-102", table: "T8", customer: "Table 8", items: "Steak, Salad", waiter: "Rohan", time: "19:35", status: "Cooking", area: "restaurant" },
   { id: "ORD-105", table: "R4", customer: "Table 4", items: "Paneer Tikka, Butter Naan", waiter: "Karan", time: "20:10", status: "Pending", area: "restaurant" },
@@ -88,10 +89,9 @@ export default function ResOrderManage() {
                   <td>
                     <button
                       className="rooms__icon_btn"
-                      title="View order"
                       onClick={() => setViewOrder(row)}
                     >
-                      👁
+                      <IcView />
                     </button>
                     {row.status !== "Served / Delivered" &&
                       (role !== "Restaurant Chef" || row.status !== "Ready") && (

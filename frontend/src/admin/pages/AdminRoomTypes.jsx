@@ -61,9 +61,22 @@ export default function AdminRoomTypes() {
             </div>
 
             {/* Cards View */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px", marginBottom: "30px" }}>
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))",
+                gap: "20px",
+                marginBottom: "30px",
+                marginTop: "20px"
+            }}>
                 {roomTypes.map((room) => (
-                    <div key={room.id} className="ad_card" style={{ minHeight: "430px", display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden" }}>
+                    <div key={room.id} className="ad_card" style={{
+                        minHeight: "430px",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        overflow: "hidden",
+                        padding: "16px"
+                    }}>
                         <div>
                             <img src={room.image} alt={room.name} style={{ width: "100%", height: "220px", objectFit: "cover", marginBottom: "16px" }} />
                             <span className="ad_chip" style={{ marginBottom: "10px", display: "inline-block" }}>{room.roomType}</span>

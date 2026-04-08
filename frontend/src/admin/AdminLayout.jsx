@@ -291,9 +291,17 @@ const PAGE_TITLES = {
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const sidebarRef = useRef(null);
   const userMenuRef = useRef(null);
   const location = useLocation();
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminRole");
+    localStorage.removeItem("adminName");
+    // Add other keys to clear if necessary
+    window.location.href = "/admin-login"; // Adjust path as needed
+  };
 
   const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const adminName = localStorage.getItem("adminName") || "Admin User";
@@ -518,7 +526,6 @@ export default function AdminLayout() {
               <div className="ad_user_name">{adminName}</div>
               <div className="ad_user_role">{adminRole}</div>
             </div>
-            <span className="ad_user_chevron">{Icons.chevron}</span>
           </div>
         </div>
       </aside>
@@ -570,7 +577,7 @@ export default function AdminLayout() {
             </button>
             <div ref={userMenuRef} className={`ad_user_menu${userMenuOpen ? " ad_user_menu--open" : ""}`}>
               <NavLink className="ad_user_menu__item" to="/admin/profile">My Profile</NavLink>
-              <button className="ad_user_menu__item" type="button">Logout</button>
+              <button className="ad_user_menu__item" type="button" onClick={() => setShowLogoutModal(true)}>Logout</button>
             </div>
           </div>
         </header>
@@ -581,6 +588,28 @@ export default function AdminLayout() {
         </section>
 
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <>
+          <div className="rooms__modal_overlay" onClick={() => setShowLogoutModal(false)} />
+          <div className="rooms__modal_box" style={{ maxWidth: "400px" }}>
+            <div className="rooms__modal_head">
+              <span className="rooms__modal_title">Logout Confirmation</span>
+              <button className="rooms__modal_close" onClick={() => setShowLogoutModal(false)}>×</button>
+            </div>
+            <div className="rooms__modal_body" style={{ padding: "24px", textAlign: "center" }}>
+              <p style={{ color: "var(--ad-text-2)", fontSize: "15px", marginBottom: "0" }}>
+                Are you sure you want to log out of the admin panel?
+              </p>
+            </div>
+            <div className="rooms__form_actions" style={{ padding: "16px 24px" }}>
+              <button className="rooms__btn rooms__btn--ghost" onClick={() => setShowLogoutModal(false)}>Cancel</button>
+              <button className="rooms__btn rooms__btn--primary" onClick={handleLogout}>Logout</button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

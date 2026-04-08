@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
+import emptyCart from "../../img/no.png";
 
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
@@ -334,131 +335,150 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
         </div>
       </section>
 
-  <div className="row" style={{ marginTop: 16 }}>
+      <div className="row" style={{ marginTop: 16 }}>
 
-  {/* LEFT SIDE - 5 COL */}
-  <div className="col-12 col-lg-5 mb-3 mb-lg-0">
-    <section className="ad_card h-100">
-      <h3 className="ad_card__title">Current Waiter Order</h3>
+        {/* LEFT SIDE - 5 COL */}
+        <div className="col-12 col-lg-5 mb-3 mb-lg-0">
+          <section className="ad_card h-100">
+            <h3 className="ad_card__title">Current Waiter Order</h3>
 
-      <div className="ad_p" style={{ marginBottom: 0 }}>
-        Then you can enter the customer name, {targetLabel.toLowerCase()}, and notes, and send it directly to the queue.
-      </div>
+            <div className="ad_p" style={{ marginBottom: 0 }}>
+              Then you can enter the customer name, {targetLabel.toLowerCase()}, and notes, and send it directly to the queue.
+            </div>
 
-      <div className="ad_form_grid" style={{ marginTop: 12 }}>
-        <input
-          className="ad_input"
-          placeholder="Customer name"
-          value={orderDraft.customerName}
-          onChange={(event) =>
-            setOrderDraft((current) => ({ ...current, customerName: event.target.value }))
-          }
-        />
+            <div className="ad_form_grid" style={{ marginTop: 12 }}>
+              <input
+                className="ad_input"
+                placeholder="Customer name"
+                value={orderDraft.customerName}
+                onChange={(event) =>
+                  setOrderDraft((current) => ({ ...current, customerName: event.target.value }))
+                }
+              />
 
-        <select
-          className="ad_input"
-          value={orderDraft.target}
-          onChange={(event) =>
-            setOrderDraft((current) => ({ ...current, target: event.target.value }))
-          }
-        >
-          <option value="">Select {targetLabel}</option>
-          {occupiedTables.map((table) => (
-            <option key={table.id} value={table.tableNo}>
-              {table.tableNo} (Waiter: {table.waiter})
-            </option>
-          ))}
-        </select>
-      </div>
+              <select
+                className="ad_input"
+                value={orderDraft.target}
+                onChange={(event) =>
+                  setOrderDraft((current) => ({ ...current, target: event.target.value }))
+                }
+              >
+                <option value="">Select {targetLabel}</option>
+                {occupiedTables.map((table) => (
+                  <option key={table.id} value={table.tableNo}>
+                    {table.tableNo} (Waiter: {table.waiter})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      <div className="rooms__form_row" style={{ marginTop: 12 }}>
-        <textarea
-          className="ad_input"
-          placeholder="Special instructions"
-          value={orderDraft.note}
-          onChange={(event) =>
-            setOrderDraft((current) => ({ ...current, note: event.target.value }))
-          }
-          style={{ minHeight: 96, resize: "vertical" }}
-        />
-      </div>
+            <div className="rooms__form_row" style={{ marginTop: 12 }}>
+              <textarea
+                className="ad_input"
+                placeholder="Special instructions"
+                value={orderDraft.note}
+                onChange={(event) =>
+                  setOrderDraft((current) => ({ ...current, note: event.target.value }))
+                }
+                style={{ minHeight: 96, resize: "vertical" }}
+              />
+            </div>
 
-      <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
-        <span className="ad_chip">{totalSelectedItems} items selected</span>
-        <span className="ad_chip">₹{orderTotal.toLocaleString("en-IN")} total</span>
-      </div>
+            <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <span className="ad_chip">{totalSelectedItems} items selected</span>
+              <span className="ad_chip">₹{orderTotal.toLocaleString("en-IN")} total</span>
+            </div>
 
-      {lastSubmitted && (
-        <div className="ad_p" style={{ marginTop: 12 }}>
-          {lastSubmitted.orderId} queued for {lastSubmitted.target} with {lastSubmitted.itemCount} items totaling ₹{lastSubmitted.total.toLocaleString("en-IN")}.
+            {lastSubmitted && (
+              <div className="ad_p" style={{ marginTop: 12 }}>
+                {lastSubmitted.orderId} queued for {lastSubmitted.target} with {lastSubmitted.itemCount} items totaling ₹{lastSubmitted.total.toLocaleString("en-IN")}.
+              </div>
+            )}
+
+            <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+              <button className="ad_btn ad_btn--primary" onClick={placeOrder} disabled={!orderDraft.items.length}>
+                {submitLabel}
+              </button>
+              <button className="ad_btn" onClick={clearDraft}>
+                Clear Draft
+              </button>
+            </div>
+          </section>
         </div>
-      )}
 
-      <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-        <button className="ad_btn ad_btn--primary" onClick={placeOrder} disabled={!orderDraft.items.length}>
-          {submitLabel}
-        </button>
-        <button className="ad_btn" onClick={clearDraft}>
-          Clear Draft
-        </button>
-      </div>
-    </section>
-  </div>
+        {/* RIGHT SIDE - 7 COL */}
+        <div className="col-12 col-lg-7">
+          <section className="ad_card h-100">
+            <h3 className="ad_card__title">Selected Dishes</h3>
 
-  {/* RIGHT SIDE - 7 COL */}
-  <div className="col-12 col-lg-7">
-    <section className="ad_card h-100">
-      <h3 className="ad_card__title">Selected Dishes</h3>
+            <div className="ad_p" style={{ marginBottom: 12 }}>
+              This list is your live basket.
+            </div>
 
-      <div className="ad_p" style={{ marginBottom: 12 }}>
-        This list is your live basket.
-      </div>
+            {orderDraft.items.length ? (
+              <div className="ad_table_wrap" style={{ maxHeight: "300px", overflowY: "auto" }}>
+                <table className="ad_table">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Price</th>
+                      <th>Quantity</th>
+                      <th>Total</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
 
-      {orderDraft.items.length ? (
-        <div className="ad_table_wrap" style={{ maxHeight: "300px", overflowY: "auto" }}>
-          <table className="ad_table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {orderDraft.items.map((item) => (
-                <tr key={item.id}>
-                  <td><b>{item.name}</b></td>
-                  <td>₹{item.price.toLocaleString("en-IN")}</td>
-                  <td>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <button className="ad_btn" onClick={() => changeDraftQuantity(item.id, -1)}>-</button>
-                      <span className="ad_chip">{item.quantity}</span>
-                      <button className="ad_btn" onClick={() => changeDraftQuantity(item.id, 1)}>+</button>
-                    </div>
-                  </td>
-                  <td>₹{(item.price * item.quantity).toLocaleString("en-IN")}</td>
-                  <td>
-                    <button className="ad_btn ad_btn--danger" onClick={() => removeFromDraft(item.id)}>
-                      <MdOutlineClose />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  <tbody>
+                    {orderDraft.items.map((item) => (
+                      <tr key={item.id}>
+                        <td><b>{item.name}</b></td>
+                        <td>₹{item.price.toLocaleString("en-IN")}</td>
+                        <td>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <button className="ad_btn" onClick={() => changeDraftQuantity(item.id, -1)}>-</button>
+                            <span className="ad_chip">{item.quantity}</span>
+                            <button className="ad_btn" onClick={() => changeDraftQuantity(item.id, 1)}>+</button>
+                          </div>
+                        </td>
+                        <td>₹{(item.price * item.quantity).toLocaleString("en-IN")}</td>
+                        <td>
+                          <button className="ad_btn ad_btn--danger" onClick={() => removeFromDraft(item.id)}>
+                            <MdOutlineClose />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div
+                className="ad_p"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                  padding: "20px"
+                }}
+              >
+                <img
+                  src={emptyCart} // ✅ use import
+                  alt="Empty Cart"
+                  style={{
+                    width: "100px",
+                    marginBottom: "10px",
+                    opacity: 0.8
+                  }}
+                />
+                <p style={{ margin: 0 }}>No dishes selected</p>
+              </div>
+            )}
+          </section>
         </div>
-      ) : (
-        <div className="ad_p text-center">
-          <p>No dishes selected</p>
-        </div>
-      )}
-    </section>
-  </div>
 
-</div>
+      </div>
     </div>
   );
 }

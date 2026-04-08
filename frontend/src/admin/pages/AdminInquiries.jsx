@@ -23,9 +23,13 @@ export default function AdminInquiries() {
   const [modal, setModal] = useState(null);
 
   const openView = (inquiry) => setModal({ mode: "view", inquiry });
+  const openDelete = (inquiry) => setModal({ mode: "delete", inquiry });
   const close = () => setModal(null);
   const toggleStatus = (id) => setRows((p) => p.map((x) => (x.id === id ? { ...x, status: x.status === "Open" ? "Resolved" : "Open" } : x)));
-  const deleteRow = (id) => setRows((p) => p.filter((x) => x.id !== id));
+  const confirmDelete = () => {
+    setRows((p) => p.filter((x) => x.id !== modal.inquiry.id));
+    close();
+  };
 
   return (
     <div className="ad_page">
@@ -44,9 +48,9 @@ export default function AdminInquiries() {
                 <td><span className="ad_chip">{r.status}</span></td>
                 <td>
                   <div className="d-flex" style={{ gap: "6px" }}>
-                    <button className="rooms__icon_btn" onClick={() => toggleStatus(r.id)} title="Edit Review"><IcEdit /></button>
-                    <button className="rooms__icon_btn" onClick={() => openView(r)} title="View Review"><IcView /></button>
-                    <DeleteIconButton title="Delete" onClick={() => deleteRow(r.id)}  />
+                    <button className="rooms__icon_btn" onClick={() => toggleStatus(r.id)} title="Toggle Status"><IcEdit /></button>
+                    <button className="rooms__icon_btn" onClick={() => openView(r)} title="View Inquiry"><IcView /></button>
+                    <DeleteIconButton title="Delete Inquiry" onClick={() => openDelete(r)} />
                   </div>
                 </td>
               </tr>
@@ -79,6 +83,20 @@ export default function AdminInquiries() {
               <p style={{ margin: "6px 0 0 0", fontSize: "14px" }}><span className="ad_chip">{modal.inquiry.status}</span></p>
             </div>
             <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Close</button></div>
+          </div>
+        </Modal>
+      )}
+
+      {modal?.mode === "delete" && (
+        <Modal title="Delete Inquiry" onClose={close}>
+          <div style={{ padding: "20px" }}>
+            <p className="rooms__delete_msg" style={{ marginBottom: "20px" }}>
+              Are you sure you want to delete the inquiry from <b>{modal.inquiry.name}</b>?
+            </p>
+            <div className="rooms__form_actions">
+              <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
+              <button className="rooms__btn rooms__btn--danger" onClick={confirmDelete}>Delete</button>
+            </div>
           </div>
         </Modal>
       )}

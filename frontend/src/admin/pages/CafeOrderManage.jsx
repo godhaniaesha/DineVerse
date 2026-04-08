@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
 const FLOW = ["Pending", "Accepted by Chef", "Cooking", "Ready", "Served / Delivered"];
+const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 const CAFE_SEED_ROWS = [
   { id: "ORD-101", table: "T3", customer: "Walk-in", items: "Sandwich, Latte", waiter: "Neha", time: "19:20", status: "Pending", area: "cafe" },
   { id: "ORD-104", table: "T5", customer: "Table 5", items: "Cappuccino, Garlic Toast", waiter: "Asha", time: "20:05", status: "Accepted by Chef", area: "cafe" },
@@ -88,10 +89,9 @@ export default function CafeOrderManage() {
                   <td>
                     <button
                       className="rooms__icon_btn"
-                      title="View order"
                       onClick={() => setViewOrder(row)}
                     >
-                      👁
+                      <IcView />
                     </button>
                     {row.status !== "Served / Delivered" &&
                       (role !== "Cafe Chef" || row.status !== "Ready") && (
