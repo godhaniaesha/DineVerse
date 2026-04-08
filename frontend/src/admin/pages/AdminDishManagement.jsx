@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
@@ -81,8 +81,23 @@ export default function AdminDishManagement() {
     const [areaFilter, setAreaFilter] = useState("All");
     const [sortBy, setSortBy] = useState("None");
     const [chefOptions] = useState(CHEF_NAMES);
+    const [isChefDropdownOpen, setIsChefDropdownOpen] = useState(false);
+    const chefDropdownRef = useRef(null);
 
-    const close = () => setModal(null);
+    const close = () => {
+        setModal(null);
+        setIsChefDropdownOpen(false);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (chefDropdownRef.current && !chefDropdownRef.current.contains(event.target)) {
+                setIsChefDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     useEffect(() => {
         localStorage.setItem(DISHES_STORAGE_KEY, JSON.stringify(rows));
@@ -239,19 +254,45 @@ export default function AdminDishManagement() {
                         <div className="rooms__form_row"><label className="rooms__form_label">Note</label><input className="rooms__form_input" value={form.note} onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))} /></div>
                         <div className="rooms__form_row">
                             <label className="rooms__form_label">Assign Chefs</label>
-                            <select
-                                className="rooms__form_select"
-                                multiple
-                                value={Array.isArray(form.assignedChefs) ? form.assignedChefs : []}
-                                onChange={(e) => {
-                                    const selected = Array.from(e.target.selectedOptions).map((option) => option.value);
-                                    setForm((f) => ({ ...f, assignedChefs: selected }));
-                                }}
-                            >
-                                {chefOptions.map((chefName) => (
-                                    <option key={chefName} value={chefName}>{chefName}</option>
-                                ))}
-                            </select>
+                            <div className="rooms__multi_select_wrapper" ref={chefDropdownRef}>
+                                <div
+                                    className="rooms__multi_select_trigger"
+                                    onClick={() => setIsChefDropdownOpen(!isChefDropdownOpen)}
+                                >
+                                    {Array.isArray(form.assignedChefs) && form.assignedChefs.length > 0 ? (
+                                        form.assignedChefs.map((chef) => (
+                                            <span key={chef} className="rooms__multi_select_tag">
+                                                {chef}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="rooms__multi_select_placeholder">Select Chefs</span>
+                                    )}
+                                </div>
+                                {isChefDropdownOpen && (
+                                    <div className="rooms__multi_select_dropdown">
+                                        {chefOptions.map((chefName) => {
+                                            const isSelected = Array.isArray(form.assignedChefs) && form.assignedChefs.includes(chefName);
+                                            return (
+                                                <div
+                                                    key={chefName}
+                                                    className={`rooms__multi_select_item ${isSelected ? "selected" : ""}`}
+                                                    onClick={() => {
+                                                        const current = Array.isArray(form.assignedChefs) ? form.assignedChefs : [];
+                                                        const next = isSelected
+                                                            ? current.filter((c) => c !== chefName)
+                                                            : [...current, chefName];
+                                                        setForm((f) => ({ ...f, assignedChefs: next }));
+                                                    }}
+                                                >
+                                                    <div className="rooms__multi_select_checkbox"></div>
+                                                    <span className="rooms__multi_select_item_label">{chefName}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select></div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option>Active</option><option>Inactive</option></select></div>
