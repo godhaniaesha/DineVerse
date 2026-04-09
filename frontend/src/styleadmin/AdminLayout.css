@@ -150,13 +150,56 @@
 
 .ad_logo {
   display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ad_logo__emblem {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.ad_logo__emblem-bg {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(145deg, #1e1a12, #0d0b07);
+  border: 1px solid var(--ad-border-mid);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ad_logo__emblem-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ad-gold), transparent);
+}
+
+.ad_logo__emblem-icon {
+  color: var(--ad-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad_logo__text {
+  display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
 .ad_logo__name {
   font-family: var(--ad-font-display);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--ad-gold);
@@ -164,8 +207,8 @@
 }
 
 .ad_logo__label {
-  font-size: 10px;
-  letter-spacing: 0.22em;
+  font-size: 9px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ad-text-3);
   font-weight: 400;

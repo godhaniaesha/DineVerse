@@ -49,7 +49,7 @@ export default function TableReservation() {
           <div className="d_resv_visual">
             <img
               src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=85"
-              alt="Lumière dining room"
+              alt="DineVerse dining room"
               className="d_resv_visual__img"
             />
             <div className="d_resv_visual__overlay" />
@@ -63,7 +63,7 @@ export default function TableReservation() {
                 <em>Table Awaits</em>
               </h2>
               <p className="d_resv_visual__body">
-                Every reservation at Lumière is personally prepared — from
+                Every reservation at DineVerse is personally prepared — from
                 your preferred seating to a curated amuse-bouche on arrival.
                 Dinner, not just a meal.
               </p>

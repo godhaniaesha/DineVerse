@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import "../styleadmin/AdminLayout.css";
 import { FaMoneyBillWave } from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi2";
 
 /* ─── ICONS (inline SVG to remove icon-lib dependency) ─────────── */
 
@@ -422,7 +423,7 @@ export default function AdminLayout() {
     }))
     .filter((group) => group.links.length);
 
-  const pageInfo = PAGE_TITLES[location.pathname] ?? { title: "Admin", sub: "Lumière" };
+  const pageInfo = PAGE_TITLES[location.pathname] ?? { title: "Admin", sub: "DineVerse" };
 
   const openSidebar = () => setSidebarOpen(true);
   const closeSidebar = () => setSidebarOpen(false);
@@ -478,8 +479,17 @@ export default function AdminLayout() {
         {/* Header */}
         <div className="ad_sidebar__head">
           <div className="ad_logo">
-            <span className="ad_logo__name">Lumière</span>
-            <span className="ad_logo__label">Admin Console</span>
+            <div className="ad_logo__emblem">
+              <div className="ad_logo__emblem-bg">
+                <span className="ad_logo__emblem-icon">
+                 <HiSparkles></HiSparkles>
+                </span>
+              </div>
+            </div>
+            <div className="ad_logo__text">
+              <span className="ad_logo__name">DineVerse</span>
+              <span className="ad_logo__label">Admin Console</span>
+            </div>
           </div>
           <button
             className="ad_sidebar__close"
@@ -547,7 +557,7 @@ export default function AdminLayout() {
           <div className="ad_topbar__title_area">
             <div className="ad_topbar__title">{pageInfo.title}</div>
             <div className="ad_topbar__breadcrumb">
-              Lumière <span>/</span> {pageInfo.sub}
+              DineVerse <span>/</span> {pageInfo.sub}
             </div>
           </div>
 

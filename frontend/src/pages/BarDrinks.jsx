@@ -185,7 +185,7 @@ export default function BarDrinks() {
           <div className="d_bar_hero__left">
             <p className="d_bar_hero__eyebrow">
               <span className="d_bar_hero__eyebrow-gem">◆</span>
-              The Bar at Lumière
+              The Bar at DineVerse
             </p>
 
             <div className="d_bar_hero__content">

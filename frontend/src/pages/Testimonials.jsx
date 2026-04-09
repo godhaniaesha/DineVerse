@@ -11,7 +11,7 @@ const REVIEWS = [
     platform: "Google",
     category: "Fine Dining",
     rating: 5,
-    text: "Lumière is the most extraordinary dining experience I've had in years. The truffle risotto was poetry on a plate, and the sommelier perfectly paired every course. We'll be back for our anniversary.",
+    text: "DineVerse is the most extraordinary dining experience I've had in years. The truffle risotto was poetry on a plate, and the sommelier perfectly paired every course. We'll be back for our anniversary.",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
   },
   {

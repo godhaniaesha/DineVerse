@@ -44,36 +44,51 @@ export default function BlogPost() {
         minHeight: "100vh",
         background: "#080705",
         color: "#f5f0e8",
-        padding: "80px 24px",
+        padding: "100px 24px 60px",
       }}
     >
-      <button
-        onClick={() => navigate("/blog")}
-        style={{
-          marginBottom: "20px",
-          color: "#c8965a",
-          background: "none",
-          border: "1px solid #c8965a",
-          padding: "8px 12px",
-          borderRadius: "999px",
-          cursor: "pointer",
-        }}
-      >
-        <FiChevronLeft /> Back to Blog
-      </button>
       <article
         style={{
           maxWidth: "900px",
           margin: "0 auto",
           display: "grid",
-          gap: "18px",
+          gap: "24px",
         }}
       >
+        <button
+          onClick={() => navigate("/blog")}
+          style={{
+            justifySelf: "start",
+            color: "#c8965a",
+            background: "none",
+            border: "1px solid rgba(200, 150, 90, 0.3)",
+            padding: "10px 20px",
+            borderRadius: "999px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "14px",
+            fontWeight: "500",
+            transition: "all 0.3s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(200, 150, 90, 0.1)";
+            e.currentTarget.style.borderColor = "#c8965a";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "none";
+            e.currentTarget.style.borderColor = "rgba(200, 150, 90, 0.3)";
+          }}
+        >
+          <FiChevronLeft /> Back to Blog
+        </button>
+
         <div
           style={{
             display: "flex",
             flexWrap: "wrap",
-            gap: "10px",
+            gap: "12px",
             alignItems: "center",
           }}
         >
