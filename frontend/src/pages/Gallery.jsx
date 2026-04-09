@@ -35,7 +35,7 @@ const GALLERY = [
     img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
   },
   {
-    id: 6, title: "The Grand Lumière Suite",
+    id: 6, title: "The Grand DineVerse Suite",
     category: "Rooms", tag: "ambiance",
     img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
   },
@@ -137,12 +137,12 @@ export default function Gallery() {
               <span className="d_gal_header__eyebrow-gem">◆</span>
             </p>
             <h2 className="d_gal_header__title">
-              Life at <em>Lumière</em>
+              Life at <em>DineVerse</em>
             </h2>
           </div>
           <div className="d_gal_header__right">
             <p className="d_gal_header__sub">
-              Every corner of Lumière is a composition — see the spaces, dishes,
+              Every corner of DineVerse is a composition — see the spaces, dishes,
               and moments that define us.
             </p>
           </div>
