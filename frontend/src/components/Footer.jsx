@@ -52,7 +52,7 @@ export default function Footer() {
                             </div>
 
                             {/* Booking Links */}
-                            <div className="col-md-3 col-6 z_footer_col">
+                            <div className="col-md-3 col-6 z_footer_col mb-3">
                                 <h4 className="z_footer_heading">Reservations</h4>
                                 <ul className="z_footer_links list-unstyled mb-0">
                                     <li><Link to="/bookTable"><MdArrowForward className="z_link_icon" /> Book a Table</Link></li>

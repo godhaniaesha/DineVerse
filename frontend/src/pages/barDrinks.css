@@ -1010,6 +1010,11 @@
     margin-bottom: 40px !important;
   }
 }
+@media (max-width: 576px) {
+  .d_bar_marquee {
+    margin-bottom: 40px !important;
+  }
+}
 
 @media (max-width: 480px) {
   .d_bar_card__img-wrap {

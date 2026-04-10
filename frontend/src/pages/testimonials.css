@@ -8,7 +8,7 @@
 .d_testi_section {
   position: relative !important;
   background: var(--d-bg) !important;
-  padding: 70px 0 80px  !important;
+  padding: 70px 0 70px  !important;
   overflow: hidden !important;
 }
 

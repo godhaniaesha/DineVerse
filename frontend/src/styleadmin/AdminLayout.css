@@ -29,29 +29,33 @@
 }
 
 /* ─── ICONS COLOR ─── */
- input[type="date"]::-webkit-calendar-picker-indicator,
- input[type="time"]::-webkit-calendar-picker-indicator {
-   filter: invert(1);
- }
- 
- /* ─── SELECT DROPDOWN FIX ─── */
- .ad_select, .ad_input {
-   max-width: 100%;
- }
- 
- @media (min-width: 2000px) {
-   .ad_select, .ad_input, select.ad_input {
-     width: auto !important;
-     min-width: 200px;
-   }
-   
-   /* Prevents the native dropdown from expanding too wide on ultra-wide screens */
-   select {
-     max-width: 400px;
-   }
- }
- 
- *,
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* ─── SELECT DROPDOWN FIX ─── */
+.ad_select,
+.ad_input {
+  max-width: 100%;
+}
+
+@media (min-width: 2000px) {
+
+  .ad_select,
+  .ad_input,
+  select.ad_input {
+    width: auto !important;
+    min-width: 200px;
+  }
+
+  /* Prevents the native dropdown from expanding too wide on ultra-wide screens */
+  select {
+    max-width: 400px;
+  }
+}
+
+*,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -648,6 +652,7 @@
   gap: 16px;
   justify-content: start;
 }
+
 @media (max-width: 640px) {
   .menu_grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 220px));
@@ -732,6 +737,16 @@
   padding: 8px 12px;
   font-size: 15px;
   outline: none;
+}
+
+
+.ad_select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236a6278' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+  padding-right: 30px;
 }
 
 .ad_btn {

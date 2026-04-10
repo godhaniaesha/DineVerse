@@ -364,6 +364,10 @@
 
 /* ─── ACTION BUTTONS (TABLE) ────────────────────────────────── */
 
+.admin_user_mangement_page .rooms__icon_btn {
+  margin-right: 8px;
+}
+
 .rooms__icon_btn {
   display: inline-flex;
   align-items: center;
@@ -377,6 +381,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   flex-shrink: 0;
+  /* margin-right: 8px; */
 }
 
 .rooms__icon_btn:hover {
