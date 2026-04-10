@@ -613,7 +613,7 @@ export default function AdminLayout() {
                 Are you sure you want to log out of the admin panel?
               </p>
             </div>
-            <div className="rooms__form_actions" style={{ padding: "16px 24px" }}>
+            <div className="rooms__form_actions">
               <button className="rooms__btn rooms__btn--ghost" onClick={() => setShowLogoutModal(false)}>Cancel</button>
               <button className="rooms__btn rooms__btn--primary" onClick={handleLogout}>Logout</button>
             </div>

@@ -180,7 +180,7 @@ body {
 .x_cat_strip {
   position: sticky;
   top: 0;
-  z-index: 29;
+  z-index: 10;
   background: var(--d-surface-glass);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
@@ -239,7 +239,7 @@ body {
 .x_subcat_strip {
   position: sticky;
   top: 48px;
-  z-index: 90;
+  z-index: 10;
   background: var(--d-surface);
   border-bottom: 1px solid var(--d-border);
   backdrop-filter: blur(12px) saturate(1.2);
