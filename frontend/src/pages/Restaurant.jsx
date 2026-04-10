@@ -60,7 +60,7 @@ export default function Restaurant() {
     return (
         <div className="z_bar_page z_restaurant_theme">
             {/* Hero Section - Parallax Style */}
-            <section className="z_bar_hero z_restaurant_hero" style={{ 
+            <section className="z_bar_hero z_restaurant_hero" style={{
                 backgroundImage: `url('https://www.fourcentric.com/wp-content/uploads/2025/01/fc-french-scaled.webp')`
             }}>
                 <div className="z_bar_hero_overlay"></div>
@@ -72,7 +72,7 @@ export default function Restaurant() {
                     </div>
                     <h1 className="z_bar_title">The Epicurean <br /><em>Masterpiece</em></h1>
                     <p className="z_bar_desc">
-                        Where culinary tradition meets modern innovation. 
+                        Where culinary tradition meets modern innovation.
                         Experience a symphony of flavors choreographed by our award-winning chefs.
                     </p>
                     <div className="z_bar_hero_btns">
@@ -82,13 +82,13 @@ export default function Restaurant() {
             </section>
 
             {/* Signature Showcase - Floating Design */}
-            <section className="z_bar_section" style={{ background: 'var(--d-bg)', paddingTop: '80px' }}>
+            <section className="z_bar_section" style={{ background: 'var(--d-bg)', paddingTop: '80px', paddingBottom: '0px' }}>
                 <div className="container">
                     <div className="z_bar_section_header" style={{ marginBottom: '60px' }}>
                         <span className="z_bar_subtitle" style={{ color: 'var(--d-restaurant)' }}>The Tasting Menu</span>
                         <h2 className="z_bar_section_title">Chef's <em>Signature</em> Creations</h2>
                     </div>
-                    
+
                     <div className="z_res_showcase_flow">
                         {DISH_ITEMS.map((dish, index) => (
                             <div key={dish.id} className="row g-0 align-items-center z_res_dish_row">

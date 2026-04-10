@@ -3032,6 +3032,12 @@ body {
   }
 }
 
+@media (max-width: 576px) {
+  .z_footer_col {
+    margin-bottom: 0px !important;
+  }
+}
+
 @media (max-width: 480px) {
   .z_footer_brand {
     text-align: center;
@@ -3289,7 +3295,7 @@ body {
   }
 
   .z_bar_section {
-    padding: 10px 0px !important;
+    padding: 38px 0px 23px !important;
   }
 
   .z_prof_save_btn {
@@ -3458,7 +3464,7 @@ body {
 
 /* ── Sections Common ── */
 .z_bar_section {
-  padding: 120px 0;
+  padding: 60px 0;
 }
 
 .z_bar_section_header {
@@ -3794,6 +3800,7 @@ body {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
+    font-size: 10px;
   }
 
   .z_bar_btn_outline:hover {
@@ -3845,7 +3852,7 @@ body {
 
   .z_bar_section_header {
     text-align: center;
-    margin-bottom: 70px;
+    margin-bottom: 40px;
   }
 
   .z_bar_subtitle {
@@ -4009,6 +4016,7 @@ body {
   .z_slide_shape_diagonal {
     border-radius: 80px 0 80px 0;
   }
+
 }
 
 /* Testimonial Slider Styles */
@@ -4915,7 +4923,7 @@ body {
 
 @media (max-width: 375px) {
   .z_bar_testimonial_next {
-    right: 37% ;
+    right: 37%;
   }
 
   .z_bar_testimonial_prev {
@@ -5114,7 +5122,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  margin-top: 3.5rem;
+  margin-top: 2.5rem;
 }
 
 .z_res_testimonial_btn {
@@ -5153,9 +5161,11 @@ body {
   }
 
   .z_res_dish_content_col {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding: 0 1rem;
+    margin-top: -80px !important;
+    width: 90% !important;
   }
 
   .z_floating_card {
@@ -5196,11 +5206,15 @@ body {
   .z_res_video_section {
     height: 40vh;
   }
+
+  .z_res_testimonial_section {
+    padding: 0px 0px 40px 0px;
+  }
 }
 
 .z_slide_wrapper {
   background-color: var(--d-bg);
-  padding: 70px 0 80px;
+  padding: 38px 0 80px;
   overflow: hidden;
   width: 100%;
 }
@@ -5504,8 +5518,8 @@ body {
   }
 
   .z_bar_experience_section {
-    padding: 0px !important;
-    padding-bottom: 30px !important;
+    /* padding: 0px !important; */
+    padding: 30px 0px !important;
   }
 }
 
@@ -5554,7 +5568,7 @@ body {
 
 @media (max-width: 576px) {
   .z_slide_wrapper {
-    padding: 13px 0;
+    padding: 13px 0 32px;
   }
 
   .z_slide_item {
@@ -5580,5 +5594,41 @@ body {
 
   .z_slide_shape_diagonal {
     border-radius: 80px 0 80px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .z_room_feature_info span {
+    font-size: 1rem !important;
+  }
+
+  .z_room_feature_info h3 {
+    font-size: 36px !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  .z_room_feature_info .z_bar_desc {
+    font-size: 0.9rem !important;
+    margin-bottom: 1.2rem !important;
+  }
+
+  .z_room_feature_info>div {
+    gap: 2.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .z_room_feature_info>div div svg {
+    font-size: 1.5rem !important;
+  }
+
+  .z_room_feature_info>div div p {
+    font-size: 0.7rem !important;
+  }
+
+  .z_bar_btn_primary {
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem;
+    font-size: 12px;
   }
 }

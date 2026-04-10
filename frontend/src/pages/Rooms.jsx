@@ -70,7 +70,7 @@ export default function Rooms() {
                     </div>
                     <h1 className="z_bar_title">Refined <em>Comfort</em></h1>
                     <p className="z_bar_desc">
-                        Experience the perfect blend of elegance and tranquility. 
+                        Experience the perfect blend of elegance and tranquility.
                         Your sanctuary awaits in the heart of the city.
                     </p>
                     <div className="z_bar_hero_btns">
@@ -87,7 +87,7 @@ export default function Rooms() {
                         <span className="z_bar_subtitle" style={{ color: 'var(--d-room)' }}>Our Selection</span>
                         <h2 className="z_bar_section_title">Signature <em>Suites</em></h2>
                     </div>
-                    
+
                     <div className="z_room_showcase">
                         {ROOM_ITEMS.map((room) => (
                             <div key={room.id} className="z_room_feature_row">
@@ -122,14 +122,14 @@ export default function Rooms() {
 
             {/* Room Video Section */}
             <section style={{ height: '80vh', position: 'relative' }}>
-             <video
-  autoPlay
-  muted
-  loop
-  playsInline
-  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-  src="/video/106674-673786323.mp4"
-></video>
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    src="/video/106674-673786323.mp4"
+                ></video>
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ textAlign: 'center', maxWidth: '700px', padding: '2rem' }}>
                         <h2 className="z_bar_section_title" style={{ color: '#fff', fontSize: '4.5rem' }}>Luxury <em>Redefined</em></h2>

@@ -145,7 +145,7 @@ export default function AdminUsers() {
   }, [filtered, sortBy]);
 
   return (
-    <div className="ad_page">
+    <div className="ad_page admin_user_mangement_page">
       <div className="rooms__header">
         <div>
           <h2 className="ad_h2">Admin User Management</h2>
