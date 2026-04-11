@@ -103,40 +103,117 @@ export default function BookRoom() {
   const [phone, setPhone] = useState("");
   
   const [checkIn, setCheckIn] = useState(null);
+  const [checkInTime, setCheckInTime] = useState("15:00");
   const [checkOut, setCheckOut] = useState(null);
+  const [checkOutTime, setCheckOutTime] = useState("11:00");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   
   const [roomType, setRoomType] = useState("");
+  const [roomNo, setRoomNo] = useState("");
   const [requests, setRequests] = useState("");
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const [paymentMethod, setPaymentMethod] = useState("card"); // card or upi
+  const [cardNo, setCardNo] = useState("");
+  const [upiId, setUpiId] = useState("");
+
   const roomTypes = [
-    {id:"deluxe", icon:<IoBedOutline />, name:"Deluxe Room",  desc:"City view, King bed", price:"$250/night"},
-    {id:"suite",  icon:<MdOutlineKingBed />, name:"Executive Suite", desc:"Spacious, Premium decor", price:"$450/night"},
-    {id:"villa",  icon:<MdOutlineVilla />, name:"Ocean Villa",   desc:"Private pool, Beachfront", price:"$800/night"},
-    {id:"pres",   icon:<MdOutlineVpnKey />, name:"Presidential",  desc:"Ultimate luxury, Butler", price:"$1500/night"},
+    {id:"deluxe", icon:<IoBedOutline />, name:"Deluxe Room",  desc:"City view, King bed", price:"$250/night", numbers:["101", "102", "103", "104", "105"]},
+    {id:"suite",  icon:<MdOutlineKingBed />, name:"Executive Suite", desc:"Spacious, Premium decor", price:"$450/night", numbers:["201", "202", "203"]},
+    {id:"villa",  icon:<MdOutlineVilla />, name:"Ocean Villa",   desc:"Private pool, Beachfront", price:"$800/night", numbers:["V-01", "V-02", "V-03"]},
+    {id:"pres",   icon:<MdOutlineVpnKey />, name:"Presidential",  desc:"Ultimate luxury, Butler", price:"$1500/night", numbers:["P-01"]},
   ];
 
   const validate1 = () => {
     const e = {};
-    if (!firstName.trim()) e.firstName = "First name required";
-    if (!lastName.trim()) e.lastName = "Last name required";
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) e.email = "Valid email required";
-    if (!phone.trim()) e.phone = "Phone required";
-    if (!checkIn) e.checkIn = "Check-in date required";
-    if (!checkOut) e.checkOut = "Check-out date required";
-    if (checkIn && checkOut && checkOut <= checkIn) e.checkOut = "Check-out must be after check-in";
-    setErrors(e); return !Object.keys(e).length;
+    if (!firstName.trim()) {
+      e.firstName = "First name is required";
+    } else if (!/^[A-Za-z ]+$/.test(firstName)) {
+      e.firstName = "First name should only contain letters";
+    }
+
+    if (!lastName.trim()) {
+      e.lastName = "Last name is required";
+    } else if (!/^[A-Za-z ]+$/.test(lastName)) {
+      e.lastName = "Last name should only contain letters";
+    }
+
+    if (!email.trim()) {
+      e.email = "Email address is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      e.email = "Please enter a valid email address";
+    }
+
+    if (!phone.trim()) {
+      e.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(phone)) {
+      e.phone = "Phone number must be 10 digits";
+    }
+
+    if (!checkIn) {
+      e.checkIn = "Please select a check-in date";
+    }
+
+    if (!checkInTime) {
+      e.checkInTime = "Please select a check-in time";
+    }
+
+    if (!checkOut) {
+      e.checkOut = "Please select a check-out date";
+    } else if (checkIn && checkOut <= checkIn) {
+      e.checkOut = "Check-out date must be after check-in date";
+    }
+
+    if (!checkOutTime) {
+      e.checkOutTime = "Please select a check-out time";
+    }
+
+    setErrors(e);
+    return !Object.keys(e).length;
   };
 
   const validate2 = () => {
     const e = {};
     if (!roomType) e.roomType = "Please select a room type";
-    if (!agree) e.agree = "Please accept our policy";
-    setErrors(e); return !Object.keys(e).length;
+    if (roomType && !roomNo) e.roomNo = "Please select a room number";
+    
+    // Payment Validation
+    if (paymentMethod === "card") {
+      if (!cardNo.trim()) {
+        e.cardNo = "Card number is required";
+      } else if (!/^\d{16}$/.test(cardNo.replace(/\s/g, ""))) {
+        e.cardNo = "Card number must be 16 digits";
+      }
+    } else if (paymentMethod === "upi") {
+      if (!upiId.trim()) {
+        e.upiId = "UPI ID is required";
+      } else if (!/^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(upiId)) {
+        e.upiId = "Please enter a valid UPI ID (e.g. user@bank)";
+      }
+    }
+    
+    if (!agree) e.agree = "You must agree to our stay policy";
+    
+    setErrors(e);
+    return !Object.keys(e).length;
   };
+
+  const calculateTotal = () => {
+    if (!roomType || !checkIn || !checkOut) return 0;
+    const room = roomTypes.find(r => r.id === roomType);
+    if (!room) return 0;
+    
+    const pricePerNight = parseInt(room.price.replace(/[^0-9]/g, ""));
+    const diffTime = checkOut - checkIn;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const nights = diffDays > 0 ? diffDays : 0;
+    
+    return pricePerNight * nights;
+  };
+
+  const totalAmount = calculateTotal();
 
   const goNext = () => { 
     if (step===1 && validate1()) setStep(2); 
@@ -149,8 +226,9 @@ export default function BookRoom() {
   
   const reset = () => {
     setSubmitted(false); setStep(1); setFirstName(""); setLastName(""); setEmail(""); setPhone("");
-    setCheckIn(null); setCheckOut(null); setAdults(2); setChildren(0);
+    setCheckIn(null); setCheckInTime("15:00"); setCheckOut(null); setCheckOutTime("11:00"); setAdults(2); setChildren(0);
     setRoomType(""); setRequests(""); setAgree(false); setErrors({});
+    setPaymentMethod("card"); setCardNo(""); setUpiId("");
   };
 
   return (
@@ -186,7 +264,7 @@ export default function BookRoom() {
                     <strong style={{color:"var(--h-champ-lt)"}}>{email}</strong> shortly.{" "}
                     We look forward to your arrival.
                   </p>
-                  <div className="h_ref">Booking Ref: {bookingRef}</div>
+                  <div className="h_ref">Booking Ref: {bookingRef} | Total Paid: ${totalAmount}</div>
                   <button className="h_again_btn" onClick={reset}>← Make Another Booking</button>
                 </div>
 
@@ -227,11 +305,45 @@ export default function BookRoom() {
                               <label className="h_label">Check-In Date</label>
                               <CalendarPicker selectedDate={checkIn} onSelect={d=>{setCheckIn(d); if(checkOut && d >= checkOut) setCheckOut(null);}} />
                               {errors.checkIn && <div className="h_err_msg">{errors.checkIn}</div>}
+                              
+                              <div style={{marginTop: "10px"}}>
+                                <label className="h_label">Check-In Time</label>
+                                <div style={{position: "relative", display: "flex", alignItems: "center"}}>
+                                  <input 
+                                    type="time" 
+                                    className={`h_input${errors.checkInTime ? " h_err" : ""}`} 
+                                    value={checkInTime} 
+                                    onChange={e=>setCheckInTime(e.target.value)} 
+                                    style={{paddingLeft: "35px"}}
+                                  />
+                                  <span style={{position: "absolute", left: "12px", color: "#c8965a", display: "flex", alignItems: "center"}}>
+                                    <FaConciergeBell size={14} />
+                                  </span>
+                                </div>
+                                {errors.checkInTime && <div className="h_err_msg">{errors.checkInTime}</div>}
+                              </div>
                             </div>
                             <div className="h_field">
                               <label className="h_label">Check-Out Date</label>
                               <CalendarPicker selectedDate={checkOut} onSelect={setCheckOut} minDate={checkIn || new Date()} />
                               {errors.checkOut && <div className="h_err_msg">{errors.checkOut}</div>}
+
+                              <div style={{marginTop: "10px"}}>
+                                <label className="h_label">Check-Out Time</label>
+                                <div style={{position: "relative", display: "flex", alignItems: "center"}}>
+                                  <input 
+                                    type="time" 
+                                    className={`h_input${errors.checkOutTime ? " h_err" : ""}`} 
+                                    value={checkOutTime} 
+                                    onChange={e=>setCheckOutTime(e.target.value)} 
+                                    style={{paddingLeft: "35px"}}
+                                  />
+                                  <span style={{position: "absolute", left: "12px", color: "#c8965a", display: "flex", alignItems: "center"}}>
+                                    <FaConciergeBell size={14} />
+                                  </span>
+                                </div>
+                                {errors.checkOutTime && <div className="h_err_msg">{errors.checkOutTime}</div>}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -254,7 +366,11 @@ export default function BookRoom() {
                           <div className="h_areas">
                             {roomTypes.map(r=>(
                               <div key={r.id} className={`h_area${roomType===r.id?" h_asel":""}`}
-                                onClick={()=>{setRoomType(r.id);setErrors(p=>({...p,roomType:null}));}}>
+                                onClick={()=>{
+                                  setRoomType(r.id);
+                                  setRoomNo(""); // Reset room number when type changes
+                                  setErrors(p=>({...p, roomType:null, roomNo:null}));
+                                }}>
                                 <span className="h_area_ico">{r.icon}</span>
                                 <div className="h_area_name">{r.name}</div>
                                 <div className="h_area_desc">{r.desc}</div>
@@ -266,11 +382,81 @@ export default function BookRoom() {
                         </div>
 
                         <div className="h_fsec">
+                          <div className="h_sec_lbl">Select Room Number</div>
+                          <div className="h_field">
+                            <label className="h_label">Available {roomTypes.find(r => r.id === roomType)?.name || "Rooms"}</label>
+                            <select 
+                              className={`h_input${errors.roomNo ? " h_err" : ""}`}
+                              value={roomNo} 
+                              onChange={e => {
+                                setRoomNo(e.target.value);
+                                setErrors(p => ({ ...p, roomNo: null }));
+                              }}
+                              disabled={!roomType}
+                            >
+                              <option value="">-- Select Room Number --</option>
+                              {roomType && roomTypes.find(r => r.id === roomType)?.numbers.map(num => (
+                                <option key={num} value={num}>Room {num}</option>
+                              ))}
+                            </select>
+                            {errors.roomNo && <div className="h_err_msg">{errors.roomNo}</div>}
+                          </div>
+                        </div>
+
+                        <div className="h_fsec">
                           <div className="h_sec_lbl">Special Requests</div>
                           <div className="h_field">
                             <label className="h_label">Preferences, allergies, or other notes</label>
                             <textarea className="h_textarea" placeholder="E.g. high floor, early check-in, anniversary setup…" value={requests} onChange={e=>setRequests(e.target.value)} />
                           </div>
+                        </div>
+
+                        <div className="h_fsec">
+                          <div className="h_sec_lbl">Payment Information</div>
+                          <div className="h_row_2" style={{marginBottom: "1rem"}}>
+                            <button 
+                              type="button" 
+                              className={`h_btn_back${paymentMethod === 'card' ? ' h_sel' : ''}`} 
+                              style={{flex: 1, padding: "10px", borderColor: paymentMethod === 'card' ? "#c8965a" : ""}} 
+                              onClick={() => setPaymentMethod('card')}
+                            >
+                              Credit / Debit Card
+                            </button>
+                            <button 
+                              type="button" 
+                              className={`h_btn_back${paymentMethod === 'upi' ? ' h_sel' : ''}`} 
+                              style={{flex: 1, padding: "10px", borderColor: paymentMethod === 'upi' ? "#c8965a" : ""}} 
+                              onClick={() => setPaymentMethod('upi')}
+                            >
+                              UPI Payment
+                            </button>
+                          </div>
+
+                          {paymentMethod === 'card' ? (
+                            <div className="h_field">
+                              <label className="h_label">Card Number</label>
+                              <input 
+                                className={`h_input${errors.cardNo ? " h_err" : ""}`} 
+                                type="text" 
+                                placeholder="XXXX XXXX XXXX XXXX" 
+                                value={cardNo} 
+                                onChange={e => setCardNo(e.target.value)} 
+                              />
+                              {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
+                            </div>
+                          ) : (
+                            <div className="h_field">
+                              <label className="h_label">UPI ID</label>
+                              <input 
+                                className={`h_input${errors.upiId ? " h_err" : ""}`} 
+                                type="text" 
+                                placeholder="username@bank" 
+                                value={upiId} 
+                                onChange={e => setUpiId(e.target.value)} 
+                              />
+                              {errors.upiId && <div className="h_err_msg">{errors.upiId}</div>}
+                            </div>
+                          )}
                         </div>
 
                         <div className="h_fsec">
@@ -290,10 +476,13 @@ export default function BookRoom() {
                           <div className="h_sec_lbl">Booking Summary</div>
                           {[
                             ["Guest",`${firstName} ${lastName}`],
-                            ["Duration",`${fmtDate(checkIn)} — ${fmtDate(checkOut)}`],
+                            ["Duration",`${fmtDate(checkIn)} (${checkInTime}) — ${fmtDate(checkOut)} (${checkOutTime})`],
                             ["Occupancy",`${adults} Adults, ${children} Children`],
                             ["Room Type",roomTypes.find(r=>r.id===roomType)?.name||"—"],
-                            ["Price",roomTypes.find(r=>r.id===roomType)?.price||"—"],
+                            ["Room Number", roomNo || "—"],
+                            ["Price per Night", roomTypes.find(r=>r.id===roomType)?.price||"—"],
+                            ["Total Amount", `$${totalAmount}`],
+                            ["Payment", paymentMethod === 'card' ? `Card (Ending in ${cardNo.slice(-4)})` : `UPI (${upiId})`],
                             ["Requests",requests||"None"],
                           ].map(([k,v])=>(
                             <div className="h_sum_row" key={k}>
@@ -314,7 +503,7 @@ export default function BookRoom() {
                       <div className="h_fbtns">
                         {step>1 && <button type="button" className="h_btn_back" onClick={()=>setStep(s=>s-1)}>← Back</button>}
                         {step<3
-                          ? <button type="button" className="h_btn_prime" onClick={goNext}>Continue <span className="h_btn_arr">→</span></button>
+                          ? <button type="button" className="h_btn_prime" onClick={goNext}>{step === 2 ? "Checkout" : "Continue"} <span className="h_btn_arr">→</span></button>
                           : <button type="submit" className="h_btn_prime">Confirm Stay <span className="h_btn_arr">✓</span></button>
                         }
                       </div>
@@ -338,6 +527,8 @@ export default function BookRoom() {
                       {key:"Adults", val:adults},
                       {key:"Children", val:children},
                       {key:"Room",  val:roomType?roomTypes.find(r=>r.id===roomType)?.name:null},
+                      {key:"Room No", val:roomNo},
+                      {key:"Total Amount", val: totalAmount > 0 ? `$${totalAmount}` : null},
                     ].map(({key,val})=>(
                       <div className="h_p_row" key={key}>
                         <span className="h_p_k">{key}</span>
