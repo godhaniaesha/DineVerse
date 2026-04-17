@@ -55,7 +55,7 @@ export default function AdminTables() {
   return (
     <div className="ad_page">
       <div className="rooms__header">
-        <div><h2 className="ad_h2">Restaurant Tables</h2><p className="ad_p">Manage table capacity and seating status.</p></div>
+        <div><h2 className="ad_h2">Tables Management</h2><p className="ad_p">Manage table capacity and seating status for all areas.</p></div>
         <button className="rooms__add_btn" onClick={openAdd}>Add Table</button>
       </div>
       <div className="ad_row_actions " style={{ marginBottom: 16, width:"max-content" }}>

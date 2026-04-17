@@ -4047,7 +4047,7 @@ body {
 .z_bar_testimonial_title {
   font-family: "Brush Script MT", cursive;
   font-size: 3.5rem;
-  color: #d4af37;
+  color: #c8965a;
   margin-bottom: 30px;
   font-weight: normal;
   line-height: 1.2;
@@ -4074,8 +4074,8 @@ body {
 
 .z_bar_testimonial_nav {
   background: transparent;
-  border: 2px solid #d4af37;
-  color: #d4af37;
+  border: 2px solid #c8965a;
+  color: #c8965a;
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -4092,7 +4092,7 @@ body {
 }
 
 .z_bar_testimonial_nav:hover {
-  background-color: #d4af37;
+  background-color: #c8965a;
   color: #000000;
   transition: all 0.3s ease;
 }
@@ -4116,7 +4116,7 @@ body {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #d4af37;
+  border: 2px solid #c8965a;
   background: transparent;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -4124,7 +4124,7 @@ body {
 
 .z_bar_testimonial_dot.active,
 .z_bar_testimonial_dot:hover {
-  background-color: #d4af37;
+  background-color: #c8965a;
   transition: all 0.3s ease;
 }
 
@@ -4864,7 +4864,7 @@ body {
   .z_bar_testimonial_title {
     font-family: "Brush Script MT", cursive;
     font-size: 3.5rem;
-    color: #d4af37;
+    color: #c8965a;
     margin-bottom: 30px;
     font-weight: normal;
     line-height: 1.2;
@@ -4898,7 +4898,7 @@ body {
   }
 
   .z_bar_testimonial_nav:hover {
-    background-color: #d4af37;
+    background-color: #c8965a;
     color: #000000;
     transition: all 0.3s ease;
   }
@@ -4914,7 +4914,7 @@ body {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    border: 2px solid #d4af37;
+    border: 2px solid #c8965a;
     background: transparent;
     cursor: pointer;
     transition: all 0.3s ease;
