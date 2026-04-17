@@ -15,7 +15,8 @@ import {
     FiFileText,
     FiEye,
     FiEyeOff,
-    FiAlertCircle
+    FiAlertCircle,
+    FiStar
 } from "react-icons/fi";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -29,6 +30,13 @@ export default function Profile() {
         new: false,
         confirm: false
     });
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState(null);
+    const [reviewStars, setReviewStars] = useState(0);
+    const [hoverStars, setHoverStars] = useState(0);
+    const [reviewTags, setReviewTags] = useState("");
+    const [reviewProfession, setReviewProfession] = useState("");
+    const [reviewMessage, setReviewMessage] = useState("");
 
     const togglePasswordVisibility = (field) => {
         setShowPasswords(prev => ({
@@ -95,9 +103,10 @@ export default function Profile() {
                         <h2 className="z_prof_section_title">Reservation <span>History</span></h2>
                         <div className="z_prof_bookings_list">
                             {[
-                                { id: 1, venue: "The Restaurant", date: "Oct 24, 2023", time: "08:30 PM", status: "confirmed", accent: "var(--d-restaurant)" },
+                                { id: 1, venue: "The Restaurant", date: "Oct 24, 2023", time: "08:30 PM", status: "completed", accent: "var(--d-restaurant)" },
                                 { id: 2, venue: "The Bar", date: "Oct 28, 2023", time: "10:00 PM", status: "pending", accent: "var(--d-bar)" },
-                                { id: 3, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "confirmed", accent: "var(--d-cafe)" },
+                                { id: 3, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "cancel", accent: "var(--d-cafe)" },
+                                { id: 4, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "confirmed", accent: "var(--d-cafe)" }
                             ].map((booking) => (
                                 <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.accent }}>
                                     <div className="z_prof_booking_info">
@@ -106,6 +115,25 @@ export default function Profile() {
                                             <span><FiCalendar /> {booking.date}</span>
                                             <span><FiClock /> {booking.time}</span>
                                         </div>
+                                        {booking.status === "completed" && (
+                                            <div 
+                                                className="z_prof_booking_stars"
+                                                onClick={() => {
+                                                    setSelectedBooking(booking);
+                                                    setReviewStars(0);
+                                                    setHoverStars(0);
+                                                    setReviewTags([]);
+                                                    setReviewProfession("");
+                                                    setReviewMessage("");
+                                                    setShowReviewModal(true);
+                                                }}
+                                            >
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <FiStar key={star} className="z_prof_star_icon" />
+                                                ))}
+                                                <span className="z_prof_rate_text">Rate your experience</span>
+                                            </div>
+                                        )}
                                     </div>
                                     <span className={`z_prof_booking_status z_prof_status_${booking.status}`}>
                                         {booking.status}
@@ -119,9 +147,10 @@ export default function Profile() {
                 return (
                     <div className="z_prof_section">
                         <div className="z_prof_billing_history" >
-                            <h3 className="z_prof_label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                              <h2 className="z_prof_section_title">Transaction <span>History</span></h2>
+                            {/* <h3 className="z_prof_label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                                 <FiFileText /> Transaction History
-                            </h3>
+                            </h3> */}
                             <div className="z_prof_history_table_wrap">
                                 <table className="z_prof_history_table">
                                     <thead>
@@ -311,8 +340,7 @@ export default function Profile() {
                         </div>
                         <h2 className="z_modal_title">Sign Out?</h2>
                         <p className="z_modal_text">
-                            Are you sure you want to sign out from DineVerse? <br />
-                            You will need to login again to access your bookings.
+                            Are you sure you want to sign out from DineVerse? 
                         </p>
                         <div className="z_modal_actions">
                             <button
@@ -330,6 +358,94 @@ export default function Profile() {
                             >
                                 Yes, Sign Out
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Review Modal */}
+            {showReviewModal && selectedBooking && (
+                <div className="z_modal_overlay z_review_overlay" onClick={() => setShowReviewModal(false)}>
+                    <div className="z_modal_content z_review_content" onClick={(e) => e.stopPropagation()}>
+                        <div className="z_review_header">
+                            <h2 className="z_modal_title">Review Your Experience</h2>
+                            <p className="z_review_venue">{selectedBooking.venue}</p>
+                        </div>
+
+                        <div className="z_review_form">
+                            {/* Star Rating */}
+                            <div className="z_prof_field_group">
+                                <label className="z_prof_label">Rating</label>
+                                <div className="z_review_stars">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FiStar
+                                            key={star}
+                                            className={`z_review_star ${star <= (hoverStars || reviewStars) ? 'active' : ''}`}
+                                            onMouseEnter={() => setHoverStars(star)}
+                                            onMouseLeave={() => setHoverStars(0)}
+                                            onClick={() => setReviewStars(star)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Tags */}
+                            <div className="z_prof_field_group">
+                                <label className="z_prof_label">Tags</label>
+                                <input
+                                    type="text"
+                                    className="z_prof_input"
+                                    placeholder="Add tags (comma separated)"
+                                    value={reviewTags}
+                                    onChange={(e) => setReviewTags(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Profession */}
+                            <div className="z_prof_field_group">
+                                <label className="z_prof_label">Profession</label>
+                                <input
+                                    type="text"
+                                    className="z_prof_input"
+                                    placeholder="Your profession (optional)"
+                                    value={reviewProfession}
+                                    onChange={(e) => setReviewProfession(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Message */}
+                            <div className="z_prof_field_group">
+                                <label className="z_prof_label">
+                                    Review Message
+                                    <span className="z_char_count">{reviewMessage.length}/230</span>
+                                </label>
+                                <textarea
+                                    className="z_prof_input z_review_textarea"
+                                    placeholder="Share your experience..."
+                                    maxLength={230}
+                                    value={reviewMessage}
+                                    onChange={(e) => setReviewMessage(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Actions */}
+                            <div className="z_modal_actions z_review_actions">
+                                <button
+                                    className="z_modal_btn z_modal_btn_cancel"
+                                    onClick={() => setShowReviewModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="z_modal_btn z_modal_btn_confirm z_review_submit"
+                                    onClick={() => {
+                                        alert("Review submitted! Thank you for your feedback.");
+                                        setShowReviewModal(false);
+                                    }}
+                                >
+                                    Submit Review
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

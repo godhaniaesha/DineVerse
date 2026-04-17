@@ -110,26 +110,6 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
         isPassword placeholder="••••••••"
         value={form.password} onChange={set("password")} error={errors.password} />
 
-      <div className="z_field_group">
-        <label className="z_field_label" htmlFor="login_role">Role</label>
-        <select
-          id="login_role"
-          className="z_field_input"
-          value={form.role}
-          onChange={set("role")}
-          style={{ marginTop: 4 }}
-        >
-          <option>Super Admin</option>
-          <option>Manager</option>
-          <option>Cafe Chef</option>
-          <option>Restaurant Chef</option>
-          <option>Bar Chef</option>
-          <option>Waiter</option>
-          <option>Bartender</option>
-          <option>Housekeeping</option>
-        </select>
-      </div>
-
       <div className="z_forgot_row">
         <button type="button" className="z_forgot_link" onClick={onForgot}>Forgot password?</button>
       </div>
@@ -211,26 +191,6 @@ const RegisterForm = ({ onSuccess, onToast }) => {
       <Field label="Confirm password" id="reg_cpw" icon={<FiLock />}
         isPassword placeholder="Repeat password"
         value={form.confirm} onChange={set("confirm")} error={errors.confirm} />
-
-      <div className="z_field_group">
-        <label className="z_field_label" htmlFor="reg_role">Role</label>
-        <select
-          id="reg_role"
-          className="z_field_input"
-          value={form.role}
-          onChange={set("role")}
-          style={{ marginTop: 4 }}
-        >
-          <option>Super Admin</option>
-          <option>Manager</option>
-          <option>Cafe Chef</option>
-          <option>Restaurant Chef</option>
-          <option>Bar Chef</option>
-          <option>Waiter</option>
-          <option>Bartender</option>
-          <option>Housekeeping</option>
-        </select>
-      </div>
 
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 20, marginTop: 4 }}>
         <input
