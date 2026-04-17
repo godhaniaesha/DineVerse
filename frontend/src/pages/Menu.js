@@ -56,7 +56,7 @@ export const MENU_ITEMS = [
         desc: "Creamy burrata, heirloom tomatoes, 12-year aged balsamic, truffle oil, sourdough crisps.",
         badges: ["veg"],
         time: "10 min", cal: "310 kcal",
-        img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
+        img: "https://i.pinimg.com/1200x/b1/a9/69/b1a969ae96e7adc5a7899ad692f35bba.jpg",
     },
     {
         id: 3, category: "restaurant", subcategory: "mains", tag: "Main",
@@ -72,7 +72,7 @@ export const MENU_ITEMS = [
         desc: "Valrhona 70% dome, molten praline core, gold leaf, passion fruit coulis.",
         badges: ["veg", "sweet"],
         time: "15 min", cal: "540 kcal",
-        img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80",
+        img: "https://i.pinimg.com/736x/cc/86/26/cc8626c088484788e38f1db9b897b859.jpg",
     },
     {
         id: 5, category: "restaurant", subcategory: "mains", tag: "Main",
@@ -80,7 +80,7 @@ export const MENU_ITEMS = [
         desc: "Carnaroli rice, aged Parmigiano, black truffle shavings, Périgord truffle oil.",
         badges: ["veg", "signature"],
         time: "22 min", cal: "560 kcal",
-        img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=600&q=80",
+        img: "https://i.pinimg.com/1200x/e1/8d/6e/e18d6e1b856e34342c3ace263959d0b5.jpg",
     },
     {
         id: 6, category: "restaurant", subcategory: "appetizers", tag: "Starter",
@@ -137,7 +137,7 @@ export const MENU_ITEMS = [
         desc: "Cold-pressed orange, saffron syrup, ginger beer, Himalayan pink salt, dehydrated citrus.",
         badges: ["veg", "alcohol-free"],
         time: "6 min", cal: "120 kcal",
-        img: "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600&q=80",
+        img: "https://i.pinimg.com/736x/41/c4/8d/41c48da902c1de66d00d7e1f6543fe0c.jpg",
     },
     {
         id: 10, category: "bar", subcategory: "spirits", tag: "Whisky",
@@ -145,7 +145,7 @@ export const MENU_ITEMS = [
         desc: "Aberfeldy 16yr, smoked honey syrup, Angostura, Peychaud's bitters, smoked rosemary.",
         badges: ["signature"],
         time: "10 min", cal: "210 kcal",
-        img: "https://i.pinimg.com/1200x/b3/3c/da/b33cda44290b058cf9c6c4d74a5d1e7c.jpg",
+        img: "https://i.pinimg.com/736x/27/7a/2e/277a2e523a3930464fb7c94301b13636.jpg",
     },
     {
         id: 11, category: "bar", subcategory: "spirits", tag: "Shots",
@@ -180,14 +180,22 @@ export const MENU_ITEMS = [
         img: "https://i.pinimg.com/736x/0c/6f/1b/0c6f1bd0c40b054eeb35f6ab86ad99a1.jpg",
     },
     /* ── CAFE ── */
+    // {
+    //     id: 18, category: "cafe", subcategory: "toasts", tag: "Breakfast",
+    //     name: "Avocado Toast Deluxe", price: "₹390",
+    //     desc: "Sourdough toast, smashed avocado, poached eggs, feta, cherry tomatoes, micro herbs.",
+    //     badges: ["veg", "bestseller"],
+    //     time: "12 min", cal: "340 kcal",
+    //     img: "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=600&q=80",
+    // },
     {
-        id: 18, category: "cafe", subcategory: "toasts", tag: "Breakfast",
-        name: "Avocado Toast Deluxe", price: "₹390",
-        desc: "Sourdough toast, smashed avocado, poached eggs, feta, cherry tomatoes, micro herbs.",
-        badges: ["veg", "bestseller"],
-        time: "12 min", cal: "340 kcal",
-        img: "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=600&q=80",
-    },
+    id: 18, category: "cafe", subcategory: "toasts", tag: "Spicy",
+    name: "Spicy Chilli Cheese Toast", price: "₹240",
+    desc: "Crispy toast topped with melted cheese, green chillies, capsicum, onions, and spicy seasoning.",
+    badges: ["veg", "spicy", "bestseller"],
+    time: "10 min", cal: "320 kcal",
+    img: "https://i.pinimg.com/736x/b9/40/e2/b940e297ec795089a32fe0064c33a3d4.jpg",
+},
     {
         id: 19, category: "cafe", subcategory: "toasts", tag: "Classic",
         name: "French Toast", price: "₹290",
@@ -250,7 +258,7 @@ export const MENU_ITEMS = [
         desc: "Spinach, kale, cucumber, green apple, ginger, lemon, wheatgrass.",
         badges: ["veg", "alcohol-free"],
         time: "5 min", cal: "120 kcal",
-        img: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&q=80",
+        img: "https://i.pinimg.com/736x/92/40/8e/92408e2006fd48b3c7f1e389d4bbeb6a.jpg",
     },
     {
         id: 27, category: "cafe", subcategory: "tonics", tag: "Energy",

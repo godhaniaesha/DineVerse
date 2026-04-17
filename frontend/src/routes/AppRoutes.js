@@ -153,6 +153,7 @@ function AppRoutes() {
             <Route path="cafe-waiter" element={<AdminRouteGuard path="/admin/cafe-waiter"><AdminCafeWaiterPanel /></AdminRouteGuard>} />
             <Route path="restaurant-waiter" element={<AdminRouteGuard path="/admin/restaurant-waiter"><AdminRestaurantWaiterPanel /></AdminRouteGuard>} />
             <Route path="bar-waiter" element={<AdminRouteGuard path="/admin/bar-waiter"><AdminBarWaiterPanel /></AdminRouteGuard>} />
+            <Route path="tables" element={<AdminRouteGuard path="/admin/tables"><AdminTables /></AdminRouteGuard>} />
             {/* <Route path="cafe-chef" element={<AdminRouteGuard path="/admin/cafe-chef"><AdminCafeChefPanel /></AdminRouteGuard>} />
             <Route path="restaurant-chef" element={<AdminRouteGuard path="/admin/restaurant-chef"><AdminRestaurantChefPanel /></AdminRouteGuard>} />
             <Route path="bar-chef" element={<AdminRouteGuard path="/admin/bar-chef"><AdminBarChefPanel /></AdminRouteGuard>} /> */}
