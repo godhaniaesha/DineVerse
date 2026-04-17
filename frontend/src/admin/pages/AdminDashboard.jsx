@@ -76,8 +76,32 @@ export default function AdminDashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
                 <XAxis dataKey="time" stroke="#666" tick={{ fontSize: 10 }} />
                 <YAxis stroke="#666" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ddd", borderRadius: "4px" }} />
-                <Legend wrapperStyle={{ fontSize: "10px" }} />
+               <Tooltip
+  cursor={{ fill: "rgba(212,163,115,0.08)" }} // soft hover highlight
+
+  contentStyle={{
+    background: "rgba(255,255,255,0.95)",
+    border: "none",
+    borderRadius: "10px",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
+    padding: "8px 12px",
+    backdropFilter: "blur(6px)"
+  }}
+
+  labelStyle={{
+    color: "#888",
+    fontSize: "11px",
+    marginBottom: "2px"
+  }}
+
+  itemStyle={{
+    color: "#333",
+    fontWeight: "600",
+    fontSize: "13px"
+  }}
+
+  formatter={(value) => `₹${(value / 100000).toFixed(1)}L`}
+/> <Legend wrapperStyle={{ fontSize: "10px" }} />
                 <Line type="monotone" dataKey="Truffle Pasta" stroke="#d4a373" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                 <Line type="monotone" dataKey="Signature Burger" stroke="#ff6b6b" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                 <Line type="monotone" dataKey="Seafood Risotto" stroke="#4ecdc4" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />

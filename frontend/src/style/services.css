@@ -1,5 +1,5 @@
 /* ============================================================
-   services.css — Lumière Luxury Dynamic Grid
+   services.css — DineVerse Luxury Dynamic Grid
 ============================================================ */
 :root {
   /* ─ Backgrounds */
@@ -25,8 +25,8 @@
   /* ─ Text */
   --d-text-1:         #f5f0e8;
   --d-text-2:         #b8b0a0;
-  --d-text-3:         #7a7060;
-  --d-text-4:         #4a4438;
+  --d-text-3:         #9e988c;
+  --d-text-4:         #ebd19f;
 
   /* ─ Category palette */
   --d-cafe:           #7ab898;

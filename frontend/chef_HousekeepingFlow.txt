@@ -1,0 +1,381 @@
+# Restaurant Management & Kitchen Assignment System
+
+## Overview
+
+This project is a **Restaurant, Bar, Cafe, and Room Service Management System** built to manage:
+
+* Table Booking
+* Room Booking
+* Order Management
+* Kitchen Workflow
+* Chef Task Allocation
+* Housekeeping
+* Bar & Cafe Orders
+
+The system automatically assigns orders to the **correct kitchen area and chef based on cuisine and item type**.
+
+---
+
+# Core Modules
+
+## 1. Menu Management
+
+Each menu item contains important fields that help the system route orders to the correct chef and kitchen.
+
+### Menu Item Fields
+
+| Field        | Description                               |
+| ------------ | ----------------------------------------- |
+| id           | Unique ID                                 |
+| name         | Dish name                                 |
+| price        | Item price                                |
+| category     | Food / Beverage / Dessert                 |
+| cuisine      | Indian / Italian / Chinese / Cafe         |
+| kitchen_area | Main Kitchen / Cafe Counter / Bar Counter |
+| prep_time    | Estimated cooking time                    |
+| status       | Active / Inactive                         |
+
+### Example
+
+```
+Butter Chicken
+Cuisine: Indian
+Kitchen Area: Main Kitchen
+Prep Time: 15 min
+```
+
+```
+Cappuccino
+Cuisine: Cafe
+Kitchen Area: Cafe Counter
+Prep Time: 3 min
+```
+
+```
+Mojito
+Cuisine: Bar
+Kitchen Area: Bar Counter
+Prep Time: 2 min
+```
+
+---
+
+# 2. Chef Management
+
+Chefs are assigned based on **Cuisine Type** and **Kitchen Area**.
+
+### Chef Table Structure
+
+| Field        | Description         |
+| ------------ | ------------------- |
+| id           | Chef ID             |
+| name         | Chef Name           |
+| cuisine      | Chef specialization |
+| kitchen_area | Assigned kitchen    |
+| status       | Active / Busy / Off |
+
+### Example
+
+| Chef       | Cuisine | Kitchen Area |
+| ---------- | ------- | ------------ |
+| Chef Rahul | Indian  | Main Kitchen |
+| Chef Maria | Italian | Main Kitchen |
+| Chef Jay   | Cafe    | Cafe Counter |
+| Alex       | Bar     | Bar Counter  |
+
+---
+
+# 3. Order Management
+
+Orders can come from different sources.
+
+### Order Sources
+
+* Dine-In Table
+* Room Service
+* Takeaway
+* Cafe
+* Bar
+
+### Order Table Structure
+
+| Field        | Description                        |
+| ------------ | ---------------------------------- |
+| id           | Order ID                           |
+| source_type  | table / room / takeaway            |
+| source_id    | table number or room number        |
+| order_status | pending / cooking / ready / served |
+| created_at   | Order time                         |
+
+---
+
+# 4. Order Item Structure
+
+Each order item stores individual dish details.
+
+| Field        | Description               |
+| ------------ | ------------------------- |
+| order_id     | Order reference           |
+| menu_item_id | Dish reference            |
+| quantity     | Item quantity             |
+| status       | Pending / Cooking / Ready |
+| kitchen_area | Assigned kitchen          |
+| chef_id      | Assigned chef             |
+
+---
+
+# 5. Automatic Chef Assignment Logic
+
+When a customer places an order, the system performs the following steps:
+
+1. Receive order
+2. Check each menu item
+3. Identify cuisine
+4. Identify kitchen area
+5. Assign to available chef
+
+### Example Order
+
+Order #201
+
+```
+Butter Chicken
+Pasta Alfredo
+Cappuccino
+Mojito
+```
+
+### System Assignment
+
+| Item           | Kitchen Area | Chef         |
+| -------------- | ------------ | ------------ |
+| Butter Chicken | Main Kitchen | Indian Chef  |
+| Pasta Alfredo  | Main Kitchen | Italian Chef |
+| Cappuccino     | Cafe Counter | Cafe Chef    |
+| Mojito         | Bar Counter  | Bartender    |
+
+---
+
+# 6. Kitchen Display System (KDS)
+
+Each kitchen area has its own dashboard screen.
+
+### Main Kitchen Screen
+
+```
+Order #201
+Butter Chicken
+Pasta Alfredo
+Status: Cooking
+```
+
+### Cafe Counter Screen
+
+```
+Order #201
+Cappuccino
+Status: Pending
+```
+
+### Bar Counter Screen
+
+```
+Order #201
+Mojito
+Status: Pending
+```
+
+---
+
+# 7. Order Status Flow
+
+Order lifecycle inside kitchen:
+
+```
+Pending
+↓
+Accepted by Chef
+↓
+Cooking
+↓
+Ready
+↓
+Served / Delivered
+```
+
+---
+
+# 8. Room Service Flow
+
+Room orders go through the same system.
+
+```
+Room App
+↓
+Order API
+↓
+Order Management System
+↓
+Cuisine Detection
+↓
+Chef Assignment
+↓
+Kitchen Preparation
+↓
+Room Service Delivery
+```
+
+Example:
+
+```
+Room 203
+Order: Sandwich + Coffee
+```
+
+Assigned to:
+
+```
+Cafe Kitchen
+Chef Jay
+```
+
+---
+
+# 9. Housekeeping Management System
+
+The Housekeeping module manages **room cleaning, maintenance, and guest service requests**.
+
+### Room Status Types
+
+| Status      | Meaning                              |
+| ----------- | ------------------------------------ |
+| Available   | Room ready for booking               |
+| Occupied    | Guest currently staying              |
+| Cleaning    | Housekeeping cleaning room           |
+| Maintenance | Room under repair                    |
+| Dirty       | Guest checked out, cleaning required |
+
+---
+
+## Housekeeping Task Types
+
+Housekeeping staff can receive different types of tasks.
+
+| Task                | Description                  |
+| ------------------- | ---------------------------- |
+| Room Cleaning       | Standard room cleaning       |
+| Linen Change        | Bedsheet / towel replacement |
+| Guest Request       | Extra towel, pillow, etc     |
+| Mini Bar Refill     | Refill minibar items         |
+| Maintenance Request | AC / light / plumbing issue  |
+
+---
+
+## Housekeeping Task Flow
+
+### When Guest Checkout
+
+```
+Guest Checkout
+↓
+Room Status → Dirty
+↓
+Housekeeping Task Created
+↓
+Staff Assigned
+↓
+Room Cleaning
+↓
+Room Status → Available
+```
+
+---
+
+### When Guest Requests Service
+
+Example:
+
+```
+Room 204
+Request: Extra Towels
+```
+
+System Flow:
+
+```
+Guest Request
+↓
+Create Housekeeping Task
+↓
+Assign to Housekeeping Staff
+↓
+Staff Completes Task
+↓
+Mark Task Completed
+```
+
+---
+
+### Housekeeping Task Table
+
+| Field          | Description                       |
+| -------------- | --------------------------------- |
+| id             | Task ID                           |
+| room_id        | Room number                       |
+| task_type      | Cleaning / Linen / Request        |
+| assigned_staff | Staff member                      |
+| status         | Pending / In Progress / Completed |
+| created_at     | Task created time                 |
+
+---
+
+## Housekeeping Dashboard
+
+Housekeeping staff dashboard shows all tasks.
+
+Example:
+
+```
+Room 203
+Task: Cleaning
+Status: Pending
+```
+
+```
+Room 204
+Task: Extra Towels
+Status: In Progress
+```
+
+---
+
+# 10. Optional Advanced Features
+
+Future improvements may include:
+
+* Chef workload balancing
+* Order priority system
+* Cooking timers
+* Kitchen analytics
+* Chef performance tracking
+* Housekeeping task notifications
+* Mobile staff app
+* Real-time room status updates
+
+---
+
+# Tech Stack Example
+
+# Goal of the System
+
+The goal of this system is to create a **complete restaurant and hospitality management platform** that efficiently manages:
+
+* Food orders
+* Kitchen workflow
+* Chef task allocation
+* Table service
+* Room service
+* Bar and cafe operations
+* Housekeeping and room management
+
+This ensures **faster service, organized operations, and better guest experience**.

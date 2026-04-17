@@ -22,8 +22,8 @@
   /* ─ Text */
   --d-text-1: #f5f0e8;
   --d-text-2: #b8b0a0;
-  --d-text-3: #7a7060;
-  --d-text-4: #4a4438;
+  --d-text-3: #9e988c;
+  --d-text-4: #ebd19f;
 
   /* ─ Category palette */
   --d-cafe: #7ab898;
@@ -94,12 +94,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(8, 7, 5, 0.4) 0%,
-    rgba(8, 7, 5, 0.8) 70%,
-    rgba(8, 7, 5, 1) 100%
-  );
+  background: radial-gradient(circle at center,
+      rgba(8, 7, 5, 0.4) 0%,
+      rgba(8, 7, 5, 0.8) 70%,
+      rgba(8, 7, 5, 1) 100%);
   z-index: 1;
 }
 
@@ -579,11 +577,9 @@ body {
 /* ─ Left Visual Section */
 .z_reg_visual-section {
   flex: 1;
-  background: linear-gradient(
-    135deg,
-    rgba(24, 21, 16, 0.8),
-    rgba(16, 14, 11, 0.9)
-  );
+  background: linear-gradient(135deg,
+      rgba(24, 21, 16, 0.8),
+      rgba(16, 14, 11, 0.9));
   padding: 4rem;
   display: flex;
   flex-direction: column;
@@ -664,11 +660,9 @@ body {
 }
 
 .z_bar_item_card:hover .z_bar_item_overlay {
-  background: linear-gradient(
-    to top,
-    rgba(155, 143, 212, 0.4) 0%,
-    rgba(0, 0, 0, 0.7) 100%
-  );
+  background: linear-gradient(to top,
+      rgba(155, 143, 212, 0.4) 0%,
+      rgba(0, 0, 0, 0.7) 100%);
 }
 
 /* Restaurant - Split & Elegant */
@@ -781,7 +775,7 @@ body {
     margin-bottom: 1rem;
   }
 
-  .z_cafe_masonry_item > div {
+  .z_cafe_masonry_item>div {
     padding: 0.8rem !important;
   }
 
@@ -867,7 +861,7 @@ body {
     font-size: 0.85rem !important;
   }
 
-  .z_cafe_masonry_item > div {
+  .z_cafe_masonry_item>div {
     padding: 0.6rem !important;
   }
 
@@ -939,6 +933,7 @@ body {
 }
 
 @media (max-width: 992px) {
+
   .z_room_feature_row,
   .z_room_feature_row:nth-child(even) {
     flex-direction: column;
@@ -1736,7 +1731,8 @@ body {
 }
 
 /* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
   .z_prof_avatar {
     image-rendering: -webkit-optimize-contrast;
   }
@@ -1868,21 +1864,17 @@ body {
   width: 100%;
   padding-right: 3.5rem;
   border: 2px solid var(--d-border);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.02)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.02));
   transition: all 0.3s var(--d-ease);
 }
 
 .z_prof_pass_wrapper .z_prof_input:focus {
   border-color: var(--d-gold);
-  background: linear-gradient(
-    135deg,
-    rgba(200, 150, 90, 0.08),
-    rgba(200, 150, 90, 0.04)
-  );
+  background: linear-gradient(135deg,
+      rgba(200, 150, 90, 0.08),
+      rgba(200, 150, 90, 0.04));
   box-shadow: 0 0 25px rgba(200, 150, 90, 0.15);
 }
 
@@ -1940,11 +1932,9 @@ body {
 
 /* Enhanced Input Fields */
 .z_prof_input {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.02)
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.02));
   border: 2px solid var(--d-border);
   border-radius: var(--d-r-md);
   padding: 0.7rem 1rem !important;
@@ -1959,11 +1949,9 @@ body {
 .z_prof_input:focus {
   outline: none;
   border-color: var(--d-gold);
-  background: linear-gradient(
-    135deg,
-    rgba(200, 150, 90, 0.08),
-    rgba(200, 150, 90, 0.04)
-  );
+  background: linear-gradient(135deg,
+      rgba(200, 150, 90, 0.08),
+      rgba(200, 150, 90, 0.04));
   box-shadow:
     0 0 20px rgba(200, 150, 90, 0.1),
     inset 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -2031,12 +2019,10 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
   transition: left 0.5s var(--d-ease);
 }
 
@@ -2068,11 +2054,9 @@ body {
   left: -2rem;
   right: -2rem;
   bottom: 2rem;
-  background: radial-gradient(
-    circle at center,
-    rgba(200, 150, 90, 0.02),
-    transparent
-  );
+  background: radial-gradient(circle at center,
+      rgba(200, 150, 90, 0.02),
+      transparent);
   pointer-events: none;
   z-index: -1;
 }
@@ -2315,7 +2299,7 @@ body {
   box-shadow: 0 0 20px rgba(200, 150, 90, 0.1);
 }
 
-.z_reg_form-control:focus + .z_reg_input-icon {
+.z_reg_form-control:focus+.z_reg_input-icon {
   color: var(--d-gold);
 }
 
@@ -2787,11 +2771,9 @@ body {
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(
-    circle,
-    rgba(200, 150, 90, 0.05) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(200, 150, 90, 0.05) 0%,
+      transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -3050,6 +3032,12 @@ body {
   }
 }
 
+@media (max-width: 576px) {
+  .z_footer_col {
+    margin-bottom: 0px !important;
+  }
+}
+
 @media (max-width: 480px) {
   .z_footer_brand {
     text-align: center;
@@ -3152,6 +3140,7 @@ body {
 }
 
 @media (max-width: 576px) {
+
   .z_footer_logo,
   .z_footer_socials {
     justify-content: center;
@@ -3170,6 +3159,7 @@ body {
 }
 
 @media (max-width: 425px) {
+
   .z_footer_logo,
   .z_footer_socials {
     justify-content: center;
@@ -3189,8 +3179,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url("https://images.unsplash.com/photo-1574096079513-d8259312b785?w=1600&q=80")
-    center/cover no-repeat;
+  background: url("https://images.unsplash.com/photo-1574096079513-d8259312b785?w=1600&q=80") center/cover no-repeat;
   overflow: hidden;
 }
 
@@ -3200,11 +3189,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(8, 7, 5, 0.4),
-    rgba(8, 7, 5, 0.9)
-  );
+  background: linear-gradient(to bottom,
+      rgba(8, 7, 5, 0.4),
+      rgba(8, 7, 5, 0.9));
   z-index: 1;
 }
 
@@ -3269,6 +3256,7 @@ body {
 }
 
 @media (max-width: 576px) {
+
   .z_footer_logo,
   .z_footer_socials {
     justify-content: center;
@@ -3287,6 +3275,7 @@ body {
 }
 
 @media (max-width: 425px) {
+
   .z_footer_logo,
   .z_footer_socials {
     justify-content: center;
@@ -3306,7 +3295,7 @@ body {
   }
 
   .z_bar_section {
-    padding: 10px 0px !important;
+    padding: 38px 0px 23px !important;
   }
 
   .z_prof_save_btn {
@@ -3328,8 +3317,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url("https://images.unsplash.com/photo-1574096079513-d8259312b785?w=1600&q=80")
-    center/cover no-repeat;
+  background: url("https://images.unsplash.com/photo-1574096079513-d8259312b785?w=1600&q=80") center/cover no-repeat;
   overflow: hidden;
 }
 
@@ -3339,11 +3327,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(8, 7, 5, 0.4),
-    rgba(8, 7, 5, 0.9)
-  );
+  background: linear-gradient(to bottom,
+      rgba(8, 7, 5, 0.4),
+      rgba(8, 7, 5, 0.9));
   z-index: 1;
 }
 
@@ -3478,7 +3464,7 @@ body {
 
 /* ── Sections Common ── */
 .z_bar_section {
-  padding: 120px 0;
+  padding: 60px 0;
 }
 
 .z_bar_section_header {
@@ -3814,6 +3800,7 @@ body {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
+    font-size: 10px;
   }
 
   .z_bar_btn_outline:hover {
@@ -3865,7 +3852,7 @@ body {
 
   .z_bar_section_header {
     text-align: center;
-    margin-bottom: 70px;
+    margin-bottom: 40px;
   }
 
   .z_bar_subtitle {
@@ -4029,6 +4016,7 @@ body {
   .z_slide_shape_diagonal {
     border-radius: 80px 0 80px 0;
   }
+
 }
 
 /* Testimonial Slider Styles */
@@ -4175,7 +4163,7 @@ body {
 
 @media (max-width: 768px) {
   .z_bar_testimonial_section {
-    padding: 50px 0;
+    padding: 50px 0 80px 0;
   }
 
   .z_bar_testimonial_content {
@@ -4197,10 +4185,17 @@ body {
   }
 
   .z_bar_testimonial_nav {
-    /* width: 40px;
-    height: 40px;
-    font-size: 14px; */
-    display: none;
+    width: 36px;
+    height: 36px;
+    top: 112%;
+  }
+
+  .z_bar_testimonial_prev {
+    left: 44%;
+  }
+
+  .z_bar_testimonial_next {
+    right: 44%;
   }
 }
 
@@ -4844,7 +4839,7 @@ body {
   /* Testimonial Slider Styles */
   .z_bar_testimonial_section {
     background-color: #000000;
-    padding: 43px 0;
+    padding: 43px 0 80px 0;
     position: relative;
     overflow: hidden;
   }
@@ -4862,7 +4857,7 @@ body {
   .z_bar_testimonial_content {
     flex: 1;
     text-align: center;
-    padding: 0 60px;
+    padding: 0;
     color: #ffffff;
   }
 
@@ -4876,7 +4871,7 @@ body {
   }
 
   .z_bar_testimonial_text {
-    font-size: 1.2rem;
+    font-size: 14px;
     line-height: 1.8;
     margin-bottom: 25px;
     color: #ffffff;
@@ -4894,37 +4889,18 @@ body {
     text-transform: uppercase;
   }
 
-  .z_bar_testimonial_nav {
-    background: transparent;
-    border: 2px solid #d4af37;
-    color: #d4af37;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 18px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
+  .z_bar_testimonial_prev {
+    left: 40%;
+  }
+
+  .z_bar_testimonial_next {
+    right: 40%;
   }
 
   .z_bar_testimonial_nav:hover {
     background-color: #d4af37;
     color: #000000;
     transition: all 0.3s ease;
-  }
-
-  .z_bar_testimonial_prev {
-    left: 20px;
-  }
-
-  .z_bar_testimonial_next {
-    right: 20px;
   }
 
   .z_bar_testimonial_dots {
@@ -4942,6 +4918,16 @@ body {
     background: transparent;
     cursor: pointer;
     transition: all 0.3s ease;
+  }
+}
+
+@media (max-width: 375px) {
+  .z_bar_testimonial_next {
+    right: 37%;
+  }
+
+  .z_bar_testimonial_prev {
+    left: 37%;
   }
 }
 
@@ -5136,7 +5122,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  margin-top: 3.5rem;
+  margin-top: 2.5rem;
 }
 
 .z_res_testimonial_btn {
@@ -5175,9 +5161,11 @@ body {
   }
 
   .z_res_dish_content_col {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding: 0 1rem;
+    margin-top: -80px !important;
+    width: 90% !important;
   }
 
   .z_floating_card {
@@ -5218,11 +5206,15 @@ body {
   .z_res_video_section {
     height: 40vh;
   }
+
+  .z_res_testimonial_section {
+    padding: 0px 0px 40px 0px;
+  }
 }
 
 .z_slide_wrapper {
   background-color: var(--d-bg);
-  padding: 70px 0 80px;
+  padding: 38px 0 80px;
   overflow: hidden;
   width: 100%;
 }
@@ -5519,15 +5511,18 @@ body {
 .z_slide_shape_diagonal {
   border-radius: 125px 0 125px 0;
 }
-@media (max-width: 1024px){
+
+@media (max-width: 1024px) {
   .z_bar_hero_badge {
     margin-bottom: 0rem !important;
   }
-  .z_bar_experience_section{
-    padding: 0px !important;
-    padding-bottom: 30px !important;
+
+  .z_bar_experience_section {
+    /* padding: 0px !important; */
+    padding: 30px 0px !important;
   }
 }
+
 @media (max-width: 992px) {
   .z_slide_item {
     width: 200px;
@@ -5553,24 +5548,27 @@ body {
   .z_slide_shape_diagonal {
     border-radius: 100px 0 100px 0;
   }
-   .z_bar_hero_badge {
+
+  .z_bar_hero_badge {
     margin-bottom: 0rem !important;
-    
+
   }
+
   .z_bar_section {
-        padding: 68px 0;
-    }
+    padding: 68px 0;
+  }
 }
+
 @media (max-width: 768px) {
   .z_res_dish_row {
     margin-bottom: 40px;
   }
- 
+
 }
 
 @media (max-width: 576px) {
   .z_slide_wrapper {
-    padding: 13px 0;
+    padding: 13px 0 32px;
   }
 
   .z_slide_item {
@@ -5596,5 +5594,41 @@ body {
 
   .z_slide_shape_diagonal {
     border-radius: 80px 0 80px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .z_room_feature_info span {
+    font-size: 1rem !important;
+  }
+
+  .z_room_feature_info h3 {
+    font-size: 36px !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  .z_room_feature_info .z_bar_desc {
+    font-size: 0.9rem !important;
+    margin-bottom: 1.2rem !important;
+  }
+
+  .z_room_feature_info>div {
+    gap: 2.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .z_room_feature_info>div div svg {
+    font-size: 1.5rem !important;
+  }
+
+  .z_room_feature_info>div div p {
+    font-size: 0.7rem !important;
+  }
+
+  .z_bar_btn_primary {
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem;
+    font-size: 12px;
   }
 }

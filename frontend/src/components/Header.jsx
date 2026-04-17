@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
-import { MdTableRestaurant, MdHotel } from "react-icons/md";
+import { FiSearch, FiUser, FiClock } from "react-icons/fi";
+import { MdTableRestaurant, MdHotel, MdLogout, MdPerson, MdLogin, MdAppRegistration, MdArrowForward } from "react-icons/md";
 import { IoWineOutline } from "react-icons/io5";
 import { PiCoffeeBold, PiKnifeBold } from "react-icons/pi";
 import { RiRestaurantLine } from "react-icons/ri";
 import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine } from "react-icons/ri";
 import "./header.css";
+import { MENU_ITEMS } from "../pages/Menu";
 
 /* ── DATA ─────────────────────────────────────────────────── */
 
@@ -102,13 +103,44 @@ function Hamburger({ open, onClick }) {
 /* ── SEARCH OVERLAY ───────────────────────────────────────── */
 function SearchOverlay({ open, onClose }) {
   const inputRef = useRef(null);
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
 
   useEffect(() => {
     if (open) {
       const t = setTimeout(() => inputRef.current?.focus(), 90);
+      setQuery("");
+      setResults([]);
       return () => clearTimeout(t);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      return;
+    }
+
+    const q = query.toLowerCase();
+    const filtered = MENU_ITEMS.filter(item => 
+      item.name.toLowerCase().includes(q) || 
+      item.desc.toLowerCase().includes(q) || 
+      item.category.toLowerCase().includes(q) ||
+      item.tag.toLowerCase().includes(q)
+    ).slice(0, 6); // Limit results for better UI
+
+    setResults(filtered);
+  }, [query]);
+
+  const handleResultClick = (id) => {
+    navigate(`/dish/${id}`);
+    onClose();
+  };
+
+  const handleTagClick = (tag) => {
+    setQuery(tag);
+  };
 
   return (
     <div
@@ -123,6 +155,8 @@ function SearchOverlay({ open, onClose }) {
           <input
             ref={inputRef}
             className="d_search__input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search menus, dishes, rooms, drinks…"
             aria-label="Search query"
           />
@@ -135,20 +169,60 @@ function SearchOverlay({ open, onClose }) {
             ✕
           </button>
         </div>
-        <div className="d_search__tags">
-          {SEARCH_TAGS.map((tag) => (
-            <button key={tag} className="d_search__tag">
-              {tag}
-            </button>
-          ))}
-        </div>
+
+        {results.length > 0 ? (
+          <div className="d_search__results">
+            <div className="d_search__results-label">Menu Items Found</div>
+            <div className="d_search__results-grid">
+              {results.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="d_search__result-card"
+                  onClick={() => handleResultClick(item.id)}
+                >
+                  <div className="d_search__result-img">
+                    <img src={item.img} alt={item.name} />
+                  </div>
+                  <div className="d_search__result-info">
+                    <div className="d_search__result-top">
+                      <span className="d_search__result-name">{item.name}</span>
+                      <span className="d_search__result-price">{item.price}</span>
+                    </div>
+                    <p className="d_search__result-desc">{item.desc}</p>
+                    <div className="d_search__result-meta">
+                      <span className="d_search__result-tag">{item.tag}</span>
+                      <span className="d_search__result-time"><FiClock size={12}/> {item.time}</span>
+                    </div>
+                  </div>
+                  <MdArrowForward className="d_search__result-arrow" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : query.trim() !== "" ? (
+          <div className="d_search__no-results">
+            <p>No dishes found for &quot;{query}&quot;</p>
+          </div>
+        ) : (
+          <div className="d_search__tags">
+            {SEARCH_TAGS.map((tag) => (
+              <button 
+                key={tag} 
+                className="d_search__tag"
+                onClick={() => handleTagClick(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
 /* ── MOBILE DRAWER ────────────────────────────────────────── */
-function Drawer({ open, onClose, onBookTable, onBookRoom }) {
+function Drawer({ open, onClose, onBookTable, onBookRoom, isLoggedIn, onLogout }) {
   return (
     <>
       {/* Backdrop */}
@@ -178,6 +252,32 @@ function Drawer({ open, onClose, onBookTable, onBookRoom }) {
 
         {/* Nav links — NO dots, icon cards */}
         <nav className="d_drawer__body">
+          {/* User Section for Mobile */}
+          <div className="d_drawer__user">
+            {isLoggedIn ? (
+              <>
+                <Link to="/profile" className="d_drawer__user-link" onClick={onClose}>
+                  <div className="d_drawer__user-icon"><MdPerson /></div>
+                  <span>My Profile</span>
+                </Link>
+                <button className="d_drawer__user-link d_drawer__user-link--logout" onClick={() => { onLogout(); onClose(); }}>
+                  <div className="d_drawer__user-icon"><MdLogout /></div>
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="d_drawer__user-link" onClick={onClose}>
+                  <div className="d_drawer__user-icon"><MdLogin /></div>
+                  <span>Login / Register</span>
+                </Link>
+            
+              </>
+            )}
+          </div>
+
+          <div className="d_drawer__sep" />
+
           {NAV_LINKS.map((link) => (
             <Link
               key={link.id}
@@ -244,8 +344,11 @@ export default function Header() {
   const [activeNav,   setActiveNav]   = useState("");
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [drawerOpen,  setDrawerOpen]  = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("adminName") || !!localStorage.getItem("userName"));
   const navigate = useNavigate();
   const location = useLocation();
+  const userDropdownRef = useRef(null);
 
   /* Scroll listener */
   useEffect(() => {
@@ -270,20 +373,41 @@ export default function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [searchOpen, drawerOpen]);
 
-  /* Escape key */
+  /* Escape key & Click outside */
   useEffect(() => {
     const handler = (e) => {
       if (e.key === "Escape") {
         setSearchOpen(false);
         setDrawerOpen(false);
+        setUserDropdownOpen(false);
       }
     };
+
+    const handleClickOutside = (e) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(e.target)) {
+        setUserDropdownOpen(false);
+      }
+    };
+
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleBookTable = () => navigate("/bookTable");
   const handleBookRoom  = () => navigate("/bookRoom");
+  
+  const handleLogout = () => {
+    localStorage.removeItem("adminName");
+    localStorage.removeItem("adminRole");
+    localStorage.removeItem("userName");
+    setIsLoggedIn(false);
+    setUserDropdownOpen(false);
+    navigate("/");
+  };
 
   return (
     <>
@@ -338,6 +462,49 @@ export default function Header() {
               <FiSearch />
             </button>
 
+            {/* User Profile / Login Dropdown */}
+            <div className="d_user_dropdown" ref={userDropdownRef}>
+              <button
+                className={`d_btn-ghost d_user_btn ${userDropdownOpen ? "d_user_btn--active" : ""}`}
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                aria-label="User account"
+                title="Account"
+              >
+                <FiUser />
+              </button>
+              
+              {userDropdownOpen && (
+                <div className="d_user_menu">
+                  <div className="d_user_menu__header">
+                    <span className="d_user_menu__title">Account Settings</span>
+                  </div>
+                  <div className="d_user_menu__body">
+                    {isLoggedIn ? (
+                      <>
+                        <Link to="/profile" className="d_user_menu__link" onClick={() => setUserDropdownOpen(false)}>
+                          <MdPerson className="d_user_menu__icon" />
+                          <span>My Profile</span>
+                        </Link>
+                        <div className="d_user_menu__sep" />
+                        <button className="d_user_menu__link d_user_menu__link--logout" onClick={handleLogout}>
+                          <MdLogout className="d_user_menu__icon" />
+                          <span>Logout</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/auth" className="d_user_menu__link" onClick={() => setUserDropdownOpen(false)}>
+                          <MdLogin className="d_user_menu__icon" />
+                          <span>Login / Register</span>
+                        </Link>
+                    
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Book Room — outlined, desktop only */}
             <button
               className="d_btn-room"
@@ -382,6 +549,8 @@ export default function Header() {
         onClose={() => setDrawerOpen(false)}
         onBookTable={handleBookTable}
         onBookRoom={handleBookRoom}
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
       />
 
       {/* Page content pusher */}

@@ -78,11 +78,13 @@ export default function CafeBookTable() {
                             .map((row) => (
                                 <tr key={row.id}>
                                     <td>{row.tableNo}</td><td>{row.capacity} members</td><td><span className="ad_chip">{row.status}</span></td>
-                                    <td className="rooms__actions_cell">
+                                    <td>
+                                        <div className="d-flex" style={{ gap: "6px" }}>
                                         {row.status === "reserved" && (
                                             <button className="rooms__icon_btn rooms__icon_btn--primary" title="Accept Booking" onClick={() => acceptBooking(row.id)}><IcCheck /></button>
                                         )}
                                         {row.waiter}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

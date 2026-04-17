@@ -1,13 +1,14 @@
 import { useState } from "react";
+import DeleteIconButton from "../components/DeleteIconButton";
 
 const INITIAL_BLOGS = [
-  { id: 1, title: "Summer Dining Trends", short_des: "Explore latest dining trends", des: "Detailed description...", author: "Admin", author_img: "https://images.unsplash.com/photo-1564564321837-a57b7a5e50d7?w=400&q=80", image: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80", like: 125, area: "Restaurant", status: "published" },
-  { id: 2, title: "Top 5 Signature Dishes", short_des: "Must-try dishes", des: "Detailed description...", author: "Chef Team", author_img: "https://images.unsplash.com/photo-1564564321837-a57b7a5e50d7?w=400&q=80", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", like: 89, area: "Cafe", status: "draft" },
+  { id: 1, title: "Summer Dining Trends", short_des: "Explore latest dining trends", des: "Detailed description...", author: "Admin", author_img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWnW0NUpcrZcGZeUJ4e50ZLU8ugS9GPPoqww&shttps://images.unsplash.com/photo-1564564321837-a57b7a5e50d7?w=400&q=80", image: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80", like: 125, area: "Restaurant", status: "published" },
+  { id: 2, title: "Top 5 Signature Dishes", short_des: "Must-try dishes", des: "Detailed description...", author: "Chef Team", author_img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWnW0NUpcrZcGZeUJ4e50ZLU8ugS9GPPoqww&s", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80", like: 89, area: "Cafe", status: "draft" },
 ];
 
 const EMPTY_FORM = { title: "", short_des: "", des: "", author: "", author_img: "", image: "", like: 0, area: "Restaurant", status: "draft" };
-const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
-const IcTrash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>;
+const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
+const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
 function Modal({ title, onClose, children }) {
   return (
@@ -28,6 +29,7 @@ export default function AdminBlogs() {
 
   const openAdd = () => { setForm(EMPTY_FORM); setModal({ mode: "add" }); };
   const openEdit = (blog) => { setForm(blog); setModal({ mode: "edit", blog }); };
+  const openView = (blog) => setModal({ mode: "view", blog });
   const openDelete = (blog) => setModal({ mode: "delete", blog });
   const close = () => setModal(null);
 
@@ -52,7 +54,13 @@ export default function AdminBlogs() {
             {blogs.map((blog) => (
               <tr key={blog.id}>
                 <td><img src={blog.image} alt={blog.title} className="ad_gallery_img" style={{ width: 90, height: 52, marginBottom: 0 }} /></td><td>{blog.title}</td><td>{blog.author}</td><td>{blog.area}</td><td>{blog.like}</td><td><span className="ad_chip">{blog.status}</span></td>
-                <td className="rooms__actions_cell"><button className="rooms__icon_btn" title="Edit blog" onClick={() => openEdit(blog)}><IcEdit /></button><button className="rooms__icon_btn rooms__icon_btn--danger" title="Delete blog" onClick={() => openDelete(blog)}><IcTrash /></button></td>
+                <td><div className="d-flex" style={{ gap: "6px" }}>
+                  <button className="rooms__icon_btn" title="Edit blog" onClick={() => openEdit(blog)}><IcEdit /></button>
+                  <button className="rooms__icon_btn" title="View blog" onClick={() => openView(blog)}><IcView /></button>
+                  <DeleteIconButton title="Delete blog" onClick={() => openDelete(blog)} />
+                </div>
+                </td>
+
               </tr>
             ))}
           </tbody>
@@ -72,6 +80,32 @@ export default function AdminBlogs() {
           </div>
           <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option value="draft">Draft</option><option value="published">Published</option></select></div>
           <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--primary" onClick={save}>Save</button></div>
+        </Modal>
+      )}
+      {modal?.mode === "view" && (
+        <Modal title="View Blog" onClose={close}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <img src={modal.blog.image} alt={modal.blog.title} style={{ width: "100%", height: "200px", objectFit: "cover", borderRadius: "8px" }} />
+            <div>
+              <h3 className="ad_h2" style={{ fontSize: "20px", marginBottom: "4px" }}>{modal.blog.title}</h3>
+              <p className="ad_p" style={{ fontSize: "12px" }}>By {modal.blog.author} | {modal.blog.area} | {modal.blog.status}</p>
+            </div>
+            <div>
+              <h4 className="ad_card__label">Short Description</h4>
+              <p className="ad_p">{modal.blog.short_des}</p>
+            </div>
+            <div>
+              <h4 className="ad_card__label">Full Description</h4>
+              <p className="ad_p">{modal.blog.des}</p>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <img src={modal.blog.author_img} alt={modal.blog.author} style={{ width: "32px", height: "32px", borderRadius: "50%" }} />
+              <span className="ad_p" style={{ fontSize: "13px" }}>{modal.blog.author}</span>
+            </div>
+          </div>
+          <div className="rooms__form_actions" style={{ marginTop: "20px" }}>
+            <button className="rooms__btn rooms__btn--primary" onClick={close}>Close</button>
+          </div>
         </Modal>
       )}
       {modal?.mode === "delete" && <Modal title="Delete Blog" onClose={close}><p className="rooms__delete_msg">Delete "{modal.blog.title}"?</p><div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={remove}>Delete</button></div></Modal>}

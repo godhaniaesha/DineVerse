@@ -1,5 +1,5 @@
 /* ============================================================
-   barDrinks.css — Lumière  |  Bar & Drinks Section
+   barDrinks.css — DineVerse  |  Bar & Drinks Section
    Custom classes: d_bar_ prefix
    Scope: .d_bar_section (root wrapper — prevents override)
    ============================================================ */
@@ -1007,6 +1007,11 @@
     margin-bottom: 41px !important;
   }
   .d_bar_hero {
+    margin-bottom: 40px !important;
+  }
+}
+@media (max-width: 576px) {
+  .d_bar_marquee {
     margin-bottom: 40px !important;
   }
 }

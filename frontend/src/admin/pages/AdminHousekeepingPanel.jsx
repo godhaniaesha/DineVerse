@@ -75,10 +75,12 @@ export default function AdminHousekeepingPanel() {
                 <td><span className="ad_chip">{task.status}</span></td>
                 <td><span className="ad_chip">{task.clean_status}</span></td>
                 <td>{task.housekeeper_name || "N/A"}</td>
-                <td className="rooms__actions_cell">
-                  <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
-                    <FiEdit2 />
-                  </button>
+                <td>
+                  <div className="d-flex" style={{ gap: "6px" }}>
+                    <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
+                      <FiEdit2 />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -91,11 +93,11 @@ export default function AdminHousekeepingPanel() {
           <div style={{ padding: "20px" }}>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Room</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.task.room}</p>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.room}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Current Clean Status</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#333" }}>{modal.task.clean_status}</p>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.clean_status}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label htmlFor="clean_status" style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>New Clean Status</label>

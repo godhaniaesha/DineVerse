@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import "../styleadmin/AdminLayout.css";
 import { FaMoneyBillWave } from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi2";
 
 /* ─── ICONS (inline SVG to remove icon-lib dependency) ─────────── */
 
@@ -123,6 +124,9 @@ const Icons = {
   order: (
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
   ),
+  pos: (
+    <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M7 15h10M12 9v10" /></svg>
+  ),
   kds: (
     <svg className="ad_link__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8" /></svg>
   ),
@@ -152,7 +156,7 @@ const Icons = {
       <polyline points="6 9 12 15 18 9" />
     </svg>
   ),
-  pos:( <FaMoneyBillWave />), // ✅ make sure this exists
+  pos: (<FaMoneyBillWave />), // ✅ make sure this exists
 
 };
 
@@ -170,6 +174,7 @@ const NAV_GROUPS = [
     label: "Manage",
     links: [
       { to: "/admin/reservations", label: "Reservations", icon: Icons.reservations, badge: "12" },
+      { to: "/admin/admin-menu", label: "Menu Items", icon: Icons.menu_items },
       { to: "/admin/cafe-bookings", label: "Cafe Bookings", icon: Icons.reservations },
       { to: "/admin/cafe-menu", label: "Cafe Menu", icon: Icons.menu_items },
       { to: "/admin/restaurant-bookings", label: "Restaurant Bookings", icon: Icons.reservations },
@@ -215,6 +220,17 @@ const NAV_GROUPS = [
   },
 ];
 
+const CHEF_ALLOWED_LINKS = [
+  "/admin",
+  "/admin/cuisines",
+  "/admin/categories",
+  "/admin/dishes",
+  "/admin/admin-menu",
+  "/admin/orders",
+  "/admin/kds",
+  "/admin/profile",
+];
+
 /* ─── PAGE TITLE MAP ─────────────────────────────────────────── */
 
 const PAGE_TITLES = {
@@ -251,7 +267,7 @@ const PAGE_TITLES = {
   "/admin/housekeeping-panel": { title: "Housekeeping", sub: "Room cleaning tasks" },
   "/admin/guests": { title: "Guests", sub: "Guest profiles" },
   "/admin/rooms": { title: "Rooms", sub: "Room management" },
-  "/admin/menu": { title: "Menu Items", sub: "Food & beverage" },
+  "/admin/admin-menu": { title: "Menu Items", sub: "Food & beverage" },
   "/admin/cafe-book-table": { title: "Cafe Book Table", sub: "Cafe table bookings" },
   "/admin/res-book-table": { title: "Restaurant Book Table", sub: "Restaurant table bookings" },
   "/admin/bar-book-table": { title: "Bar Book Table", sub: "Bar table bookings" },
@@ -276,66 +292,65 @@ const PAGE_TITLES = {
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const sidebarRef = useRef(null);
   const userMenuRef = useRef(null);
   const location = useLocation();
 
+  const handleLogout = () => {
+    localStorage.removeItem("adminRole");
+    localStorage.removeItem("adminName");
+    // Add other keys to clear if necessary
+    window.location.href = "/admin-login"; // Adjust path as needed
+  };
+
   const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const adminName = localStorage.getItem("adminName") || "Admin User";
+  const isChefRole = adminRole === "Cafe Chef" || adminRole === "Restaurant Chef" || adminRole === "Bar Chef";
 
   const roleAllowedLinks = {
     "Super Admin": [
       "/admin",
+      "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
       "/admin/cafe-bookings",
-      "/admin/cafe-menu",
       "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
       "/admin/bar-bookings",
-      "/admin/bar-menu",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/guests",
-      "/admin/cafe-book-table",
-      "/admin/res-book-table",
-      "/admin/bar-book-table",
+      // "/admin/cafe-book-table",
+      // "/admin/res-book-table",
+      // "/admin/bar-book-table",
       "/admin/rooms",
       "/admin/room-types",
       "/admin/blogs",
       "/admin/reviews",
       "/admin/inquiries",
       "/admin/admin-users",
-      "/admin/cafe-order-manage",
-      "/admin/res-order-manage",
-      "/admin/bar-order-manage",
       "/admin/profile",
       "/admin/sales-history",
     ],
     Manager: [
       "/admin",
+      "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
       "/admin/cafe-bookings",
-      "/admin/cafe-menu",
       "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
       "/admin/bar-bookings",
-      "/admin/bar-menu",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
       "/admin/categories",
       "/admin/dishes",
       "/admin/orders",
-      "/admin/cafe-order-manage",
-      "/admin/res-order-manage",
-      "/admin/bar-order-manage",
       "/admin/housekeeping-panel",
       "/admin/guests",
-      "/admin/cafe-book-table",
-      "/admin/res-book-table",
-      "/admin/bar-book-table",
+      // "/admin/cafe-book-table",
+      // "/admin/res-book-table",
+      // "/admin/bar-book-table",
       "/admin/rooms",
       "/admin/room-types",
       "/admin/gallery",
@@ -344,51 +359,6 @@ export default function AdminLayout() {
       "/admin/inquiries",
       "/admin/profile",
       "/admin/sales-history",
-    ],
-    "Cafe Chef": [
-      "/admin",
-      "/admin/cafe-bookings",
-      "/admin/cafe-menu",
-      "/admin/cafe-waiter",
-      "/admin/cafe-chef",
-      "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
-      "/admin/menu",
-      "/admin/orders",
-      "/admin/cafe-order-manage",
-      "/admin/res-order-manage",
-      "/admin/bar-order-manage",
-      "/admin/kds",
-      "/admin/profile",
-    ],
-    "Restaurant Chef": [
-      "/admin",
-      "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
-      "/admin/restaurant-waiter",
-      "/admin/restaurant-chef",
-      "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
-      "/admin/menu",
-      "/admin/orders",
-      "/admin/kds",
-      "/admin/profile",
-    ],
-    "Bar Chef": [
-      "/admin",
-      "/admin/bar-bookings",
-      "/admin/bar-menu",
-      "/admin/bar-waiter",
-      "/admin/bar-chef",
-      "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
-      "/admin/menu",
-      "/admin/orders",
-      "/admin/kds",
-      "/admin/profile",
     ],
     Waiter: [
       "/admin",
@@ -401,7 +371,7 @@ export default function AdminLayout() {
       "/admin/profile",
     ],
     "Cafe Waiter": [
-      "/admin",      
+      "/admin",
       "/admin/cafe-book-table",
       "/admin/cafe-menu",
       "/admin/cafe-waiter",
@@ -413,7 +383,7 @@ export default function AdminLayout() {
       "/admin",
       "/admin/res-book-table",
       "/admin/restaurant-menu",
-      "/admin/restaurant-waiter",      
+      "/admin/restaurant-waiter",
       "/admin/orders",
       "/admin/billing",
       "/admin/profile",
@@ -422,7 +392,7 @@ export default function AdminLayout() {
       "/admin",
       "/admin/bar-book-table",
       "/admin/bar-menu",
-      "/admin/bar-waiter",      
+      "/admin/bar-waiter",
       "/admin/orders",
       "/admin/billing",
       "/admin/profile",
@@ -442,7 +412,7 @@ export default function AdminLayout() {
     ],
   };
 
-  const allowedLinks = roleAllowedLinks[adminRole] ?? [];
+  const allowedLinks = isChefRole ? CHEF_ALLOWED_LINKS : roleAllowedLinks[adminRole] ?? [];
 
   const filteredNavGroups = NAV_GROUPS
     .map((group) => ({
@@ -453,7 +423,7 @@ export default function AdminLayout() {
     }))
     .filter((group) => group.links.length);
 
-  const pageInfo = PAGE_TITLES[location.pathname] ?? { title: "Admin", sub: "Lumière" };
+  const pageInfo = PAGE_TITLES[location.pathname] ?? { title: "Admin", sub: "DineVerse" };
 
   const openSidebar = () => setSidebarOpen(true);
   const closeSidebar = () => setSidebarOpen(false);
@@ -509,8 +479,17 @@ export default function AdminLayout() {
         {/* Header */}
         <div className="ad_sidebar__head">
           <div className="ad_logo">
-            <span className="ad_logo__name">Lumière</span>
-            <span className="ad_logo__label">Admin Console</span>
+            <div className="ad_logo__emblem">
+              <div className="ad_logo__emblem-bg">
+                <span className="ad_logo__emblem-icon">
+                 <HiSparkles></HiSparkles>
+                </span>
+              </div>
+            </div>
+            <div className="ad_logo__text">
+              <span className="ad_logo__name">DineVerse</span>
+              <span className="ad_logo__label">Admin Console</span>
+            </div>
           </div>
           <button
             className="ad_sidebar__close"
@@ -557,7 +536,6 @@ export default function AdminLayout() {
               <div className="ad_user_name">{adminName}</div>
               <div className="ad_user_role">{adminRole}</div>
             </div>
-            <span className="ad_user_chevron">{Icons.chevron}</span>
           </div>
         </div>
       </aside>
@@ -579,7 +557,7 @@ export default function AdminLayout() {
           <div className="ad_topbar__title_area">
             <div className="ad_topbar__title">{pageInfo.title}</div>
             <div className="ad_topbar__breadcrumb">
-              Lumière <span>/</span> {pageInfo.sub}
+              DineVerse <span>/</span> {pageInfo.sub}
             </div>
           </div>
 
@@ -609,7 +587,7 @@ export default function AdminLayout() {
             </button>
             <div ref={userMenuRef} className={`ad_user_menu${userMenuOpen ? " ad_user_menu--open" : ""}`}>
               <NavLink className="ad_user_menu__item" to="/admin/profile">My Profile</NavLink>
-              <button className="ad_user_menu__item" type="button">Logout</button>
+              <button className="ad_user_menu__item" type="button" onClick={() => setShowLogoutModal(true)}>Logout</button>
             </div>
           </div>
         </header>
@@ -620,6 +598,28 @@ export default function AdminLayout() {
         </section>
 
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <>
+          <div className="rooms__modal_overlay" onClick={() => setShowLogoutModal(false)} />
+          <div className="rooms__modal_box" style={{ maxWidth: "400px" }}>
+            <div className="rooms__modal_head">
+              <span className="rooms__modal_title">Logout Confirmation</span>
+              <button className="rooms__modal_close" onClick={() => setShowLogoutModal(false)}>×</button>
+            </div>
+            <div className="rooms__modal_body" style={{ padding: "24px", textAlign: "center" }}>
+              <p style={{ color: "var(--ad-text-2)", fontSize: "15px", marginBottom: "0" }}>
+                Are you sure you want to log out of the admin panel?
+              </p>
+            </div>
+            <div className="rooms__form_actions">
+              <button className="rooms__btn rooms__btn--ghost" onClick={() => setShowLogoutModal(false)}>Cancel</button>
+              <button className="rooms__btn rooms__btn--primary" onClick={handleLogout}>Logout</button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

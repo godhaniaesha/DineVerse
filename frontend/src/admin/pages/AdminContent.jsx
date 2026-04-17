@@ -1,6 +1,6 @@
 import { useState } from "react";
 const DATA = [
-  { id: 1, section: "Homepage Hero", content: "Welcome to Lumiere", updatedAt: "2026-04-01" },
+  { id: 1, section: "Homepage Hero", content: "Welcome to DineVerse", updatedAt: "2026-04-01" },
   { id: 2, section: "Opening Hours", content: "9:00 AM - 11:00 PM", updatedAt: "2026-04-01" },
 ];
 export default function AdminContent() {

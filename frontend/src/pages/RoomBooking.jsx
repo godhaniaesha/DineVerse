@@ -15,7 +15,7 @@ const ROOMS = [
   {
     id: 1,
     featured: true,
-    name: "The Grand Lumière Suite",
+    name: "The Grand DineVerse Suite",
     type: "Signature Suite",
     desc: "Our crown jewel — a sprawling suite with floor-to-ceiling windows overlooking the city skyline. Hand-picked antique furnishings, a private terrace, soaking tub, and complimentary sommelier service.",
     price: "420",
@@ -217,7 +217,7 @@ export default function RoomBooking() {
           </div>
           <div className="d_rooms_header__right">
             <p className="d_rooms_header__desc">
-              Each room at Lumière is a world of its own — thoughtfully designed
+              Each room at DineVerse is a world of its own — thoughtfully designed
               spaces where comfort meets artistry, just moments from the dining
               floor and bar.
             </p>

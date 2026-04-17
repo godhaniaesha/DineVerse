@@ -1,17 +1,23 @@
 import { Navigate } from "react-router-dom";
 
+const CHEF_ALLOWED_ROUTES = [
+    "/admin",
+    "/admin/cuisines",
+    "/admin/categories",
+    "/admin/dishes",
+    "/admin/admin-menu",
+    "/admin/orders",
+    "/admin/kds",
+    "/admin/profile",
+];
+
 const ROLE_ROUTE_MAP = {
     "Super Admin": null,
     "Manager": [
       "/admin",
       "/admin/analytics",
       "/admin/reservations",
-      "/admin/cafe-bookings",
-      "/admin/cafe-menu",
-      "/admin/restaurant-bookings",
-      "/admin/restaurant-menu",
-      "/admin/bar-bookings",
-      "/admin/bar-menu",
+      "/admin/admin-menu",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
@@ -28,7 +34,7 @@ const ROLE_ROUTE_MAP = {
       "/admin/manager-panel",
       "/admin/housekeeping-panel",
       "/admin/guests",
-      "/admin/menu",
+      "/admin/admin-menu",
       "/admin/tables",
       "/admin/rooms",
       "/admin/gallery",
@@ -44,45 +50,6 @@ const ROLE_ROUTE_MAP = {
       "/admin/notifications",
       "/admin/profile",
       "/admin/sales-history",
-    ],
-    "Cafe Chef": [
-        "/admin",
-        "/admin/cafe-bookings",
-        "/admin/cafe-menu",
-        "/admin/cafe-waiter",
-        "/admin/cafe-chef",
-        "/admin/cuisines",
-        "/admin/categories",
-        "/admin/dishes",
-        "/admin/orders",
-        "/admin/kds",
-        "/admin/profile",
-    ],
-    "Restaurant Chef": [
-        "/admin",
-        "/admin/restaurant-bookings",
-        "/admin/restaurant-menu",
-        "/admin/restaurant-waiter",
-        "/admin/restaurant-chef",
-        "/admin/cuisines",
-        "/admin/categories",
-        "/admin/dishes",
-        "/admin/orders",
-        "/admin/kds",
-        "/admin/profile",
-    ],
-    "Bar Chef": [
-        "/admin",
-        "/admin/bar-bookings",
-        "/admin/bar-menu",
-        "/admin/bar-waiter",
-        "/admin/bar-chef",
-        "/admin/cuisines",
-        "/admin/categories",
-        "/admin/dishes",
-        "/admin/orders",
-        "/admin/kds",
-        "/admin/profile",
     ],
     Waiter: [
         "/admin",
@@ -138,12 +105,13 @@ const ROLE_ROUTE_MAP = {
 
 export default function AdminRouteGuard({ path, children }) {
     const role = localStorage.getItem("adminRole") || "Super Admin";
+    const isChefRole = role === "Cafe Chef" || role === "Restaurant Chef" || role === "Bar Chef";
 
     if (role === "Super Admin" || role === "Manager") {
         return children;
     }
 
-    const allowed = ROLE_ROUTE_MAP[role];
+    const allowed = isChefRole ? CHEF_ALLOWED_ROUTES : ROLE_ROUTE_MAP[role];
     if (allowed && allowed.includes(path)) {
         return children;
     }
