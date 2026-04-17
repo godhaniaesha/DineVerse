@@ -3,7 +3,7 @@ import { register, login, changePassword, forgotPassword, verifyOTP, resetPasswo
 import { addStaff, getStaff, updateStaffProfile, deleteStaff } from '../controllers/staffController.js';
 import { addCategory, getCategories, getCategoryById, updateCategory, deleteCategory, addDish, getDishes, getDishById, updateDish, deleteDish, getDishesByArea, getCategoriesByArea, searchDishes, searchCategories } from '../controllers/foodController.js';
 import { addRoomType, getRoomTypes, updateRoomType, deleteRoomType, addRoom, getRooms, updateRoom, deleteRoom, getRoomById, searchRooms } from '../controllers/roomController.js';
-import { getReservations, updateReservationStatus, createPaymentIntent, confirmBooking, getReservationById, getAvailableRoomTypes, getRoomsByType, validateGuestDetails, getGuests, searchReservations, searchGuests } from '../controllers/reservationController.js';
+import { getReservations, updateReservationStatus, createPaymentIntent, confirmBooking, getReservationById, getAvailableRoomTypes, getRoomsByType, validateGuestDetails, getGuests, searchReservations, searchGuests, getAdminReservations } from '../controllers/reservationController.js';
 import { addTable, getTables, getTableById, updateTable, deleteTable, getTablesByArea } from '../controllers/tableController.js';
 import { UserAuth, superAdminAuth, managerAuth, adminManagerAuth, waiterAuth, chefAuth, housekeepingAuth, isStaff } from '../middlewares/authMiddleware.js';
 import { upload, listBucketObjects, deleteManyFromS3 } from '../utils/uploadFile.utils.js';
@@ -16,6 +16,8 @@ import { confirmTableBooking, createTablePaymentIntent, getAvailableTablesByArea
 import { acceptDish, confirmBillingAndCheckout, createBillingPaymentIntent, createOrder, getAllOrdersAdmin, getAllOrdersForAdmin, getBillingOrders, getChefQueue, getDashboardStats, getKitchenQueue, getWaiterActiveOrders, markDishReady, updateItemStatus } from '../controllers/orderController.js';
 import { getUserBookings, getUserBillingHistory } from '../controllers/userProfileController.js';
 import { getAdminDashboardData } from '../controllers/dashboardController.js';
+import { addReview, deleteReview, getAreaReviews, getReviews, getUserReviews } from '../controllers/reviewController.js';
+import { getAnalytics } from '../controllers/analyticsController.js';
 
 const router = express.Router();
 
@@ -63,6 +65,7 @@ router.post('/reservations/confirmBooking', confirmBooking);
 router.get('/reservations/guests', UserAuth, adminManagerAuth, getGuests);
 router.get('/reservations/guests/search', UserAuth, adminManagerAuth, searchGuests);
 router.get('/reservations/search', UserAuth, adminManagerAuth, searchReservations);
+router.get('/reservations/getAdminReservations', UserAuth, adminManagerAuth, getAdminReservations);
 router.get('/reservations/getAll', UserAuth, adminManagerAuth, getReservations);
 router.get('/reservations/getById/:id', UserAuth, adminManagerAuth, getReservationById);
 router.patch('/reservations/updateStatus/:id', UserAuth, adminManagerAuth, updateReservationStatus);
@@ -144,13 +147,21 @@ router.patch('/orders/accept-dish', UserAuth, chefAuth, acceptDish);
 router.patch('/orders/mark-ready', UserAuth, chefAuth, markDishReady);
 router.patch('/orders/update-item-status/:orderId/:dishItemId', UserAuth, isStaff, updateItemStatus);
 router.get('/orders/billing-orders', UserAuth, isStaff, getBillingOrders);
-router.get('/dashboard/admin-overview', UserAuth, chefAuth, getAdminDashboardData);
+router.get('/dashboard/admin-overview', UserAuth, adminManagerAuth, getAdminDashboardData);
 router.get('/orders/dashboard-stats', UserAuth, adminManagerAuth, getDashboardStats);
+router.get('/analytics', UserAuth, adminManagerAuth, getAnalytics);
 router.post('/orders/checkout-details/:orderId', UserAuth, adminManagerAuth, createBillingPaymentIntent);
 router.post('/orders/confirm-checkout/:orderId', UserAuth, adminManagerAuth, confirmBillingAndCheckout);
 router.get('/orders/chef-queue', UserAuth, chefAuth, getChefQueue);
 router.get('/orders/waiter-active-orders', UserAuth, waiterAuth, getWaiterActiveOrders);
 router.get('/orders/all-orders', UserAuth, adminManagerAuth, getAllOrdersAdmin);
+
+
+router.post('/reviews/add', UserAuth, addReview);
+router.get('/reviews/get-all', getReviews);
+router.delete('/reviews/delete/:id', UserAuth, adminManagerAuth, deleteReview);
+router.get('/reviews/area/:area', getAreaReviews);
+router.get('/reviews/user/:userId', getUserReviews);
 
 
 router.get("/s3/list", async (req, res) => {

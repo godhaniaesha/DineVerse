@@ -52,6 +52,15 @@ export const assignHousekeeper = async (req, res) => {
 export const updateCleanStatus = async (req, res) => {
     try {
         const { roomId, cleanStatus } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(roomId)) {
+            return sendBadRequestResponse(res, "Invalid Room ID format");
+        }
+
+        if (!cleanStatus) {
+            return sendBadRequestResponse(res, "Clean status is required");
+        }
+
         const currentRoom = await Room.findById(roomId);
         if (!currentRoom) return ThrowError(res, 404, "Room not found");
 
@@ -83,6 +92,10 @@ export const approveRoomCleaning = async (req, res) => {
     try {
         const { roomId } = req.body;
 
+        if (!mongoose.Types.ObjectId.isValid(roomId)) {
+            return sendBadRequestResponse(res, "Invalid Room ID format");
+        }
+
         const room = await Room.findByIdAndUpdate(
             roomId,
             {
@@ -92,6 +105,8 @@ export const approveRoomCleaning = async (req, res) => {
             },
             { new: true }
         );
+
+        if (!room) return ThrowError(res, 404, "Room not found");
 
         res.status(200).json({
             success: true,

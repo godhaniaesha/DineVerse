@@ -1,8 +1,14 @@
-﻿import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema({
-    cust_name: {
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    area: {
         type: String,
+        enum: ["Restaurant", "Cafe", "Bar"],
         required: true
     },
     rating: {
@@ -15,6 +21,12 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    tags: {
+        type: String
+    },
+    profession: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now
@@ -22,6 +34,9 @@ const reviewSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+// One user can only review a particular area once
+reviewSchema.index({ user: 1, area: 1 }, { unique: true });
 
 const Review = mongoose.model('Review', reviewSchema);
 export default Review;

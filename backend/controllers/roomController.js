@@ -65,11 +65,23 @@ export const getRoomTypes = async (req, res) => {
 };
 export const updateRoomType = async (req, res) => {
     try {
+        const { id } = req.params;
         const { name, display_name, description, price_per_night, features, status } = req.body;
 
-        const roomType = await RoomType.findById(req.params.id);
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return sendBadRequestResponse(res, "Invalid RoomType ID format");
+        }
+
+        const roomType = await RoomType.findById(id);
         if (!roomType) {
             return ThrowError(res, 404, "Room type not found");
+        }
+
+        if (name && name !== roomType.name) {
+            const exists = await RoomType.findOne({ name, _id: { $ne: id } });
+            if (exists) {
+                return sendBadRequestResponse(res, "Another room type with this name already exists");
+            }
         }
 
         if (req.file) {
@@ -107,11 +119,18 @@ export const updateRoomType = async (req, res) => {
 };
 export const deleteRoomType = async (req, res) => {
     try {
-        const roomType = await RoomType.findById(req.params.id);
-        if (!roomType) {
-            return ThrowError(res, 404, "No any Room type not found");
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return sendBadRequestResponse(res, "Invalid RoomType ID format");
         }
-        const roomsUsing = await Room.countDocuments({ roomType: req.params.id });
+
+        const roomType = await RoomType.findById(id);
+        if (!roomType) {
+            return ThrowError(res, 404, "Room type not found");
+        }
+
+        const roomsUsing = await Room.countDocuments({ roomType: id });
         if (roomsUsing > 0) {
             return ThrowError(res, 400, `Cannot delete. ${roomsUsing} rooms are currently using this type.`);
         }
@@ -164,10 +183,6 @@ export const addRoom = async (req, res) => {
 export const getRooms = async (req, res) => {
     try {
         const rooms = await Room.find({}).populate('roomType', 'display_name price_per_night');
-
-        if (!rooms || rooms.length === 0) {
-            return sendBadRequestResponse(res, "No Rooms found");
-        }
 
         res.status(200).json({
             success: true,

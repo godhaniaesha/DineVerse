@@ -10,6 +10,11 @@ export const addInquiry = async (req, res) => {
             return ThrowError(res, 400, 'Full name, email, reason and message are required');
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return sendBadRequestResponse(res, "Invalid email format");
+        }
+
         const inquiry = await Inquiry.create({
             full_name,
             email,
@@ -32,9 +37,6 @@ export const getInquiries = async (req, res) => {
     try {
         const inquiries = await Inquiry.find({}).sort({ createdAt: -1 });
 
-        if (!inquiries || inquiries.length === 0) {
-            return ThrowError(res, 404, 'No inquiries found');
-        }
         const formatted = inquiries.map(inq => ({
             ...inq._doc,
             date: new Date(inq.createdAt).toLocaleDateString('en-GB', {

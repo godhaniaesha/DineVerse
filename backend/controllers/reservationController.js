@@ -686,3 +686,67 @@ export const searchGuests = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
+
+export const getAdminReservations = async (req, res) => {
+    try {
+        const { search = "", type = "All" } = req.query;
+
+        let tableReservations = [];
+        let roomReservations = [];
+
+        // 1. Fetch Room Reservations
+        if (type === "All" || type === "Room") {
+            const query = {};
+            if (search) {
+                const regex = new RegExp(search, "i")
+                query.$or = [
+                    { bookingRef: regex },
+                    { first_name: regex },
+                    { last_name: regex }
+                ];
+            }
+            roomReservations = await RoomReservation.find(query).sort({ createdAt: -1 });
+        }
+
+        // 2. Fetch Table Reservations
+        if (type === "All" || type === "Table") {
+            const query = {};
+            if (search) {
+                const regex = new RegExp(search, "i");
+                query.$or = [
+                    { bookingRef: regex },
+                    { guest_name: regex }
+                ];
+            }
+            tableReservations = await TableReservation.find(query).sort({ createdAt: -1 });
+        }
+
+        // 4. Calculate KPI Stats (Strictly based on active/recent management statuses)
+        const activeStatuses = ["Confirmed", "Pending", "Cancelled", "Checked In", "No Show"];
+
+        const totalTable = await TableReservation.countDocuments({ status: { $in: activeStatuses } });
+        const totalRoom = await RoomReservation.countDocuments({ status: { $in: activeStatuses } });
+
+        const confirmedTable = await TableReservation.countDocuments({ status: "Confirmed" });
+        const confirmedRoom = await RoomReservation.countDocuments({ status: "Confirmed" });
+
+        const pendingTable = await TableReservation.countDocuments({ status: "Pending" });
+        const pendingRoom = await RoomReservation.countDocuments({ status: "Pending" });
+
+        const cancelledTable = await TableReservation.countDocuments({ status: "Cancelled" });
+        const cancelledRoom = await RoomReservation.countDocuments({ status: "Cancelled" });
+
+        res.status(200).json({
+            success: true,
+            data: {
+                total: totalTable + totalRoom,
+                confirmed: confirmedTable + confirmedRoom,
+                pending: pendingTable + pendingRoom,
+                cancelled: cancelledTable + cancelledRoom
+            }
+        });
+
+    } catch (error) {
+        return ThrowError(res, 500, error.message);
+    }
+};
