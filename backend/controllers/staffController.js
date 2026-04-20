@@ -55,6 +55,20 @@ export const getStaff = async (req, res) => {
     }
 };
 
+export const getAdmin = async (req, res) => {
+    try {
+        const admin = await UserModel.find({ role: { $in: ['Super Admin'] } }).select('-password');
+
+        if (admin.length === 0) {
+            return sendBadRequestResponse(res, "No any Admin found...")
+        }
+
+        res.json({ success: true, msg: "Admin fetched successfully", data: admin });
+    } catch (error) {
+        return ThrowError(res, 500, error.message);
+    }
+};
+
 export const updateStaffProfile = async (req, res) => {
     try {
         const { id } = req.params;

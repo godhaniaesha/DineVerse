@@ -1,6 +1,6 @@
 import express from 'express';
 import { register, login, changePassword, forgotPassword, verifyOTP, resetPassword } from '../controllers/authController.js';
-import { addStaff, getStaff, updateStaffProfile, deleteStaff } from '../controllers/staffController.js';
+import { addStaff, getStaff, updateStaffProfile, deleteStaff, getAdmin } from '../controllers/staffController.js';
 import { addCategory, getCategories, getCategoryById, updateCategory, deleteCategory, addDish, getDishes, getDishById, updateDish, deleteDish, getDishesByArea, getCategoriesByArea, searchDishes, searchCategories } from '../controllers/foodController.js';
 import { addRoomType, getRoomTypes, updateRoomType, deleteRoomType, addRoom, getRooms, updateRoom, deleteRoom, getRoomById, searchRooms } from '../controllers/roomController.js';
 import { getReservations, updateReservationStatus, createPaymentIntent, confirmBooking, getReservationById, getAvailableRoomTypes, getRoomsByType, validateGuestDetails, getGuests, searchReservations, searchGuests, getAdminReservations } from '../controllers/reservationController.js';
@@ -39,6 +39,7 @@ router.get('/user/billing', UserAuth, getUserBillingHistory);
 
 router.post('/addStaff', UserAuth, adminManagerAuth, addStaff);
 router.get('/getStaff', UserAuth, adminManagerAuth, getStaff);
+router.get('/getAdmin', UserAuth, superAdminAuth, getAdmin);
 router.put('/updateStaffProfile/:id', UserAuth, upload.single("img"), updateStaffProfile);
 router.delete('/deleteStaff/:id', UserAuth, superAdminAuth, deleteStaff);
 
