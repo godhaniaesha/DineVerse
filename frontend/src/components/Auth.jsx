@@ -1,13 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiArrowRight, FiCoffee, FiStar, FiArrowLeft, FiFacebook } from "react-icons/fi";
+import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiArrowRight, FiCoffee, FiStar, FiArrowLeft, FiPhone } from "react-icons/fi";
 import { GiWineGlass, GiKnifeFork, GiCoffeeCup } from "react-icons/gi";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../style/Auth.css";
+import { useAuth } from "../contexts/AuthContext";
 
-/* ─────────────────────────────────────────────
-   TOAST
-───────────────────────────────────────────── */
+const ALL_ROLES = [
+  'Super Admin',
+  'Manager',
+  'Housekeeping',
+  'Cafe Waiter',
+  'Res Waiter',
+  'Bar Waiter',
+  'Chef',
+  'User'
+];
+
 const Toast = ({ msg, type, onDone }) => {
   const [exiting, setExiting] = useState(false);
   useEffect(() => {
@@ -22,10 +32,7 @@ const Toast = ({ msg, type, onDone }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
-   INPUT FIELD
-───────────────────────────────────────────── */
-const Field = ({ label, id, icon, type = "text", placeholder, value, onChange, error, isPassword }) => {
+const Field = ({ label, id, icon, type = "text", placeholder, value, onChange, error, isPassword, disabled }) => {
   const [show, setShow] = useState(false);
   const inputType = isPassword ? (show ? "text" : "password") : type;
   return (
@@ -40,6 +47,7 @@ const Field = ({ label, id, icon, type = "text", placeholder, value, onChange, e
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          disabled={disabled}
           autoComplete={isPassword ? "current-password" : undefined}
           style={isPassword ? { paddingRight: "42px" } : {}}
         />
@@ -54,13 +62,41 @@ const Field = ({ label, id, icon, type = "text", placeholder, value, onChange, e
   );
 };
 
-/* ─────────────────────────────────────────────
-   LOGIN FORM
-───────────────────────────────────────────── */
-const LoginForm = ({ onSuccess, onToast, onForgot }) => {
-  const [form, setForm] = useState({ email: "", password: "", role: "Super Admin" });
+const SelectField = ({ label, id, icon, options, value, onChange, error }) => {
+  return (
+    <div className="z_field_group">
+      <label className="z_field_label" htmlFor={id}>{label}</label>
+      <div className="z_field_wrap">
+        <span className="z_field_icon">{icon}</span>
+        <select
+          id={id}
+          className={`z_field_input z_select_input${error ? " z_error" : ""}`}
+          value={value}
+          onChange={onChange}
+        >
+          {options.map((option) => (
+            <option key={option} value={option}>{option}</option>
+          ))}
+        </select>
+      </div>
+      {error && <div className="z_error_msg">{error}</div>}
+    </div>
+  );
+};
+
+const LoginForm = ({ onSuccess, onToast }) => {
+  const navigate = useNavigate();
+  const { login, isAuthenticated, user } = useAuth();
+  const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const targetPath = user.role === "User" ? "/" : "/admin";
+      navigate(targetPath);
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
 
@@ -79,22 +115,24 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1600));
+    
+    const result = await login(form.email, form.password);
+    
+    if (result.success) {
+      onToast("Welcome back! Redirecting…", "success");
+      setTimeout(() => {
+        const targetPath = result.data.data.role === "User" ? "/" : "/admin";
+        navigate(targetPath);
+      }, 1000);
+    } else {
+      onToast(result.error, "error");
+    }
+    
     setLoading(false);
-    localStorage.setItem("adminRole", form.role);
-    localStorage.setItem("adminName", form.email || "Admin User");
-    onSuccess("login");
-    onToast("Welcome back! Redirecting…", "success");
   };
 
   const handleSocialLogin = (platform) => {
     onToast(`Redirecting to ${platform} login...`, "success");
-    // You can replace these with actual OAuth URLs
-    if (platform === "Google") {
-      window.location.href = "https://accounts.google.com/o/oauth2/auth";
-    } else if (platform === "Facebook") {
-      window.location.href = "https://www.facebook.com/v12.0/dialog/oauth";
-    }
   };
 
   return (
@@ -110,8 +148,17 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
         isPassword placeholder="••••••••"
         value={form.password} onChange={set("password")} error={errors.password} />
 
+      {/* <SelectField 
+        label="Role" 
+        id="login_role" 
+        icon={<FiUser />}
+        options={ALL_ROLES}
+        value={form.role}
+        onChange={set("role")}
+      /> */}
+
       <div className="z_forgot_row">
-        <button type="button" className="z_forgot_link" onClick={onForgot}>Forgot password?</button>
+        <button type="button" className="z_forgot_link" onClick={() => onSuccess('forgot')}>Forgot password?</button>
       </div>
 
       <button type="submit" className="z_submit_btn" disabled={loading}>
@@ -137,11 +184,9 @@ const LoginForm = ({ onSuccess, onToast, onForgot }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
-   REGISTER FORM
-───────────────────────────────────────────── */
 const RegisterForm = ({ onSuccess, onToast }) => {
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "", role: "Super Admin" });
+  const { register } = useAuth();
+  const [form, setForm] = useState({ name: "", email: "", phone: "", password: "", confirm: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -153,6 +198,7 @@ const RegisterForm = ({ onSuccess, onToast }) => {
     if (!form.name)               e.name    = "Full name is required";
     if (!form.email)              e.email   = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Enter a valid email";
+    if (!form.phone)              e.phone   = "Phone number is required";
     if (!form.password)           e.password = "Password is required";
     else if (form.password.length < 8) e.password = "At least 8 characters";
     if (form.confirm !== form.password) e.confirm = "Passwords do not match";
@@ -166,12 +212,17 @@ const RegisterForm = ({ onSuccess, onToast }) => {
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1800));
+    
+    const result = await register(form.name, form.email, form.phone, form.password);
+    
+    if (result.success) {
+      onToast("Account created! Please login.", "success");
+      onSuccess("register");
+    } else {
+      onToast(result.error, "error");
+    }
+    
     setLoading(false);
-    localStorage.setItem("adminRole", form.role);
-    localStorage.setItem("adminName", form.name || form.email || "Admin User");
-    onSuccess("register");
-    onToast("Account created! Welcome aboard.", "success");
   };
 
   return (
@@ -182,12 +233,28 @@ const RegisterForm = ({ onSuccess, onToast }) => {
       <Field label="Full name" id="reg_name" icon={<FiUser />}
         placeholder="Your name"
         value={form.name} onChange={set("name")} error={errors.name} />
+        
+      <Field label="Phone number" id="reg_phone" icon={<FiPhone />}
+        placeholder="+91 98765 43210"
+        value={form.phone} onChange={set("phone")} error={errors.phone} />
+        
       <Field label="Email address" id="reg_email" icon={<FiMail />}
         type="email" placeholder="you@example.com"
         value={form.email} onChange={set("email")} error={errors.email} />
+        
+      {/* <SelectField 
+        label="Role" 
+        id="reg_role" 
+        icon={<FiUser />}
+        options={ALL_ROLES}
+        value={form.role}
+        onChange={set("role")}
+      /> */}
+        
       <Field label="Password" id="reg_pw" icon={<FiLock />}
         isPassword placeholder="Min. 8 characters"
         value={form.password} onChange={set("password")} error={errors.password} />
+        
       <Field label="Confirm password" id="reg_cpw" icon={<FiLock />}
         isPassword placeholder="Repeat password"
         value={form.confirm} onChange={set("confirm")} error={errors.confirm} />
@@ -216,63 +283,202 @@ const RegisterForm = ({ onSuccess, onToast }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
-   FORGOT PASSWORD FORM
-───────────────────────────────────────────── */
 const ForgotPasswordForm = ({ onBack, onSuccess, onToast }) => {
-  const [form, setForm] = useState({ email: "" });
+  const { forgotPassword, verifyOTP, resetPassword } = useAuth();
+  const [step, setStep] = useState("email");
+  const [form, setForm] = useState({ email: "", otp: "", newPassword: "", confirmPassword: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [resetToken, setResetToken] = useState(null);
+  const otpRefs = [useRef(), useRef(), useRef(), useRef()];
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
 
-  const validate = () => {
+  const handleOtpChange = (index, value) => {
+    if (isNaN(value)) return;
+    const newOtp = form.otp.split('');
+    newOtp[index] = value.slice(-1);
+    const updatedOtp = newOtp.join('');
+    setForm(f => ({ ...f, otp: updatedOtp }));
+
+    if (value && index < 3) {
+      otpRefs[index + 1].current?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !form.otp[index] && index > 0) {
+      otpRefs[index - 1].current?.focus();
+    }
+  };
+
+  const validateEmail = () => {
     const e = {};
     if (!form.email) e.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Enter a valid email";
     return e;
   };
 
-  const handleSubmit = async (ev) => {
+  const validateOtp = () => {
+    const e = {};
+    if (!form.otp || form.otp.length !== 4) e.otp = "Please enter complete OTP";
+    return e;
+  };
+
+  const validatePassword = () => {
+    const e = {};
+    if (!form.newPassword) e.newPassword = "New password is required";
+    else if (form.newPassword.length < 8) e.newPassword = "At least 8 characters";
+    if (form.confirmPassword !== form.newPassword) e.confirmPassword = "Passwords do not match";
+    return e;
+  };
+
+  const handleEmailSubmit = async (ev) => {
     ev.preventDefault();
-    const e = validate();
+    const e = validateEmail();
     if (Object.keys(e).length) { setErrors(e); return; }
     setErrors({});
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
+    
+    const result = await forgotPassword(form.email);
+    
+    if (result.success) {
+      onToast("OTP sent to your email!", "success");
+      setStep("otp");
+    } else {
+      onToast(result.error, "error");
+    }
+    
     setLoading(false);
-    onSuccess("forgot");
-    onToast("Password reset link sent! Check your email.", "success");
+  };
+
+  const handleOtpSubmit = async (ev) => {
+    ev.preventDefault();
+    const e = validateOtp();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setErrors({});
+    setLoading(true);
+    
+    const result = await verifyOTP(form.email, form.otp);
+    
+    if (result.success) {
+      setResetToken(result.resetToken);
+      onToast("OTP verified!", "success");
+      setStep("reset");
+    } else {
+      onToast(result.error, "error");
+    }
+    
+    setLoading(false);
+  };
+
+  const handleResetSubmit = async (ev) => {
+    ev.preventDefault();
+    const e = validatePassword();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setErrors({});
+    setLoading(true);
+    
+    const result = await resetPassword(form.email, form.newPassword, form.confirmPassword);
+    
+    if (result.success) {
+      onToast("Password reset successfully!", "success");
+      setStep("success");
+    } else {
+      onToast(result.error, "error");
+    }
+    
+    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="z_slide_in">
+    <form 
+      onSubmit={step === "email" ? handleEmailSubmit : step === "otp" ? handleOtpSubmit : handleResetSubmit} 
+      noValidate 
+      className="z_slide_in"
+    >
       <div className="z_form_title">Reset <em>password.</em></div>
-      <div className="z_form_desc">Enter your email and we'll send you a reset link.</div>
-
-      <Field label="Email address" id="forgot_email" icon={<FiMail />}
-        type="email" placeholder="you@example.com"
-        value={form.email} onChange={set("email")} error={errors.email} />
-
-      <button type="submit" className="z_submit_btn" disabled={loading}>
-        {loading
-          ? <><div className="z_spinner" /><span className="z_btn_text">Sending…</span></>
-          : <><span className="z_btn_text">Send Reset Link</span><FiArrowRight className="z_btn_arrow" /></>}
-      </button>
-
-      <div className="z_forgot_row" style={{ justifyContent: "center", marginTop: 20, marginBottom: 0 }}>
-        <button type="button" className="z_forgot_link" onClick={onBack}>
-          <FiArrowLeft size={12} style={{ marginRight: 6 }} />
-          Back to sign in
-        </button>
+      <div className="z_form_desc">
+        {step === "email" && "Enter your email and we'll send you an OTP."}
+        {step === "otp" && `Enter the 4-digit code sent to ${form.email}`}
+        {step === "reset" && "Create a strong new password for your account."}
+        {step === "success" && "Your password has been changed successfully!"}
       </div>
+
+      {step === "success" ? (
+        <div className="text-center">
+          <div className="z_success_box z_fade_in">
+            <div className="z_success_icon"><FiStar /></div>
+            <div className="z_success_title">All set!</div>
+            <div className="z_success_desc" style={{ marginBottom: 28 }}>
+              You can now sign in with your new password.
+            </div>
+            <button type="button" className="z_submit_btn" onClick={() => onSuccess('login')} style={{ maxWidth: 200, margin: "0 auto" }}>
+              <span className="z_btn_text">Back to Login</span><FiArrowRight className="z_btn_arrow" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {step === "email" && (
+            <Field label="Email address" id="forgot_email" icon={<FiMail />}
+              type="email" placeholder="you@example.com"
+              value={form.email} onChange={set("email")} error={errors.email} />
+          )}
+
+          {step === "otp" && (
+            <div className="z_field_group">
+              <label className="z_field_label">OTP Code</label>
+              <div className="z_reg_otp-container">
+                {[0, 1, 2, 3].map((idx) => (
+                  <input
+                    key={idx}
+                    ref={otpRefs[idx]}
+                    type="text"
+                    maxLength="1"
+                    value={form.otp[idx] || ""}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                    className="z_reg_otp-input"
+                    required
+                  />
+                ))}
+              </div>
+              {errors.otp && <div className="z_error_msg">{errors.otp}</div>}
+            </div>
+          )}
+
+          {step === "reset" && (
+            <>
+              <Field label="New Password" id="new_pw" icon={<FiLock />}
+                isPassword placeholder="Min. 8 characters"
+                value={form.newPassword} onChange={set("newPassword")} error={errors.newPassword} />
+              <Field label="Confirm Password" id="confirm_new_pw" icon={<FiLock />}
+                isPassword placeholder="Repeat password"
+                value={form.confirmPassword} onChange={set("confirmPassword")} error={errors.confirmPassword} />
+            </>
+          )}
+
+          <button type="submit" className="z_submit_btn" disabled={loading}>
+            {loading
+              ? <><div className="z_spinner" /><span className="z_btn_text">Processing…</span></>
+              : <><span className="z_btn_text">
+                  {step === "email" ? "Send OTP" : step === "otp" ? "Verify OTP" : "Reset Password"}
+                </span><FiArrowRight className="z_btn_arrow" /></>}
+          </button>
+
+          <div className="z_forgot_row" style={{ justifyContent: "center", marginTop: 20, marginBottom: 0 }}>
+            <button type="button" className="z_forgot_link" onClick={onBack}>
+              <FiArrowLeft size={12} style={{ marginRight: 6 }} />
+              {step === "email" ? "Back to sign in" : "Go back"}
+            </button>
+          </div>
+        </>
+      )}
     </form>
   );
 };
 
-/* ─────────────────────────────────────────────
-   SUCCESS STATE
-───────────────────────────────────────────── */
 const SuccessView = ({ mode, onBack }) => (
   <div className="z_success_box z_fade_in">
     <div className="z_success_icon"><FiStar /></div>
@@ -283,8 +489,8 @@ const SuccessView = ({ mode, onBack }) => (
       {mode === "login"
         ? "Successfully signed in. Redirecting you to your dashboard…"
         : mode === "forgot"
-        ? "Check your email for the password reset link."
-        : "Your account has been created. Welcome to the family."}
+        ? "Check your email for the password reset OTP."
+        : "Your account has been created. Please login."}
     </div>
     <button className="z_submit_btn" onClick={onBack} style={{ maxWidth: 200, margin: "0 auto" }}>
       <span className="z_btn_text">Continue</span><FiArrowRight className="z_btn_arrow" />
@@ -292,16 +498,20 @@ const SuccessView = ({ mode, onBack }) => (
   </div>
 );
 
-/* ─────────────────────────────────────────────
-   ROOT AUTH COMPONENT
-───────────────────────────────────────────── */
 export default function Auth() {
   const [tab, setTab] = useState("login");
   const [success, setSuccess] = useState(null);
   const [toast, setToast] = useState(null);
 
-  const handleSuccess = (mode) => setSuccess(mode);
-  const handleToast   = (msg, type) => setToast({ msg, type, key: Date.now() });
+  const handleSuccess = (mode) => {
+    if (mode === 'forgot') {
+      setTab('forgot');
+    } else {
+      setSuccess(mode);
+    }
+  };
+  
+  const handleToast = (msg, type) => setToast({ msg, type, key: Date.now() });
 
   const handleTabSwitch = (t) => { setTab(t); setSuccess(null); };
 
@@ -330,7 +540,6 @@ export default function Auth() {
 
   return (
     <div className="z_auth_wrapper">
-      {/* ambient background */}
       <div className="z_bg_canvas">
         <div className="z_bg_orb z_bg_orb_1" />
         <div className="z_bg_orb z_bg_orb_2" />
@@ -338,11 +547,9 @@ export default function Auth() {
       </div>
       <div className="z_bg_grain" />
 
-      {/* toast */}
       {toast && <Toast key={toast.key} msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
 
       <div className="z_auth_layout">
-        {/* ── Side Image (Hidden on mobile) ── */}
         <div className="z_auth_image_side" key={tab}>
           <img 
             src={currentSide.img} 
@@ -359,7 +566,6 @@ export default function Auth() {
         </div>
 
         <div className="z_auth_form_side">
-          {/* ── Brand Header ── */}
           <div className="z_auth_brand">
             <div className="z_brand_icon">
               <GiCoffeeCup size={22} color="#080705" />
@@ -373,24 +579,26 @@ export default function Auth() {
           <div className="z_form_card">
             {!success ? (
               <>
-                <div className="z_tab_strip">
-                  <div className={`z_tab_indicator z_${tab}`} />
-                  <button className={`z_tab_btn${tab === "login" ? " z_active" : ""}`} onClick={() => handleTabSwitch("login")}>Sign In</button>
-                  <button className={`z_tab_btn${tab === "register" ? " z_active" : ""}`} onClick={() => handleTabSwitch("register")}>Register</button>
-                </div>
+                {tab !== "forgot" && (
+                  <div className="z_tab_strip">
+                    <div className={`z_tab_indicator z_${tab}`} />
+                    <button className={`z_tab_btn${tab === "login" ? " z_active" : ""}`} onClick={() => handleTabSwitch("login")}>Sign In</button>
+                    <button className={`z_tab_btn${tab === "register" ? " z_active" : ""}`} onClick={() => handleTabSwitch("register")}>Register</button>
+                  </div>
+                )}
                 <div className="z_form_container" key={tab}>
                   {tab === "login"
-                    ? <LoginForm    onSuccess={handleSuccess} onToast={handleToast} onForgot={() => setTab("forgot")} />
+                    ? <LoginForm    onSuccess={handleSuccess} onToast={handleToast} />
                     : tab === "register"
                     ? <RegisterForm onSuccess={handleSuccess} onToast={handleToast} />
-                    : <ForgotPasswordForm onBack={() => setTab("login")} onSuccess={handleSuccess} onToast={handleToast} />}
+                    : <ForgotPasswordForm onBack={() => handleTabSwitch("login")} onSuccess={handleTabSwitch} onToast={handleToast} />}
                 </div>
                 <div className="z_terms_text" style={{ marginTop: 24 }}>
                   Protected by enterprise-grade security &amp; encryption.
                 </div>
               </>
             ) : (
-              <SuccessView mode={success} onBack={() => setSuccess(null)} />
+              <SuccessView mode={success} onBack={() => handleTabSwitch("login")} />
             )}
           </div>
         </div>
