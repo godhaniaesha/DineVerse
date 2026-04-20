@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../styleadmin/AdminLayout.css";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
+import { useAuth } from "../contexts/AuthContext";
 
 /* ─── ICONS (inline SVG to remove icon-lib dependency) ─────────── */
 
@@ -298,16 +299,16 @@ export default function AdminLayout() {
   const sidebarRef = useRef(null);
   const userMenuRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("adminRole");
-    localStorage.removeItem("adminName");
-    // Add other keys to clear if necessary
-    window.location.href = "/admin-login"; // Adjust path as needed
+    logout();
+    navigate("/auth");
   };
 
-  const adminRole = localStorage.getItem("adminRole") || "Super Admin";
-  const adminName = localStorage.getItem("adminName") || "Admin User";
+  const adminRole = user?.role || localStorage.getItem("adminRole") || "User";
+  const adminName = user?.full_name || localStorage.getItem("adminName") || "Admin User";
   const isChefRole = adminRole === "Cafe Chef" || adminRole === "Restaurant Chef" || adminRole === "Bar Chef";
 
   const roleAllowedLinks = {

@@ -390,6 +390,42 @@
   border-color: #e57373;
   box-shadow: 0 0 0 3px rgba(229,115,115,0.10);
 }
+
+.z_select_input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ebd19f' viewBox='0 0 16 16'%3E%3Cpath d='M8 11a.75.75 0 0 1-.53-.22l-4.5-4.5a.75.75 0 0 1 1.06-1.06L8 9.19l3.97-3.97a.75.75 0 1 1 1.06 1.06l-4.5 4.5A.75.75 0 0 1 8 11z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px !important;
+}
+
+.z_reg_otp-container {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.z_reg_otp-input {
+  flex: 1;
+  padding: 16px 12px;
+  background: var(--d-surface-2);
+  border: 1px solid var(--d-border);
+  border-radius: var(--d-r-sm);
+  color: var(--d-text-1);
+  font-family: var(--d-font-sans);
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  outline: none;
+  transition: all var(--d-dur) var(--d-ease);
+}
+
+.z_reg_otp-input:focus {
+  border-color: var(--d-gold);
+  background: var(--d-surface-3);
+  box-shadow: 0 0 0 3px var(--d-gold-subtle), var(--d-shadow-sm);
+}
+
 .z_error_msg {
   font-size: 11px;
   color: #e57373;
