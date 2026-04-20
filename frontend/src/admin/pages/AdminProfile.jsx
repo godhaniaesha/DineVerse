@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const IcEdit = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 const IcSave = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17,21 17,13 7,13 7,21" /><polyline points="7,3 7,8 15,8" /></svg>;
@@ -8,6 +9,7 @@ const IcEye = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
 const IcEyeOff = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>;
 
 export default function AdminProfile() {
+  const { user, token, changePassword, updateProfile } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -15,38 +17,58 @@ export default function AdminProfile() {
     confirm: false,
   });
   const [form, setForm] = useState({
-    name: localStorage.getItem("adminName") || "Admin User",
-    email: "admin@lumiere.com",
-    phone: "+91 90000 11111",
+    full_name: user?.full_name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
   });
-  const role = localStorage.getItem("adminRole") || "Super Admin";
   const [passwordForm, setPasswordForm] = useState({
     current: "",
     new: "",
     confirm: "",
   });
+  const [profileImage, setProfileImage] = useState(null);
 
-  const handleSave = () => {
-    localStorage.setItem("adminName", form.name);
-    setEditMode(false);
+  const handleSave = async () => {
+    const formData = new FormData();
+    formData.append("full_name", form.full_name);
+    formData.append("email", form.email);
+    formData.append("phone", form.phone);
+    if (profileImage) {
+      formData.append("img", profileImage);
+    }
+
+    const result = await updateProfile(user._id, formData);
+    if (result.success) {
+      alert("Profile updated successfully!");
+      setEditMode(false);
+    } else {
+      alert(result.error || "Failed to update profile");
+    }
   };
 
   const handleCancel = () => {
     setForm({
-      name: localStorage.getItem("adminName") || "Admin User",
-      email: "admin@lumiere.com",
-      phone: "+91 90000 11111",
+      full_name: user?.full_name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
     });
+    setProfileImage(null);
     setEditMode(false);
   };
 
-  const handlePasswordUpdate = () => {
+  const handlePasswordUpdate = async () => {
     if (passwordForm.new !== passwordForm.confirm) {
       alert("New passwords do not match!");
       return;
     }
-    alert("Password updated successfully!");
-    setPasswordForm({ current: "", new: "", confirm: "" });
+
+    const result = await changePassword(passwordForm.current, passwordForm.new);
+    if (result.success) {
+      alert("Password updated successfully!");
+      setPasswordForm({ current: "", new: "", confirm: "" });
+    } else {
+      alert(result.error || "Failed to update password");
+    }
   };
 
   return (
@@ -75,12 +97,17 @@ export default function AdminProfile() {
                 fontWeight: "bold",
                 color: "rgb(215 164 106)",
                 border: "4px solid rgb(33 25 27)",
+                overflow: "hidden",
               }}
             >
-              {form.name.charAt(0).toUpperCase()}
+              {user?.img ? (
+                <img src={user.img} alt={user.full_name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                (form.full_name || "A").charAt(0).toUpperCase()
+              )}
             </div>
-            <h3 style={{ margin: "0 0 4px 0", fontSize: 24, fontWeight: 600 }} className="rooms__modal_title">{form.name}</h3>
-            <p style={{ margin: 0, color: "#666", fontSize: 16 }}>{role}</p>
+            <h3 style={{ margin: "0 0 4px 0", fontSize: 24, fontWeight: 600 }} className="rooms__modal_title">{user?.full_name || "Admin User"}</h3>
+            <p style={{ margin: 0, color: "#666", fontSize: 16 }}>{user?.role || "Super Admin"}</p>
             {!editMode && (
               <button className="ad_btn ad_btn--outline" onClick={() => setEditMode(true)} style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 8 }}>
                 <IcEdit /> Edit Profile
@@ -92,21 +119,35 @@ export default function AdminProfile() {
             <h3 className="rooms__modal_title" style={{ marginBottom: 24, display: "flex", alignItems: "center", gap: 8, fontSize: 20 }}>
               <IcEdit /> Personal Information
             </h3>
+            {editMode && (
+              <div className="rooms__form_row" style={{ marginBottom: "16px" }}>
+                <label className="rooms__form_label">Profile Picture</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="rooms__form_input"
+                  onChange={(e) => setProfileImage(e.target.files[0])}
+                />
+              </div>
+            )}
             <div className="rooms__form_grid2">
               <div>
                 <label className="rooms__form_label">Full Name</label>
                 <input
                   className="rooms__form_input"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  value={form.full_name}
+                  onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
+                  disabled={!editMode}
                 />
               </div>
               <div>
                 <label className="rooms__form_label">Email Address</label>
                 <input
+                  type="email"
                   className="rooms__form_input"
                   value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  disabled={!editMode}
                 />
               </div>
             </div>
@@ -116,15 +157,17 @@ export default function AdminProfile() {
                 <input
                   className="rooms__form_input"
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  maxLength={10}
+                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                  disabled={!editMode}
                 />
               </div>
               <div>
                 <label className="rooms__form_label">Role</label>
                 <input
                   className="rooms__form_input"
-                  value={form.role}
-                  onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  value={user?.role || "Super Admin"}
+                  disabled
                 />
               </div>
             </div>
