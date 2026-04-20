@@ -321,7 +321,7 @@ const ForgotPasswordForm = ({ onBack, onSuccess, onToast }) => {
 
   const validateOtp = () => {
     const e = {};
-    if (!form.otp || form.otp.length !== 4) e.otp = "Please enter complete OTP";
+    if (!form.otp || form.otp.length !== 6) e.otp = "Please enter complete OTP";
     return e;
   };
 
@@ -430,7 +430,7 @@ const ForgotPasswordForm = ({ onBack, onSuccess, onToast }) => {
             <div className="z_field_group">
               <label className="z_field_label">OTP Code</label>
               <div className="z_reg_otp-container">
-                {[0, 1, 2, 3].map((idx) => (
+                {[0, 1, 2, 3, 4, 5].map((idx) => (
                   <input
                     key={idx}
                     ref={otpRefs[idx]}

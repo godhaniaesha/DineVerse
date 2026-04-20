@@ -150,6 +150,60 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const changePassword = async (oldPassword, newPassword) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/changePassword`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        return { success: true, data: data };
+      } else {
+        return { success: false, error: data.message || "Password change failed" };
+      }
+    } catch (error) {
+      console.error("Change password error:", error);
+      return { success: false, error: "Network error. Please try again." };
+    }
+  };
+
+  const updateProfile = async (id, profileData) => {
+    console.log(profileData,"profileData");
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/updateStaffProfile/${id}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+        body: profileData,
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        const userData = data.data;
+        setUser(userData);
+        localStorage.setItem("authUser", JSON.stringify(userData));
+        localStorage.setItem("adminRole", userData.role);
+        localStorage.setItem("adminName", userData.full_name);
+        return { success: true, data: data };
+      } else {
+        return { success: false, error: data.message || "Profile update failed" };
+      }
+    } catch (error) {
+      console.error("Update profile error:", error);
+      return { success: false, error: "Network error. Please try again." };
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -175,6 +229,8 @@ export const AuthProvider = ({ children }) => {
         forgotPassword,
         verifyOTP,
         resetPassword,
+        changePassword,
+        updateProfile,
         logout,
         isAuthenticated: !!token && !!user,
       }}

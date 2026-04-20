@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
+import { useStaff } from "../../contexts/StaffContext";
 
 const IcEdit = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
@@ -19,47 +20,25 @@ const IcEyeOff = () => (
     <line x1="1" y1="1" x2="23" y2="23" />
   </svg>
 );
+
 const ROLES = [
-  "Super Admin",
-  "Manager",
-  "Cafe Chef",
-  "Restaurant Chef",
-  "Bar Chef",
-  "Cafe Waiter",
-  "Restaurant Waiter",
-  "Bar Waiter"
+  "Super Admin"
 ];
 const STATUSES = ["Active", "Inactive"];
 const SORT_OPTIONS = ["None", "Name A–Z", "Name Z–A", "Email A–Z", "Email Z–A"];
 
-const DATA = [
-  { id: 1, name: "Admin User", email: "admin@lumiere.com", phone: "1234567890", role: "Super Admin", status: "Active", password: "password123" },
-];
-
-const ADMIN_USERS_STORAGE_KEY = "adminUsersRows";
-
 const EMPTY = {
-  name: "",
+  full_name: "",
   email: "",
   phone: "",
   password: "",
   confirmPassword: "",
-  role: "Manager",
+  role: "Super Admin",
   status: "Active"
 };
 
 export default function AdminUsers() {
-  const [rows, setRows] = useState(() => {
-    try {
-      const stored = localStorage.getItem(ADMIN_USERS_STORAGE_KEY);
-      if (!stored) return DATA;
-      const parsed = JSON.parse(stored);
-      return Array.isArray(parsed) ? parsed : DATA;
-    } catch {
-      return DATA;
-    }
-  });
-
+  const { staff, loading, getStaff, addStaff, updateStaffProfile, deleteStaff } = useStaff();
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [search, setSearch] = useState("");
@@ -77,11 +56,12 @@ export default function AdminUsers() {
   };
 
   useEffect(() => {
-    localStorage.setItem(ADMIN_USERS_STORAGE_KEY, JSON.stringify(rows));
-  }, [rows]);
+    let result = getStaff();
+    console.log(result,"result");
+  }, [getStaff]);
 
-  const save = () => {
-    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
+  const handleSave = async () => {
+    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
       alert("Please fill in all required fields (Name, Email, Phone).");
       return;
     }
@@ -91,42 +71,64 @@ export default function AdminUsers() {
         alert("Passwords do not match or are empty.");
         return;
       }
-    } else if (form.password && form.password !== form.confirmPassword) {
-      alert("Passwords do not match.");
-      return;
+
+      const formData = new FormData();
+      formData.append("full_name", form.full_name);
+      formData.append("email", form.email);
+      formData.append("phone", form.phone);
+      formData.append("password", form.password);
+      formData.append("role", form.role);
+      formData.append("status", form.status);
+
+      const result = await addStaff(formData);
+      if (result.success) {
+        close();
+      } else {
+        alert(result.error || "Failed to add Super Admin");
+      }
+    } else if (modal.mode === "edit") {
+      if (form.password && form.password !== form.confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("full_name", form.full_name);
+      formData.append("email", form.email);
+      formData.append("phone", form.phone);
+      formData.append("role", form.role);
+      formData.append("status", form.status);
+      if (form.password) {
+        formData.append("password", form.password);
+      }
+
+      const result = await updateStaffProfile(modal.row._id, formData);
+      if (result.success) {
+        alert("Super Admin updated successfully!");
+        close();
+      } else {
+        alert(result.error || "Failed to update Super Admin");
+      }
     }
-
-    // eslint-disable-next-line no-unused-vars
-    const { confirmPassword, ...payload } = form;
-
-    if (modal.mode === "add") {
-      setRows((p) => [...p, { id: Date.now(), ...payload }]);
-    }
-
-    if (modal.mode === "edit") {
-      setRows((p) =>
-        p.map((r) => {
-          if (r.id === modal.row.id) {
-            const updatedRow = { ...r, ...payload };
-            // Only update password if provided
-            if (!form.password) {
-              updatedRow.password = r.password;
-            }
-            return updatedRow;
-          }
-          return r;
-        })
-      );
-    }
-
-    close();
   };
 
-  // ✅ FILTER LOGIC (FIXED)
-  const filtered = rows.filter((r) => {
+  const handleDelete = async () => {
+    const result = await deleteStaff(modal.row._id);
+    if (result.success) {
+      alert("Super Admin deleted successfully!");
+      close();
+    } else {
+      alert(result.error || "Failed to delete Super Admin");
+    }
+  };
+
+  const superAdmins = staff.filter(u => u.role === "Super Admin");
+
+  // Filter and sort
+  const filtered = superAdmins.filter((r) => {
     const matchRole = roleFilter === "All" || r.role === roleFilter;
     const matchStatus = statusFilter === "All" || r.status === statusFilter;
-    const text = `${r.name} ${r.email} ${r.role}`.toLowerCase();
+    const text = `${r.full_name} ${r.email} ${r.role}`.toLowerCase();
     const matchSearch = !search || text.includes(search.toLowerCase());
 
     return matchRole && matchStatus && matchSearch;
@@ -135,11 +137,10 @@ export default function AdminUsers() {
   const sorted = useMemo(() => {
     const list = [...filtered];
 
-    if (sortBy === "Name A–Z") return list.sort((a, b) => a.name.localeCompare(b.name));
-    if (sortBy === "Name Z–A") return list.sort((a, b) => b.name.localeCompare(a.name));
+    if (sortBy === "Name A–Z") return list.sort((a, b) => a.full_name.localeCompare(b.full_name));
+    if (sortBy === "Name Z–A") return list.sort((a, b) => b.full_name.localeCompare(a.full_name));
     if (sortBy === "Email A–Z") return list.sort((a, b) => a.email.localeCompare(b.email));
     if (sortBy === "Email Z–A") return list.sort((a, b) => b.email.localeCompare(a.email));
-    if (sortBy === "Role") return list.sort((a, b) => a.role.localeCompare(b.role));
 
     return list;
   }, [filtered, sortBy]);
@@ -148,15 +149,15 @@ export default function AdminUsers() {
     <div className="ad_page admin_user_mangement_page">
       <div className="rooms__header">
         <div>
-          <h2 className="ad_h2">Admin User Management</h2>
-          <p className="ad_p">Manage admin accounts, roles and permissions with search and filters.</p>
+          <h2 className="ad_h2">Super Admin Management</h2>
+          <p className="ad_p">Manage Super Admin accounts.</p>
         </div>
         <button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>
-          Add Admin
+          Add Super Admin
         </button>
       </div>
 
-      {/* ✅ FILTERS */}
+      {/* Filters */}
       <div className="rooms__filters" style={{ marginBottom: 12 }}>
         <input
           className="rooms__search"
@@ -166,7 +167,6 @@ export default function AdminUsers() {
           style={{ width: 280, marginRight: 8 }}
         />
 
-        {/* ✅ STATUS FILTER FIXED */}
         <select
           className="rooms__select"
           value={statusFilter}
@@ -190,7 +190,7 @@ export default function AdminUsers() {
         </select>
       </div>
 
-      {/* ✅ TABLE */}
+      {/* Table */}
       <div className="ad_table_wrap">
         <table className="ad_table">
           <thead>
@@ -205,53 +205,54 @@ export default function AdminUsers() {
           </thead>
 
           <tbody>
-            {sorted.map((r) => (
-              <tr key={r.id}>
-                <td>{r.name}</td>
-                <td>{r.email}</td>
-                <td>{r.phone || "—"}</td>
-                <td>{r.role}</td>
-                <td><span className="ad_chip">{r.status}</span></td>
-                <td className="rooms__actions_cell">
-                  <button
-                    className="rooms__icon_btn"
-                    onClick={() => {
-                      setForm({ ...r, password: "", confirmPassword: "" });
-                      setModal({ mode: "edit", row: r });
-                    }}
-                  >
-                    <IcEdit />
-                  </button>
-
-                  <DeleteIconButton
-                    onClick={() =>
-                      setRows((p) => p.filter((x) => x.id !== r.id))
-                    }
-                  />
-                </td>
-              </tr>
-            ))}
-
-            {/* ✅ EMPTY STATE */}
-            {sorted.length === 0 && (
+            {loading ? (
               <tr>
-                <td colSpan={5} className="rooms__empty">
-                  No users match the filters
-                </td>
+                <td colSpan={6} className="rooms__empty">Loading Super Admins...</td>
               </tr>
+            ) : sorted.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="rooms__empty">No Super Admins found</td>
+              </tr>
+            ) : (
+              sorted.map((r) => (
+                console.log(r,"r"),
+                
+                <tr key={r._id}>
+                  <td>{r.full_name}</td>
+                  <td>{r.email}</td>
+                  <td>{r.phone || "—"}</td>
+                  <td>{r.role}</td>
+                  <td><span className="ad_chip">{r.status}</span></td>
+                  <td className="rooms__actions_cell">
+                    <button
+                      className="rooms__icon_btn"
+                      onClick={() => {
+                        setForm({ ...r, password: "", confirmPassword: "" });
+                        setModal({ mode: "edit", row: r });
+                      }}
+                    >
+                      <IcEdit />
+                    </button>
+
+                    <DeleteIconButton
+                      onClick={() => setModal({ mode: "delete", row: r })}
+                    />
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
       </div>
 
-      {/* ✅ MODAL */}
+      {/* Modal */}
       {(modal?.mode === "add" || modal?.mode === "edit") && (
         <>
           <div className="rooms__modal_overlay" onClick={close} />
           <div className="rooms__modal_box" style={{ maxWidth: "550px" }}>
             <div className="rooms__modal_head">
               <span className="rooms__modal_title">
-                {modal.mode === "add" ? "Add Admin" : "Edit Admin"}
+                {modal.mode === "add" ? "Add Super Admin" : "Edit Super Admin"}
               </span>
               <button className="rooms__modal_close" onClick={close}>×</button>
             </div>
@@ -264,8 +265,8 @@ export default function AdminUsers() {
                     type="text"
                     className="rooms__form_input"
                     placeholder="Enter full name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    value={form.full_name}
+                    onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                   />
                 </div>
                 <div className="rooms__form_row">
@@ -307,7 +308,9 @@ export default function AdminUsers() {
 
               <div className="rooms__form_grid2">
                 <div className="rooms__form_row">
-                  <label className="rooms__form_label">Password</label>
+                  <label className="rooms__form_label">
+                    Password {modal.mode === "edit" && "(optional)"}
+                  </label>
                   <div style={{ position: "relative" }}>
                     <input
                       type={showPass ? "text" : "password"}
@@ -396,11 +399,34 @@ export default function AdminUsers() {
               <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
               <button
                 className="rooms__btn rooms__btn--primary"
-                onClick={save}
-                disabled={form.password !== form.confirmPassword || !form.name || !form.email}
+                onClick={handleSave}
+                disabled={
+                  form.password !== form.confirmPassword ||
+                  !form.full_name ||
+                  !form.email ||
+                  (modal.mode === "add" && !form.password)
+                }
               >
-                {modal.mode === "add" ? "Create Admin" : "Save Changes"}
+                {modal.mode === "add" ? "Create Super Admin" : "Save Changes"}
               </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete Modal */}
+      {modal?.mode === "delete" && (
+        <>
+          <div className="rooms__modal_overlay" onClick={close} />
+          <div className="rooms__modal_box">
+            <div className="rooms__modal_head">
+              <span className="rooms__modal_title">Delete Super Admin</span>
+              <button className="rooms__modal_close" onClick={close}>×</button>
+            </div>
+            <p className="rooms__delete_msg">Delete {modal.row.full_name}?</p>
+            <div className="rooms__form_actions">
+              <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
+              <button className="rooms__btn rooms__btn--danger" onClick={handleDelete}>Delete</button>
             </div>
           </div>
         </>

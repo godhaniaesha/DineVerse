@@ -37,7 +37,7 @@ router.get('/user/billing', UserAuth, getUserBillingHistory);
 
 
 
-router.post('/addStaff', UserAuth, adminManagerAuth, addStaff);
+router.post('/addStaff', UserAuth, adminManagerAuth, upload.none(), addStaff);
 router.get('/getStaff', UserAuth, adminManagerAuth, getStaff);
 router.get('/getAdmin', UserAuth, superAdminAuth, getAdmin);
 router.put('/updateStaffProfile/:id', UserAuth, upload.single("img"), updateStaffProfile);
