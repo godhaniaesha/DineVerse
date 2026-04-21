@@ -11,24 +11,27 @@ import { MenuProvider } from './contexts/MenuContext';
 import { GalleryProvider } from './contexts/GalleryContext';
 import { TableProvider } from './contexts/TableContext';
 import { TableReservationProvider } from './contexts/TableReservationContext';
+import { OrderProvider } from './contexts/OrderContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <RoomProvider>
-        <StaffProvider>
+      <StaffProvider>
+        <RoomProvider>
           <MenuProvider>
-            <TableProvider>
-              <GalleryProvider>
+            <GalleryProvider>
+              <TableProvider>
                 <TableReservationProvider>
-                  <App />
+                  <OrderProvider>
+                    <App />
+                  </OrderProvider>
                 </TableReservationProvider>
-              </GalleryProvider>
-            </TableProvider>
+              </TableProvider>
+            </GalleryProvider>
           </MenuProvider>
-        </StaffProvider>
-      </RoomProvider>
+        </RoomProvider>
+      </StaffProvider>
     </AuthProvider>
   </React.StrictMode >
 );

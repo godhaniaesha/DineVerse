@@ -72,17 +72,17 @@ router.get('/reservations/getById/:id', UserAuth, adminManagerAuth, getReservati
 router.patch('/reservations/updateStatus/:id', UserAuth, adminManagerAuth, updateReservationStatus);
 
 
-// ========== TABLE RESERVATION ROUTES (Public + Auth) ==========
+// ========== TABLE RESERVATION ROUTES (Public) ==========
 // Public - Check available tables
 router.post('/table/getAvailableTablesByArea', getAvailableTablesByArea);
 // Public - Check booked times
 router.get('/table/getTableReservationsByDate', getTableReservationsByDate);
-// Auth required - Create payment
-router.post('/table/createTablePaymentIntent', UserAuth, createTablePaymentIntent);
-// Auth required - Confirm booking
-router.post('/table/confirmTableBooking', UserAuth, confirmTableBooking);
-// Admin - Update reservation status
-router.patch('/table/updateTableReservationStatus/:id', UserAuth, adminManagerAuth, updateTableReservationStatus);
+// Public - Create payment
+router.post('/table/createTablePaymentIntent', createTablePaymentIntent);
+// Public - Confirm booking
+router.post('/table/confirmTableBooking', confirmTableBooking);
+// Auth required - Admin/Waiter status update
+router.patch('/table/updateTableReservationStatus/:id', UserAuth, waiterAuth, updateTableReservationStatus);
 
 // ========== TABLE MANAGEMENT ROUTES (Admin Only) ==========
 router.post('/table/add', UserAuth, adminManagerAuth, addTable);

@@ -35,7 +35,7 @@ export default function CafeBookTable() {
   const close = () => setModal(null);
 
   const acceptBooking = async (id) => {
-    await updateReservationStatus(id, "Arrived");
+    await updateReservationStatus(id, "Arrived", adminName);
   };
 
   const completeBooking = async (id) => {
@@ -63,7 +63,16 @@ export default function CafeBookTable() {
                         <tr><td colSpan="7" style={{ textAlign: "center" }}>No reservations found</td></tr>
                     ) : (
                         cafeReservations.map((row) => (
-                            <tr key={row._id}>
+                            <tr 
+                                key={row._id}
+                                onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    if (row.status === "Confirmed") {
+                                        acceptBooking(row._id);
+                                    }
+                                }}
+                                style={{ cursor: "context-menu" }}
+                            >
                                 <td>{row.table?.tableNo || "-"}</td>
                                 <td>{row.guest_name}</td>
                                 <td>{new Date(row.date).toLocaleDateString()}</td>
@@ -71,10 +80,12 @@ export default function CafeBookTable() {
                                 <td>{row.guests} guests</td>
                                 <td><span className="ad_chip">{row.status}</span></td>
                                 <td>
-                                    <div className="d-flex" style={{ gap: "6px" }}>
-                                        {row.status === "Confirmed" && (
+                                    <div className="d-flex align-items-center" style={{ gap: "6px" }}>
+                                        {row.status === "Confirmed" ? (
                                             <button className="rooms__icon_btn rooms__icon_btn--primary" title="Accept Booking" onClick={() => acceptBooking(row._id)}><IcCheck /></button>
-                                        )}
+                                        ) : row.status === "Arrived" ? (
+                                            <span style={{ fontSize: "14px", color: "var(--ad-champ-lt)", fontWeight: "500" }}>{row.waiter || "Self"}</span>
+                                        ) : null}
                                         {row.status === "Arrived" && (
                                             <button className="rooms__icon_btn" title="Complete Booking" onClick={() => completeBooking(row._id)}>✓</button>
                                         )}

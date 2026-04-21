@@ -13,6 +13,7 @@ const tableReservationSchema = new mongoose.Schema({
     occasion: { type: String },
     specialRequest: { type: String },
     advanceAmount: { type: Number, default: 10 },
+    waiter: { type: String },
     paymentStatus: { type: String, enum: ["Pending", "Paid", "Failed"], default: "Pending" },
     status: { type: String, enum: ["Confirmed", "Cancelled", "Arrived", "Completed"], default: "Confirmed" },
     isDiscountApplied: { type: Boolean, default: false }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { FaRegCalendarAlt, FaRegClock, FaRegUser, FaRegBuilding, FaRegCreditCard, FaRegCheckCircle, FaRegTimesCircle, FaChevronLeft, FaChevronRight, FaLock } from 'react-icons/fa';
 import { IoRestaurantOutline, IoWineOutline, IoCafeOutline, IoBedOutline } from 'react-icons/io5';
 import "../style/h_style.css"
@@ -18,7 +18,7 @@ function buildCalendar(year, month) {
 function genRef() { return "LN" + Math.random().toString(36).substring(2, 7).toUpperCase(); }
 
 function StepIndicator({ current }) {
-  const steps = ["Details", "Preferences", "Confirm"];
+  const steps = ["Details", "Preferences", "Payment", "Confirm"];
   return (
     <div className="h_steps">
       {steps.map((lbl, i) => {
@@ -106,6 +106,9 @@ export default function BookTable() {
 
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [cardNo, setCardNo] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
   const [upiId, setUpiId] = useState("");
   const [paymentIntentId, setPaymentIntentId] = useState("");
 
@@ -113,6 +116,20 @@ export default function BookTable() {
     "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "6:00 PM",
     "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM"
   ];
+
+  const formatCardNumber = (value) => {
+    return value
+      .replace(/\D/g, "")
+      .slice(0, 16)
+      .replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+
+  const formatExpiry = (value) => {
+    return value
+      .replace(/\D/g, "")
+      .slice(0, 4)
+      .replace(/(\d{2})(?=\d)/g, "$1/");
+  };
 
   const areas = [
     { id: "Cafe", icon: <IoCafeOutline />, name: "Cafe", desc: "Cozy coffee & snacks" },
@@ -150,11 +167,16 @@ export default function BookTable() {
   }, [area, date, time, guests, getAvailableTables]);
 
   // Fetch booked reservations for selected date and area to check time availability
+  const getReservationsRef = useRef(getReservations);
+  getReservationsRef.current = getReservations;
+  const dateRef = useRef(date);
+  dateRef.current = date;
+
   useEffect(() => {
     const fetchBookedReservations = async () => {
-      if (date) {
-        const dateStr = date.toISOString();
-        const result = await getReservations(dateStr);
+      if (dateRef.current) {
+        const dateStr = dateRef.current.toISOString();
+        const result = await getReservationsRef.current(dateStr);
         if (result.success) {
           setBookedReservations(result.data);
         } else {
@@ -164,16 +186,17 @@ export default function BookTable() {
         setBookedReservations([]);
       }
     };
+
     fetchBookedReservations();
-  }, [date, getReservations]);
+  }, [date]);
 
   // Generate times array with avail based on bookedReservations
   const times = baseTimes.map(label => {
     // Check if this time has any booked tables for selected area and date
     if (!area || !date) return { label, avail: true };
-    const hasBooking = bookedReservations.some(res => 
-      res.date.startsWith(date.toISOString().split('T')[0]) && 
-      res.time === label && 
+    const hasBooking = bookedReservations.some(res =>
+      res.date.startsWith(date.toISOString().split('T')[0]) &&
+      res.time === label &&
       res.area === area &&
       (res.status === "Confirmed" || res.status === "Arrived")
     );
@@ -224,11 +247,20 @@ export default function BookTable() {
     setErrors(e);
     return !Object.keys(e).length;
   };
-  const formatCardNumber = (value) => {
-    return value
-      .replace(/\D/g, "")
-      .slice(0, 16)
-      .replace(/(\d{4})(?=\d)/g, "$1 ");
+
+  const validate3 = () => {
+    const e = {};
+    if (paymentMethod === "card") {
+      if (!cardNo.trim()) e.cardNo = "Card number is required";
+      if (!cardName.trim()) e.cardName = "Cardholder name is required";
+      if (!expiry.trim()) e.expiry = "Expiry date is required";
+      if (!cvv.trim()) e.cvv = "CVV is required";
+    } else {
+      if (!upiId.trim()) e.upiId = "UPI ID is required";
+      else if (!upiId.includes("@")) e.upiId = "Enter a valid UPI ID";
+    }
+    setErrors(e);
+    return !Object.keys(e).length;
   };
 
   const validate2 = () => {
@@ -241,11 +273,12 @@ export default function BookTable() {
     setErrors(e);
     return !Object.keys(e).length;
   };
-  const goNext = async () => { 
+  const goNext = async () => {
     if (step === 1 && validate1()) {
       setStep(2);
-    }
-    if (step === 2 && validate2()) {
+    } else if (step === 2 && validate2()) {
+      setStep(3);
+    } else if (step === 3 && validate3()) {
       // Create payment intent
       const paymentResult = await createPaymentIntent({
         guest_name: `${firstName} ${lastName}`,
@@ -253,16 +286,16 @@ export default function BookTable() {
       });
       if (paymentResult.success) {
         setPaymentIntentId(paymentResult.data.paymentIntentId);
-        setStep(3);
+        setStep(4);
       } else {
         alert(paymentResult.error || "Failed to create payment");
       }
-    } 
+    }
   };
-  const submit = async (e) => { 
-    e.preventDefault(); 
-    if (!agree) return; 
-    
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!agree) return;
+
     const bookingResult = await confirmBooking({
       guest_name: `${firstName} ${lastName}`,
       email: email,
@@ -309,7 +342,7 @@ export default function BookTable() {
                   <div>
                     <div className="h_card_title">Table Reservation</div>
                     <div className="h_card_sub">
-                      {step === 1 ? "Your details & schedule" : step === 2 ? "Seating preferences" : "Review & confirm"}
+                      {step === 1 ? "Your details & schedule" : step === 2 ? "Seating preferences" : step === 3 ? "Payment details" : "Review & confirm"}
                     </div>
                   </div>
                   <StepIndicator current={step} />
@@ -323,7 +356,7 @@ export default function BookTable() {
                     <strong style={{ color: "var(--h-champ-lt)" }}>{email}</strong>.{" "}
                     We look forward to welcoming you.
                   </p>
-                  <div className="h_ref">Booking Ref: {bookingRef}</div>
+                  {/* <div className="h_ref">Booking Ref: {bookingRef}</div> */}
                   <button className="h_again_btn" onClick={reset}>← Make Another Reservation</button>
                 </div>
 
@@ -504,27 +537,132 @@ export default function BookTable() {
                     {step === 3 && (
                       <div className="h_fbody">
                         <div className="h_fsec">
-                          <div className="h_sec_lbl">Reservation Summary</div>
-                          {[
-                            ["Guest", `${firstName} ${lastName}`],
-                            ["Email", email], ["Phone", phone],
-                            ["Guests", `${guests} ${guests > 1 ? "Guests" : "Guest"}`],
-                            ["Date", fmtDate(date)], ["Time", time],
-                            ["Area", areas.find(a => a.id === area)?.name || "—"],
-                            ["Table Number", availableTables.find(t => t._id === tableId)?.tableNo || "—"],
-                            ["Occasion", occasion || "—"],
-                            ["Advance Payment", "10 USD"],
-                            ["Requests", requests || "None"],
-                          ].map(([k, v]) => (
-                            <div className="h_sum_row" key={k}>
-                              <span className="h_sum_k">{k}</span>
-                              <span className="h_sum_v">{v}</span>
+                          <div className="h_sec_lbl">Payment Method</div>
+                          <div className="h_pay_methods" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+                            <div
+                              className={`h_pay_method${paymentMethod === "card" ? " h_asel" : ""}`}
+                              style={{ flex: 1, padding: "1rem", border: "1px solid var(--h-border)", borderRadius: "var(--h-r-md)", cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                              onClick={() => setPaymentMethod("card")}
+                            >
+                              <FaRegCreditCard /> <span>Credit Card</span>
                             </div>
-                          ))}
+                            <div
+                              className={`h_pay_method${paymentMethod === "upi" ? " h_asel" : ""}`}
+                              style={{ flex: 1, padding: "1rem", border: "1px solid var(--h-border)", borderRadius: "var(--h-r-md)", cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                              onClick={() => setPaymentMethod("upi")}
+                            >
+                              <FaRegCheckCircle /> <span>UPI</span>
+                            </div>
+                          </div>
+
+                          {paymentMethod === "card" ? (
+                            <div className="h_row_2">
+                              <div className="h_field">
+                                <label className="h_label">Card Number</label>
+                                <input
+                                  className={`h_input${errors.cardNo ? " h_err" : ""}`}
+                                  type="text"
+                                  placeholder="0000 0000 0000 0000"
+                                  value={cardNo}
+                                  onChange={e => setCardNo(formatCardNumber(e.target.value))}
+                                />
+                                {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
+                              </div>
+                              <div className="h_field">
+                                <label className="h_label">Cardholder Name</label>
+                                <input
+                                  className={`h_input${errors.cardName ? " h_err" : ""}`}
+                                  type="text"
+                                  placeholder="Alexandre Dupont"
+                                  value={cardName}
+                                  onChange={e => setCardName(e.target.value)}
+                                />
+                                {errors.cardName && <div className="h_err_msg">{errors.cardName}</div>}
+                              </div>
+                              <div className="h_field">
+                                <label className="h_label">Expiry Date</label>
+                                <input
+                                  className={`h_input${errors.expiry ? " h_err" : ""}`}
+                                  type="text"
+                                  placeholder="MM/YY"
+                                  value={expiry}
+                                  onChange={e => setExpiry(formatExpiry(e.target.value))}
+                                />
+                                {errors.expiry && <div className="h_err_msg">{errors.expiry}</div>}
+                              </div>
+                              <div className="h_field">
+                                <label className="h_label">CVV</label>
+                                <input
+                                  className={`h_input${errors.cvv ? " h_err" : ""}`}
+                                  type="password"
+                                  maxLength="3"
+                                  placeholder="***"
+                                  value={cvv}
+                                  onChange={e => setCvv(e.target.value.replace(/\D/g, ""))}
+                                />
+                                {errors.cvv && <div className="h_err_msg">{errors.cvv}</div>}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="h_field">
+                              <label className="h_label">UPI ID</label>
+                              <input
+                                className={`h_input${errors.upiId ? " h_err" : ""}`}
+                                type="text"
+                                placeholder="username@upi"
+                                value={upiId}
+                                onChange={e => setUpiId(e.target.value)}
+                              />
+                              {errors.upiId && <div className="h_err_msg">{errors.upiId}</div>}
+                            </div>
+                          )}
                         </div>
-                        <div className="h_policy">
+
+                        <div className="h_policy" style={{ background: "rgba(200, 160, 90, 0.05)", padding: "1rem", borderRadius: "8px", border: "1px dashed var(--h-border)" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: ".5rem" }}>
+                            <span>Advance Amount</span>
+                            <strong style={{ color: "var(--h-champ-lt)" }}>10 USD</strong>
+                          </div>
+                          <p className="h_policy_p" style={{ fontSize: "11px", margin: 0 }}>This amount will be deducted from your final bill at the restaurant.</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 4 && (
+                      <div className="h_fbody">
+                        {/* <div className="h_fsec">
+                          <div className="h_sec_lbl">Reservation Summary</div>
+                          <div className="h_summary_grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", background: "rgba(255,255,255,0.02)", padding: "1.5rem", borderRadius: "12px", border: "1px solid var(--h-border)" }}>
+                            {[
+                              ["Guest", `${firstName} ${lastName}`],
+                              ["Email", email], ["Phone", phone],
+                              ["Guests", `${guests} ${guests > 1 ? "Guests" : "Guest"}`],
+                              ["Date", fmtDate(date)], ["Time", time],
+                              ["Area", areas.find(a => a.id === area)?.name || "—"],
+                              ["Table No", availableTables.find(t => t._id === tableId)?.tableNo || "—"],
+                              ["Occasion", occasion || "—"],
+                              ["Advance", "10 USD Paid"],
+                            ].map(([k, v]) => (
+                              <div key={k} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                <span style={{ fontSize: "11px", color: "var(--h-champ-pale)", opacity: 0.6, textTransform: "uppercase", letterSpacing: "1px" }}>{k}</span>
+                                <span style={{ fontSize: "14px", color: "var(--h-champ-lt)", fontWeight: "500" }}>{v}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div> */}
+                        {requests && (
+                          <div className="h_fsec" style={{ marginTop: "1rem" }}>
+                            <div className="h_sec_lbl" style={{ fontSize: "12px" }}>Special Requests</div>
+                            <div style={{ padding: "1rem", background: "rgba(255,255,255,0.02)", borderRadius: "8px", border: "1px solid var(--h-border)", fontSize: "13px", color: "var(--h-champ-lt)", fontStyle: "italic" }}>
+                              "{requests}"
+                            </div>
+                          </div>
+                        )}
+                        <div className="h_policy" style={{ marginTop: "1.5rem" }}>
                           <div className="h_policy_t">Cancellation Policy</div>
-                          <p className="h_policy_p">Cancellations must be made at least 24 hours in advance. Late cancellations or no-shows may incur a fee. Confirmation will be emailed to you.</p>
+                          <p className="h_policy_p">
+                            Cancellations must be made at least 24 hours in advance. Confirmation will be emailed to you.
+                          </p>
                         </div>
                       </div>
                     )}
@@ -533,7 +671,7 @@ export default function BookTable() {
                       <div className="h_fnote"><span><FaLock /></span> Encrypted &amp; secure</div>
                       <div className="h_fbtns">
                         {step > 1 && <button type="button" className="h_btn_back" onClick={() => setStep(s => s - 1)}>← Back</button>}
-                        {step < 3
+                        {step < 4
                           ? <button type="button" className="h_btn_prime" onClick={goNext}>Continue <span className="h_btn_arr">→</span></button>
                           : <button type="submit" className="h_btn_prime">Confirm Reservation <span className="h_btn_arr">✓</span></button>
                         }

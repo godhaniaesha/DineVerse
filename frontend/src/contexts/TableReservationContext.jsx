@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { useAuth } from "./AuthContext";
 const API_BASE_URL = "http://localhost:8000/api";
 const TableReservationContext = createContext();
@@ -14,7 +14,7 @@ export const TableReservationProvider = ({ children }) => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+  const authHeaders = useMemo(() => (token ? { Authorization: `Bearer ${token}` } : {}), [token]);
   const callApiWithFallback = useCallback(async ({ endpoints, options }) => {
     let lastError = "Request failed";
     for (const endpoint of endpoints) {
@@ -111,10 +111,6 @@ export const TableReservationProvider = ({ children }) => {
   }, [authHeaders, callApiWithFallback]);
   const getReservations = useCallback(async (date = null) => {
     try {
-      if (!token) {
-        setReservations([]);
-        return { success: true, data: [] };
-      }
       setLoading(true);
       const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
       const result = await callApiWithFallback({
@@ -133,18 +129,21 @@ export const TableReservationProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [token, authHeaders, callApiWithFallback]);
-  const updateReservationStatus = useCallback(async (id, status) => {
+  }, [authHeaders, callApiWithFallback]);
+  const updateReservationStatus = useCallback(async (id, status, waiter = null) => {
     try {
       setLoading(true);
+      const body = { status };
+      if (waiter) body.waiter = waiter;
+
       const res = await fetch(`${API_BASE_URL}/table/updateTableReservationStatus/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", ...authHeaders },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (data.success) {
-        setReservations((prev) => prev.map((r) => (r._id === id ? { ...r, status } : r)));
+        setReservations((prev) => prev.map((r) => (r._id === id ? { ...r, status, waiter: waiter || r.waiter } : r)));
         return { success: true, data: data.data };
       }
       return { success: false, error: data.msg || "Failed to update status" };

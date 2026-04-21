@@ -173,7 +173,7 @@ export const confirmTableBooking = async (req, res) => {
 export const updateTableReservationStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
+        const { status, waiter } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return sendBadRequestResponse(res, "Invalid Reservation ID");
@@ -184,9 +184,12 @@ export const updateTableReservationStatus = async (req, res) => {
             return sendBadRequestResponse(res, "Invalid status value");
         }
 
+        const updateData = { status };
+        if (waiter) updateData.waiter = waiter;
+
         const reservation = await TableReservation.findByIdAndUpdate(
             id,
-            { status },
+            updateData,
             { new: true }
         ).populate('table', 'tableNo area');
 
