@@ -6,6 +6,7 @@ import { TbSparkles, TbChefHat } from "react-icons/tb";
 import { MdOutlineLocalBar } from "react-icons/md";
 import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMenu } from "../contexts/MenuContext";
 
 /* ─────────── DATA ─────────── */
 export const CATEGORIES = [
@@ -40,252 +41,6 @@ export const CAFE_SUBCATEGORIES = [
     { id: "tonics", label: "Tonics", icon: <GiCoffeeCup /> },
 ];
 
-export const MENU_ITEMS = [
-    /* ── RESTAURANT ── */
-    {
-        id: 1, category: "restaurant", subcategory: "appetizers", tag: "Chef's Special", featured: true,
-        name: "Wagyu Burnt Ends", price: "₹2,890",
-        desc: "48-hour braised A5 wagyu, smoked bone marrow butter, pickled shallots, micro herbs.",
-        badges: ["signature", "spicy"],
-        time: "35 min", cal: "620 kcal",
-        img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
-    },
-    {
-        id: 2, category: "restaurant", subcategory: "appetizers", tag: "Starter",
-        name: "Burrata Royale", price: "₹890",
-        desc: "Creamy burrata, heirloom tomatoes, 12-year aged balsamic, truffle oil, sourdough crisps.",
-        badges: ["veg"],
-        time: "10 min", cal: "310 kcal",
-        img: "https://i.pinimg.com/1200x/b1/a9/69/b1a969ae96e7adc5a7899ad692f35bba.jpg",
-    },
-    {
-        id: 3, category: "restaurant", subcategory: "mains", tag: "Main",
-        name: "Pan-Seared Halibut", price: "₹1,990",
-        desc: "Atlantic halibut, saffron beurre blanc, caviar, fennel confit, yuzu foam.",
-        badges: [],
-        time: "28 min", cal: "480 kcal",
-        img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80",
-    },
-    {
-        id: 4, category: "restaurant", subcategory: "desserts", tag: "Dessert",
-        name: "Dark Chocolate Sphere", price: "₹690",
-        desc: "Valrhona 70% dome, molten praline core, gold leaf, passion fruit coulis.",
-        badges: ["veg", "sweet"],
-        time: "15 min", cal: "540 kcal",
-        img: "https://i.pinimg.com/736x/cc/86/26/cc8626c088484788e38f1db9b897b859.jpg",
-    },
-    {
-        id: 5, category: "restaurant", subcategory: "mains", tag: "Main",
-        name: "Truffle Risotto", price: "₹1,490",
-        desc: "Carnaroli rice, aged Parmigiano, black truffle shavings, Périgord truffle oil.",
-        badges: ["veg", "signature"],
-        time: "22 min", cal: "560 kcal",
-        img: "https://i.pinimg.com/1200x/e1/8d/6e/e18d6e1b856e34342c3ace263959d0b5.jpg",
-    },
-    {
-        id: 6, category: "restaurant", subcategory: "appetizers", tag: "Starter",
-        name: "Smoked Duck Tataki", price: "₹1,190",
-        desc: "Cherry-smoked duck breast, ponzu gel, pickled daikon, sesame tuile, wasabi aioli.",
-        badges: ["spicy"],
-        time: "18 min", cal: "390 kcal",
-        img: "https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&q=80",
-    },
-    {
-        id: 13, category: "restaurant", subcategory: "sides", tag: "Side",
-        name: "Truffle Parmesan Fries", price: "₹490",
-        desc: "Hand-cut fries with black truffle oil, aged Parmigiano, fresh parsley.",
-        badges: [],
-        time: "12 min", cal: "280 kcal",
-        img: "https://i.pinimg.com/736x/fb/6e/d2/fb6ed247d66ca7e208e038802eeadcc9.jpg",
-    },
-    {
-        id: 14, category: "restaurant", subcategory: "sides", tag: "Side",
-        name: "Grilled Asparagus", price: "₹390",
-        desc: "Seasonal asparagus, lemon butter, shaved Parmesan, toasted almonds.",
-        badges: ["veg"],
-        time: "8 min", cal: "120 kcal",
-        img: "https://i.pinimg.com/1200x/b4/93/09/b493093259ad1a15c18c1a78a877ffe9.jpg",
-    },
-    {
-        id: 15, category: "restaurant", subcategory: "drinks", tag: "Beverage",
-        name: "Fresh Lemonade", price: "₹190",
-        desc: "Fresh squeezed lemons, organic cane sugar, mint, sparkling water.",
-        badges: ["veg", "alcohol-free"],
-        time: "5 min", cal: "80 kcal",
-        img: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80",
-    },
-    /* ── BAR ── */
-    {
-        id: 7, category: "bar", subcategory: "cocktails", tag: "Signature Cocktail", featured: true,
-        name: "Midnight Empress", price: "₹890",
-        desc: "Butterfly pea-infused gin, elderflower liqueur, yuzu, activated charcoal, egg white foam.",
-        badges: ["bestseller"],
-        time: "8 min", cal: "180 kcal",
-        img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
-    },
-    {
-        id: 8, category: "bar", subcategory: "cocktails", tag: "Classic",
-        name: "Negroni Sbagliato", price: "₹750",
-        desc: "Campari, Carpano Antica Formula, Prosecco, expressed orange peel, large ice cube.",
-        badges: [],
-        time: "5 min", cal: "155 kcal",
-        img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80",
-    },
-    {
-        id: 9, category: "bar", subcategory: "mocktails", tag: "Mocktail",
-        name: "Saffron Sunrise", price: "₹490",
-        desc: "Cold-pressed orange, saffron syrup, ginger beer, Himalayan pink salt, dehydrated citrus.",
-        badges: ["veg", "alcohol-free"],
-        time: "6 min", cal: "120 kcal",
-        img: "https://i.pinimg.com/736x/41/c4/8d/41c48da902c1de66d00d7e1f6543fe0c.jpg",
-    },
-    {
-        id: 10, category: "bar", subcategory: "spirits", tag: "Whisky",
-        name: "Smoke & Honey", price: "₹1,290",
-        desc: "Aberfeldy 16yr, smoked honey syrup, Angostura, Peychaud's bitters, smoked rosemary.",
-        badges: ["signature"],
-        time: "10 min", cal: "210 kcal",
-        img: "https://i.pinimg.com/736x/27/7a/2e/277a2e523a3930464fb7c94301b13636.jpg",
-    },
-    {
-        id: 11, category: "bar", subcategory: "spirits", tag: "Shots",
-        name: "Golden Dragon", price: "₹380",
-        desc: "Gold tequila, Drambuie, fresh lime, chilli tincture, gold shimmer dust.",
-        badges: ["spicy", "bestseller"],
-        time: "3 min", cal: "90 kcal",
-        img: "https://i.pinimg.com/1200x/ee/7d/74/ee7d74334ad94561ff2138c62a1d24d2.jpg",
-    },
-    {
-        id: 12, category: "bar", subcategory: "wine", tag: "Wine",
-        name: "Barolo Reserve 2019", price: "₹3,200",
-        desc: "Single-vineyard Nebbiolo from Langhe, garnet ruby, dried roses, tar, leather, firm tannins.",
-        badges: [],
-        time: "2 min", cal: "125 kcal",
-        img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80",
-    },
-    {
-        id: 16, category: "bar", subcategory: "beer", tag: "Craft Beer",
-        name: "Belgian Tripel", price: "₹590",
-        desc: "Traditional Belgian tripel with notes of citrus, honey, and spice, 9% ABV.",
-        badges: [],
-        time: "3 min", cal: "220 kcal",
-        img: "https://i.pinimg.com/736x/6a/29/84/6a2984e529e29a99e408e67bfdb682a8.jpg",
-    },
-    {
-        id: 17, category: "bar", subcategory: "signature", tag: "House Special",
-        name: "DineVerse Fusion", price: "₹1,490",
-        desc: "House-infused gin with saffron, cardamom, and local botanicals, served with gold leaf.",
-        badges: ["signature", "bestseller"],
-        time: "12 min", cal: "160 kcal",
-        img: "https://i.pinimg.com/736x/0c/6f/1b/0c6f1bd0c40b054eeb35f6ab86ad99a1.jpg",
-    },
-    /* ── CAFE ── */
-    // {
-    //     id: 18, category: "cafe", subcategory: "toasts", tag: "Breakfast",
-    //     name: "Avocado Toast Deluxe", price: "₹390",
-    //     desc: "Sourdough toast, smashed avocado, poached eggs, feta, cherry tomatoes, micro herbs.",
-    //     badges: ["veg", "bestseller"],
-    //     time: "12 min", cal: "340 kcal",
-    //     img: "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=600&q=80",
-    // },
-    {
-    id: 18, category: "cafe", subcategory: "toasts", tag: "Spicy",
-    name: "Spicy Chilli Cheese Toast", price: "₹240",
-    desc: "Crispy toast topped with melted cheese, green chillies, capsicum, onions, and spicy seasoning.",
-    badges: ["veg", "spicy", "bestseller"],
-    time: "10 min", cal: "320 kcal",
-    img: "https://i.pinimg.com/736x/b9/40/e2/b940e297ec795089a32fe0064c33a3d4.jpg",
-},
-    {
-        id: 19, category: "cafe", subcategory: "toasts", tag: "Classic",
-        name: "French Toast", price: "₹290",
-        desc: "Brioche, vanilla custard, fresh berries, maple syrup, dusted with powdered sugar.",
-        badges: ["veg", "sweet"],
-        time: "10 min", cal: "380 kcal",
-        img: "https://i.pinimg.com/1200x/d5/ad/6e/d5ad6ef2f943811f9d9e361b899173f1.jpg",
-    },
-    {
-        id: 20, category: "cafe", subcategory: "light-meals", tag: "Lunch",
-        name: "Mediterranean Wrap", price: "₹450",
-        desc: "Grilled chicken, hummus, roasted vegetables, feta, olives, tzatziki, whole wheat wrap.",
-        badges: [],
-        time: "15 min", cal: "420 kcal",
-        img: "https://i.pinimg.com/1200x/01/5d/15/015d15bb9770336ddc570880761c5f54.jpg",
-    },
-    {
-        id: 21, category: "cafe", subcategory: "light-meals", tag: "Healthy",
-        name: "Quinoa Buddha Bowl", price: "₹490",
-        desc: "Organic quinoa, roasted chickpeas, kale, beets, sweet potato, tahini dressing.",
-        badges: ["veg", "bestseller"],
-        time: "18 min", cal: "380 kcal",
-        img: "https://i.pinimg.com/736x/94/13/81/941381d08aad02420646d84f881e0e1e.jpg",
-    },
-    {
-        id: 22, category: "cafe", subcategory: "salads", tag: "Fresh",
-        name: "Caesar Salad", price: "₹350",
-        desc: "Romaine lettuce, parmesan shavings, croutons, classic Caesar dressing, grilled chicken.",
-        badges: [],
-        time: "8 min", cal: "290 kcal",
-        img: "https://i.pinimg.com/1200x/8b/76/b8/8b76b89916cb1835988868779e3bcac2.jpg",
-    },
-    {
-        id: 23, category: "cafe", subcategory: "salads", tag: "Vegan",
-        name: "Superfood Salad", price: "₹320",
-        desc: "Mixed greens, spinach, kale, nuts, seeds, berries, citrus vinaigrette.",
-        badges: ["veg", "alcohol-free"],
-        time: "6 min", cal: "180 kcal",
-        img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80",
-    },
-    {
-        id: 24, category: "cafe", subcategory: "snacks", tag: "Quick Bite",
-        name: "Artisan Cheese Board", price: "₹550",
-        desc: "Selection of local cheeses, crackers, grapes, nuts, honey comb.",
-        badges: ["veg"],
-        time: "5 min", cal: "420 kcal",
-        img: "https://i.pinimg.com/control1/1200x/bb/b3/29/bbb329d22dd85ab17bd8fa43731b5530.jpg",
-    },
-    {
-        id: 25, category: "cafe", subcategory: "snacks", tag: "Sweet",
-        name: "Croissant Assortment", price: "₹280",
-        desc: "Butter, almond, chocolate croissants served with jam and butter.",
-        badges: ["veg", "sweet"],
-        time: "3 min", cal: "320 kcal",
-        img: "https://i.pinimg.com/1200x/8e/ef/09/8eef094d7b0f0caaad992cea0945182c.jpg",
-    },
-    {
-        id: 26, category: "cafe", subcategory: "tonics", tag: "Wellness",
-        name: "Green Detox Juice", price: "₹220",
-        desc: "Spinach, kale, cucumber, green apple, ginger, lemon, wheatgrass.",
-        badges: ["veg", "alcohol-free"],
-        time: "5 min", cal: "120 kcal",
-        img: "https://i.pinimg.com/736x/92/40/8e/92408e2006fd48b3c7f1e389d4bbeb6a.jpg",
-    },
-    {
-        id: 27, category: "cafe", subcategory: "tonics", tag: "Energy",
-        name: "Matcha Latte", price: "₹320",
-        desc: "Premium Japanese matcha, oat milk, honey, served hot or iced.",
-        badges: ["veg", "alcohol-free"],
-        time: "8 min", cal: "140 kcal",
-        img: "https://i.pinimg.com/736x/32/d5/a3/32d5a352cd3d092c37b0f79d144bae16.jpg",
-    },
-    {
-        id: 28, category: "cafe", subcategory: "light-meals", tag: "Lunch",
-        name: "Margherita Pizza", price: "₹550",
-        desc: "Classic Neapolitan pizza with fresh mozzarella, basil, and tomato sauce on a thin crust.",
-        badges: ["veg"],
-        time: "20 min", cal: "650 kcal",
-        img: "https://i.pinimg.com/736x/e4/81/00/e48100d4cecd9121ea762fb546a5d815.jpg",
-    },
-    {
-        id: 29, category: "cafe", subcategory: "light-meals", tag: "Lunch",
-        name: "Penne Alfredo Pasta", price: "₹480",
-        desc: "Penne pasta in creamy Alfredo sauce, topped with parmesan and fresh herbs.",
-        badges: ["veg", "signature"],
-        time: "18 min", cal: "580 kcal",
-        img: "https://i.pinimg.com/1200x/89/5e/11/895e1147dcfc9f025c7cacbb2f3e4e65.jpg",
-    }
-];
-
 export const BADGE_META = {
     signature: { label: "Signature", color: "var(--d-gold)", bg: "var(--d-gold-subtle)" },
     spicy: { label: "🌶 Spicy", color: "#e87070", bg: "rgba(232,112,112,0.10)" },
@@ -298,6 +53,7 @@ export const BADGE_META = {
 /* ─────────── COMPONENT ─────────── */
 export default function Menu() {
     const navigate = useNavigate();
+    const { mappedDishes: mappedItems, loading: menuLoading } = useMenu();
     const [activeCategory, setActiveCategory] = useState("all");
     const [activeSubcategory, setActiveSubcategory] = useState(null);
     const [search, setSearch] = useState("");
@@ -316,7 +72,7 @@ export default function Menu() {
             (entries) => {
                 entries.forEach((e) => {
                     if (e.isIntersecting) {
-                        setVisibleIds((prev) => new Set([...prev, Number(e.target.dataset.id)]));
+                        setVisibleIds((prev) => new Set([...prev, e.target.dataset.id]));
                     }
                 });
             },
@@ -324,9 +80,9 @@ export default function Menu() {
         );
         Object.values(cardRefs.current).forEach((el) => el && obs.observe(el));
         return () => obs.disconnect();
-    }, [activeCategory, activeSubcategory, search]);
+    }, [activeCategory, activeSubcategory, search, mappedItems]);
 
-    const filtered = MENU_ITEMS.filter((item) => {
+    const filtered = mappedItems.filter((item) => {
         const matchCat = activeCategory === "all" || item.category === activeCategory;
         const matchSubCat = !activeSubcategory || item.subcategory === activeSubcategory;
         const q = search.toLowerCase();
@@ -347,6 +103,14 @@ export default function Menu() {
         if (activeCategory === "cafe") return CAFE_SUBCATEGORIES;
         return [];
     };
+
+    if (menuLoading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--d-bg)' }}>
+                <div className="x_title" style={{ fontSize: '2rem' }}>Loading Menu...</div>
+            </div>
+        );
+    }
 
     return (
         <>

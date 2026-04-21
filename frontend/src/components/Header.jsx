@@ -8,7 +8,7 @@ import { RiRestaurantLine } from "react-icons/ri";
 import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine } from "react-icons/ri";
 import "./header.css";
-import { MENU_ITEMS } from "../pages/Menu";
+import { useMenu } from "../contexts/MenuContext";
 
 /* ── DATA ─────────────────────────────────────────────────── */
 
@@ -104,6 +104,7 @@ function Hamburger({ open, onClick }) {
 function SearchOverlay({ open, onClose }) {
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const { mappedDishes: MENU_ITEMS } = useMenu();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
@@ -117,7 +118,7 @@ function SearchOverlay({ open, onClose }) {
   }, [open]);
 
   useEffect(() => {
-    if (!query.trim()) {
+    if (!query.trim() || !MENU_ITEMS) {
       setResults([]);
       return;
     }
@@ -131,7 +132,7 @@ function SearchOverlay({ open, onClose }) {
     ).slice(0, 6); // Limit results for better UI
 
     setResults(filtered);
-  }, [query]);
+  }, [query, MENU_ITEMS]);
 
   const handleResultClick = (id) => {
     navigate(`/dish/${id}`);
