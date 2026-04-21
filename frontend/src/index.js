@@ -14,14 +14,12 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <RoomProvider>
-        <App />
+        <StaffProvider>
+          <MenuProvider>
+            <App />
+          </MenuProvider>
+        </StaffProvider>
       </RoomProvider>
-      <StaffProvider>
-        <App />
-      </StaffProvider>
-      <MenuProvider>
-        <App />
-      </MenuProvider>
     </AuthProvider>
   </React.StrictMode>
 );
