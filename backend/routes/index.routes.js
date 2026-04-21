@@ -112,11 +112,11 @@ router.put('/food/updateDish/:id', UserAuth, adminManagerAuth, upload.single('im
 router.delete('/food/deleteDish/:id', UserAuth, adminManagerAuth, deleteDish);
 
 
-router.post("/addImage", upload.single("img"), addImage);
+router.post("/addImage", UserAuth, adminManagerAuth, upload.single("img"), addImage);
 router.get("/getGallery", getGallery);
-router.put("/updateImage/:id", upload.single("img"), updateImage);
-router.patch("/toggleVisibility/:id", toggleVisibility);
-router.delete("/deleteImage/:id", deleteImage);
+router.put("/updateImage/:id", UserAuth, adminManagerAuth, upload.single("img"), updateImage);
+router.patch("/toggleVisibility/:id", UserAuth, adminManagerAuth, toggleVisibility);
+router.delete("/deleteImage/:id", UserAuth, adminManagerAuth, deleteImage);
 
 
 router.post("/addBlog", UserAuth, adminManagerAuth, upload.fields([{ name: "coverImg" }]), addBlog);

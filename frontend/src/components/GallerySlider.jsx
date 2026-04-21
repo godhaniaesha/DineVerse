@@ -1,27 +1,38 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdClose } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { useGallery } from "../contexts/GalleryContext";
 import "../style/z_style.css";
 
-const GALLERY_IMAGES = [
-    { id: 1, url: "https://i.pinimg.com/736x/70/e2/4d/70e24d7713367a5e5ca1f908ef72d617.jpg", shape: "z_slide_shape_arch" }, // Restaurant Interior
-    { id: 2, url: "https://i.pinimg.com/1200x/3b/32/f5/3b32f5151c15b5f7c8ce9eb1f0e9502f.jpg", shape: "z_slide_shape_square" }, // Cafe Coffee
-    { id: 3, url: "https://i.pinimg.com/1200x/3e/94/ce/3e94ce6becaba0b6e1faa5f811bdeae3.jpg", shape: "z_slide_shape_pill" }, // Bar Cocktails
-    { id: 4, url: "https://i.pinimg.com/736x/8d/ba/de/8dbade02b886e09ad83524a67b1375fd.jpg", shape: "z_slide_shape_diagonal" }, // Fine Dining Food
-    { id: 5, url: "https://i.pinimg.com/1200x/76/e1/e3/76e1e3bea5eb4cb5cd3f043dc6ce5501.jpg", shape: "z_slide_shape_custom" }, // Cafe Interior
-    { id: 6, url: "https://i.pinimg.com/1200x/1b/bc/ee/1bbceeb8ab57c6070bd545b3a7375207.jpg", shape: "z_slide_shape_arch_bottom" }, // Bar Interior
-    { id: 7, url: "https://i.pinimg.com/736x/f3/c4/84/f3c48464426236c998b42fc51b643d69.jpg", shape: "z_slide_shape_pill" }, // Gourmet Dish
-    { id: 8, url: "https://i.pinimg.com/736x/ec/f3/a9/ecf3a92d57be34ef9b0702378238b373.jpg", shape: "z_slide_shape_square" }, // Restaurant Pasta
+const SHAPES = [
+    "z_slide_shape_arch",
+    "z_slide_shape_square",
+    "z_slide_shape_pill",
+    "z_slide_shape_diagonal",
+    "z_slide_shape_custom",
+    "z_slide_shape_arch_bottom",
+    "z_slide_shape_circle",
 ];
 
 export default function GallerySlider() {
+    const { images, loading } = useGallery();
     const [previewImage, setPreviewImage] = useState(null);
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
     const containerRef = useRef(null);
 
+    // Filter only visible images and map them with shapes (limit to first 6)
+    const visibleImages = images
+        .filter((img) => img.visibility === "Visible")
+        .slice(0, 7)
+        .map((img, index) => ({
+            ...img,
+            id: img._id,
+            shape: SHAPES[index % SHAPES.length],
+        }));
+
     // Doubling images for infinite marquee effect
-    const displayImages = [...GALLERY_IMAGES, ...GALLERY_IMAGES];
+    const displayImages = [...visibleImages, ...visibleImages];
 
     const handleMouseMove = (e) => {
         if (!containerRef.current) return;
@@ -41,6 +52,8 @@ export default function GallerySlider() {
         setPreviewImage(null);
         document.body.style.overflow = "auto";
     };
+
+    if (loading) return null; // Or a small loader if preferred
 
     return (
         <section className="z_slide_wrapper">
@@ -78,9 +91,9 @@ export default function GallerySlider() {
                         <div
                             key={`${img.id}-${index}`}
                             className={`z_slide_item ${img.shape}`}
-                            onClick={() => openPreview(img.url)}
+                            onClick={() => openPreview(img.img)}
                         >
-                            <img src={img.url} alt={`Gallery ${img.id}`} className="z_slide_img" />
+                            <img src={img.img} alt={`Gallery ${img.id}`} className="z_slide_img" />
                             <div className="z_slide_overlay">
                                 <div className="z_slide_border_inner"></div>
                             </div>

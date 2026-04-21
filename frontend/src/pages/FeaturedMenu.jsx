@@ -44,9 +44,8 @@ function Badge({ type }) {
 /* ── MENU CARD ────────────────────────────────────────────── */
 function MenuCard({ item }) {
   const navigate = useNavigate();
-  // Map Menu.js item structure to FeaturedMenu structure if needed
-  const price = item.price.replace('₹', '');
-  const rating = item.featured ? 4.9 : 4.7; // Mock rating for featured items
+  const price = typeof item.price === 'string' ? item.price.replace('₹', '') : item.price;
+  const rating = item.featured ? 4.9 : 4.7;
   const badge = item.badges?.[0] || (item.featured ? 'signature' : null);
 
   return (
@@ -97,16 +96,13 @@ export default function FeaturedMenu() {
   const [activeTab, setActiveTab] = useState("all");
   const { mappedDishes: MENU_ITEMS, loading } = useMenu();
 
-  // Get items from Menu.js and prioritize featured ones for this section
-  const FEATURED_SELECTION = MENU_ITEMS ? MENU_ITEMS.filter(item => item.featured || item.badges?.includes('signature')).slice(0, 4) : [];
-
   const filtered =
     activeTab === "all"
-      ? FEATURED_SELECTION
-      : FEATURED_SELECTION.filter((item) => item.category === activeTab);
+      ? MENU_ITEMS
+      : MENU_ITEMS.filter((item) => item.category === activeTab);
 
   if (loading) {
-    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading featured menu...</div>;
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading menu...</div>;
   }
 
   return (
@@ -117,15 +113,14 @@ export default function FeaturedMenu() {
         <div className="d_featured__header">
           <p className="d_featured__eyebrow">
             <span className="d_featured__eyebrow-line" />
-            Seasonal Selection
+            Our Menu
             <span className="d_featured__eyebrow-line" />
           </p>
           <h2 className="d_featured__title">
-            Chef 's <em>Signature</em> Dishes
+            Discover <em>Delicious</em> Dishes
           </h2>
           <p className="d_featured__subtitle">
-            Handpicked favourites from our kitchen — crafted with seasonal
-            ingredients and artisan passion.
+            Explore our complete menu — crafted with seasonal ingredients and artisan passion.
           </p>
         </div>
 
