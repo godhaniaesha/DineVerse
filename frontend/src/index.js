@@ -7,16 +7,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { StaffProvider } from './contexts/StaffContext';
 import { RoomProvider } from './contexts/RoomContext';
+import { MenuProvider } from './contexts/MenuContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthProvider>
+      <RoomProvider>
+        <App />
+      </RoomProvider>
       <StaffProvider>
-        <RoomProvider>
-          <App />
-        </RoomProvider>
+        <App />
       </StaffProvider>
+      <MenuProvider>
+        <App />
+      </MenuProvider>
     </AuthProvider>
   </React.StrictMode>
 );

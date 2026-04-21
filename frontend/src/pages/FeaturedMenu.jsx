@@ -7,7 +7,8 @@ import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { MdStar } from "react-icons/md";
 import { IoFlameOutline } from "react-icons/io5";
-import { MENU_ITEMS, BADGE_META } from "./Menu";
+import { BADGE_META } from "./Menu";
+import { useMenu } from "../contexts/MenuContext";
 import "./featuredMenu.css";
 
 const TABS = [
@@ -94,14 +95,19 @@ function MenuCard({ item }) {
 /* ── MAIN SECTION ─────────────────────────────────────────── */
 export default function FeaturedMenu() {
   const [activeTab, setActiveTab] = useState("all");
+  const { mappedDishes: MENU_ITEMS, loading } = useMenu();
 
   // Get items from Menu.js and prioritize featured ones for this section
-  const FEATURED_SELECTION = MENU_ITEMS.filter(item => item.featured || item.badges?.includes('signature')).slice(0, 4);
+  const FEATURED_SELECTION = MENU_ITEMS ? MENU_ITEMS.filter(item => item.featured || item.badges?.includes('signature')).slice(0, 4) : [];
 
   const filtered =
     activeTab === "all"
       ? FEATURED_SELECTION
       : FEATURED_SELECTION.filter((item) => item.category === activeTab);
+
+  if (loading) {
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading featured menu...</div>;
+  }
 
   return (
     <section className="d_featured">
