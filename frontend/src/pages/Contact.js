@@ -6,6 +6,7 @@ import {
 } from "react-icons/fi";
 import { GiWineGlass, GiKnifeFork, GiCoffeeCup } from "react-icons/gi";
 import { TbBrandWhatsapp } from "react-icons/tb";
+import inquiryService from "../services/inquiryService";
 
 /* ─── DATA ─── */
 const VENUES_INFO = [
@@ -112,12 +113,45 @@ function ContactForm() {
     setForm((p) => ({ ...p, [name]: value }));
   };
   const handleBlur = (e) => setTouched((p) => ({ ...p, [e.target.name]: true }));
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted');
     setTouched({ name: true, email: true, reason: true, message: true });
-    if (!isValid) return;
-    setStatus("loading");
-    setTimeout(() => setStatus("success"), 2000);
+    if (!isValid) {
+      console.log('Form validation failed:', errors);
+      return;
+    }
+    
+    try {
+      setStatus("loading");
+      console.log('Setting status to loading');
+      
+      const inquiryData = {
+        full_name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        reason: form.reason,
+        message: form.message.trim()
+      };
+      
+      console.log('Sending inquiry data:', inquiryData);
+      
+      const response = await inquiryService.submitInquiry(inquiryData);
+      console.log('API Response:', response);
+      
+      if (response.success) {
+        console.log('Submission successful');
+        setStatus("success");
+        setForm({ name: "", email: "", phone: "", reason: "", message: "" });
+        setTouched({});
+      } else {
+        console.log('Submission failed:', response);
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error('Error submitting inquiry:', error);
+      setStatus("error");
+    }
   };
 
   if (status === "success") {
@@ -128,6 +162,19 @@ function ContactForm() {
         <p className="x_success_sub">Thank you for reaching out. We'll get back to you within 24 hours.</p>
         <button className="x_btn x_btn--ghost" onClick={() => { setStatus("idle"); setForm({ name:"",email:"",phone:"",reason:"",message:"" }); setTouched({}); }}>
           Send Another
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div ref={ref} className={`x_form_error${vis ? " x_visible" : ""}`}>
+        <FiAlertCircle className="x_error_icon" />
+        <h3 className="x_error_title">Submission Failed</h3>
+        <p className="x_error_sub">Sorry, there was an error sending your message. Please try again or contact us directly.</p>
+        <button className="x_btn x_btn--ghost" onClick={() => { setStatus("idle"); }}>
+          Try Again
         </button>
       </div>
     );

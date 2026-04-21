@@ -1,16 +1,88 @@
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import { FiClock, FiEye, FiHeart, FiChevronLeft } from "react-icons/fi";
-import { POSTS } from "../data/blogData";
+import { useState, useEffect } from "react";
+import blogService from "../services/blogService";
 
 export default function BlogPost() {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
   const postFromState = location.state?.post;
-  const post = postFromState || POSTS.find((p) => String(p.id) === String(id));
 
-  if (!post) {
+  useEffect(() => {
+    if (postFromState) {
+      setPost(postFromState);
+      setLiked(postFromState.likes?.includes(localStorage.getItem('userId')) || false);
+      setLikesCount(postFromState.likes?.length || 0);
+      setLoading(false);
+    } else {
+      fetchBlogById(id);
+    }
+  }, [id, postFromState]);
+
+  const fetchBlogById = async (blogId) => {
+    try {
+      setLoading(true);
+      const response = await blogService.getBlogById(blogId);
+      if (response.success) {
+        const blogData = response.data;
+        setPost(blogData);
+        setLiked(blogData.likes?.includes(localStorage.getItem('userId')) || false);
+        setLikesCount(blogData.likes?.length || 0);
+      } else {
+        setError(response.msg || 'Failed to fetch blog');
+      }
+    } catch (err) {
+      setError('Failed to fetch blog');
+      console.error('Error fetching blog:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login to like posts');
+        return;
+      }
+      
+      await blogService.toggleLike(post._id, token);
+      const newLiked = !liked;
+      setLiked(newLiked);
+      setLikesCount(prev => newLiked ? prev + 1 : prev - 1);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          padding: "100px 24px",
+          background: "#080705",
+          color: "#f5f0e8",
+          minHeight: "70vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <p>Loading article...</p>
+      </div>
+    );
+  }
+
+  if (error || !post) {
     return (
       <div
         style={{
@@ -20,7 +92,7 @@ export default function BlogPost() {
           minHeight: "70vh",
         }}
       >
-        <p>Article not found.</p>
+        <p>{error || 'Article not found.'}</p>
         <button
           onClick={() => navigate("/blog")}
           style={{
@@ -94,21 +166,21 @@ export default function BlogPost() {
         >
           <span
             style={{
-              color: post.tagColor,
-              border: `1px solid ${post.tagColor}`,
+              color: post.tagColor || "#c49f5c",
+              border: `1px solid ${post.tagColor || "#c49f5c"}`,
               padding: "5px 10px",
               borderRadius: "999px",
               fontSize: "12px",
               textTransform: "uppercase",
             }}
           >
-            {post.tag}
+            {post.area || post.tag}
           </span>
           <span style={{ fontSize: "12px", color: "#b8b0a0" }}>
-            <FiClock /> {post.readTime}
+            <FiClock /> {post.readTime || "5 min read"}
           </span>
           <span style={{ fontSize: "12px", color: "#b8b0a0" }}>
-            <FiEye /> {post.views}
+            <FiEye /> {post.views || 0}
           </span>
         </div>
         <h1
@@ -120,15 +192,14 @@ export default function BlogPost() {
         >
           {post.title}
         </h1>
-        <p style={{ color: "#b8b0a0", marginBottom: "0" }}>{post.excerpt}</p>
+        <p style={{ color: "#b8b0a0", marginBottom: "0" }}>{post.short_des}</p>
         <img
-          src={post.img}
+          src={post.coverImg}
           alt={post.title}
           style={{ width: "100%", borderRadius: "18px", objectFit: "cover" }}
         />
         <p style={{ fontSize: "16px", lineHeight: 1.7, color: "#dcd2c4" }}>
-          {post.content ||
-            "No article body available. Please update the post data with `.content`."}
+          {post.des || "No article body available."}
         </p>
         <div
           style={{
@@ -142,11 +213,25 @@ export default function BlogPost() {
             fontSize: "14px",
           }}
         >
-          <span>Author: {post.author}</span>
-          <span>Date: {post.date}</span>
-          <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <FiHeart /> {post.likes}
-          </span>
+          <span>Author: {post.addedBy?.name || "DineVerse Team"}</span>
+          <span>Date: {new Date(post.createdAt).toLocaleDateString()}</span>
+          <button
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              background: liked ? "rgba(200, 150, 90, 0.2)" : "none",
+              border: "1px solid rgba(200, 150, 90, 0.3)",
+              padding: "5px 10px",
+              borderRadius: "8px",
+              color: liked ? "#c8965a" : "#b8b0a0",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+            }}
+            onClick={handleLike}
+          >
+            <FiHeart /> {likesCount}
+          </button>
         </div>
       </article>
     </main>
