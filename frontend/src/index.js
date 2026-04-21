@@ -8,6 +8,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import { StaffProvider } from './contexts/StaffContext';
 import { RoomProvider } from './contexts/RoomContext';
 import { MenuProvider } from './contexts/MenuContext';
+import { TableProvider } from './contexts/TableContext';
+import { TableReservationProvider } from './contexts/TableReservationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,7 +18,11 @@ root.render(
       <RoomProvider>
         <StaffProvider>
           <MenuProvider>
-            <App />
+            <TableProvider>
+              <TableReservationProvider>
+                <App />
+              </TableReservationProvider>
+            </TableProvider>
           </MenuProvider>
         </StaffProvider>
       </RoomProvider>

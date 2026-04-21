@@ -72,11 +72,35 @@ router.get('/reservations/getById/:id', UserAuth, adminManagerAuth, getReservati
 router.patch('/reservations/updateStatus/:id', UserAuth, adminManagerAuth, updateReservationStatus);
 
 
-router.get('/table/getAvailableTablesByArea', getAvailableTablesByArea);
+// ========== TABLE RESERVATION ROUTES (Public + Auth) ==========
+// Public - Check available tables
+router.post('/table/getAvailableTablesByArea', getAvailableTablesByArea);
+// Public - Check booked times
+router.get('/table/getTableReservationsByDate', getTableReservationsByDate);
+// Auth required - Create payment
 router.post('/table/createTablePaymentIntent', UserAuth, createTablePaymentIntent);
+// Auth required - Confirm booking
 router.post('/table/confirmTableBooking', UserAuth, confirmTableBooking);
-router.patch('/table/updateTableReservationStatus', UserAuth, adminManagerAuth, updateTableReservationStatus);
-router.get('/table/getTableReservationsByDate', UserAuth, adminManagerAuth, getTableReservationsByDate);
+// Admin - Update reservation status
+router.patch('/table/updateTableReservationStatus/:id', UserAuth, adminManagerAuth, updateTableReservationStatus);
+
+// ========== TABLE MANAGEMENT ROUTES (Admin Only) ==========
+router.post('/table/add', UserAuth, adminManagerAuth, addTable);
+router.get('/table/getAll', UserAuth, adminManagerAuth, getTables);
+router.get('/table/getById/:id', UserAuth, adminManagerAuth, getTableById);
+router.put('/table/update/:id', UserAuth, adminManagerAuth, updateTable);
+router.delete('/table/delete/:id', UserAuth, adminManagerAuth, deleteTable);
+
+// ========== PUBLIC TABLE ENDPOINTS ==========
+// Public - Get tables by area
+router.get('/table/getByArea', getTablesByArea);
+
+// ========== BACKUP ROUTES FOR COMPATIBILITY ==========
+router.post('/getAvailableTablesByArea', getAvailableTablesByArea);
+router.get('/getTableReservationsByDate', getTableReservationsByDate);
+router.post('/createTablePaymentIntent', UserAuth, createTablePaymentIntent);
+router.post('/confirmTableBooking', UserAuth, confirmTableBooking);
+router.patch('/updateTableReservationStatus/:id', UserAuth, adminManagerAuth, updateTableReservationStatus);
 
 
 router.get('/housekeeping/staff', UserAuth, adminManagerAuth, getHousekeepingStaff);
@@ -127,10 +151,11 @@ router.patch("/toggleLike/:id", UserAuth, toggleLike);
 router.delete("/deleteBlog/:id", UserAuth, adminManagerAuth, deleteBlog);
 
 
+// Legacy routes (deprecated but kept for backward compatibility)
 router.post('/addTable', UserAuth, adminManagerAuth, addTable);
-router.get('/getTables', UserAuth, getTables);
+router.get('/getTables', UserAuth, adminManagerAuth, getTables);
 router.get('/getTablesByArea', getTablesByArea);
-router.get('/getTableById/:id', UserAuth, getTableById);
+router.get('/getTableById/:id', UserAuth, adminManagerAuth, getTableById);
 router.put('/updateTable/:id', UserAuth, adminManagerAuth, updateTable);
 router.delete('/deleteTable/:id', UserAuth, adminManagerAuth, deleteTable);
 
