@@ -9,6 +9,8 @@ import { StaffProvider } from './contexts/StaffContext';
 import { RoomProvider } from './contexts/RoomContext';
 import { MenuProvider } from './contexts/MenuContext';
 import { GalleryProvider } from './contexts/GalleryContext';
+import { TableProvider } from './contexts/TableContext';
+import { TableReservationProvider } from './contexts/TableReservationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -17,14 +19,18 @@ root.render(
       <RoomProvider>
         <StaffProvider>
           <MenuProvider>
-            <GalleryProvider>
-              <App />
-            </GalleryProvider>
+            <TableProvider>
+              <GalleryProvider>
+                <TableReservationProvider>
+                  <App />
+                </TableReservationProvider>
+              </GalleryProvider>
+            </TableProvider>
           </MenuProvider>
         </StaffProvider>
       </RoomProvider>
     </AuthProvider>
-  </React.StrictMode>
+  </React.StrictMode >
 );
 
 // If you want to start measuring performance in your app, pass a function

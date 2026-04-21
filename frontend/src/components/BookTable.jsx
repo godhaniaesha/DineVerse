@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaRegCalendarAlt, FaRegClock, FaRegUser, FaRegBuilding, FaRegCreditCard, FaRegCheckCircle, FaRegTimesCircle, FaChevronLeft, FaChevronRight, FaLock } from 'react-icons/fa';
 import { IoRestaurantOutline, IoWineOutline, IoCafeOutline, IoBedOutline } from 'react-icons/io5';
 import "../style/h_style.css"
+import { useTableReservation } from "../contexts/TableReservationContext";
 
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -14,7 +15,7 @@ function buildCalendar(year, month) {
   for (let d = 1; d <= total; d++) cells.push(d);
   return cells;
 }
-function genRef() { return "LN·" + Math.random().toString(36).substring(2, 7).toUpperCase(); }
+function genRef() { return "LN" + Math.random().toString(36).substring(2, 7).toUpperCase(); }
 
 function StepIndicator({ current }) {
   const steps = ["Details", "Preferences", "Confirm"];
@@ -82,6 +83,7 @@ function CalendarPicker({ selectedDate, onSelect }) {
 }
 
 export default function BookTable() {
+  const { getAvailableTables, createPaymentIntent, confirmBooking, getReservations } = useTableReservation();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef] = useState(genRef);
@@ -93,30 +95,97 @@ export default function BookTable() {
   const [date, setDate] = useState(null);
   const [time, setTime] = useState("");
   const [area, setArea] = useState("");
-  const [tableNo, setTableNo] = useState("");
+  const [tableId, setTableId] = useState(""); // store table._id instead of tableNo
   const [occasion, setOccasion] = useState("");
   const [requests, setRequests] = useState("");
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState({});
+  const [availableTables, setAvailableTables] = useState([]);
+  const [loadingTables, setLoadingTables] = useState(false);
+  const [bookedReservations, setBookedReservations] = useState([]);
 
-  const [paymentMethod, setPaymentMethod] = useState("card"); // card or upi
+  const [paymentMethod, setPaymentMethod] = useState("card");
   const [cardNo, setCardNo] = useState("");
   const [upiId, setUpiId] = useState("");
+  const [paymentIntentId, setPaymentIntentId] = useState("");
 
-  const times = [
-    { label: "12:00 PM", avail: true }, { label: "12:30 PM", avail: true },
-    { label: "1:00 PM", avail: false }, { label: "1:30 PM", avail: true },
-    { label: "2:00 PM", avail: true }, { label: "6:00 PM", avail: true },
-    { label: "6:30 PM", avail: true }, { label: "7:00 PM", avail: true },
-    { label: "7:30 PM", avail: false }, { label: "8:00 PM", avail: true },
-    { label: "8:30 PM", avail: true }, { label: "9:00 PM", avail: true },
+  const baseTimes = [
+    "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "6:00 PM",
+    "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM"
   ];
+
   const areas = [
-    { id: "cafe", icon: <IoCafeOutline />, name: "Cafe", desc: "Cozy coffee & snacks", tables: ["C-01", "C-02", "C-03", "C-04", "C-05"] },
-    { id: "rest", icon: <IoRestaurantOutline />, name: "Restaurant", desc: "Fine dining experience", tables: ["R-01", "R-02", "R-03", "R-04", "R-05", "R-06"] },
-    { id: "bar", icon: <IoWineOutline />, name: "Bar Lounge", desc: "Cocktails & night life", tables: ["B-01", "B-02", "B-03"] },
+    { id: "Cafe", icon: <IoCafeOutline />, name: "Cafe", desc: "Cozy coffee & snacks" },
+    { id: "Restaurant", icon: <IoRestaurantOutline />, name: "Restaurant", desc: "Fine dining experience" },
+    { id: "Bar", icon: <IoWineOutline />, name: "Bar Lounge", desc: "Cocktails & night life" },
   ];
   const occasions = ["Anniversary", "Birthday", "Business", "Date Night", "Family", "Celebration", "Other"];
+
+  // Fetch available tables when area, date, time, or guests change
+  useEffect(() => {
+    const fetchTables = async () => {
+      if (area && date && time && guests) {
+        try {
+          setLoadingTables(true);
+          const result = await getAvailableTables({
+            area: area,
+            date: date.toISOString(),
+            time: time,
+            guests: guests
+          });
+          if (result.success) {
+            setAvailableTables(result.data);
+          } else {
+            setAvailableTables([]);
+          }
+        } catch (err) {
+          console.error(err);
+          setAvailableTables([]);
+        } finally {
+          setLoadingTables(false);
+        }
+      }
+    };
+    fetchTables();
+  }, [area, date, time, guests, getAvailableTables]);
+
+  // Fetch booked reservations for selected date and area to check time availability
+  useEffect(() => {
+    const fetchBookedReservations = async () => {
+      if (date) {
+        const dateStr = date.toISOString();
+        const result = await getReservations(dateStr);
+        if (result.success) {
+          setBookedReservations(result.data);
+        } else {
+          setBookedReservations([]);
+        }
+      } else {
+        setBookedReservations([]);
+      }
+    };
+    fetchBookedReservations();
+  }, [date, getReservations]);
+
+  // Generate times array with avail based on bookedReservations
+  const times = baseTimes.map(label => {
+    // Check if this time has any booked tables for selected area and date
+    if (!area || !date) return { label, avail: true };
+    const hasBooking = bookedReservations.some(res => 
+      res.date.startsWith(date.toISOString().split('T')[0]) && 
+      res.time === label && 
+      res.area === area &&
+      (res.status === "Confirmed" || res.status === "Arrived")
+    );
+    return { label, avail: !hasBooking };
+  });
+  const sortedAvailableTables = [...availableTables].sort((a, b) => {
+    const aMatch = a.capacityMatch ? 1 : 0;
+    const bMatch = b.capacityMatch ? 1 : 0;
+    if (aMatch !== bMatch) return bMatch - aMatch;
+    return a.capacity - b.capacity;
+  });
+  const selectedTable = availableTables.find(t => t._id === tableId);
 
   const validate1 = () => {
     const e = {};
@@ -165,35 +234,60 @@ export default function BookTable() {
   const validate2 = () => {
     const e = {};
     if (!area) e.area = "Please select a seating area";
-    if (area && !tableNo) e.tableNo = "Please select a table number";
-
-    // Payment Validation
-    if (paymentMethod === "card") {
-      if (!cardNo.trim()) {
-        e.cardNo = "Card number is required";
-      } else if (!/^\d{16}$/.test(cardNo.replace(/\s/g, ""))) {
-        e.cardNo = "Card number must be 16 digits";
-      }
-    } else if (paymentMethod === "upi") {
-      if (!upiId.trim()) {
-        e.upiId = "UPI ID is required";
-      } else if (!/^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(upiId)) {
-        e.upiId = "Please enter a valid UPI ID (e.g. user@bank)";
-      }
-    }
+    if (area && !tableId) e.tableNo = "Please select a table number";
 
     if (!agree) e.agree = "You must agree to our reservation policy";
 
     setErrors(e);
     return !Object.keys(e).length;
   };
-  const goNext = () => { if (step === 1 && validate1()) setStep(2); if (step === 2 && validate2()) setStep(3); };
-  const submit = e => { e.preventDefault(); if (!agree) return; setSubmitted(true); };
+  const goNext = async () => { 
+    if (step === 1 && validate1()) {
+      setStep(2);
+    }
+    if (step === 2 && validate2()) {
+      // Create payment intent
+      const paymentResult = await createPaymentIntent({
+        guest_name: `${firstName} ${lastName}`,
+        email: email
+      });
+      if (paymentResult.success) {
+        setPaymentIntentId(paymentResult.data.paymentIntentId);
+        setStep(3);
+      } else {
+        alert(paymentResult.error || "Failed to create payment");
+      }
+    } 
+  };
+  const submit = async (e) => { 
+    e.preventDefault(); 
+    if (!agree) return; 
+    
+    const bookingResult = await confirmBooking({
+      guest_name: `${firstName} ${lastName}`,
+      email: email,
+      phone: phone,
+      date: date.toISOString(),
+      time: time,
+      guests: guests,
+      area: area,
+      tableId: tableId,
+      occasion: occasion,
+      specialRequest: requests,
+      paymentIntentId: paymentIntentId
+    });
+
+    if (bookingResult.success) {
+      setSubmitted(true);
+    } else {
+      alert(bookingResult.error || "Failed to confirm booking");
+    }
+  };
   const fmtDate = d => d ? d.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" }) : null;
   const reset = () => {
     setSubmitted(false); setStep(1); setFirstName(""); setLastName(""); setEmail(""); setPhone("");
-    setGuests(2); setDate(null); setTime(""); setArea(""); setTableNo(""); setOccasion(""); setRequests(""); setAgree(false); setErrors({});
-    setPaymentMethod("card"); setCardNo(""); setUpiId("");
+    setGuests(2); setDate(null); setTime(""); setArea(""); setTableId(""); setOccasion(""); setRequests(""); setAgree(false); setErrors({});
+    setPaymentMethod("card"); setCardNo(""); setUpiId(""); setPaymentIntentId(""); setAvailableTables([]); setBookedReservations([]);
   };
 
   return (
@@ -336,7 +430,7 @@ export default function BookTable() {
                               <div key={a.id} className={`h_area${area === a.id ? " h_asel" : ""}`}
                                 onClick={() => {
                                   setArea(a.id);
-                                  setTableNo(""); // Reset table number when area changes
+                                  setTableId(""); // Reset table when area changes
                                   setErrors(p => ({ ...p, area: null, tableNo: null }));
                                 }}>
                                 <span className="h_area_ico">{a.icon}</span>
@@ -354,19 +448,26 @@ export default function BookTable() {
                             <label className="h_label">Available Tables in {areas.find(a => a.id === area)?.name || "Selection"}</label>
                             <select
                               className={`h_input${errors.tableNo ? " h_err" : ""}`}
-                              value={tableNo}
+                              value={tableId}
                               onChange={e => {
-                                setTableNo(e.target.value);
+                                setTableId(e.target.value);
                                 setErrors(p => ({ ...p, tableNo: null }));
                               }}
-                              disabled={!area}
+                              disabled={!area || loadingTables}
                             >
                               <option value="">-- Select Table Number --</option>
-                              {area && areas.find(a => a.id === area)?.tables.map(num => (
-                                <option key={num} value={num}>Table {num}</option>
+                              {loadingTables && <option value="">Loading tables...</option>}
+                              {!loadingTables && availableTables.length === 0 && area && <option value="">No available tables</option>}
+                              {!loadingTables && sortedAvailableTables.map(table => (
+                                <option key={table._id} value={table._id}>
+                                  {table.tableNo} ({table.capacity} guests{table.capacityMatch ? ", fits" : ", less than guests"})
+                                </option>
                               ))}
                             </select>
                             {errors.tableNo && <div className="h_err_msg">{errors.tableNo}</div>}
+                            {selectedTable && !selectedTable.capacityMatch && (
+                              <div className="h_err_msg">Selected table capacity is lower than number of guests, but table is available.</div>
+                            )}
                           </div>
                         </div>
 
@@ -390,60 +491,6 @@ export default function BookTable() {
                         </div>
 
                         <div className="h_fsec">
-                          <div className="h_sec_lbl">Payment Information</div>
-                          <div className="h_row_2" style={{ marginBottom: "1rem" }}>
-                            <button
-                              type="button"
-                              className={`h_btn_back${paymentMethod === 'card' ? ' h_sel' : ''}`}
-                              style={{ flex: 1, padding: "10px", borderColor: paymentMethod === 'card' ? "#c8965a" : "" }}
-                              onClick={() => setPaymentMethod('card')}
-                            >
-                              Credit / Debit Card
-                            </button>
-                            <button
-                              type="button"
-                              className={`h_btn_back${paymentMethod === 'upi' ? ' h_sel' : ''}`}
-                              style={{ flex: 1, padding: "10px", borderColor: paymentMethod === 'upi' ? "#c8965a" : "" }}
-                              onClick={() => setPaymentMethod('upi')}
-                            >
-                              UPI Payment
-                            </button>
-                          </div>
-
-                          {paymentMethod === 'card' ? (
-                            <div className="h_field">
-                              <label className="h_label">Card Number</label>
-                              <input
-                                className={`h_input${errors.cardNo ? " h_err" : ""}`}
-                                type="text"
-                                placeholder="xxxx xxxx xxxx xxxx"
-                                value={formatCardNumber(cardNo)}
-                                onChange={e => {
-                                  const raw = e.target.value.replace(/\D/g, "").slice(0, 16);
-                                  setCardNo(raw);
-                                  if (errors.cardNo) setErrors(p => ({ ...p, cardNo: null }));
-                                }}
-                              />
-                              {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
-                            </div>
-                          ) : (
-                            <div className="h_field">
-                              <label className="h_label">UPI ID</label>
-                              <input
-                                className={`h_input${errors.upiId ? " h_err" : ""}`}
-                                type="text"
-                                placeholder="username@bank"
-                                value={upiId}
-                                onChange={e => {
-                                  setUpiId(e.target.value);
-                                  if (errors.upiId) setErrors(p => ({ ...p, upiId: null }));
-                                }}
-                              />
-                              {errors.upiId && <div className="h_err_msg">{errors.upiId}</div>}
-                            </div>
-                          )}
-                        </div>
-                        <div className="h_fsec">
                           <label className="h_chk_wrap">
                             <input type="checkbox" className="h_chk" checked={agree}
                               onChange={e => { setAgree(e.target.checked); setErrors(p => ({ ...p, agree: null })); }} />
@@ -464,9 +511,9 @@ export default function BookTable() {
                             ["Guests", `${guests} ${guests > 1 ? "Guests" : "Guest"}`],
                             ["Date", fmtDate(date)], ["Time", time],
                             ["Area", areas.find(a => a.id === area)?.name || "—"],
-                            ["Table Number", tableNo || "—"],
+                            ["Table Number", availableTables.find(t => t._id === tableId)?.tableNo || "—"],
                             ["Occasion", occasion || "—"],
-                            ["Payment", paymentMethod === 'card' ? `Card (Ending in ${cardNo.slice(-4)})` : `UPI (${upiId})`],
+                            ["Advance Payment", "10 USD"],
                             ["Requests", requests || "None"],
                           ].map(([k, v]) => (
                             <div className="h_sum_row" key={k}>
@@ -510,8 +557,9 @@ export default function BookTable() {
                       { key: "Time", val: time },
                       { key: "Guests", val: `${guests} ${guests > 1 ? "guests" : "guest"}` },
                       { key: "Area", val: area ? areas.find(a => a.id === area)?.name : null },
-                      { key: "Table No", val: tableNo },
+                      { key: "Table No", val: availableTables.find(t => t._id === tableId)?.tableNo || null },
                       { key: "Occasion", val: occasion || null },
+                      { key: "Advance Payment", val: "10 USD" },
                     ].map(({ key, val }) => (
                       <div className="h_p_row" key={key}>
                         <span className="h_p_k">{key}</span>
