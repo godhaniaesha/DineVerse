@@ -262,7 +262,7 @@ export const createPaymentIntent = async (req, res) => {
         const {
             first_name, last_name, email, phone,
             checkIn, checkOut, checkInTime, checkOutTime,
-            adults, children, roomTypeId, roomId, specialRequest
+            adults, children, roomTypeId, roomId, specialRequest, userId
         } = req.body;
 
         if (!first_name || !last_name || !email || !phone ||
@@ -286,12 +286,20 @@ export const createPaymentIntent = async (req, res) => {
             return ThrowError(res, 400, "Check-out time must be after check-in time");
         }
 
+        let finalUserId = userId || req.user?._id;
+
+        if (!finalUserId && email) {
+            const user = await UserModel.findOne({ email: email.toLowerCase() });
+            if (user) finalUserId = user._id;
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: billing.totalAmount * 100,
             currency: "inr",
             metadata: {
                 first_name, last_name, email,
                 roomId, roomTypeId,
+                userId: finalUserId?.toString() || "",
                 checkIn: checkIn.toString(),
                 checkOut: checkOut.toString(),
                 billingType: billing.billingType,
@@ -326,7 +334,7 @@ export const confirmBooking = async (req, res) => {
             first_name, last_name, email, phone,
             checkIn, checkOut, checkInTime, checkOutTime,
             adults, children, roomTypeId, roomId,
-            specialRequest, paymentIntentId
+            specialRequest, paymentIntentId, userId
         } = req.body;
 
         if (!first_name || !last_name || !email || !phone ||
@@ -344,6 +352,13 @@ export const confirmBooking = async (req, res) => {
         const checkInDateTime = new Date(`${checkIn}T${checkInTime24}:00`);
         const checkOutDateTime = new Date(`${checkOut}T${checkOutTime24}:00`);
 
+        let finalUserId = userId || req.user?._id;
+
+        if (!finalUserId && email) {
+            const user = await UserModel.findOne({ email: email.toLowerCase() });
+            if (user) finalUserId = user._id;
+        }
+
         const booking = await RoomReservation.create({
             first_name, last_name, email, phone,
             checkIn: checkInDateTime,
@@ -354,6 +369,7 @@ export const confirmBooking = async (req, res) => {
             children: Number(children) || 0,
             roomType: roomTypeId,
             room: roomId,
+            user: finalUserId,
             specialRequest: specialRequest || "",
             totalAmount: billing.totalAmount,
             nights: billing.nights || 1,
@@ -694,7 +710,6 @@ export const getAdminReservations = async (req, res) => {
         let tableReservations = [];
         let roomReservations = [];
 
-        // 1. Fetch Room Reservations
         if (type === "All" || type === "Room") {
             const query = {};
             if (search) {
@@ -708,7 +723,6 @@ export const getAdminReservations = async (req, res) => {
             roomReservations = await RoomReservation.find(query).sort({ createdAt: -1 });
         }
 
-        // 2. Fetch Table Reservations
         if (type === "All" || type === "Table") {
             const query = {};
             if (search) {
@@ -721,7 +735,6 @@ export const getAdminReservations = async (req, res) => {
             tableReservations = await TableReservation.find(query).sort({ createdAt: -1 });
         }
 
-        // 4. Calculate KPI Stats (Strictly based on active/recent management statuses)
         const activeStatuses = ["Confirmed", "Pending", "Cancelled", "Checked In", "No Show"];
 
         const totalTable = await TableReservation.countDocuments({ status: { $in: activeStatuses } });

@@ -5,6 +5,7 @@ import { sendBadRequestResponse } from "../utils/Response.utils.js";
 import mongoose from "mongoose";
 import Stripe from "stripe";
 import dotenv from "dotenv";
+import UserModel from "../models/UserModel.js";
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET);
@@ -14,10 +15,6 @@ const isValidDate = (dateString) => {
     const dr = new Date(dateString);
     return dr instanceof Date && !isNaN(dr);
 };
-
-
-
-
 
 export const getAvailableTablesByArea = async (req, res) => {
     try {
@@ -62,13 +59,9 @@ export const getAvailableTablesByArea = async (req, res) => {
     }
 };
 
-
-
-
-
 export const createTablePaymentIntent = async (req, res) => {
     try {
-        const { guest_name, email } = req.body;
+        const { guest_name, email, userId } = req.body;
 
         if (!guest_name || !email) {
             return sendBadRequestResponse(res, "Guest name and email are required for payment");
@@ -76,11 +69,22 @@ export const createTablePaymentIntent = async (req, res) => {
 
         const amount = 50;
 
+        let finalUserId = userId || req.user?._id;
+
+        if (!finalUserId && email) {
+            const user = await UserModel.findOne({ email: email.toLowerCase() });
+            if (user) finalUserId = user._id;
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amount * 100,
             currency: "inr",
             description: `Table reservation advance for ${guest_name}`,
-            metadata: { guest_name, email },
+            metadata: { 
+                guest_name, 
+                email,
+                userId: finalUserId?.toString() || ""
+            },
             payment_method_types: ["card"],
         });
 
@@ -98,16 +102,12 @@ export const createTablePaymentIntent = async (req, res) => {
     }
 };
 
-
-
-
-
 export const confirmTableBooking = async (req, res) => {
     try {
         const {
             guest_name, email, phone, date, time,
             guests, area, tableId, occasion,
-            specialRequest, paymentIntentId
+            specialRequest, paymentIntentId, userId
         } = req.body;
 
         if (!guest_name || !email || !phone || !date || !time || !tableId || !paymentIntentId) {
@@ -137,11 +137,19 @@ export const confirmTableBooking = async (req, res) => {
             return ThrowError(res, 400, "This table has just been booked by someone else.");
         }
 
+        let finalUserId = userId || req.user?._id;
+
+        if (!finalUserId && email) {
+            const user = await UserModel.findOne({ email: email.toLowerCase() });
+            if (user) finalUserId = user._id;
+        }
+
         const booking = await TableReservation.create({
             guest_name, email, phone,
             date: searchDate, time,
             guests: Number(guests) || 1,
             area, table: tableId,
+            user: finalUserId,
             occasion: occasion || "Other",
             specialRequest: specialRequest || "",
             advanceAmount: 10,
@@ -159,8 +167,6 @@ export const confirmTableBooking = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
-
-
 
 export const updateTableReservationStatus = async (req, res) => {
     try {
@@ -193,9 +199,6 @@ export const updateTableReservationStatus = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
-
-
-
 
 export const getTableReservationsByDate = async (req, res) => {
     try {

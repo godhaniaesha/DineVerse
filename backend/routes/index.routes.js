@@ -18,6 +18,7 @@ import { getUserBookings, getUserBillingHistory } from '../controllers/userProfi
 import { getAdminDashboardData } from '../controllers/dashboardController.js';
 import { addReview, deleteReview, getAreaReviews, getReviews, getUserReviews } from '../controllers/reviewController.js';
 import { getAnalytics } from '../controllers/analyticsController.js';
+import { subscribe, getAllSubscriptions, deleteSubscription } from '../controllers/subscriptionController.js';
 
 const router = express.Router();
 
@@ -61,8 +62,8 @@ router.delete('/deleteRoom/:id', UserAuth, adminManagerAuth, deleteRoom);
 router.post('/reservations/validateGuestDetails', validateGuestDetails);
 router.post('/reservations/getAvailableRoomTypes', getAvailableRoomTypes);
 router.post('/reservations/getRoomsByType', getRoomsByType);
-router.post('/reservations/createPaymentIntent', createPaymentIntent);
-router.post('/reservations/confirmBooking', confirmBooking);
+router.post('/reservations/createPaymentIntent', UserAuth, createPaymentIntent);
+router.post('/reservations/confirmBooking', UserAuth, confirmBooking);
 router.get('/reservations/guests', UserAuth, adminManagerAuth, getGuests);
 router.get('/reservations/guests/search', UserAuth, adminManagerAuth, searchGuests);
 router.get('/reservations/search', UserAuth, adminManagerAuth, searchReservations);
@@ -163,6 +164,11 @@ router.get('/reviews/get-all', getReviews);
 router.delete('/reviews/delete/:id', UserAuth, adminManagerAuth, deleteReview);
 router.get('/reviews/area/:area', getAreaReviews);
 router.get('/reviews/user/:userId', getUserReviews);
+
+
+router.post('/subscriptions/subscribe', subscribe);
+router.get('/subscriptions/getAll', UserAuth, adminManagerAuth, getAllSubscriptions);
+router.delete('/subscriptions/delete/:id', UserAuth, adminManagerAuth, deleteSubscription);
 
 
 router.get("/s3/list", async (req, res) => {

@@ -10,6 +10,7 @@ const tableReservationSchema = new mongoose.Schema({
     guests: { type: Number, required: true },
     area: { type: String, enum: ["Restaurant", "Cafe", "Bar"], required: true },
     table: { type: mongoose.Schema.Types.ObjectId, ref: "Table", required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     occasion: { type: String },
     specialRequest: { type: String },
     advanceAmount: { type: Number, default: 10 },

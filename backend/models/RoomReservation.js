@@ -1,4 +1,4 @@
-﻿import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 const roomReservationSchema = new mongoose.Schema(
     {
@@ -25,6 +25,10 @@ const roomReservationSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Room",
             required: true
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
         },
         specialRequest: { type: String, default: "" },
         totalAmount: { type: Number, required: true },
