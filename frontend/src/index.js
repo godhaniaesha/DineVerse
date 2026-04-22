@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { AuthProvider } from './contexts/AuthContext';
 import { StaffProvider } from './contexts/StaffContext';
 import { RoomProvider } from './contexts/RoomContext';
@@ -13,30 +14,37 @@ import { TableProvider } from './contexts/TableContext';
 import { TableReservationProvider } from './contexts/TableReservationContext';
 import { OrderProvider } from './contexts/OrderContext';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
+// ✅ Root Provider (clean structure)
+const RootProviders = ({ children }) => {
+  return (
     <AuthProvider>
       <StaffProvider>
         <RoomProvider>
           <MenuProvider>
             <GalleryProvider>
               <TableProvider>
-                <TableReservationProvider>
-                  <OrderProvider>
-                    <App />
-                  </OrderProvider>
-                </TableReservationProvider>
+                  <TableReservationProvider>
+                    <OrderProvider>
+                      {children}
+                    </OrderProvider>
+                  </TableReservationProvider>
               </TableProvider>
             </GalleryProvider>
           </MenuProvider>
         </RoomProvider>
       </StaffProvider>
     </AuthProvider>
-  </React.StrictMode >
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
+  <React.StrictMode>
+    <RootProviders>
+      <App />
+    </RootProviders>
+  </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

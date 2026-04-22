@@ -3,6 +3,7 @@ import { FaRegCalendarAlt, FaRegClock, FaRegUser, FaRegBuilding, FaRegCreditCard
 import { IoRestaurantOutline, IoWineOutline, IoCafeOutline, IoBedOutline } from 'react-icons/io5';
 import "../style/h_style.css"
 import { useTableReservation } from "../contexts/TableReservationContext";
+import { useAuth } from "../contexts/AuthContext";
 
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -84,6 +85,7 @@ function CalendarPicker({ selectedDate, onSelect }) {
 
 export default function BookTable() {
   const { getAvailableTables, createPaymentIntent, confirmBooking, getReservations } = useTableReservation();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef] = useState(genRef);
@@ -282,7 +284,8 @@ export default function BookTable() {
       // Create payment intent
       const paymentResult = await createPaymentIntent({
         guest_name: `${firstName} ${lastName}`,
-        email: email
+        email: email,
+        userId: user?._id
       });
       if (paymentResult.success) {
         setPaymentIntentId(paymentResult.data.paymentIntentId);
@@ -307,7 +310,8 @@ export default function BookTable() {
       tableId: tableId,
       occasion: occasion,
       specialRequest: requests,
-      paymentIntentId: paymentIntentId
+      paymentIntentId: paymentIntentId,
+      userId: user?._id
     });
 
     if (bookingResult.success) {
@@ -630,7 +634,7 @@ export default function BookTable() {
 
                     {step === 4 && (
                       <div className="h_fbody">
-                        {/* <div className="h_fsec">
+                        <div className="h_fsec">
                           <div className="h_sec_lbl">Reservation Summary</div>
                           <div className="h_summary_grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", background: "rgba(255,255,255,0.02)", padding: "1.5rem", borderRadius: "12px", border: "1px solid var(--h-border)" }}>
                             {[
@@ -649,7 +653,7 @@ export default function BookTable() {
                               </div>
                             ))}
                           </div>
-                        </div> */}
+                        </div>
                         {requests && (
                           <div className="h_fsec" style={{ marginTop: "1rem" }}>
                             <div className="h_sec_lbl" style={{ fontSize: "12px" }}>Special Requests</div>
