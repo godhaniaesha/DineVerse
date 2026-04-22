@@ -375,6 +375,16 @@ export default function AdminLayout() {
       "/admin/billing",
       "/admin/profile",
     ],
+    Chef: [
+    "/admin",
+    "/admin/cuisines",
+    "/admin/categories",
+    "/admin/dishes",
+    "/admin/admin-menu",
+    "/admin/orders",
+    "/admin/kds",
+    "/admin/profile",
+  ],
     "Cafe Waiter": [
       "/admin",
       "/admin/cafe-book-table",

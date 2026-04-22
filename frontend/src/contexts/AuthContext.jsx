@@ -213,6 +213,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("adminRole");
       localStorage.removeItem("adminName");
       localStorage.clear();
+       console.log("AFTER CLEAR", localStorage);
     } catch (error) {
       console.error("Logout error:", error);
     }

@@ -1,22 +1,30 @@
-import axios from 'axios';
+// src/services/inquiryService.js
+import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 const inquiryService = {
-  // Submit new inquiry
+  // Submit new inquiry (public contact form)
   submitInquiry: async (inquiryData) => {
     try {
-      console.log('inquiryService: Making API call to:', `${API_BASE_URL}/addInquiry`);
-      console.log('inquiryService: Data being sent:', inquiryData);
-      
-      const response = await axios.post(`${API_BASE_URL}/addInquiry`, inquiryData);
-      console.log('inquiryService: Raw API response:', response);
-      console.log('inquiryService: Response data:', response.data);
-      
+      console.log(
+        "inquiryService: Making API call to:",
+        `${API_BASE_URL}/addInquiry`
+      );
+      console.log("inquiryService: Data being sent:", inquiryData);
+
+      const response = await axios.post(
+        `${API_BASE_URL}/addInquiry`,
+        inquiryData
+      );
+      console.log("inquiryService: Raw API response:", response);
+      console.log("inquiryService: Response data:", response.data);
+
       return response.data;
     } catch (error) {
-      console.error('inquiryService: Error submitting inquiry:', error);
-      console.error('inquiryService: Error response:', error.response);
+      console.error("inquiryService: Error submitting inquiry:", error);
+      console.error("inquiryService: Error response:", error.response);
       throw error;
     }
   },
@@ -29,9 +37,9 @@ const inquiryService = {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      return response.data; // expect {success, msg, data: [...]}
     } catch (error) {
-      console.error('Error fetching inquiries:', error);
+      console.error("Error fetching inquiries:", error);
       throw error;
     }
   },
@@ -39,14 +47,17 @@ const inquiryService = {
   // Get inquiry by ID (admin only)
   getInquiryById: async (id, token) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/getInquiryById/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/getInquiryById/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error('Error fetching inquiry by ID:', error);
+      console.error("Error fetching inquiry by ID:", error);
       throw error;
     }
   },
@@ -63,9 +74,9 @@ const inquiryService = {
           },
         }
       );
-      return response.data;
+      return response.data; // expect {success, msg, data: {...}}
     } catch (error) {
-      console.error('Error updating inquiry status:', error);
+      console.error("Error updating inquiry status:", error);
       throw error;
     }
   },
@@ -73,14 +84,17 @@ const inquiryService = {
   // Delete inquiry (admin only)
   deleteInquiry: async (id, token) => {
     try {
-      const response = await axios.delete(`${API_BASE_URL}/deleteInquiry/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.delete(
+        `${API_BASE_URL}/deleteInquiry/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error('Error deleting inquiry:', error);
+      console.error("Error deleting inquiry:", error);
       throw error;
     }
   },

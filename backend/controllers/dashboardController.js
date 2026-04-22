@@ -37,7 +37,7 @@ export const getAdminDashboardData = async (req, res) => {
             { label: "Active Rooms", value: `${activeRoomsCount} / ${totalRoomsCount}`, trend: "Occupied vs Total" },
             { label: "Total Orders", value: todayOrdersCount, trend: "Today" },
             { label: "Gallery Uploads", value: totalGalleryUploads, trend: "Total Uploads" }
-        ];
+        ]; 
 
 
         const bestDishesAgg = await Order.aggregate([

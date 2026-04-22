@@ -43,13 +43,13 @@ function BlogCard({ post, delay = 0, onRead, onLikeToggle }) {
 
     const handleLike = async () => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
                 alert('Please login to like posts');
                 return;
             }
             
-            await blogService.toggleLike(post._id, token);
+            await blogService.toggleLike(post._id, authToken);
             const newLiked = !liked;
             setLiked(newLiked);
             setLikesCount(prev => newLiked ? prev + 1 : prev - 1);
