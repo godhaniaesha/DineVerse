@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
+import { useTableReservation } from "../../contexts/TableReservationContext";
+import { useOrder } from "../../contexts/OrderContext";
 import emptyCart from "../../img/no.png";
 
 
@@ -71,21 +73,43 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
   const [lineQuantities, setLineQuantities] = useState({});
   const [lastSubmitted, setLastSubmitted] = useState(null);
   const [occupiedTables, setOccupiedTables] = useState([]);
+  const { reservations, getReservations } = useTableReservation();
+  const { orders, fetchOrders, createOrder: sendOrderToBackend } = useOrder();
 
   useEffect(() => {
-    const tableKeyMap = {
-      cafe: "admin-cafe-tables",
-      restaurant: "admin-res-tables",
-      bar: "admin-bar-tables",
-    };
-    const tableKey = tableKeyMap[variant] || `admin-${variant}-tables`;
-    const savedTables = localStorage.getItem(tableKey);
-    if (savedTables) {
-      const allTables = JSON.parse(savedTables);
-      const occupied = allTables.filter(t => t.status === "occupied");
+    getReservations();
+    fetchOrders();
+  }, [getReservations, fetchOrders]);
+
+  useEffect(() => {
+    if (reservations.length > 0) {
+      // Filter reservations for the current area (variant) that have Arrived (Occupied)
+      const variantMap = {
+        cafe: "Cafe",
+        restaurant: "Restaurant",
+        bar: "Bar"
+      };
+      const currentArea = variantMap[variant] || "Cafe";
+      
+      const occupied = reservations
+        .filter(r => r.area === currentArea && r.status === "Arrived")
+        .map(r => {
+          // Find orders for this table
+          const tableOrders = orders.filter(o => o.tableId?._id === r.table?._id || o.tableId === r.table?._id);
+          const orderItems = tableOrders.flatMap(o => o.items.map(i => `${i.name} x${i.quantity}`));
+          
+          return {
+            id: r._id,
+            tableId: r.table?._id,
+            tableNo: r.table?.tableNo || "T-?",
+            waiter: r.waiter || "Unassigned",
+            currentOrders: orderItems.length > 0 ? orderItems.join(", ") : "No active orders"
+          };
+        });
+      
       setOccupiedTables(occupied);
     }
-  }, [variant]);
+  }, [reservations, orders, variant]);
 
   const [orderDraft, setOrderDraft] = useState(() => {
     const savedDraft = localStorage.getItem(storageKey);

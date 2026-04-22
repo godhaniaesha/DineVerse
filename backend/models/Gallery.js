@@ -7,6 +7,12 @@ const gallerySchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+        category: {
+            type: String,
+            required: true,
+            enum: ["Ambiance", "Dishes", "Bar", "Events", "Restaurant"],
+            default: "Ambiance"
+        },
         img: {
             type: String,
             required: true

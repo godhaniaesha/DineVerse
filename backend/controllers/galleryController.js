@@ -1,19 +1,21 @@
-﻿import { Gallery } from "../models/Gallery.js";
+import { Gallery } from "../models/Gallery.js";
 import { uploadFile, deleteFileFromS3 } from "../utils/uploadFile.utils.js";
 import { sendBadRequestResponse } from "../utils/Response.utils.js";
 import { ThrowError } from "../utils/Error.utils.js";
 import mongoose from "mongoose";
 export const addImage = async (req, res) => {
     try {
-        const { title, visibility } = req.body;
+        const { title, visibility, category } = req.body;
 
         if (!title) return sendBadRequestResponse(res, "Title is required");
+        if (!category) return sendBadRequestResponse(res, "Category is required");
         if (!req.file) return sendBadRequestResponse(res, "Image is required");
 
         const uploadResult = await uploadFile(req.file);
 
         const image = await Gallery.create({
             title,
+            category,
             img: uploadResult.url,
             visibility: visibility || "Visible",
             addedBy: req.user?._id
@@ -59,6 +61,7 @@ export const updateImage = async (req, res) => {
         }
 
         image.title = req.body.title || image.title;
+        image.category = req.body.category || image.category;
         image.visibility = req.body.visibility || image.visibility;
 
         const updated = await image.save();

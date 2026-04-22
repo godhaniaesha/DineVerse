@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     FiUser,
     FiCalendar,
@@ -18,11 +18,15 @@ import {
     FiAlertCircle,
     FiStar
 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../style/z_style.css";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Profile() {
+    const navigate = useNavigate();
+    const { user, logout, changePassword, updateProfile, isAuthenticated, token } = useAuth();
     const [activeTab, setActiveTab] = useState("profile");
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [showPasswords, setShowPasswords] = useState({
@@ -38,11 +42,138 @@ export default function Profile() {
     const [reviewProfession, setReviewProfession] = useState("");
     const [reviewMessage, setReviewMessage] = useState("");
 
+    const [profileForm, setProfileForm] = useState({
+        full_name: "",
+        email: "",
+        phone: "",
+        img: null
+    });
+    const [passwordForm, setPasswordForm] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const [loading, setLoading] = useState(false);
+    const [bookings, setBookings] = useState([]);
+    const [bookingsLoading, setBookingsLoading] = useState(false);
+    const [bookingsError, setBookingsError] = useState("");
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate("/auth");
+        }
+        if (user) {
+            setProfileForm({
+                full_name: user.full_name || "",
+                email: user.email || "",
+                phone: user.phone || "",
+                img: null
+            });
+        }
+    }, [isAuthenticated, user, navigate]);
+
+    useEffect(() => {
+        const fetchBookings = async () => {
+            if (!token || !isAuthenticated) return;
+            try {
+                setBookingsLoading(true);
+                setBookingsError("");
+                const response = await fetch("http://localhost:8000/api/user/bookings", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (!response.ok || !data?.success) {
+                    throw new Error(data?.msg || "Failed to load bookings");
+                }
+                setBookings(data?.data || []);
+            } catch (error) {
+                setBookings([]);
+                setBookingsError(error.message || "Failed to load bookings");
+            } finally {
+                setBookingsLoading(false);
+            }
+        };
+
+        fetchBookings();
+    }, [token, isAuthenticated]);
+
+    const formatBookingDate = (value) => {
+        if (!value) return "-";
+        return new Date(value).toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric"
+        });
+    };
+
+    const formatStatus = (status = "") => status.toLowerCase().replace(/\s+/g, "_");
+
     const togglePasswordVisibility = (field) => {
         setShowPasswords(prev => ({
             ...prev,
             [field]: !prev[field]
         }));
+    };
+
+    const handleProfileSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append("full_name", profileForm.full_name);
+            formData.append("email", profileForm.email);
+            formData.append("phone", profileForm.phone);
+            if (profileForm.img) {
+                formData.append("img", profileForm.img);
+            }
+            
+            const result = await updateProfile(user._id, formData);
+            if (result.success) {
+                alert("Profile updated successfully!");
+            } else {
+                alert(result.error || "Failed to update profile");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error updating profile");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+        
+        try {
+            setLoading(true);
+            const result = await changePassword(
+                passwordForm.oldPassword, 
+                passwordForm.newPassword
+            );
+            
+            if (result.success) {
+                alert("Password changed successfully!");
+                setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
+            } else {
+                alert(result.error || "Failed to change password");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error changing password");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate("/auth");
     };
 
     const renderContent = () => {
@@ -55,7 +186,7 @@ export default function Profile() {
                         <div className="z_prof_user_info z_md">
                             <div className="z_prof_avatar_wrap">
                                 <img
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
+                                    src={user?.img || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"}
                                     alt="Profile"
                                     className="z_prof_avatar"
                                 />
@@ -63,38 +194,62 @@ export default function Profile() {
                                     <FiEdit2 size={16} />
                                 </div>
                             </div>
-                            <h3 className="z_prof_user_name">John Doe</h3>
-                            <div className="z_prof_user_tag">Elite Member</div>
+                            <h3 className="z_prof_user_name">{user?.full_name || "User"}</h3>
+                            <div className="z_prof_user_tag">{user?.role || "Member"}</div>
                         </div>
-                        <div className="row g-4">
-                            <div className="col-md-6 col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">Legal Name</label>
-                                    <input type="text" className="z_prof_input" defaultValue="John Doe" />
+                        <form onSubmit={handleProfileSubmit}>
+                            <div className="row g-4">
+                                <div className="col-md-6 col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">Legal Name</label>
+                                        <input 
+                                            type="text" 
+                                            className="z_prof_input" 
+                                            value={profileForm.full_name}
+                                            onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">Email Identity</label>
+                                        <input 
+                                            type="email" 
+                                            className="z_prof_input" 
+                                            value={profileForm.email}
+                                            onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">Contact Number</label>
+                                        <input 
+                                            type="tel" 
+                                            className="z_prof_input" 
+                                            value={profileForm.phone}
+                                            onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-6 col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">Profile Image</label>
+                                        <input 
+                                            type="file" 
+                                            className="z_prof_input" 
+                                            accept="image/*"
+                                            onChange={(e) => setProfileForm({ ...profileForm, img: e.target.files[0] })}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="col-md-6 col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">Email Identity</label>
-                                    <input type="email" className="z_prof_input" defaultValue="john.doe@example.com" />
-                                </div>
+                            <div className="w-100 justify-content-center d-flex mt-3">
+                                <button type="submit" className="z_prof_save_btn" disabled={loading}>
+                                    {loading ? "Updating..." : "Update Profile"}
+                                </button>
                             </div>
-                            <div className="col-md-6 col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">Contact Number</label>
-                                    <input type="tel" className="z_prof_input" defaultValue="+91 98765 43210" />
-                                </div>
-                            </div>
-                            <div className="col-md-6 col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">Current City</label>
-                                    <input type="text" className="z_prof_input" defaultValue="Mumbai, India" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="w-100 justify-content-center d-flex mt-3">
-                            <button className="z_prof_save_btn">Update Profile</button>
-                        </div>
+                        </form>
                     </div>
                 );
             case "bookings":
@@ -102,20 +257,21 @@ export default function Profile() {
                     <div className="z_prof_section">
                         <h2 className="z_prof_section_title">Reservation <span>History</span></h2>
                         <div className="z_prof_bookings_list">
-                            {[
-                                { id: 1, venue: "The Restaurant", date: "Oct 24, 2023", time: "08:30 PM", status: "completed", accent: "var(--d-restaurant)" },
-                                { id: 2, venue: "The Bar", date: "Oct 28, 2023", time: "10:00 PM", status: "pending", accent: "var(--d-bar)" },
-                                { id: 3, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "cancel", accent: "var(--d-cafe)" },
-                                { id: 4, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "confirmed", accent: "var(--d-cafe)" }
-                            ].map((booking) => (
-                                <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.accent }}>
+                            {bookingsLoading && <p>Loading bookings...</p>}
+                            {bookingsError && <p style={{ color: "var(--d-danger, #dc3545)" }}>{bookingsError}</p>}
+                            {!bookingsLoading && !bookingsError && bookings.length === 0 && <p>No bookings found yet.</p>}
+                            {bookings.map((booking) => (
+                                <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.type === "Room" ? "var(--d-room)" : "var(--d-restaurant)" }}>
                                     <div className="z_prof_booking_info">
-                                        <h4>{booking.venue}</h4>
+                                        <h4>{booking.service}</h4>
                                         <div className="z_prof_booking_meta">
-                                            <span><FiCalendar /> {booking.date}</span>
-                                            <span><FiClock /> {booking.time}</span>
+                                            <span><FiCalendar /> {formatBookingDate(booking.date)}</span>
+                                            <span><FiClock /> {booking.time || "-"}</span>
                                         </div>
-                                        {booking.status === "completed" && (
+                                        <div className="z_prof_booking_meta">
+                                            <span><FiFileText /> {booking.bookingRef || "-"}</span>
+                                        </div>
+                                        {formatStatus(booking.status) === "completed" && (
                                             <div 
                                                 className="z_prof_booking_stars"
                                                 onClick={() => {
@@ -135,7 +291,7 @@ export default function Profile() {
                                             </div>
                                         )}
                                     </div>
-                                    <span className={`z_prof_booking_status z_prof_status_${booking.status}`}>
+                                    <span className={`z_prof_booking_status z_prof_status_${formatStatus(booking.status)}`}>
                                         {booking.status}
                                     </span>
                                 </div>
@@ -148,9 +304,6 @@ export default function Profile() {
                     <div className="z_prof_section">
                         <div className="z_prof_billing_history" >
                               <h2 className="z_prof_section_title">Transaction <span>History</span></h2>
-                            {/* <h3 className="z_prof_label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                <FiFileText /> Transaction History
-                            </h3> */}
                             <div className="z_prof_history_table_wrap">
                                 <table className="z_prof_history_table">
                                     <thead>
@@ -191,68 +344,78 @@ export default function Profile() {
                 return (
                     <div className="z_prof_section">
                         <h2 className="z_prof_section_title">Security <span>Access</span></h2>
-                        <div className="row g-4">
-                            <div className="col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">Current Credentials</label>
-                                    <div className="z_prof_pass_wrapper">
-                                        <input
-                                            type={showPasswords.current ? "text" : "password"}
-                                            className="z_prof_input"
-                                            placeholder="Enter current password"
-                                        />
-                                        <button
-                                            type="button"
-                                            className="z_prof_eye_btn"
-                                            onClick={() => togglePasswordVisibility('current')}
-                                        >
-                                            {showPasswords.current ? <FiEyeOff /> : <FiEye />}
-                                        </button>
+                        <form onSubmit={handlePasswordSubmit}>
+                            <div className="row g-4">
+                                <div className="col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">Current Credentials</label>
+                                        <div className="z_prof_pass_wrapper">
+                                            <input
+                                                type={showPasswords.current ? "text" : "password"}
+                                                className="z_prof_input"
+                                                placeholder="Enter current password"
+                                                value={passwordForm.oldPassword}
+                                                onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="z_prof_eye_btn"
+                                                onClick={() => togglePasswordVisibility('current')}
+                                            >
+                                                {showPasswords.current ? <FiEyeOff /> : <FiEye />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-md-6 col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">New Key</label>
-                                    <div className="z_prof_pass_wrapper">
-                                        <input
-                                            type={showPasswords.new ? "text" : "password"}
-                                            className="z_prof_input"
-                                            placeholder="New password"
-                                        />
-                                        <button
-                                            type="button"
-                                            className="z_prof_eye_btn"
-                                            onClick={() => togglePasswordVisibility('new')}
-                                        >
-                                            {showPasswords.new ? <FiEyeOff /> : <FiEye />}
-                                        </button>
+                                <div className="col-md-6 col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">New Key</label>
+                                        <div className="z_prof_pass_wrapper">
+                                            <input
+                                                type={showPasswords.new ? "text" : "password"}
+                                                className="z_prof_input"
+                                                placeholder="New password"
+                                                value={passwordForm.newPassword}
+                                                onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="z_prof_eye_btn"
+                                                onClick={() => togglePasswordVisibility('new')}
+                                            >
+                                                {showPasswords.new ? <FiEyeOff /> : <FiEye />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-md-6 col-12">
-                                <div className="z_prof_field_group">
-                                    <label className="z_prof_label">Verify Key</label>
-                                    <div className="z_prof_pass_wrapper">
-                                        <input
-                                            type={showPasswords.confirm ? "text" : "password"}
-                                            className="z_prof_input"
-                                            placeholder="Confirm password"
-                                        />
-                                        <button
-                                            type="button"
-                                            className="z_prof_eye_btn"
-                                            onClick={() => togglePasswordVisibility('confirm')}
-                                        >
-                                            {showPasswords.confirm ? <FiEyeOff /> : <FiEye />}
-                                        </button>
+                                <div className="col-md-6 col-12">
+                                    <div className="z_prof_field_group">
+                                        <label className="z_prof_label">Verify Key</label>
+                                        <div className="z_prof_pass_wrapper">
+                                            <input
+                                                type={showPasswords.confirm ? "text" : "password"}
+                                                className="z_prof_input"
+                                                placeholder="Confirm password"
+                                                value={passwordForm.confirmPassword}
+                                                onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="z_prof_eye_btn"
+                                                onClick={() => togglePasswordVisibility('confirm')}
+                                            >
+                                                {showPasswords.confirm ? <FiEyeOff /> : <FiEye />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+                                <div className="col-12 justify-content-center d-flex ">
+                                    <button type="submit" className="z_prof_save_btn" disabled={loading}>
+                                        {loading ? "Changing..." : "Change Access Key"}
+                                    </button>
+                                </div>
                             </div>
-                            <div className="col-12 justify-content-center d-flex ">
-                                <button className="z_prof_save_btn ">Change Access Key</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 );
             default:
@@ -271,7 +434,7 @@ export default function Profile() {
                     <div className="z_prof_user_info z_all">
                         <div className="z_prof_avatar_wrap">
                             <img
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
+                                src={user?.img || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"}
                                 alt="Profile"
                                 className="z_prof_avatar"
                             />
@@ -279,8 +442,8 @@ export default function Profile() {
                                 <FiEdit2 size={16} />
                             </div>
                         </div>
-                        <h3 className="z_prof_user_name">John Doe</h3>
-                        <div className="z_prof_user_tag">Elite Member</div>
+                        <h3 className="z_prof_user_name">{user?.full_name || "User"}</h3>
+                        <div className="z_prof_user_tag">{user?.role || "Member"}</div>
                     </div>
 
                     <nav className="z_prof_nav">
@@ -353,7 +516,7 @@ export default function Profile() {
                                 className="z_modal_btn z_modal_btn_confirm"
                                 onClick={() => {
                                     setShowLogoutModal(false);
-                                    alert("Logging out..."); // Replace with actual logout logic
+                                    handleLogout();
                                 }}
                             >
                                 Yes, Sign Out

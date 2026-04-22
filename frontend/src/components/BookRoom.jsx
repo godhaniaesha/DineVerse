@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { FaRegBuilding, FaRegCreditCard, FaRegCheckCircle, FaLock, FaSwimmingPool, FaSpa, FaConciergeBell } from 'react-icons/fa';
 import { IoBedOutline } from 'react-icons/io5';
 import { MdOutlineKingBed, MdOutlineVilla, MdOutlineVpnKey } from 'react-icons/md';
 import "../style/h_style.css"
+import { useAuth } from "../contexts/AuthContext";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -93,9 +96,14 @@ function CalendarPicker({ label, selectedDate, onSelect, minDate = new Date() })
 }
 
 export default function BookRoom() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const selectedRoomTypeId = location.state?.selectedRoomTypeId || "";
+  const selectedRoomTypeName = location.state?.selectedRoomTypeName || "";
+
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
-  const [bookingRef] = useState(genRef);
+  const [bookingRef, setBookingRef] = useState(genRef);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -109,22 +117,179 @@ export default function BookRoom() {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
-  const [roomType, setRoomType] = useState("");
+  const [roomType, setRoomType] = useState(selectedRoomTypeId || "");
   const [roomNo, setRoomNo] = useState("");
+  const [availableRooms, setAvailableRooms] = useState([]);
   const [requests, setRequests] = useState("");
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState({});
+  const [roomTypes, setRoomTypes] = useState([]);
+  const [roomTypesLoading, setRoomTypesLoading] = useState(false);
+  const [roomsLoading, setRoomsLoading] = useState(false);
+  const [roomTypesError, setRoomTypesError] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState("card"); // card or upi
   const [cardNo, setCardNo] = useState("");
   const [upiId, setUpiId] = useState("");
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const roomTypes = [
-    { id: "deluxe", icon: <IoBedOutline />, name: "Deluxe Room", desc: "City view, King bed", price: "$250/night", numbers: ["101", "102", "103", "104", "105"] },
-    { id: "suite", icon: <MdOutlineKingBed />, name: "Executive Suite", desc: "Spacious, Premium decor", price: "$450/night", numbers: ["201", "202", "203"] },
-    { id: "villa", icon: <MdOutlineVilla />, name: "Ocean Villa", desc: "Private pool, Beachfront", price: "$800/night", numbers: ["V-01", "V-02", "V-03"] },
-    { id: "pres", icon: <MdOutlineVpnKey />, name: "Presidential", desc: "Ultimate luxury, Butler", price: "$1500/night", numbers: ["P-01"] },
-  ];
+  const iconByIndex = [<IoBedOutline />, <MdOutlineKingBed />, <MdOutlineVilla />, <MdOutlineVpnKey />];
+  const iconForRoomType = (index) => iconByIndex[index % iconByIndex.length];
+
+  const formatDateForApi = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const fetchAvailableRoomTypes = async () => {
+    setRoomTypesLoading(true);
+    setRoomTypesError("");
+    try {
+      let mappedRoomTypes = [];
+
+      if (checkIn && checkOut && adults) {
+        const response = await fetch(`${API_BASE_URL}/reservations/getAvailableRoomTypes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            checkIn: formatDateForApi(checkIn),
+            checkOut: formatDateForApi(checkOut),
+            checkInTime,
+            checkOutTime,
+            adults,
+            children
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data?.success) {
+          throw new Error(data?.msg || "Failed to load room types");
+        }
+
+        mappedRoomTypes = (data?.data?.roomTypes || [])
+          .filter((rt) => rt.isAvailable)
+          .map((rt, index) => ({
+            id: rt._id,
+            icon: iconForRoomType(index),
+            name: rt.display_name || rt.name,
+            desc: rt.description || "Comfortable stay with premium amenities",
+            priceValue: rt.price_per_night || 0,
+            price: `₹${rt.price_per_night || 0}/night`,
+            totalAmount: rt.totalAmount || 0
+          }));
+      } else {
+        const response = await fetch(`${API_BASE_URL}/rooms/types`);
+        const data = await response.json();
+        if (!response.ok || !data?.success) {
+          throw new Error(data?.msg || "Failed to load room types");
+        }
+
+        mappedRoomTypes = (data?.data || []).map((rt, index) => ({
+          id: rt._id,
+          icon: iconForRoomType(index),
+          name: rt.display_name || rt.name,
+          desc: rt.description || "Comfortable stay with premium amenities",
+          priceValue: rt.price_per_night || 0,
+          price: `₹${rt.price_per_night || 0}/night`,
+          totalAmount: 0
+        }));
+      }
+
+      setRoomTypes(mappedRoomTypes);
+      if (roomType && !mappedRoomTypes.some((rt) => rt.id === roomType)) {
+        setRoomType("");
+        setRoomNo("");
+        setAvailableRooms([]);
+      }
+    } catch (error) {
+      setRoomTypes([]);
+      setRoomTypesError(error.message || "Failed to load room types");
+    } finally {
+      setRoomTypesLoading(false);
+    }
+  };
+
+  const fetchRoomsByType = async (roomTypeId) => {
+    if (!roomTypeId || !checkIn || !checkOut) return;
+    setRoomsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/reservations/getRoomsByType`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomTypeId,
+          checkIn: formatDateForApi(checkIn),
+          checkOut: formatDateForApi(checkOut),
+          checkInTime,
+          checkOutTime
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.msg || "Failed to load rooms");
+      }
+
+      setAvailableRooms(data?.data?.availableRooms || []);
+    } catch (error) {
+      setAvailableRooms([]);
+      setErrors((prev) => ({ ...prev, roomNo: error.message || "Failed to load rooms" }));
+    } finally {
+      setRoomsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (step === 2) {
+      fetchAvailableRoomTypes();
+    }
+  }, [step, checkIn, checkOut, checkInTime, checkOutTime, adults, children]);
+
+  useEffect(() => {
+    if (!selectedRoomTypeId || !roomTypes.length) return;
+    const isValidType = roomTypes.some((rt) => rt.id === selectedRoomTypeId);
+    if (isValidType) {
+      setRoomType(selectedRoomTypeId);
+    }
+  }, [selectedRoomTypeId, roomTypes]);
+
+  useEffect(() => {
+    if (!selectedRoomTypeName || roomType || !roomTypes.length) return;
+    const byName = roomTypes.find((rt) => rt.name?.toLowerCase() === selectedRoomTypeName.toLowerCase());
+    if (byName) {
+      setRoomType(byName.id);
+    }
+  }, [selectedRoomTypeName, roomType, roomTypes]);
+
+  useEffect(() => {
+    if (roomType) {
+      fetchRoomsByType(roomType);
+    } else {
+      setAvailableRooms([]);
+    }
+  }, [roomType, checkIn, checkOut, checkInTime, checkOutTime]);
+
+  useEffect(() => {
+    if (roomNo && !availableRooms.some((room) => room._id === roomNo)) {
+      setRoomNo("");
+    }
+  }, [availableRooms, roomNo]);
+
+  useEffect(() => {
+    if (!user) return;
+    setFirstName((prev) => prev || user.full_name?.split(" ")[0] || "");
+    setLastName((prev) => {
+      if (prev) return prev;
+      const parts = (user.full_name || "").trim().split(" ");
+      return parts.length > 1 ? parts.slice(1).join(" ") : "";
+    });
+    setEmail((prev) => prev || user.email || "");
+    setPhone((prev) => prev || user.phone || "");
+  }, [user]);
 
   const validate1 = () => {
     const e = {};
@@ -205,7 +370,8 @@ export default function BookRoom() {
     const room = roomTypes.find(r => r.id === roomType);
     if (!room) return 0;
 
-    const pricePerNight = parseInt(room.price.replace(/[^0-9]/g, ""));
+    if (room.totalAmount) return room.totalAmount;
+    const pricePerNight = room.priceValue || parseInt(room.price.replace(/[^0-9]/g, ""), 10) || 0;
     const diffTime = checkOut - checkIn;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const nights = diffDays > 0 ? diffDays : 0;
@@ -214,13 +380,57 @@ export default function BookRoom() {
   };
 
   const totalAmount = calculateTotal();
+  const selectedRoomType = roomTypes.find(r => r.id === roomType);
+  const selectedRoom = availableRooms.find((room) => room._id === roomNo);
 
   const goNext = () => {
     if (step === 1 && validate1()) setStep(2);
     if (step === 2 && validate2()) setStep(3);
   };
 
-  const submit = e => { e.preventDefault(); if (!agree) return; setSubmitted(true); };
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!agree) return;
+    setSubmitError("");
+    setSubmitLoading(true);
+
+    try {
+      const payload = {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        email: user?.email || email.trim(),
+        phone: phone.trim(),
+        checkIn: formatDateForApi(checkIn),
+        checkOut: formatDateForApi(checkOut),
+        checkInTime,
+        checkOutTime,
+        adults,
+        children,
+        roomTypeId: roomType,
+        roomId: roomNo,
+        specialRequest: requests,
+        paymentIntentId: `PI-LOCAL-${Date.now()}`
+      };
+
+      const response = await fetch(`${API_BASE_URL}/reservations/confirmBooking`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.msg || "Booking failed");
+      }
+
+      setBookingRef(data?.data?.bookingRef || genRef());
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error.message || "Unable to confirm booking");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   const fmtDate = d => d ? d.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" }) : null;
 
@@ -228,6 +438,7 @@ export default function BookRoom() {
     setSubmitted(false); setStep(1); setFirstName(""); setLastName(""); setEmail(""); setPhone("");
     setCheckIn(null); setCheckInTime("15:00"); setCheckOut(null); setCheckOutTime("11:00"); setAdults(2); setChildren(0);
     setRoomType(""); setRequests(""); setAgree(false); setErrors({});
+    setAvailableRooms([]); setRoomTypesError("");
     setPaymentMethod("card"); setCardNo(""); setUpiId("");
   };
 
@@ -264,12 +475,13 @@ export default function BookRoom() {
                     <strong style={{ color: "var(--h-champ-lt)" }}>{email}</strong> shortly.{" "}
                     We look forward to your arrival.
                   </p>
-                  <div className="h_ref">Booking Ref: {bookingRef} | Total Paid: ${totalAmount}</div>
+                  <div className="h_ref">Booking Ref: {bookingRef} | Total Paid: ₹{totalAmount}</div>
                   <button className="h_again_btn" onClick={reset}>← Make Another Booking</button>
                 </div>
 
                 {!submitted && (
                   <form onSubmit={submit} noValidate>
+                    {submitError && <div className="h_err_msg" style={{ marginBottom: ".8rem" }}>{submitError}</div>}
                     {step === 1 && (
                       <div className="h_fbody">
                         <div className="h_fsec">
@@ -401,6 +613,8 @@ export default function BookRoom() {
                       <div className="h_fbody">
                         <div className="h_fsec">
                           <div className="h_sec_lbl">Select Accommodation</div>
+                          {roomTypesLoading && <div className="h_panel_sub" style={{ marginBottom: ".6rem" }}>Loading available room types...</div>}
+                          {roomTypesError && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{roomTypesError}</div>}
                           {errors.roomType && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.roomType}</div>}
                           <div className="h_areas">
                             {roomTypes.map(r => (
@@ -412,7 +626,7 @@ export default function BookRoom() {
                                 }}>
                                 <span className="h_area_ico">{r.icon}</span>
                                 <div className="h_area_name">{r.name}</div>
-                                <div className="h_area_desc">{r.desc}</div>
+                                {/* <div className="h_area_desc">{r.desc}</div> */}
                                 <div className="h_area_price" style={{ color: "var(--h-champ)", fontSize: ".75rem", marginTop: ".5rem" }}>{r.price}</div>
                                 <div className="h_area_chk">✓</div>
                               </div>
@@ -431,11 +645,17 @@ export default function BookRoom() {
                                 setRoomNo(e.target.value);
                                 setErrors(p => ({ ...p, roomNo: null }));
                               }}
-                              disabled={!roomType}
+                              disabled={!roomType || roomsLoading || !checkIn || !checkOut}
                             >
-                              <option value="">-- Select Room Number --</option>
-                              {roomType && roomTypes.find(r => r.id === roomType)?.numbers.map(num => (
-                                <option key={num} value={num}>Room {num}</option>
+                              <option value="">
+                                {roomsLoading
+                                  ? "-- Loading Rooms --"
+                                  : !checkIn || !checkOut
+                                    ? "-- Select check-in/check-out first --"
+                                    : "-- Select Room Number --"}
+                              </option>
+                              {roomType && availableRooms.map(room => (
+                                <option key={room._id} value={room._id}>Room {room.roomNumber}</option>
                               ))}
                             </select>
                             {errors.roomNo && <div className="h_err_msg">{errors.roomNo}</div>}
@@ -524,10 +744,10 @@ export default function BookRoom() {
                             ["Guest", `${firstName} ${lastName}`],
                             ["Duration", `${fmtDate(checkIn)} (${checkInTime}) — ${fmtDate(checkOut)} (${checkOutTime})`],
                             ["Occupancy", `${adults} Adults, ${children} Children`],
-                            ["Room Type", roomTypes.find(r => r.id === roomType)?.name || "—"],
-                            ["Room Number", roomNo || "—"],
-                            ["Price per Night", roomTypes.find(r => r.id === roomType)?.price || "—"],
-                            ["Total Amount", `$${totalAmount}`],
+                            ["Room Type", selectedRoomType?.name || "—"],
+                            ["Room Number", selectedRoom?.roomNumber || "—"],
+                            ["Price per Night", selectedRoomType?.price || "—"],
+                            ["Total Amount", totalAmount ? `₹${totalAmount}` : "—"],
                             ["Payment", paymentMethod === 'card' ? `Card (Ending in ${cardNo.slice(-4)})` : `UPI (${upiId})`],
                             ["Requests", requests || "None"],
                           ].map(([k, v]) => (
@@ -550,7 +770,7 @@ export default function BookRoom() {
                         {step > 1 && <button type="button" className="h_btn_back" onClick={() => setStep(s => s - 1)}>← Back</button>}
                         {step < 3
                           ? <button type="button" className="h_btn_prime" onClick={goNext}>{step === 2 ? "Checkout" : "Continue"} <span className="h_btn_arr">→</span></button>
-                          : <button type="submit" className="h_btn_prime">Confirm Stay <span className="h_btn_arr">✓</span></button>
+                          : <button type="submit" className="h_btn_prime" disabled={submitLoading}>{submitLoading ? "Confirming..." : "Confirm Stay"} <span className="h_btn_arr">✓</span></button>
                         }
                       </div>
                     </div>
@@ -572,9 +792,9 @@ export default function BookRoom() {
                       { key: "Check-Out", val: fmtDate(checkOut) },
                       { key: "Adults", val: adults },
                       { key: "Children", val: children },
-                      { key: "Room", val: roomType ? roomTypes.find(r => r.id === roomType)?.name : null },
-                      { key: "Room No", val: roomNo },
-                      { key: "Total Amount", val: totalAmount > 0 ? `$${totalAmount}` : null },
+                      { key: "Room", val: roomType ? (selectedRoomType?.name || selectedRoomTypeName || "Selected") : null },
+                      { key: "Room No", val: selectedRoom?.roomNumber || null },
+                      { key: "Total Amount", val: totalAmount > 0 ? `₹${totalAmount}` : null },
                     ].map(({ key, val }) => (
                       <div className="h_p_row" key={key}>
                         <span className="h_p_k">{key}</span>

@@ -5,14 +5,35 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './contexts/AuthContext';
+import { StaffProvider } from './contexts/StaffContext';
+import { RoomProvider } from './contexts/RoomContext';
+import { MenuProvider } from './contexts/MenuContext';
+import { GalleryProvider } from './contexts/GalleryContext';
+import { TableProvider } from './contexts/TableContext';
+import { TableReservationProvider } from './contexts/TableReservationContext';
+import { OrderProvider } from './contexts/OrderContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <StaffProvider>
+        <RoomProvider>
+          <MenuProvider>
+            <GalleryProvider>
+              <TableProvider>
+                <TableReservationProvider>
+                  <OrderProvider>
+                    <App />
+                  </OrderProvider>
+                </TableReservationProvider>
+              </TableProvider>
+            </GalleryProvider>
+          </MenuProvider>
+        </RoomProvider>
+      </StaffProvider>
     </AuthProvider>
-  </React.StrictMode>
+  </React.StrictMode >
 );
 
 // If you want to start measuring performance in your app, pass a function

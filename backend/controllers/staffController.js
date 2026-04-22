@@ -5,9 +5,13 @@ import { uploadFile, deleteFileFromS3 } from '../utils/uploadFile.utils.js';
 import mongoose from 'mongoose';
 
 export const addStaff = async (req, res) => {
-    const { full_name, email, phone, role, department, cuisineSpecialization, password, area, status } = req.body;
-
     try {
+        let { full_name, email, phone, role, department, cuisineSpecialization, password, area, status } = req.body;
+
+        if (typeof cuisineSpecialization === 'string' && cuisineSpecialization) {
+            cuisineSpecialization = cuisineSpecialization.split(',').map(s => s.trim()).filter(s => s);
+        }
+
         if (!full_name || !email || !phone || !role || !password) {
             return sendBadRequestResponse(res, "Full name, email, phone, role, and password are required");
         }
@@ -25,14 +29,14 @@ export const addStaff = async (req, res) => {
         const user = await UserModel.create({
             full_name,
             email,
-            phone,
+            phone: Number(phone),
             role,
             department,
-            cuisineSpecialization,
+            cuisineSpecialization: cuisineSpecialization || [],
             password,
-            area,
+            area: area ? (Array.isArray(area) ? area : [area]) : ['All'],
             status: status || 'Active',
-            addedBy: req.user.full_name
+            addedBy: req.user?.full_name || 'System'
         });
 
         if (user) {
@@ -47,7 +51,7 @@ export const addStaff = async (req, res) => {
 
 export const getStaff = async (req, res) => {
     try {
-        const staff = await UserModel.find({ role: { $nin: ['User', 'Super Admin'] } }).select('-password');
+        const staff = await UserModel.find({ role: { $ne: 'User' } }).select('-password');
 
         res.json({ success: true, msg: "Staff fetched successfully", data: staff });
     } catch (error) {
@@ -104,11 +108,19 @@ export const updateStaffProfile = async (req, res) => {
 
         user.full_name = req.body.full_name || user.full_name;
         user.email = req.body.email || user.email;
-        user.phone = req.body.phone || user.phone;
+        user.phone = req.body.phone ? Number(req.body.phone) : user.phone;
         user.role = req.body.role || user.role;
         user.department = req.body.department || user.department;
-        user.area = req.body.area || user.area;
+        user.area = req.body.area ? (Array.isArray(req.body.area) ? req.body.area : [req.body.area]) : user.area;
         user.status = req.body.status || user.status;
+
+        if (req.body.cuisineSpecialization) {
+            if (typeof req.body.cuisineSpecialization === 'string') {
+                user.cuisineSpecialization = req.body.cuisineSpecialization.split(',').map(s => s.trim()).filter(s => s);
+            } else if (Array.isArray(req.body.cuisineSpecialization)) {
+                user.cuisineSpecialization = req.body.cuisineSpecialization;
+            }
+        }
 
         if (req.body.password) {
             user.password = req.body.password;

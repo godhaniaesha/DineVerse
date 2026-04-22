@@ -11,8 +11,8 @@ import {
 } from "react-icons/gi";
 import { TbSparkles, TbChefHat, TbFlame } from "react-icons/tb";
 
-/* ─────────────────── DATA ─────────────────── */
-import { TAGS, POSTS, NEWSLETTER_TOPICS } from "../data/blogData";
+import blogService from "../services/blogService";
+import { TAGS, NEWSLETTER_TOPICS } from "../data/blogData";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 /* ─────────────────── HOOKS ─────────────────── */
@@ -36,49 +36,72 @@ function useReveal(threshold = 0.12) {
 
 
 /* Standard blog card */
-function BlogCard({ post, delay = 0, onRead }) {
+function BlogCard({ post, delay = 0, onRead, onLikeToggle }) {
     const [ref, vis] = useReveal();
-    const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(post.likes?.includes(localStorage.getItem('userId')) || false);
+    const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
+
+    const handleLike = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                alert('Please login to like posts');
+                return;
+            }
+            
+            await blogService.toggleLike(post._id, authToken);
+            const newLiked = !liked;
+            setLiked(newLiked);
+            setLikesCount(prev => newLiked ? prev + 1 : prev - 1);
+            
+            if (onLikeToggle) {
+                onLikeToggle(post._id, newLiked);
+            }
+        } catch (error) {
+            console.error('Error toggling like:', error);
+        }
+    };
+
     return (
         <article
             ref={ref}
             className={`x_blog_card${vis ? " x_anim_in" : ""}`}
             style={{
-                "--tag-color": post.tagColor,
-                "--tag-dim": post.tagDim,
+                "--tag-color": post.tagColor || "#c49f5c",
+                "--tag-dim": post.tagDim || "#7d5a1d",
                 animationDelay: `${delay}s`,
             }}
         >
             <div className="x_bc_img_wrap">
-                <img src={post.img} alt={post.title} className="x_bc_img" loading="lazy" />
-                <span className="x_bc_tag">{post.tag}</span>
+                <img src={post.coverImg} alt={post.title} className="x_bc_img" loading="lazy" />
+                <span className="x_bc_tag">{post.area || post.tag}</span>
                 <div className="x_bc_img_hover_overlay" />
             </div>
             <div className="x_bc_body">
                 <div className="x_bc_meta">
-                    <span className="x_meta_item"><FiClock />{post.readTime}</span>
-                    <span className="x_meta_item"><FiEye />{post.views}</span>
+                    <span className="x_meta_item"><FiClock />{post.readTime || "5 min read"}</span>
+                    <span className="x_meta_item"><FiEye />{post.views || 0}</span>
                 </div>
                 <h3 className="x_bc_title">{post.title}</h3>
-                <p className="x_bc_excerpt">{post.excerpt}</p>
+                <p className="x_bc_excerpt">{post.short_des}</p>
                 <div className="x_bc_foot">
                     <div className="x_author_row x_author_row--sm">
-                        <img src={post.avatar} alt={post.author} className="x_avatar x_avatar--sm" />
+                        <img src={post.addedBy?.avatar || "/api/placeholder/40/40"} alt={post.addedBy?.name || "Author"} className="x_avatar x_avatar--sm" />
                         <div className="x_author_info">
-                            <span className="x_author_name">{post.author}</span>
-                            <span className="x_author_role">{post.date}</span>
+                            <span className="x_author_name">{post.addedBy?.name || "DineVerse Team"}</span>
+                            <span className="x_author_role">{new Date(post.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
                     <div className="x_bc_actions">
                         <button
                             className={`x_like_btn x_like_btn--sm${liked ? " x_like_btn--active" : ""}`}
-                            onClick={() => setLiked((p) => !p)}
+                            onClick={handleLike}
                         >
-                            <FiHeart /> {liked ? post.likes + 1 : post.likes}
+                            <FiHeart /> {likesCount}
                         </button>
                     </div>
                 </div>
-                <Link to={`/blog/${post.id}`} state={{ post }} className="x_bc_read_link">
+                <Link to={`/blog/${post._id}`} state={{ post }} className="x_bc_read_link">
                     Read Article <FiChevronRight />
                 </Link>
             </div>
@@ -89,14 +112,14 @@ function BlogCard({ post, delay = 0, onRead }) {
 /* Side card (trending) */
 function TrendingCard({ post, rank }) {
     return (
-        <Link to={`/blog/${post.id}`} state={{ post }} className="x_trending_card" style={{ "--tag-color": post.tagColor }}>
+        <Link to={`/blog/${post._id}`} state={{ post }} className="x_trending_card" style={{ "--tag-color": post.tagColor || "#c49f5c" }}>
             <span className="x_trending_rank">{String(rank).padStart(2, "0")}</span>
             <div className="x_trending_body">
-                <span className="x_trending_tag">{post.tag}</span>
+                <span className="x_trending_tag">{post.area || post.tag}</span>
                 <p className="x_trending_title x_wid">{post.title}</p>
-                <span className="x_trending_meta"><FiClock />{post.readTime}</span>
+                <span className="x_trending_meta"><FiClock />{post.readTime || "5 min read"}</span>
             </div>
-            <img src={post.img} alt="" className="x_trending_img" />
+            <img src={post.coverImg} alt="" className="x_trending_img" />
         </Link>
     );
 }
@@ -155,11 +178,49 @@ export default function Blog() {
     const [search, setSearch] = useState("");
     const [heroVis, setHeroVis] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const postsPerPage = 6;
+
+    useEffect(() => {
+        fetchBlogs();
+    }, []);
+
+    const fetchBlogs = async () => {
+        try {
+            setLoading(true);
+            const response = await blogService.getAllBlogs();
+            console.log('API Response:', response);
+            if (response.success) {
+                const blogData = response.data || [];
+                console.log('Blog Data:', blogData);
+                console.log('Available areas:', [...new Set(blogData.map(p => p.area))]);
+                setPosts(blogData);
+            } else {
+                setError(response.msg || 'Failed to fetch blogs');
+            }
+        } catch (err) {
+            setError('Failed to fetch blogs');
+            console.error('Error fetching blogs:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const onReadArticle = (post) => {
         if (!post) return;
-        navigate(`/blog/${post.id}`, { state: { post } });
+        navigate(`/blog/${post._id}`, { state: { post } });
+    };
+
+    const onLikeToggle = (postId, isLiked) => {
+        setPosts(prevPosts => 
+            prevPosts.map(post => 
+                post._id === postId 
+                    ? { ...post, likes: isLiked ? [...(post.likes || []), localStorage.getItem('userId')] : (post.likes || []).filter(id => id !== localStorage.getItem('userId')) }
+                    : post
+            )
+        );
     };
 
     useEffect(() => {
@@ -168,18 +229,35 @@ export default function Blog() {
 
     useEffect(() => { setTimeout(() => setHeroVis(true), 100); }, []);
 
-    const featured = POSTS.find((p) => p.featured);
-    const regular = POSTS.filter((p) => {
-        const matchTag = activeTag === "All" || p.tag === activeTag;
-        const q = search.toLowerCase();
-        const matchSearch = !q || p.title.toLowerCase().includes(q) || p.author.toLowerCase().includes(q) || p.tag.toLowerCase().includes(q);
-        return !p.featured && matchTag && matchSearch;
+    const featured = posts.find((p) => p.featured);
+    const normalizeText = (text) => {
+        return text?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') || '';
+    };
+
+    const regular = posts.filter((p) => {
+        const normalizedActiveTag = normalizeText(activeTag);
+        const normalizedArea = normalizeText(p.area);
+        const normalizedTag = normalizeText(p.tag);
+        const matchTag = activeTag === "All" || normalizedArea === normalizedActiveTag || normalizedTag === normalizedActiveTag;
+        
+        const q = normalizeText(search);
+        const normalizedTitle = normalizeText(p.title);
+        const normalizedAuthorName = normalizeText(p.addedBy?.name || "DineVerse Team");
+        const matchSearch = !q || normalizedTitle.includes(q) || normalizedAuthorName.includes(q) || normalizedArea.includes(q) || normalizedTag.includes(q);
+        const shouldInclude = !p.featured && matchTag && matchSearch;
+        
+        // Debug logging for first few posts
+        if (posts.indexOf(p) < 3) {
+            console.log(`Post: ${p.title}, Area: ${p.area} -> ${normalizedArea}, ActiveTag: ${activeTag} -> ${normalizedActiveTag}, MatchTag: ${matchTag}, ShouldInclude: ${shouldInclude}`);
+        }
+        
+        return shouldInclude;
     });
     const totalPages = Math.max(1, Math.ceil(regular.length / postsPerPage));
     const pageStart = (currentPage - 1) * postsPerPage;
     const pageEnd = pageStart + postsPerPage;
     const paginatedPosts = regular.slice(pageStart, pageEnd);
-    const trending = [...POSTS].sort((a, b) => b.likes - a.likes).slice(0, 4);
+    const trending = [...posts].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 4);
 
     return (
         <>
@@ -301,7 +379,7 @@ export default function Blog() {
                                     </div>
                                     <div className="x_trending_list x_trending_slider">
                                         {trending.map((post, i) => (
-                                            <TrendingCard key={post.id} post={post} rank={i + 1} />
+                                            <TrendingCard key={post._id} post={post} rank={i + 1} />
                                         ))}
                                     </div>
                                 </section>
@@ -317,7 +395,7 @@ export default function Blog() {
                                     </div>
                                     <div className="x_blog_grid">
                                         {paginatedPosts.map((post, i) => (
-                                            <BlogCard key={post.id} post={post} delay={i * 0.08} onRead={onReadArticle} />
+                                            <BlogCard key={post._id} post={post} delay={i * 0.08} onRead={onReadArticle} onLikeToggle={onLikeToggle} />
                                         ))}
                                     </div>
 
@@ -354,7 +432,27 @@ export default function Blog() {
                                 </section>
                             )}
 
-                            {regular.length === 0 && (search || activeTag !== "All") && (
+                            {loading && (
+                                <div className="x_empty_state">
+                                    <span className="x_empty_icon">⏳</span>
+                                    <p>Loading articles...</p>
+                                </div>
+                            )}
+                            
+                            {error && (
+                                <div className="x_empty_state">
+                                    <span className="x_empty_icon">⚠️</span>
+                                    <p>{error}</p>
+                                    <button
+                                        className="x_reset_btn"
+                                        onClick={fetchBlogs}
+                                    >
+                                        Try Again
+                                    </button>
+                                </div>
+                            )}
+                            
+                            {!loading && !error && regular.length === 0 && (search || activeTag !== "All") && (
                                 <div className="x_empty_state">
                                     <span className="x_empty_icon">📖</span>
                                     <p>No articles match your filters.</p>
@@ -380,7 +478,7 @@ export default function Blog() {
                                 </div>
                                 <div className="x_trending_list">
                                     {trending.map((post, i) => (
-                                        <TrendingCard key={post.id} post={post} rank={i + 1} />
+                                        <TrendingCard key={post._id} post={post} rank={i + 1} />
                                     ))}
                                 </div>
                             </div>
@@ -392,7 +490,9 @@ export default function Blog() {
                                 </div>
                                 <div className="x_topics_list">
                                     {TAGS.filter((t) => t !== "All").map((t) => {
-                                        const count = POSTS.filter((p) => p.tag === t).length;
+                                        const normalizedTag = normalizeText(t);
+                                        const count = posts.filter((p) => normalizeText(p.area) === normalizedTag || normalizeText(p.tag) === normalizedTag).length;
+                                        console.log(`Category ${t} -> ${normalizedTag}: Count = ${count}, Posts with this area:`, posts.filter(p => normalizeText(p.area) === normalizedTag || normalizeText(p.tag) === normalizedTag).map(p => p.title));
                                         return (
                                             <button
                                                 key={t}

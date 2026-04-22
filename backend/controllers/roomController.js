@@ -6,6 +6,9 @@ import { sendBadRequestResponse } from '../utils/Response.utils.js';
 import mongoose from 'mongoose';
 export const addRoomType = async (req, res) => {
     try {
+        console.log("addRoomType - req.body:", req.body);
+        console.log("addRoomType - req.file:", req.file);
+        
         const { name, display_name, description, price_per_night, features, status } = req.body;
 
         if (!name) {
@@ -26,17 +29,28 @@ export const addRoomType = async (req, res) => {
         let parsedFeatures = [];
         if (features) {
             try {
-                parsedFeatures = JSON.parse(features);
+                const temp = JSON.parse(features);
+                parsedFeatures = Array.isArray(temp) 
+                    ? temp.map(f => {
+                        if (typeof f === 'object' && f !== null) {
+                            return f.name || f.icon || JSON.stringify(f);
+                        }
+                        return String(f);
+                    })
+                    : [String(temp)];
             } catch (e) {
-                parsedFeatures = [features];
+                console.error("addRoomType - parse features error:", e);
+                parsedFeatures = [String(features)];
             }
         }
+
+        console.log("addRoomType - parsedFeatures:", parsedFeatures);
 
         const roomType = await RoomType.create({
             name,
             display_name,
             description,
-            price_per_night,
+            price_per_night: Number(price_per_night),
             image_url,
             features: parsedFeatures,
             status
@@ -48,6 +62,7 @@ export const addRoomType = async (req, res) => {
             data: roomType
         });
     } catch (error) {
+        console.error("Add room type error - full stack:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -60,6 +75,7 @@ export const getRoomTypes = async (req, res) => {
             data: roomTypes
         });
     } catch (error) {
+        console.error("Get room types error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -95,14 +111,22 @@ export const updateRoomType = async (req, res) => {
         roomType.name = name || roomType.name;
         roomType.display_name = display_name || roomType.display_name;
         roomType.description = description || roomType.description;
-        roomType.price_per_night = price_per_night || roomType.price_per_night;
+        roomType.price_per_night = price_per_night ? Number(price_per_night) : roomType.price_per_night;
         roomType.status = status || roomType.status;
 
         if (features) {
             try {
-                roomType.features = JSON.parse(features);
+                const temp = JSON.parse(features);
+                roomType.features = Array.isArray(temp) 
+                    ? temp.map(f => {
+                        if (typeof f === 'object' && f !== null) {
+                            return f.name || f.icon || JSON.stringify(f);
+                        }
+                        return String(f);
+                    })
+                    : [String(temp)];
             } catch (e) {
-                roomType.features = [features];
+                roomType.features = [String(features)];
             }
         }
 
@@ -114,12 +138,14 @@ export const updateRoomType = async (req, res) => {
             data: updatedRoomType
         });
     } catch (error) {
+        console.error("Update room type error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteRoomType = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log("deleteRoomType - id:", id);
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return sendBadRequestResponse(res, "Invalid RoomType ID format");
@@ -131,6 +157,8 @@ export const deleteRoomType = async (req, res) => {
         }
 
         const roomsUsing = await Room.countDocuments({ roomType: id });
+        console.log("deleteRoomType - roomsUsing count:", roomsUsing);
+        
         if (roomsUsing > 0) {
             return ThrowError(res, 400, `Cannot delete. ${roomsUsing} rooms are currently using this type.`);
         }
@@ -146,6 +174,7 @@ export const deleteRoomType = async (req, res) => {
             data: roomType
         });
     } catch (error) {
+        console.error("Delete room type error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -168,7 +197,12 @@ export const addRoom = async (req, res) => {
         }
 
         const room = await Room.create({
-            roomNumber, floor, roomType, capacity_adults, capacity_childs, status
+            roomNumber, 
+            floor, 
+            roomType, 
+            capacity_adults: Number(capacity_adults), 
+            capacity_childs: Number(capacity_childs), 
+            status
         });
 
         res.status(201).json({
@@ -177,6 +211,7 @@ export const addRoom = async (req, res) => {
             data: room
         });
     } catch (error) {
+        console.error("Add room error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -190,6 +225,7 @@ export const getRooms = async (req, res) => {
             data: rooms
         });
     } catch (error) {
+        console.error("Get rooms error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -230,6 +266,7 @@ export const searchRooms = async (req, res) => {
             data: rooms
         });
     } catch (error) {
+        console.error("Search rooms error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -253,13 +290,14 @@ export const getRoomById = async (req, res) => {
             data: room
         });
     } catch (error) {
+        console.error("Get room by ID error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
 export const updateRoom = async (req, res) => {
     try {
         const { id } = req.params;
-        const { roomType, roomNumber } = req.body;
+        const { roomType, roomNumber, capacity_adults, capacity_childs, status, floor } = req.body;
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return sendBadRequestResponse(res, "Invalid Room ID format");
         }
@@ -278,9 +316,13 @@ export const updateRoom = async (req, res) => {
                 return sendBadRequestResponse(res, "Another room with this number already exists");
             }
         }
+        const updateData = { ...req.body };
+        if (capacity_adults !== undefined) updateData.capacity_adults = Number(capacity_adults);
+        if (capacity_childs !== undefined) updateData.capacity_childs = Number(capacity_childs);
+        
         const room = await Room.findByIdAndUpdate(
             id,
-            { $set: req.body },
+            { $set: updateData },
             { new: true, runValidators: true }
         );
 
@@ -295,6 +337,7 @@ export const updateRoom = async (req, res) => {
         });
 
     } catch (error) {
+        console.error("Update room error:", error);
         return ThrowError(res, 500, error.message);
     }
 };
@@ -318,6 +361,7 @@ export const deleteRoom = async (req, res) => {
             data: room
         });
     } catch (error) {
+        console.error("Delete room error:", error);
         return ThrowError(res, 500, error.message);
     }
 };

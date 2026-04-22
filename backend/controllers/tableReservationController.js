@@ -18,7 +18,7 @@ const isValidDate = (dateString) => {
 
 export const getAvailableTablesByArea = async (req, res) => {
     try {
-        const { area, date, time } = req.body;
+        const { area, date, time, guests } = req.body;
 
 
         if (!area || !date || !time) {
@@ -42,17 +42,25 @@ export const getAvailableTablesByArea = async (req, res) => {
         const bookedTableIds = bookedReservations.map(b => b.table.toString());
 
 
-        const availableTables = await Table.find({
+        const query = {
             area: area,
             status: "Available",
             _id: { $nin: bookedTableIds }
-        });
+        };
+
+        const availableTables = await Table.find(query).sort({ capacity: 1, tableNo: 1 });
+        const guestCount = Number(guests) || 0;
+        const tablesWithMatchInfo = availableTables.map((table) => ({
+            ...table.toObject(),
+            capacityMatch: guestCount ? table.capacity >= guestCount : true,
+            capacityGap: guestCount ? table.capacity - guestCount : 0
+        }));
 
         return res.status(200).json({
             success: true,
-            count: availableTables.length,
+            count: tablesWithMatchInfo.length,
             msg: `Available tables in ${area} for ${time} fetched successfully`,
-            data: availableTables
+            data: tablesWithMatchInfo
         });
     } catch (error) {
         return ThrowError(res, 500, error.message);
@@ -67,7 +75,7 @@ export const createTablePaymentIntent = async (req, res) => {
             return sendBadRequestResponse(res, "Guest name and email are required for payment");
         }
 
-        const amount = 50;
+        const amount = 10;
 
         let finalUserId = userId || req.user?._id;
 
@@ -78,7 +86,7 @@ export const createTablePaymentIntent = async (req, res) => {
 
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amount * 100,
-            currency: "inr",
+            currency: "usd",
             description: `Table reservation advance for ${guest_name}`,
             metadata: { 
                 guest_name, 
@@ -171,7 +179,7 @@ export const confirmTableBooking = async (req, res) => {
 export const updateTableReservationStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body;
+        const { status, waiter } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return sendBadRequestResponse(res, "Invalid Reservation ID");
@@ -182,9 +190,12 @@ export const updateTableReservationStatus = async (req, res) => {
             return sendBadRequestResponse(res, "Invalid status value");
         }
 
+        const updateData = { status };
+        if (waiter) updateData.waiter = waiter;
+
         const reservation = await TableReservation.findByIdAndUpdate(
             id,
-            { status },
+            updateData,
             { new: true }
         ).populate('table', 'tableNo area');
 

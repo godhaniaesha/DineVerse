@@ -1,14 +1,20 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../style/DishDetailsPage.css';
-import { MENU_ITEMS, BADGE_META } from './Menu';
+import { BADGE_META } from './Menu';
+import { useMenu } from '../contexts/MenuContext';
 
 const DishDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { mappedDishes: MENU_ITEMS, loading } = useMenu();
 
   // Find dish from MENU_ITEMS. Handle both string and number ID comparison.
-  const foundItem = MENU_ITEMS.find((d) => d.id.toString() === id);
+  const foundItem = MENU_ITEMS?.find((d) => d.id.toString() === id);
+
+  if (loading) {
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading dish details...</div>;
+  }
 
   if (!foundItem) {
     return (

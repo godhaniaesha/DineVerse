@@ -4,206 +4,26 @@ import { RiArrowRightSLine, RiArrowLeftSLine } from "react-icons/ri";
 import { TbMaximize } from "react-icons/tb";
 import { PiFrameCornersBold } from "react-icons/pi";
 import { MdOutlinePhotoLibrary } from "react-icons/md";
+import { useGallery } from "../contexts/GalleryContext";
 import "../style/GalleryPage.css";
 import "../style/z_style.css";
 
-/* ── GALLERY DATA ─────────────────────────────────────────── */
-const GALLERY = [
-  {
-    id: 1,
-    title: "The Dining Room at Dusk",
-    category: "Restaurant",
-    tag: "restaurant",
-    img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
-    shape: "z_slide_shape_arch",
-  },
-  {
-    id: 2,
-    title: "Truffle Risotto",
-    category: "Signature Dish",
-    tag: "food",
-    img: "https://recipes.net/wp-content/uploads/2023/05/chanterelle-mushroom-risotto_f34effca58384b447accde25b8a6adc1.jpeg",
-    shape: "z_slide_shape_square",
-  },
-  {
-    id: 3,
-    title: "The Midnight Bar",
-    category: "Bar & Lounge",
-    tag: "bar",
-    img: "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?w=700&q=80",
-    shape: "z_slide_shape_pill",
-  },
-  {
-    id: 4,
-    title: "Celebration",
-    category: "Events",
-    tag: "events",
-    img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&q=80",
-    shape: "z_slide_shape_diagonal",
-  },
-  {
-    id: 5,
-    title: "Midnight Negroni",
-    category: "Bar & Lounge",
-    tag: "bar",
-    img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
-    shape: "z_slide_shape_custom",
-  },
-  {
-    id: 6,
-    title: "The Grand Suite",
-    category: "Rooms",
-    tag: "rooms",
-    img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
-    shape: "z_slide_shape_arch_bottom",
-  },
-  {
-    id: 7,
-    title: "Smoked Duck Breast",
-    category: "Signature Dish",
-    tag: "food",
-    img: "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=600&q=80",
-    shape: "z_slide_shape_pill",
-  },
-  {
-    id: 8,
-    title: "Private Dining",
-    category: "Events",
-    tag: "events",
-    img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=700&q=80",
-    shape: "z_slide_shape_square",
-  },
-  {
-    id: 9,
-    title: "Burrata & Heirloom",
-    category: "Café & Small Plates",
-    tag: "cafe",
-    img: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=600&q=80",
-    shape: "z_slide_shape_arch",
-  },
-  {
-    id: 10,
-    title: "Wine Cellar",
-    category: "Bar & Lounge",
-    tag: "bar",
-    img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80",
-    shape: "z_slide_shape_diagonal",
-  },
-  {
-    id: 11,
-    title: "Table by the Window",
-    category: "Restaurant",
-    tag: "restaurant",
-    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
-    shape: "z_slide_shape_custom",
-  },
-  {
-    id: 12,
-    title: "Cardamom Latte Art",
-    category: "Café",
-    tag: "cafe",
-    img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80",
-    shape: "z_slide_shape_pill",
-  },
-
-  // extra restaurant / ambiance
-  {
-    id: 13,
-    title: "Chef’s Counter",
-    category: "Restaurant",
-    tag: "restaurant",
-    img: "https://www.vmcdn.ca/f/files/via/images/food/folietta-restaurant-chefs-counter-kitchen.jpeg;w=960",
-    shape: "z_slide_shape_arch",
-  },
-  {
-    id: 14,
-    title: "Open Kitchen Pass",
-    category: "Restaurant",
-    tag: "restaurant",
-    img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=700&q=80",
-    shape: "z_slide_shape_square",
-  },
-
-  // extra café
-  {
-    id: 15,
-    title: "Morning Pastry Stand",
-    category: "Café",
-    tag: "cafe",
-    img: "https://images.unsplash.com/photo-1483695028939-5bb13f8648b0?w=700&q=80",
-    shape: "z_slide_shape_pill",
-  },
-  {
-    id: 16,
-    title: "Reading Corner",
-    category: "Café",
-    tag: "cafe",
-    img: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=700&q=80",
-    shape: "z_slide_shape_diagonal",
-  },
-
-  // extra bar
-  {
-    id: 17,
-    title: "Golden Hour Cocktails",
-    category: "Bar & Lounge",
-    tag: "bar",
-    img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=700&q=80",
-    shape: "z_slide_shape_custom",
-  },
-  {
-    id: 18,
-    title: "Mixology in Motion",
-    category: "Bar & Lounge",
-    tag: "bar",
-    img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
-    shape: "z_slide_shape_arch_bottom",
-  },
-
-  // extra rooms
-  {
-    id: 19,
-    title: "Suite Living Room",
-    category: "Rooms",
-    tag: "rooms",
-    img: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=800&q=80",
-    shape: "z_slide_shape_pill",
-  },
-  {
-    id: 20,
-    title: "Evening Turndown",
-    category: "Rooms",
-    tag: "rooms",
-    img: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=700&q=80",
-    shape: "z_slide_shape_square",
-  },
-
-  // extra events
-  {
-    id: 21,
-    title: "Intimate Celebration",
-    category: "Events",
-    tag: "events",
-    img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=700&q=80",
-    shape: "z_slide_shape_arch",
-  },
-  {
-    id: 22,
-    title: "Garden Reception",
-    category: "Events",
-    tag: "events",
-    img: "https://images.unsplash.com/photo-1519741497674-611481863552?w=700&q=80",
-    shape: "z_slide_shape_diagonal",
-  },
+/* ── SHAPES FOR MASONRY ───────────────────────────────────── */
+const SHAPES = [
+  "z_slide_shape_arch",
+  "z_slide_shape_square",
+  "z_slide_shape_pill",
+  "z_slide_shape_diagonal",
+  "z_slide_shape_custom",
+  "z_slide_shape_arch_bottom",
 ];
 
 const TABS = [
   { id: "all", label: "All", icon: <MdOutlinePhotoLibrary /> },
-  { id: "restaurant", label: "Restaurant", icon: <HiSparkles /> },
-  { id: "cafe", label: "Café", icon: <HiSparkles /> },
-  { id: "bar", label: "Bar", icon: <PiFrameCornersBold /> },
-  { id: "rooms", label: "Rooms", icon: <HiSparkles /> },
-  { id: "events", label: "Events", icon: <HiSparkles /> },
+  { id: "Ambiance", label: "Ambiance", icon: <HiSparkles /> },
+  { id: "Dishes", label: "Dishes", icon: <HiSparkles /> },
+  { id: "Bar", label: "Bar", icon: <PiFrameCornersBold /> },
+  { id: "Events", label: "Events", icon: <HiSparkles /> },
 ];
 
 /* ── LIGHTBOX ─────────────────────────────────────────────── */
@@ -272,16 +92,26 @@ function Lightbox({ items, index, onClose, onNav }) {
 
 /* ── MAIN PAGE ────────────────────────────────────────────── */
 export default function GalleryPage() {
+  const { images, loading } = useGallery();
   const [activeTab, setActiveTab] = useState("all");
   const [lightboxIdx, setLightboxIdx] = useState(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const containerRef = useRef(null);
 
+  // Filter only visible images and map them with shapes
+  const allVisibleImages = images
+    .filter((img) => img.visibility === "Visible")
+    .map((img, index) => ({
+      ...img,
+      id: img._id,
+      shape: SHAPES[index % SHAPES.length],
+    }));
+
   const filtered =
     activeTab === "all"
-      ? GALLERY
-      : GALLERY.filter((g) => g.tag === activeTab);
+      ? allVisibleImages
+      : allVisibleImages.filter((g) => g.category === activeTab);
 
   const openLightbox = (idx) => {
     setLightboxIdx(idx);
@@ -301,9 +131,17 @@ export default function GalleryPage() {
     const rect = containerRef.current.getBoundingClientRect();
     setCursorPos({
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      y: e.clientY - rect.top,
     });
   };
+
+  if (loading) {
+    return (
+      <div className="gp_page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div className="gp_title">Loading Gallery...</div>
+      </div>
+    );
+  }
 
   return (
     <main className="gp_page">
@@ -330,8 +168,7 @@ export default function GalleryPage() {
                 role="tab"
                 aria-selected={activeTab === tab.id}
                 className={
-                  "gp_tab" +
-                  (activeTab === tab.id ? " gp_tab--active" : "")
+                  "gp_tab" + (activeTab === tab.id ? " gp_tab--active" : "")
                 }
                 onClick={() => setActiveTab(tab.id)}
               >
@@ -352,10 +189,10 @@ export default function GalleryPage() {
           >
             {/* Custom Cursor Follower */}
             <div
-              className={`z_slide_cursor_follower ${isHovering ? 'z_active' : ''}`}
+              className={`z_slide_cursor_follower ${isHovering ? "z_active" : ""}`}
               style={{
                 left: `${cursorPos.x}px`,
-                top: `${cursorPos.y}px`
+                top: `${cursorPos.y}px`,
               }}
             >
               <span>VIEW</span>
@@ -390,6 +227,11 @@ export default function GalleryPage() {
                 </div>
               ))}
             </div>
+            {filtered.length === 0 && !loading && (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                No images found in this category.
+              </div>
+            )}
           </div>
         </div>
       </section>

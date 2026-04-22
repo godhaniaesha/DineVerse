@@ -6,9 +6,9 @@ import {
   BAR_SUBCATEGORIES,
   CAFE_SUBCATEGORIES,
   CATEGORIES,
-  MENU_ITEMS,
   RESTAURANT_SUBCATEGORIES,
 } from "../../pages/Menu";
+import { useMenu } from "../../contexts/MenuContext";
 
 function MenuCard({ item, hovered, visible, onHover, registerRef }) {
   const accent = item.category === "bar" ? "var(--d-bar)" : "var(--d-restaurant)";
@@ -54,6 +54,7 @@ function MenuCard({ item, hovered, visible, onHover, registerRef }) {
 }
 
 export default function AdminMenu() {
+  const { mappedDishes: MENU_ITEMS, loading } = useMenu();
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeSubcategory, setActiveSubcategory] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
@@ -69,7 +70,7 @@ export default function AdminMenu() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisibleIds((previous) => new Set([...previous, Number(entry.target.dataset.id)]));
+            setVisibleIds((previous) => new Set([...previous, entry.target.dataset.id]));
           }
         });
       },
@@ -78,7 +79,7 @@ export default function AdminMenu() {
 
     Object.values(cardRefs.current).forEach((element) => element && observer.observe(element));
     return () => observer.disconnect();
-  }, [activeCategory, activeSubcategory]);
+  }, [activeCategory, activeSubcategory, MENU_ITEMS]);
 
   const getCurrentSubcategories = () => {
     if (activeCategory === "restaurant") return RESTAURANT_SUBCATEGORIES;
@@ -92,6 +93,10 @@ export default function AdminMenu() {
     const subcategoryMatch = !activeSubcategory || item.subcategory === activeSubcategory;
     return categoryMatch && subcategoryMatch;
   });
+
+  if (loading) {
+    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>;
+  }
 
   return (
     <div className="x_wrapper">
