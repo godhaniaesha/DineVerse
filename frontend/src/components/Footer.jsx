@@ -17,14 +17,14 @@ export default function Footer() {
                     <div className="col-lg-4 col-md-12 z_footer_col">
                         <div className="z_footer_brand">
                             <Link to="/" className="z_footer_logo_link">
-                                    <h2 className="z_footer_logo">
-                                        <HiSparkles className="z_footer_sparkle" />
-                                        DineVerse
-                                    </h2>
-                                </Link>
+                                <h2 className="z_footer_logo">
+                                    <HiSparkles className="z_footer_sparkle" />
+                                    DineVerse
+                                </h2>
+                            </Link>
                             <p className="z_footer_about">
-                                Experience the pinnacle of hospitality at DineVerse. From our artisanal café 
-                                and Michelin-starred dining to our curated bar and luxury suites, we craft 
+                                Experience the pinnacle of hospitality at DineVerse. From our artisanal café
+                                and Michelin-starred dining to our curated bar and luxury suites, we craft
                                 every moment with obsessive intention and refined aesthetics.
                             </p>
                             <div className="z_footer_socials">

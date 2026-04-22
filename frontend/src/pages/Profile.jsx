@@ -26,7 +26,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function Profile() {
     const navigate = useNavigate();
-    const { user, logout, changePassword, updateProfile, isAuthenticated } = useAuth();
+    const { user, logout, changePassword, updateProfile, isAuthenticated, token } = useAuth();
     const [activeTab, setActiveTab] = useState("profile");
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [showPasswords, setShowPasswords] = useState({
@@ -54,6 +54,9 @@ export default function Profile() {
         confirmPassword: ""
     });
     const [loading, setLoading] = useState(false);
+    const [bookings, setBookings] = useState([]);
+    const [bookingsLoading, setBookingsLoading] = useState(false);
+    const [bookingsError, setBookingsError] = useState("");
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -68,6 +71,44 @@ export default function Profile() {
             });
         }
     }, [isAuthenticated, user, navigate]);
+
+    useEffect(() => {
+        const fetchBookings = async () => {
+            if (!token || !isAuthenticated) return;
+            try {
+                setBookingsLoading(true);
+                setBookingsError("");
+                const response = await fetch("http://localhost:8000/api/user/bookings", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (!response.ok || !data?.success) {
+                    throw new Error(data?.msg || "Failed to load bookings");
+                }
+                setBookings(data?.data || []);
+            } catch (error) {
+                setBookings([]);
+                setBookingsError(error.message || "Failed to load bookings");
+            } finally {
+                setBookingsLoading(false);
+            }
+        };
+
+        fetchBookings();
+    }, [token, isAuthenticated]);
+
+    const formatBookingDate = (value) => {
+        if (!value) return "-";
+        return new Date(value).toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric"
+        });
+    };
+
+    const formatStatus = (status = "") => status.toLowerCase().replace(/\s+/g, "_");
 
     const togglePasswordVisibility = (field) => {
         setShowPasswords(prev => ({
@@ -216,20 +257,21 @@ export default function Profile() {
                     <div className="z_prof_section">
                         <h2 className="z_prof_section_title">Reservation <span>History</span></h2>
                         <div className="z_prof_bookings_list">
-                            {[
-                                { id: 1, venue: "The Restaurant", date: "Oct 24, 2023", time: "08:30 PM", status: "completed", accent: "var(--d-restaurant)" },
-                                { id: 2, venue: "The Bar", date: "Oct 28, 2023", time: "10:00 PM", status: "pending", accent: "var(--d-bar)" },
-                                { id: 3, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "cancel", accent: "var(--d-cafe)" },
-                                { id: 4, venue: "The Café", date: "Nov 02, 2023", time: "09:00 AM", status: "confirmed", accent: "var(--d-cafe)" }
-                            ].map((booking) => (
-                                <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.accent }}>
+                            {bookingsLoading && <p>Loading bookings...</p>}
+                            {bookingsError && <p style={{ color: "var(--d-danger, #dc3545)" }}>{bookingsError}</p>}
+                            {!bookingsLoading && !bookingsError && bookings.length === 0 && <p>No bookings found yet.</p>}
+                            {bookings.map((booking) => (
+                                <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.type === "Room" ? "var(--d-room)" : "var(--d-restaurant)" }}>
                                     <div className="z_prof_booking_info">
-                                        <h4>{booking.venue}</h4>
+                                        <h4>{booking.service}</h4>
                                         <div className="z_prof_booking_meta">
-                                            <span><FiCalendar /> {booking.date}</span>
-                                            <span><FiClock /> {booking.time}</span>
+                                            <span><FiCalendar /> {formatBookingDate(booking.date)}</span>
+                                            <span><FiClock /> {booking.time || "-"}</span>
                                         </div>
-                                        {booking.status === "completed" && (
+                                        <div className="z_prof_booking_meta">
+                                            <span><FiFileText /> {booking.bookingRef || "-"}</span>
+                                        </div>
+                                        {formatStatus(booking.status) === "completed" && (
                                             <div 
                                                 className="z_prof_booking_stars"
                                                 onClick={() => {
@@ -249,7 +291,7 @@ export default function Profile() {
                                             </div>
                                         )}
                                     </div>
-                                    <span className={`z_prof_booking_status z_prof_status_${booking.status}`}>
+                                    <span className={`z_prof_booking_status z_prof_status_${formatStatus(booking.status)}`}>
                                         {booking.status}
                                     </span>
                                 </div>

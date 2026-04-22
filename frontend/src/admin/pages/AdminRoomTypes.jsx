@@ -151,7 +151,7 @@ export default function AdminRoomTypes() {
                                     <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{roomType.description || "-"}</td>
                                     <td>₹{Number(roomType.price_per_night).toLocaleString("en-IN")}</td>
                                     <td>
-                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center" }}>
                                             {roomType.features?.slice(0, 3).map((feat, idx) => (
                                                 <span key={idx} style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", background: "#ddd", color: "#333", padding: "4px 8px", borderRadius: "999px" }}>
                                                     {feat.icon || ""} {feat.name || feat}
