@@ -4,6 +4,7 @@ import DeleteIconButton from "../components/DeleteIconButton";
 import { useRooms } from "../../contexts/RoomContext";
 
 const EMPTY_FORM = { name: "", display_name: "", description: "", price_per_night: "", features: [] };
+const COMMON_FEATURES = ["King Bed", "Wi-Fi", "Mini Bar", "Balcony", "Sea View", "AC", "TV", "Breakfast", "Room Service", "Parking", "Double Bed"];
 
 function Modal({ title, onClose, children }) {
     return (
@@ -21,7 +22,7 @@ export default function AdminRoomTypes() {
     const { roomTypes, loading, getRoomTypes, addRoomType, updateRoomType, deleteRoomType } = useRooms();
     const [modal, setModal] = useState(null);
     const [form, setForm] = useState(EMPTY_FORM);
-    const [newFeature, setNewFeature] = useState({ icon: "", name: "" });
+    const [newFeature, setNewFeature] = useState("");
     const [roomTypeImage, setRoomTypeImage] = useState(null);
 
     useEffect(() => {
@@ -33,13 +34,15 @@ export default function AdminRoomTypes() {
         console.log("AdminRoomTypes - roomTypes updated:", roomTypes);
     }, [roomTypes]);
 
-    const openAdd = () => { setForm(EMPTY_FORM); setNewFeature({ icon: "", name: "" }); setRoomTypeImage(null); setModal({ mode: "add" }); };
+    const openAdd = () => { setForm(EMPTY_FORM); setNewFeature(""); setRoomTypeImage(null); setModal({ mode: "add" }); };
     const openEdit = (roomType) => { 
         setForm({ 
             ...roomType, 
-            features: roomType.features?.map(f => ({ icon: f.icon || "", name: f.name || f })) || [] 
+            features: (roomType.features || [])
+                .map((f) => (typeof f === "string" ? f : (f?.name || f?.icon || "")))
+                .filter(Boolean)
         }); 
-        setNewFeature({ icon: "", name: "" }); 
+        setNewFeature(""); 
         setRoomTypeImage(null);
         setModal({ mode: "edit", roomType }); 
     };
@@ -47,9 +50,24 @@ export default function AdminRoomTypes() {
     const close = () => setModal(null);
 
     const addFeature = () => {
-        if (!newFeature.icon.trim() || !newFeature.name.trim()) return;
-        setForm((f) => ({ ...f, features: [...f.features, newFeature] }));
-        setNewFeature({ icon: "", name: "" });
+        const featureName = newFeature.trim();
+        if (!featureName) return;
+        setForm((f) => {
+            if (f.features.some((feature) => feature.toLowerCase() === featureName.toLowerCase())) {
+                return f;
+            }
+            return { ...f, features: [...f.features, featureName] };
+        });
+        setNewFeature("");
+    };
+
+    const addCommonFeature = (featureName) => {
+        setForm((f) => {
+            if (f.features.some((feature) => feature.toLowerCase() === featureName.toLowerCase())) {
+                return f;
+            }
+            return { ...f, features: [...f.features, featureName] };
+        });
     };
 
     const removeFeature = (index) => {
@@ -154,7 +172,7 @@ export default function AdminRoomTypes() {
                                         <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center" }}>
                                             {roomType.features?.slice(0, 3).map((feat, idx) => (
                                                 <span key={idx} style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "12px", background: "#ddd", color: "#333", padding: "4px 8px", borderRadius: "999px" }}>
-                                                    {feat.icon || ""} {feat.name || feat}
+                                                    {feat}
                                                 </span>
                                             ))}
                                             {roomType.features?.length > 3 && <span style={{ fontSize: "12px", color: "#666" }}>+{roomType.features.length - 3}</span>}
@@ -199,14 +217,38 @@ export default function AdminRoomTypes() {
                     <div style={{ marginTop: "16px", padding: "12px", background: "#14101b", borderRadius: "6px" }}>
                         <label className="rooms__form_label">Features</label>
                         <div style={{ marginBottom: "12px", display: "flex", gap: "8px" }}>
-                            <input className="rooms__form_input" placeholder="Icon (e.g., 🛏️)" style={{ flex: 1 }} value={newFeature.icon} onChange={(e) => setNewFeature((f) => ({ ...f, icon: e.target.value }))} maxLength="2" />
-                            <input className="rooms__form_input" placeholder="Feature name (e.g., King Bed)" style={{ flex: 2 }} value={newFeature.name} onChange={(e) => setNewFeature((f) => ({ ...f, name: e.target.value }))} />
+                            <input
+                                className="rooms__form_input"
+                                placeholder="Feature name (e.g., King Bed)"
+                                style={{ flex: 1 }}
+                                value={newFeature}
+                                onChange={(e) => setNewFeature(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        addFeature();
+                                    }
+                                }}
+                            />
                             <button className="rooms__btn rooms__btn--primary" onClick={addFeature} style={{ whiteSpace: "nowrap" }}>+ Add</button>
+                        </div>
+                        <div style={{ marginBottom: "12px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                            {COMMON_FEATURES.map((feature) => (
+                                <button
+                                    key={feature}
+                                    type="button"
+                                    className="rooms__btn rooms__btn--ghost"
+                                    onClick={() => addCommonFeature(feature)}
+                                    style={{ padding: "4px 10px", fontSize: "12px" }}
+                                >
+                                    + {feature}
+                                </button>
+                            ))}
                         </div>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                             {form.features.map((feat, idx) => (
                                 <span key={idx} style={{ display: "flex", alignItems: "center", gap: "6px", background: "#14101b", padding: "6px 12px", borderRadius: "4px", border: "1px solid #9a6e3f" }}>
-                                    {feat.icon} {feat.name}
+                                    {feat}
                                     <button onClick={() => removeFeature(idx)} style={{ background: "none", border: "none", cursor: "pointer", color: "#ff4444", fontWeight: "bold" }}>×</button>
                                 </span>
                             ))}

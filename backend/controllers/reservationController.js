@@ -138,7 +138,7 @@ export const getAvailableRoomTypes = async (req, res) => {
 
         const bookedRoomIds = bookedRooms.map(b => b.room.toString());
 
-        const roomTypes = await RoomType.find({ status: "Available" });
+        const roomTypes = await RoomType.find({ status: { $in: ["Available", "Active"] } });
 
         const result = await Promise.all(
             roomTypes.map(async (rt) => {
