@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const CHEF_ALLOWED_ROUTES = [
-  "/admin",
+  // "/admin",
   "/admin/cuisines",
   "/admin/categories",
   "/admin/dishes",
@@ -53,7 +53,6 @@ const ROLE_ROUTE_MAP = {
     "/admin/sales-history",
   ],
   Waiter: [
-    "/admin",
     "/admin/waiter-panel",
     "/admin/cafe-waiter",
     "/admin/restaurant-waiter",
@@ -62,7 +61,6 @@ const ROLE_ROUTE_MAP = {
     "/admin/profile",
   ],
   "Cafe Waiter": [
-    "/admin",
     "/admin/cafe-waiter",
     "/admin/cafe-book-table",
     "/admin/cafe-menu",
@@ -71,7 +69,6 @@ const ROLE_ROUTE_MAP = {
     "/admin/profile",
   ],
   "Restaurant Waiter": [
-    "/admin",
     "/admin/restaurant-waiter",
     "/admin/res-book-table",
     "/admin/restaurant-menu",
@@ -80,7 +77,6 @@ const ROLE_ROUTE_MAP = {
     "/admin/profile",
   ],
   "Bar Waiter": [
-    "/admin",
     "/admin/bar-waiter",
     "/admin/bar-book-table",
     "/admin/bar-menu",
@@ -89,21 +85,18 @@ const ROLE_ROUTE_MAP = {
     "/admin/profile",
   ],
   Bartender: [
-    "/admin",
     "/admin/bartender-panel",
     "/admin/bar-menu",
     "/admin/bar-bookings",
     "/admin/profile",
   ],
   Housekeeping: [
-    "/admin",
     "/admin/housekeeping-panel",
     "/admin/room-bookings",
-    "/admin/rooms",
+    // "/admin/rooms",
     "/admin/profile",
   ],
   Chef: [
-    "/admin",
     "/admin/cuisines",
     "/admin/categories",
     "/admin/dishes",
@@ -148,5 +141,11 @@ export default function AdminRouteGuard({ path, children }) {
     return children;
   }
 
+  // Redirect to first allowed route for the role
+  if (allowed && allowed.length > 0) {
+    return <Navigate to={allowed[0]} replace />;
+  }
+
+  // Fallback to admin dashboard
   return <Navigate to="/admin" replace />;
 }

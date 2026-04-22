@@ -1,53 +1,113 @@
+import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-const KPI_CARDS = [
-  { label: "Today's Reservations", value: 18, trend: "+12%" },
-  { label: "Active Rooms", value: "26 / 34", trend: "+4%" },
-  { label: "Kitchen Orders", value: 47, trend: "+9%" },
-  { label: "Gallery Uploads", value: 6, trend: "+2 new" },
-];
-
-const TOP_ITEMS_CHART_DATA = [
-  { time: "12 AM", "Truffle Pasta": 5, "Signature Burger": 3, "Seafood Risotto": 2, "Chocolate Dome": 1 },
-  { time: "6 AM", "Truffle Pasta": 8, "Signature Burger": 6, "Seafood Risotto": 4, "Chocolate Dome": 2 },
-  { time: "12 PM", "Truffle Pasta": 18, "Signature Burger": 8, "Seafood Risotto": 10, "Chocolate Dome": 5 },
-  { time: "6 PM", "Truffle Pasta": 34, "Signature Burger": 29, "Seafood Risotto": 23, "Chocolate Dome": 19 },
-];
-
-const TOP_ITEMS = [
-  { name: "Truffle Pasta", orders: 34 },
-  { name: "Signature Burger", orders: 29 },
-  { name: "Seafood Risotto", orders: 23 },
-  { name: "Chocolate Dome", orders: 19 },
-];
-
-const TODAY_TABLE = [
-  { id: "RV-918", guest: "Aarav Sharma", slot: "7:30 PM", type: "Table", status: "Confirmed" },
-  { id: "RV-922", guest: "Mia Wilson", slot: "8:15 PM", type: "Table", status: "Pending" },
-  { id: "RM-203", guest: "Noah Johnson", slot: "2:00 PM", type: "Room", status: "Checked In" },
-];
-
-const TABLE_OVERVIEW = [
-  { area: "Cafe", table: "T1", seats: 4, status: "Occupied" },
-  { area: "Cafe", table: "T2", seats: 4, status: "Available" },
-  { area: "Restaurant", table: "R1", seats: 6, status: "Occupied" },
-  { area: "Restaurant", table: "R2", seats: 4, status: "Available" },
-  { area: "Bar", table: "B1", seats: 4, status: "Occupied" },
-  { area: "Bar", table: "B2", seats: 2, status: "Available" },
-];
+import dashboardService from '../../services/dashboardService';
 
 export default function AdminDashboard() {
+  const [dashboardData, setDashboardData] = useState({
+    kpiCards: [],
+    bestSellingDishes: [],
+    topChartData: [],
+    tableOverview: [],
+    todayLiveBookings: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardService.getDashboardData();
+      
+      if (response.success) {
+        setDashboardData({
+          kpiCards: Array.isArray(response.data.kpiCards) ? response.data.kpiCards : [],
+          bestSellingDishes: Array.isArray(response.data.bestSellingDishes) ? response.data.bestSellingDishes : [],
+          topChartData: Array.isArray(response.data.topChartData) ? response.data.topChartData : [],
+          tableOverview: Array.isArray(response.data.tableOverview) ? response.data.tableOverview : [],
+          todayLiveBookings: Array.isArray(response.data.todayLiveBookings) ? response.data.todayLiveBookings : []
+        });
+      } else {
+        setError(response.msg || 'Failed to load dashboard data');
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      
+      if (error.message === 'Authentication failed. Please login again.') {
+        setError('Authentication failed. Please login again to access the dashboard.');
+      } else if (error.message === 'No authentication token found. Please login again.') {
+        setError('Please login to access the dashboard.');
+      } else {
+        setError('Failed to load dashboard data. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">Dashboard Overview</h2>
+        <p className="ad_p">Track key admin metrics across bookings, rooms and menu performance.</p>
+        <div style={{ textAlign: 'center', padding: '40px' }}>Loading dashboard data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    const isAuthError = error.includes('Authentication failed') || error.includes('Please login');
+    
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">Dashboard Overview</h2>
+        <p className="ad_p">Track key admin metrics across bookings, rooms and menu performance.</p>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ color: '#ff6b6b', marginBottom: '16px' }}>{error}</div>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {!isAuthError && (
+              <button 
+                className="rooms__btn rooms__btn--primary" 
+                onClick={fetchDashboardData}
+              >
+                Retry
+              </button>
+            )}
+            {isAuthError && (
+              <button 
+                className="rooms__btn rooms__btn--primary" 
+                onClick={() => {
+                  localStorage.removeItem('authToken');
+                  localStorage.removeItem('authUser');
+                  localStorage.removeItem('adminRole');
+                  localStorage.removeItem('adminName');
+                  window.location.href = '/login';
+                }}
+              >
+                Go to Login
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ad_page">
       <h2 className="ad_h2">Dashboard Overview</h2>
       <p className="ad_p">Track key admin metrics across bookings, rooms and menu performance.</p>
 
       <div className="ad_cards_grid" style={{ marginTop: 16 }}>
-        {KPI_CARDS.map((item) => (
-          <article key={item.label} className="ad_card">
+        {dashboardData.kpiCards.map((item, index) => (
+          <article key={`${item.label}-${index}`} className="ad_card">
             <div className="ad_card__label">{item.label}</div>
             <div className="ad_card__value">{item.value}</div>
-            <div className="ad_card__meta">{item.trend} vs yesterday</div>
+            <div className="ad_card__meta">{item.trend}</div>
           </article>
         ))}
       </div>
@@ -56,8 +116,8 @@ export default function AdminDashboard() {
         <section className="ad_card" style={{ overflow: "hidden" }}>
           <h3 className="ad_card__title">Best Selling Dishes</h3>
           <ul className="ad_list">
-            {TOP_ITEMS.map((item, index) => (
-              <li key={item.name} className="ad_list__item ad_list__item--between">
+            {dashboardData.bestSellingDishes.map((item, index) => (
+              <li key={item.name || index} className="ad_list__item ad_list__item--between">
                 <div>
                   <div style={{ color: "#f3ede2", fontWeight: 600 }}>#{index + 1} {item.name}</div>
                   <div className="ad_card__meta">High demand during prime service hours</div>
@@ -72,7 +132,7 @@ export default function AdminDashboard() {
           <h3 className="ad_card__title">Top Menu Items</h3>
           <div style={{ width: "100%", height: 300 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={TOP_ITEMS_CHART_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <LineChart data={dashboardData.topChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
                 <XAxis dataKey="time" stroke="#666" tick={{ fontSize: 10 }} />
                 <YAxis stroke="#666" tick={{ fontSize: 10 }} />
@@ -100,12 +160,22 @@ export default function AdminDashboard() {
     fontSize: "13px"
   }}
 
-  formatter={(value) => `₹${(value / 100000).toFixed(1)}L`}
+  formatter={(value) => `${value} orders`}
 /> <Legend wrapperStyle={{ fontSize: "10px" }} />
-                <Line type="monotone" dataKey="Truffle Pasta" stroke="#d4a373" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" dataKey="Signature Burger" stroke="#ff6b6b" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" dataKey="Seafood Risotto" stroke="#4ecdc4" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" dataKey="Chocolate Dome" stroke="#a78bfa" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+                {dashboardData.bestSellingDishes.map((dish, index) => {
+                  const colors = ["#d4a373", "#ff6b6b", "#4ecdc4", "#a78bfa"];
+                  return (
+                    <Line 
+                      key={dish.name || index}
+                      type="monotone" 
+                      dataKey={dish.name} 
+                      stroke={colors[index % colors.length]} 
+                      strokeWidth={2} 
+                      dot={{ r: 3 }} 
+                      activeDot={{ r: 5 }} 
+                    />
+                  );
+                })}
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -115,8 +185,8 @@ export default function AdminDashboard() {
       <section className="ad_card" style={{ marginTop: 16 }}>
         <h3 className="ad_card__title">Table Status</h3>
         <div className="ad_cards_grid" style={{ marginTop: 12 }}>
-          {TABLE_OVERVIEW.map((item) => (
-            <article key={`${item.area}-${item.table}`} className="ad_card">
+          {dashboardData.tableOverview.map((item, index) => (
+            <article key={`${item.area}-${item.table}-${index}`} className="ad_card">
               <div className="ad_card__label">{item.area} - {item.table}</div>
               <div className="ad_card__value">{item.seats} persons</div>
               <div className="ad_card__meta">{item.status}</div>
@@ -131,7 +201,7 @@ export default function AdminDashboard() {
           <table className="ad_table">
             <thead><tr><th>ID</th><th>Guest</th><th>Slot</th><th>Type</th><th>Status</th></tr></thead>
             <tbody>
-              {TODAY_TABLE.map((row) => (
+              {dashboardData.todayLiveBookings.map((row) => (
                 <tr key={row.id}>
                   <td>{row.id}</td><td>{row.guest}</td><td>{row.slot}</td><td>{row.type}</td><td><span className="ad_chip">{row.status}</span></td>
                 </tr>

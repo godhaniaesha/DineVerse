@@ -91,9 +91,149 @@ const LoginForm = ({ onSuccess, onToast }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const getFirstAllowedRoute = (role) => {
+    const ROLE_ROUTE_MAP = {
+      "Super Admin": [
+        "/admin",
+        "/admin/analytics",
+        "/admin/reservations",
+        "/admin/admin-menu",
+        "/admin/room-bookings",
+        "/admin/staff",
+        "/admin/cuisines",
+        "/admin/orders",
+        "/admin/kds",
+        "/admin/waiter-panel",
+        "/admin/cafe-waiter",
+        "/admin/restaurant-waiter",
+        "/admin/bar-waiter",
+        "/admin/cafe-chef",
+        "/admin/restaurant-chef",
+        "/admin/bar-chef",
+        "/admin/bartender-panel",
+        "/admin/manager-panel",
+        "/admin/housekeeping-panel",
+        "/admin/guests",
+        "/admin/admin-menu",
+        "/admin/tables",
+        "/admin/rooms",
+        "/admin/gallery",
+        "/admin/blogs",
+        "/admin/reviews",
+        "/admin/offers",
+        "/admin/inquiries",
+        "/admin/content",
+        "/admin/settings",
+        "/admin/role-access",
+        "/admin/architecture",
+        "/admin/admin-users",
+        "/admin/notifications",
+        "/admin/profile",
+        "/admin/sales-history",
+      ],
+      Manager: [
+        "/admin",
+        "/admin/analytics",
+        "/admin/reservations",
+        "/admin/admin-menu",
+        "/admin/room-bookings",
+        "/admin/staff",
+        "/admin/cuisines",
+        "/admin/orders",
+        "/admin/kds",
+        "/admin/waiter-panel",
+        "/admin/cafe-waiter",
+        "/admin/restaurant-waiter",
+        "/admin/bar-waiter",
+        "/admin/cafe-chef",
+        "/admin/restaurant-chef",
+        "/admin/bar-chef",
+        "/admin/bartender-panel",
+        "/admin/manager-panel",
+        "/admin/housekeeping-panel",
+        "/admin/guests",
+        "/admin/admin-menu",
+        "/admin/tables",
+        "/admin/rooms",
+        "/admin/gallery",
+        "/admin/blogs",
+        "/admin/reviews",
+        "/admin/offers",
+        "/admin/inquiries",
+        "/admin/content",
+        "/admin/settings",
+        "/admin/role-access",
+        "/admin/architecture",
+        "/admin/admin-users",
+        "/admin/notifications",
+        "/admin/profile",
+        "/admin/sales-history",
+      ],
+      Waiter: [
+        "/admin/profile",
+        "/admin/waiter-panel",
+        "/admin/cafe-waiter",
+        "/admin/restaurant-waiter",
+        "/admin/bar-waiter",
+        "/admin/orders",
+      ],
+      "Cafe Waiter": [
+        "/admin/profile",
+        "/admin/cafe-waiter",
+        "/admin/cafe-book-table",
+        "/admin/cafe-menu",
+        "/admin/orders",
+        "/admin/billing",
+      ],
+      "Restaurant Waiter": [
+        "/admin/profile",
+        "/admin/restaurant-waiter",
+        "/admin/res-book-table",
+        "/admin/restaurant-menu",
+        "/admin/orders",
+        "/admin/billing",
+      ],
+      "Bar Waiter": [
+        "/admin/profile",
+        "/admin/bar-waiter",
+        "/admin/bar-book-table",
+        "/admin/bar-menu",
+        "/admin/orders",
+        "/admin/billing",
+      ],
+      Bartender: [
+        "/admin/profile",
+        "/admin/bartender-panel",
+        "/admin/bar-menu",
+        "/admin/bar-bookings",
+      ],
+      Housekeeping: [
+        "/admin/profile",
+        "/admin/housekeeping-panel",
+        "/admin/room-bookings",
+        "/admin/rooms",
+      ],
+      Chef: [
+        "/admin/profile",
+        "/admin/cuisines",
+        "/admin/categories",
+        "/admin/dishes",
+        "/admin/admin-menu",
+        "/admin/orders",
+        "/admin/kds",
+      ],
+      User: ["/admin"],
+    };
+
+    const isChefRole = role === "Chef" || role === "Cafe Chef" || role === "Restaurant Chef" || role === "Bar Chef";
+    const allowed = isChefRole ? ["/admin/profile", "/admin", "/admin/cuisines", "/admin/categories", "/admin/dishes", "/admin/admin-menu", "/admin/orders", "/admin/kds"] : ROLE_ROUTE_MAP[role];
+    
+    return allowed && allowed.length > 0 ? allowed[0] : "/admin";
+  };
+
   useEffect(() => {
     if (isAuthenticated && user) {
-      const targetPath = user.role === "User" ? "/" : "/admin";
+      const targetPath = user.role === "User" ? "/" : getFirstAllowedRoute(user.role);
       navigate(targetPath);
     }
   }, [isAuthenticated, user, navigate]);
@@ -121,7 +261,7 @@ const LoginForm = ({ onSuccess, onToast }) => {
     if (result.success) {
       onToast("Welcome back! Redirecting…", "success");
       setTimeout(() => {
-        const targetPath = result.data.data.role === "User" ? "/" : "/admin";
+        const targetPath = result.data.data.role === "User" ? "/" : getFirstAllowedRoute(result.data.data.role);
         navigate(targetPath);
       }, 1000);
     } else {

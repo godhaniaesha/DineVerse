@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import dashboardService from '../../services/dashboardService';
 
 const THEME_COLORS = [
   "#d4a373", // Primary Gold
@@ -10,67 +11,110 @@ const THEME_COLORS = [
   "#d4af37", // Metallic Gold
 ];
 
-const WEEKLY_REVENUE = [
-  { day: "Mon", amount: 42000 },
-  { day: "Tue", amount: 46500 },
-  { day: "Wed", amount: 51200 },
-  { day: "Thu", amount: 49800 },
-  { day: "Fri", amount: 63400 },
-  { day: "Sat", amount: 71100 },
-  { day: "Sun", amount: 68900 },
-];
-
-const MONTHLY_REVENUE = [
-  { month: "Jan", revenue: 380000 },
-  { month: "Feb", revenue: 420000 },
-  { month: "Mar", revenue: 390000 },
-  { month: "Apr", revenue: 450000 },
-  { month: "May", revenue: 480000 },
-  { month: "Jun", revenue: 510000 },
-  { month: "Jul", revenue: 530000 },
-  { month: "Aug", revenue: 490000 },
-  { month: "Sep", revenue: 520000 },
-  { month: "Oct", revenue: 550000 },
-  { month: "Nov", revenue: 580000 },
-  { month: "Dec", revenue: 620000 },
-];
-
-
-
-const KPI = [
-  { label: "Weekly Revenue", value: "₹3.9L", trend: "+8%" },
-  { label: "Avg Reservation Value", value: "₹4,820", trend: "+5%" },
-  { label: "Occupancy Rate", value: "74%", trend: "+3%" },
-  { label: "No-show Rate", value: "4.2%", trend: "-1.1%" },
-];
-
-
 export default function AdminAnalytics() {
+  const [analyticsData, setAnalyticsData] = useState({
+    kpiCards: [],
+    weeklyRevenue: [],
+    monthlyRevenue: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [period, setPeriod] = useState('week');
   const [isCompactMobile, setIsCompactMobile] = useState(() => window.innerWidth <= 425);
+
+  useEffect(() => {
+    fetchAnalyticsData();
+  }, [period]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 425px)");
     const handleViewportChange = (event) => setIsCompactMobile(event.matches);
-
+    
     setIsCompactMobile(mediaQuery.matches);
     mediaQuery.addEventListener("change", handleViewportChange);
 
     return () => mediaQuery.removeEventListener("change", handleViewportChange);
   }, []);
 
-  const mobileChartWidth = Math.max(MONTHLY_REVENUE.length * 56, 640);
+  const fetchAnalyticsData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardService.getAnalytics(`?period=${period}`);
+      
+      if (response.success) {
+        setAnalyticsData({
+          kpiCards: Array.isArray(response.data.kpiCards) ? response.data.kpiCards : [],
+          weeklyRevenue: Array.isArray(response.data.weeklyRevenue) ? response.data.weeklyRevenue : [],
+          monthlyRevenue: Array.isArray(response.data.monthlyRevenue) ? response.data.monthlyRevenue : []
+        });
+      } else {
+        setError(response.msg || 'Failed to load analytics data');
+      }
+    } catch (error) {
+      console.error('Error fetching analytics data:', error);
+      setError('Failed to load analytics data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mobileChartWidth = Math.max(analyticsData.monthlyRevenue.length * 56, 640);
+
+  if (loading) {
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">Analytics</h2>
+        <p className="ad_p">Performance snapshot for revenue trends and booking channels.</p>
+        <div style={{ textAlign: 'center', padding: '40px' }}>Loading analytics data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">Analytics</h2>
+        <p className="ad_p">Performance snapshot for revenue trends and booking channels.</p>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ color: '#ff6b6b', marginBottom: '16px' }}>{error}</div>
+          <button 
+            className="rooms__btn rooms__btn--primary" 
+            onClick={fetchAnalyticsData}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
 
   return (
     <div className="ad_page">
       <h2 className="ad_h2">Analytics</h2>
       <p className="ad_p">Performance snapshot for revenue trends and booking channels.</p>
 
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <select 
+          value={period} 
+          onChange={(e) => setPeriod(e.target.value)}
+          className="rooms__form_select"
+          style={{ minWidth: '120px' }}
+        >
+          <option value="week">Last Week</option>
+          <option value="month">Last Month</option>
+          <option value="year">Last Year</option>
+        </select>
+      </div>
+
       <div className="ad_cards_grid">
-        {KPI.map((item) => (
-          <article className="ad_card" key={item.label}>
+        {analyticsData.kpiCards.map((item, index) => (
+          <article className="ad_card" key={`${item.label}-${index}`}>
             <div className="ad_card__label">{item.label}</div>
             <div className="ad_card__value">{item.value}</div>
-            <div className="ad_card__meta">{item.trend} this week</div>
+            <div className="ad_card__meta">{item.trend}</div>
           </article>
         ))}
       </div>
@@ -80,7 +124,7 @@ export default function AdminAnalytics() {
           <h3 className="ad_card__title">Weekly Revenue</h3>
           <div style={{ width: "100%", height: 300 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={WEEKLY_REVENUE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={analyticsData.weeklyRevenue} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#d4a373" stopOpacity={0.8} />
@@ -88,7 +132,7 @@ export default function AdminAnalytics() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ddd" vertical={false} />
-                <XAxis dataKey="day" stroke="#666" tick={{ fontSize: 10 }} />
+                <XAxis dataKey="date" stroke="#666" tick={{ fontSize: 10 }} />
                 <YAxis stroke="#666" tick={{ fontSize: 10 }} />
                 <Tooltip contentStyle={{
                   backgroundColor: "transparent",
@@ -102,7 +146,7 @@ export default function AdminAnalytics() {
                     fontSize: "12px"
                   }}
                    formatter={(value) => `₹${value.toLocaleString("en-IN")}`} />
-                <Area type="monotone" dataKey="amount" stroke="#d4a373" fillOpacity={1} fill="url(#colorAmount)" />
+                <Area type="monotone" dataKey="revenue" stroke="#d4a373" fillOpacity={1} fill="url(#colorAmount)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -114,7 +158,7 @@ export default function AdminAnalytics() {
             <div style={{ width: isCompactMobile ? mobileChartWidth : "100%", minWidth: isCompactMobile ? mobileChartWidth : "auto", height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={MONTHLY_REVENUE}
+                  data={analyticsData.monthlyRevenue}
                   margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                   barSize={isCompactMobile ? 22 : 16}
                 >
@@ -151,7 +195,7 @@ export default function AdminAnalytics() {
                   />
 
                   <Bar dataKey="revenue" radius={[4, 4, 0, 0]}>
-                    {MONTHLY_REVENUE.map((entry, index) => (
+                    {analyticsData.monthlyRevenue.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={THEME_COLORS[index % THEME_COLORS.length]} />
                     ))}
                   </Bar>

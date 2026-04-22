@@ -67,7 +67,8 @@ export const login = async (req, res) => {
                     full_name: user.full_name,
                     email: user.email,
                     role: user.role,
-                    token: token
+                    token: token,
+                    phone: user.phone
                 }
             });
         } else {

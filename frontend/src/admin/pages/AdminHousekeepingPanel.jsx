@@ -1,12 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiEdit2 } from "react-icons/fi";
-
-const INITIAL_TASKS = [
-  { id: 1, room: "302", task: "deluxe", assigned: "HK-01", status: "checkout", hasBooking: true, clean_status: "Pending", housekeeper_name: "" },
-  { id: 2, room: "110", task: "suite", assigned: "HK-03", status: "checkout", hasBooking: true, clean_status: "In Progress", housekeeper_name: "John Doe" },
-  { id: 3, room: "205", task: "deluxe", assigned: "HK-02", status: "occupied", hasBooking: true, clean_status: "Clean", housekeeper_name: "Jane Smith" },
-  { id: 4, room: "401", task: "suite", assigned: "HK-01", status: "checkout", hasBooking: false, clean_status: "Pending", housekeeper_name: "" },
-];
+import housekeepingService from "../../services/housekeepingService";
 
 function Modal({ title, onClose, children }) {
   return (
@@ -21,19 +15,91 @@ function Modal({ title, onClose, children }) {
 }
 
 export default function AdminHousekeepingPanel() {
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [tasks, setTasks] = useState([]);
+  const [stats, setStats] = useState({ roomsToClean: 0, inProgress: 0, cleanedToday: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [modal, setModal] = useState(null);
 
-  const filteredTasks = tasks.filter(task => task.hasBooking && task.status === "checkout");
+  useEffect(() => {
+    fetchHousekeepingData();
+  }, []);
+
+  const fetchHousekeepingData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await housekeepingService.getHousekeepingTasks();
+      
+      if (response.success) {
+        setTasks(Array.isArray(response.data.tasks) ? response.data.tasks : []);
+        setStats(response.data.stats || { roomsToClean: 0, inProgress: 0, cleanedToday: 0 });
+      } else {
+        setError(response.msg || 'Failed to load housekeeping data');
+      }
+    } catch (error) {
+      console.error('Error fetching housekeeping data:', error);
+      setError('Failed to load housekeeping data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openEdit = (task) => setModal({ mode: "edit", task });
   const close = () => setModal(null);
 
-  const saveCleanStatus = (id, newStatus) => {
-    const adminName = localStorage.getItem("adminName") || "Admin";
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, clean_status: newStatus, housekeeper_name: adminName } : t));
-    close();
+  const saveCleanStatus = async (roomId, newStatus) => {
+    try {
+      const response = await housekeepingService.updateCleanStatus(roomId, newStatus);
+      
+      if (response.success) {
+        // Refresh data after update
+        await fetchHousekeepingData();
+        close();
+      } else {
+        setError(response.msg || 'Failed to update clean status');
+      }
+    } catch (error) {
+      console.error('Error updating clean status:', error);
+      setError('Failed to update clean status. Please try again.');
+    }
   };
+
+  const getRoomTypeDisplay = (room) => {
+    return room.roomType?.display_name || room.roomType || 'Standard';
+  };
+
+  const getHousekeeperName = (room) => {
+    return room.assignedHousekeeper?.full_name || 'Not Assigned';
+  };
+
+  if (loading) {
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">Housekeeping Panel</h2>
+        <p className="ad_p">Housekeeping task board for room cleaning and status updates.</p>
+        <div style={{ textAlign: 'center', padding: '40px' }}>Loading housekeeping data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">Housekeeping Panel</h2>
+        <p className="ad_p">Housekeeping task board for room cleaning and status updates.</p>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ color: '#ff6b6b', marginBottom: '16px' }}>{error}</div>
+          <button 
+            className="rooms__btn rooms__btn--primary" 
+            onClick={fetchHousekeepingData}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ad_page">
@@ -43,15 +109,15 @@ export default function AdminHousekeepingPanel() {
       <div className="ad_two_col">
         <div className="ad_card">
           <h3>Rooms To Clean</h3>
-          <p className="ad_metric">{filteredTasks.filter(t => t.clean_status === "Pending").length}</p>
+          <p className="ad_metric">{stats.roomsToClean}</p>
         </div>
         <div className="ad_card">
           <h3>In Progress</h3>
-          <p className="ad_metric">{filteredTasks.filter(t => t.clean_status === "In Progress").length}</p>
+          <p className="ad_metric">{stats.inProgress}</p>
         </div>
         <div className="ad_card">
           <h3>Cleaned Today</h3>
-          <p className="ad_metric">{filteredTasks.filter(t => t.clean_status === "Clean").length}</p>
+          <p className="ad_metric">{stats.cleanedToday}</p>
         </div>
       </div>
 
@@ -68,22 +134,30 @@ export default function AdminHousekeepingPanel() {
             </tr>
           </thead>
           <tbody>
-            {filteredTasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.room}</td>
-                <td>{task.task}</td>
-                <td><span className="ad_chip">{task.status}</span></td>
-                <td><span className="ad_chip">{task.clean_status}</span></td>
-                <td>{task.housekeeper_name || "N/A"}</td>
-                <td>
-                  <div className="d-flex" style={{ gap: "6px" }}>
-                    <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
-                      <FiEdit2 />
-                    </button>
-                  </div>
+            {tasks.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                  No housekeeping tasks found
                 </td>
               </tr>
-            ))}
+            ) : (
+              tasks.map((task) => (
+                <tr key={task._id}>
+                  <td>{task.roomNumber}</td>
+                  <td>{getRoomTypeDisplay(task)}</td>
+                  <td><span className="ad_chip">{task.status}</span></td>
+                  <td><span className="ad_chip">{task.cleanStatus}</span></td>
+                  <td>{getHousekeeperName(task)}</td>
+                  <td>
+                    <div className="d-flex" style={{ gap: "6px" }}>
+                      <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
+                        <FiEdit2 />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -93,24 +167,29 @@ export default function AdminHousekeepingPanel() {
           <div style={{ padding: "20px" }}>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Room</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.room}</p>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.roomNumber}</p>
+            </div>
+            <div style={{ marginBottom: "16px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Room Type</label>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{getRoomTypeDisplay(modal.task)}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>Current Clean Status</label>
-              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.clean_status}</p>
+              <p style={{ margin: "6px 0 0 0", fontSize: "14px", color: "#cbc7c7" }}>{modal.task.cleanStatus}</p>
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label htmlFor="clean_status" style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>New Clean Status</label>
-              <select className="rooms__form_select" id="clean_status" defaultValue={modal.task.clean_status} >
+              <select className="rooms__form_select" id="clean_status" defaultValue={modal.task.cleanStatus} >
                 <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Clean">Clean</option>
+                <option value="Dirty">Dirty</option>
               </select>
             </div>
             <div className="rooms__form_actions">
               <button className="rooms__btn rooms__btn--primary" onClick={() => {
                 const select = document.getElementById("clean_status");
-                saveCleanStatus(modal.task.id, select.value);
+                saveCleanStatus(modal.task._id, select.value);
               }}>Save</button>
               <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
             </div>
