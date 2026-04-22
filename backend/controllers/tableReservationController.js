@@ -157,7 +157,7 @@ export const confirmTableBooking = async (req, res) => {
             date: searchDate, time,
             guests: Number(guests) || 1,
             area, table: tableId,
-            user: finalUserId,
+            user: finalUserId || null,
             occasion: occasion || "Other",
             specialRequest: specialRequest || "",
             advanceAmount: 10,
@@ -168,7 +168,9 @@ export const confirmTableBooking = async (req, res) => {
 
         await Table.findByIdAndUpdate(tableId, { status: "Occupied" });
 
-        const populatedBooking = await TableReservation.findById(booking._id).populate('table', 'tableNo area floor');
+        const populatedBooking = await TableReservation.findById(booking._id)
+            .populate('table', 'tableNo area floor')
+            .populate('user', 'full_name email');
 
         return res.status(201).json({ success: true, msg: "Table Reserved Successfully", data: populatedBooking });
     } catch (error) {
@@ -197,7 +199,8 @@ export const updateTableReservationStatus = async (req, res) => {
             id,
             updateData,
             { new: true }
-        ).populate('table', 'tableNo area');
+        ).populate('table', 'tableNo area')
+         .populate('user', 'full_name email');
 
         if (!reservation) return ThrowError(res, 404, "Reservation not found");
 
@@ -224,6 +227,7 @@ export const getTableReservationsByDate = async (req, res) => {
 
         const reservations = await TableReservation.find(query)
             .populate('table', 'tableNo area')
+            .populate('user', 'full_name email')
             .sort({ time: 1 });
 
         return res.status(200).json({

@@ -58,7 +58,7 @@ export default function Footer() {
                                     <li><Link to="/bookTable"><MdArrowForward className="z_link_icon" /> Book a Table</Link></li>
                                     <li><Link to="/bookRoom"><MdArrowForward className="z_link_icon" /> Book a Room</Link></li>
                                     <li><Link to="/bar"><MdArrowForward className="z_link_icon" /> Bar Access</Link></li>
-                                    <li><Link to="/contact"><MdArrowForward className="z_link_icon" /> Private Events</Link></li>
+                                    <li><Link to="/contact"><MdArrowForward className="z_link_icon" /> Contact Us</Link></li>
                                     <li><Link to="/faq"><MdArrowForward className="z_link_icon" /> FAQ</Link></li>
                                 </ul>
                             </div>
