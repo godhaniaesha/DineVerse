@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 const IcEdit = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
@@ -10,6 +10,13 @@ const IcEyeOff = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 
 export default function AdminProfile() {
   const { user, token, changePassword, updateProfile } = useAuth();
+  
+  // Log phone received from backend for debugging
+  useEffect(() => {
+    console.log("Auth user object (from backend):", user);
+    console.log("Phone from backend:", user?.phone);
+  }, [user]);
+ 
   const [editMode, setEditMode] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -71,6 +78,7 @@ export default function AdminProfile() {
     }
   };
 
+  
   return (
     <>
       <div style={{ textAlign: "center", marginBottom: 32 }}>

@@ -223,6 +223,7 @@ const NAV_GROUPS = [
 ];
 
 const CHEF_ALLOWED_LINKS = [
+  "/admin/profile",
   "/admin",
   "/admin/cuisines",
   "/admin/categories",
@@ -230,7 +231,6 @@ const CHEF_ALLOWED_LINKS = [
   "/admin/admin-menu",
   "/admin/orders",
   "/admin/kds",
-  "/admin/profile",
 ];
 
 /* ─── PAGE TITLE MAP ─────────────────────────────────────────── */
@@ -314,116 +314,132 @@ export default function AdminLayout() {
   const roleAllowedLinks = {
     "Super Admin": [
       "/admin",
-      "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
-      "/admin/cafe-bookings",
-      "/admin/restaurant-bookings",
-      "/admin/bar-bookings",
+      "/admin/admin-menu",
       "/admin/room-bookings",
       "/admin/staff",
+      "/admin/cuisines",
+      "/admin/orders",
+      "/admin/kds",
+      "/admin/waiter-panel",
+      "/admin/cafe-waiter",
+      "/admin/restaurant-waiter",
+      "/admin/bar-waiter",
+      "/admin/cafe-chef",
+      "/admin/restaurant-chef",
+      "/admin/bar-chef",
+      "/admin/bartender-panel",
+      "/admin/manager-panel",
+      "/admin/housekeeping-panel",
       "/admin/guests",
+      "/admin/admin-menu",
       "/admin/tables",
-      "/admin/cafe-book-table",
-      "/admin/res-book-table",
-      "/admin/bar-book-table",
       "/admin/rooms",
-      "/admin/room-types",
+      "/admin/gallery",
       "/admin/blogs",
       "/admin/reviews",
+      "/admin/offers",
       "/admin/inquiries",
+      "/admin/content",
+      "/admin/settings",
+      "/admin/role-access",
+      "/admin/architecture",
       "/admin/admin-users",
+      "/admin/notifications",
       "/admin/profile",
       "/admin/sales-history",
     ],
     Manager: [
       "/admin",
-      "/admin/admin-menu",
       "/admin/analytics",
       "/admin/reservations",
-      "/admin/cafe-bookings",
-      "/admin/restaurant-bookings",
-      "/admin/bar-bookings",
+      "/admin/admin-menu",
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
-      "/admin/categories",
-      "/admin/dishes",
       "/admin/orders",
+      "/admin/kds",
+      "/admin/waiter-panel",
+      "/admin/cafe-waiter",
+      "/admin/restaurant-waiter",
+      "/admin/bar-waiter",
+      "/admin/cafe-chef",
+      "/admin/restaurant-chef",
+      "/admin/bar-chef",
+      "/admin/bartender-panel",
+      "/admin/manager-panel",
       "/admin/housekeeping-panel",
       "/admin/guests",
-     "/admin/tables",
-      // "/admin/cafe-book-table",
-      // "/admin/res-book-table",
-      // "/admin/bar-book-table",
+      "/admin/admin-menu",
+      "/admin/tables",
       "/admin/rooms",
-      "/admin/room-types",
       "/admin/gallery",
       "/admin/blogs",
       "/admin/reviews",
+      "/admin/offers",
       "/admin/inquiries",
+      "/admin/content",
+      "/admin/settings",
+      "/admin/role-access",
+      "/admin/architecture",
+      "/admin/admin-users",
+      "/admin/notifications",
       "/admin/profile",
       "/admin/sales-history",
     ],
     Waiter: [
-      "/admin",
+      "/admin/profile",
       "/admin/waiter-panel",
       "/admin/cafe-waiter",
       "/admin/restaurant-waiter",
       "/admin/bar-waiter",
       "/admin/orders",
-      "/admin/billing",
-      "/admin/profile",
     ],
     Chef: [
-    "/admin",
-    "/admin/cuisines",
-    "/admin/categories",
-    "/admin/dishes",
-    "/admin/admin-menu",
-    "/admin/orders",
-    "/admin/kds",
-    "/admin/profile",
-  ],
+      "/admin/profile",
+      "/admin/cuisines",
+      "/admin/categories",
+      "/admin/dishes",
+      "/admin/admin-menu",
+      "/admin/orders",
+      "/admin/kds",
+    ],
     "Cafe Waiter": [
-      "/admin",
+      "/admin/profile",
+      "/admin/cafe-waiter",
       "/admin/cafe-book-table",
       "/admin/cafe-menu",
-      "/admin/cafe-waiter",
       "/admin/orders",
       "/admin/billing",
-      "/admin/profile",
     ],
     "Restaurant Waiter": [
-      "/admin",
+      "/admin/profile",
+      "/admin/restaurant-waiter",
       "/admin/res-book-table",
       "/admin/restaurant-menu",
-      "/admin/restaurant-waiter",
       "/admin/orders",
       "/admin/billing",
-      "/admin/profile",
     ],
     "Bar Waiter": [
-      "/admin",
+      "/admin/profile",
+      "/admin/bar-waiter",
       "/admin/bar-book-table",
       "/admin/bar-menu",
-      "/admin/bar-waiter",
       "/admin/orders",
       "/admin/billing",
-      "/admin/profile",
     ],
     Bartender: [
-      "/admin",
+      "/admin/profile",
       "/admin/bartender-panel",
       "/admin/bar-menu",
       "/admin/bar-bookings",
-      "/admin/profile",
     ],
     Housekeeping: [
-      "/admin",
+      "/admin/profile",
       "/admin/housekeeping-panel",
       "/admin/room-bookings",
-      "/admin/profile",
+      // "/admin/rooms",
     ],
   };
 
@@ -596,7 +612,22 @@ export default function AdminLayout() {
                 setUserMenuOpen((value) => !value);
               }}
             >
-              <div className="ad_topbar__avatar">AD</div>
+              <div className="ad_topbar__avatar">
+                {(() => {
+                  const userName = adminName || "Admin User";
+                  const nameParts = userName.trim().split(' ');
+                  if (nameParts.length >= 2) {
+                    // Take first letter of first two words
+                    return (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+                  } else if (nameParts.length === 1 && nameParts[0].length > 1) {
+                    // Take first two characters if single word
+                    return nameParts[0].substring(0, 2).toUpperCase();
+                  } else {
+                    // Fallback to first character
+                    return userName.substring(0, 1).toUpperCase();
+                  }
+                })()}
+              </div>
               {/* <span className="ad_topbar__user_name">Admin User</span> */}
               {/* {Icons.chevron} */}
             </button>
