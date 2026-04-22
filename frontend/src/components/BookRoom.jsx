@@ -21,7 +21,7 @@ function buildCalendar(year, month) {
 function genRef() { return "RM·" + Math.random().toString(36).substring(2, 7).toUpperCase(); }
 
 function StepIndicator({ current }) {
-  const steps = ["Details", "Preferences", "Confirm"];
+  const steps = ["Details", "Preferences", "Payment", "Confirm"];
   return (
     <div className="h_steps">
       {steps.map((lbl, i) => {
@@ -130,12 +130,27 @@ export default function BookRoom() {
 
   const [paymentMethod, setPaymentMethod] = useState("card"); // card or upi
   const [cardNo, setCardNo] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
   const [upiId, setUpiId] = useState("");
+  const [paymentIntentId, setPaymentIntentId] = useState("");
+  const [billingDetails, setBillingDetails] = useState({
+    billingType: "",
+    hours: 0,
+    nights: 0,
+    hourlyRate: 0,
+    totalAmount: 0
+  });
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [initialAvailabilityError, setInitialAvailabilityError] = useState("");
+  const [initialTypeResolved, setInitialTypeResolved] = useState(false);
 
   const iconByIndex = [<IoBedOutline />, <MdOutlineKingBed />, <MdOutlineVilla />, <MdOutlineVpnKey />];
   const iconForRoomType = (index) => iconByIndex[index % iconByIndex.length];
+  const formatCardNumber = (value) => value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
+  const formatExpiry = (value) => value.replace(/\D/g, "").slice(0, 4).replace(/(\d{2})(?=\d)/g, "$1/");
 
   const formatDateForApi = (date) => {
     if (!date) return "";
@@ -171,7 +186,6 @@ export default function BookRoom() {
         }
 
         mappedRoomTypes = (data?.data?.roomTypes || [])
-          .filter((rt) => rt.isAvailable)
           .map((rt, index) => ({
             id: rt._id,
             icon: iconForRoomType(index),
@@ -179,7 +193,10 @@ export default function BookRoom() {
             desc: rt.description || "Comfortable stay with premium amenities",
             priceValue: rt.price_per_night || 0,
             price: `₹${rt.price_per_night || 0}/night`,
-            totalAmount: rt.totalAmount || 0
+            totalAmount: rt.totalAmount || 0,
+            features: Array.isArray(rt.features) ? rt.features : [],
+            availableCount: Number(rt.availableCount || 0),
+            isAvailable: Boolean(rt.isAvailable)
           }));
       } else {
         const response = await fetch(`${API_BASE_URL}/rooms/types`);
@@ -195,7 +212,10 @@ export default function BookRoom() {
           desc: rt.description || "Comfortable stay with premium amenities",
           priceValue: rt.price_per_night || 0,
           price: `₹${rt.price_per_night || 0}/night`,
-          totalAmount: 0
+          totalAmount: 0,
+          features: Array.isArray(rt.features) ? rt.features : [],
+          availableCount: 0,
+          isAvailable: true
         }));
       }
 
@@ -235,13 +255,49 @@ export default function BookRoom() {
       }
 
       setAvailableRooms(data?.data?.availableRooms || []);
+      setBillingDetails({
+        billingType: data?.data?.billingType || "",
+        hours: Number(data?.data?.hours || 0),
+        nights: Number(data?.data?.nights || 0),
+        hourlyRate: Number(data?.data?.hourlyRate || 0),
+        totalAmount: Number(data?.data?.totalAmount || 0)
+      });
     } catch (error) {
       setAvailableRooms([]);
+      setBillingDetails({
+        billingType: "",
+        hours: 0,
+        nights: 0,
+        hourlyRate: 0,
+        totalAmount: 0
+      });
       setErrors((prev) => ({ ...prev, roomNo: error.message || "Failed to load rooms" }));
     } finally {
       setRoomsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const checkInitialAvailability = async () => {
+      if (!selectedRoomTypeId) return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/reservations/roomTypeAvailability/${selectedRoomTypeId}`);
+        const data = await response.json();
+        if (!response.ok || !data?.success) return;
+
+        if (!data?.data?.isAvailable) {
+          const roomTypeName = data?.data?.roomTypeName || selectedRoomTypeName || "Selected room type";
+          const msg = `${roomTypeName} has no available rooms right now.`;
+          setInitialAvailabilityError(msg);
+          setSubmitError(msg);
+        }
+      } catch (_) {
+        // Ignore network error and keep normal flow.
+      }
+    };
+
+    checkInitialAvailability();
+  }, [selectedRoomTypeId, selectedRoomTypeName]);
 
   useEffect(() => {
     if (step === 2) {
@@ -250,26 +306,37 @@ export default function BookRoom() {
   }, [step, checkIn, checkOut, checkInTime, checkOutTime, adults, children]);
 
   useEffect(() => {
+    if (initialTypeResolved) return;
     if (!selectedRoomTypeId || !roomTypes.length) return;
     const isValidType = roomTypes.some((rt) => rt.id === selectedRoomTypeId);
     if (isValidType) {
       setRoomType(selectedRoomTypeId);
     }
-  }, [selectedRoomTypeId, roomTypes]);
+    setInitialTypeResolved(true);
+  }, [selectedRoomTypeId, roomTypes, initialTypeResolved]);
 
   useEffect(() => {
+    if (initialTypeResolved) return;
     if (!selectedRoomTypeName || roomType || !roomTypes.length) return;
     const byName = roomTypes.find((rt) => rt.name?.toLowerCase() === selectedRoomTypeName.toLowerCase());
     if (byName) {
       setRoomType(byName.id);
     }
-  }, [selectedRoomTypeName, roomType, roomTypes]);
+    setInitialTypeResolved(true);
+  }, [selectedRoomTypeName, roomType, roomTypes, initialTypeResolved]);
 
   useEffect(() => {
     if (roomType) {
       fetchRoomsByType(roomType);
     } else {
       setAvailableRooms([]);
+      setBillingDetails({
+        billingType: "",
+        hours: 0,
+        nights: 0,
+        hourlyRate: 0,
+        totalAmount: 0
+      });
     }
   }, [roomType, checkIn, checkOut, checkInTime, checkOutTime]);
 
@@ -343,14 +410,24 @@ export default function BookRoom() {
     const e = {};
     if (!roomType) e.roomType = "Please select a room type";
     if (roomType && !roomNo) e.roomNo = "Please select a room number";
+    if (!agree) e.agree = "You must agree to our stay policy";
 
-    // Payment Validation
+    setErrors(e);
+    return !Object.keys(e).length;
+  };
+
+  const validate3 = () => {
+    const e = {};
+
     if (paymentMethod === "card") {
       if (!cardNo.trim()) {
         e.cardNo = "Card number is required";
       } else if (!/^\d{16}$/.test(cardNo.replace(/\s/g, ""))) {
         e.cardNo = "Card number must be 16 digits";
       }
+      if (!cardName.trim()) e.cardName = "Cardholder name is required";
+      if (!expiry.trim()) e.expiry = "Expiry date is required";
+      if (!cvv.trim()) e.cvv = "CVV is required";
     } else if (paymentMethod === "upi") {
       if (!upiId.trim()) {
         e.upiId = "UPI ID is required";
@@ -359,13 +436,12 @@ export default function BookRoom() {
       }
     }
 
-    if (!agree) e.agree = "You must agree to our stay policy";
-
     setErrors(e);
     return !Object.keys(e).length;
   };
 
   const calculateTotal = () => {
+    if (billingDetails.totalAmount > 0) return billingDetails.totalAmount;
     if (!roomType || !checkIn || !checkOut) return 0;
     const room = roomTypes.find(r => r.id === roomType);
     if (!room) return 0;
@@ -383,14 +459,70 @@ export default function BookRoom() {
   const selectedRoomType = roomTypes.find(r => r.id === roomType);
   const selectedRoom = availableRooms.find((room) => room._id === roomNo);
 
-  const goNext = () => {
+  const goNext = async () => {
     if (step === 1 && validate1()) setStep(2);
     if (step === 2 && validate2()) setStep(3);
+    if (step === 3 && validate3()) {
+      setSubmitError("");
+      setSubmitLoading(true);
+      try {
+        const payload = {
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          email: user?.email || email.trim(),
+          phone: phone.trim(),
+          checkIn: formatDateForApi(checkIn),
+          checkOut: formatDateForApi(checkOut),
+          checkInTime,
+          checkOutTime,
+          adults,
+          children,
+          roomTypeId: roomType,
+          roomId: roomNo,
+          specialRequest: requests
+        };
+
+        const response = await fetch(`${API_BASE_URL}/reservations/createPaymentIntent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data?.success) {
+          throw new Error(data?.msg || "Payment initialization failed");
+        }
+
+        setPaymentIntentId(data?.data?.paymentIntentId || "");
+        setBillingDetails({
+          billingType: data?.data?.billingType || billingDetails.billingType || "",
+          hours: Number(data?.data?.hours || billingDetails.hours || 0),
+          nights: Number(data?.data?.nights || billingDetails.nights || 0),
+          hourlyRate: Number(data?.data?.hourlyRate || billingDetails.hourlyRate || 0),
+          totalAmount: Number(data?.data?.totalAmount || billingDetails.totalAmount || 0)
+        });
+        if (data?.data?.totalAmount) {
+          const updatedTotal = Number(data.data.totalAmount);
+          setRoomTypes((prev) =>
+            prev.map((rt) => (rt.id === roomType ? { ...rt, totalAmount: updatedTotal } : rt))
+          );
+        }
+        setStep(4);
+      } catch (error) {
+        setSubmitError(error.message || "Unable to initialize payment");
+      } finally {
+        setSubmitLoading(false);
+      }
+    }
   };
 
   const submit = async (e) => {
     e.preventDefault();
     if (!agree) return;
+    if (!paymentIntentId) {
+      setSubmitError("Payment not initialized. Please review payment details again.");
+      return;
+    }
     setSubmitError("");
     setSubmitLoading(true);
 
@@ -409,7 +541,7 @@ export default function BookRoom() {
         roomTypeId: roomType,
         roomId: roomNo,
         specialRequest: requests,
-        paymentIntentId: `PI-LOCAL-${Date.now()}`
+        paymentIntentId
       };
 
       const response = await fetch(`${API_BASE_URL}/reservations/confirmBooking`, {
@@ -439,8 +571,34 @@ export default function BookRoom() {
     setCheckIn(null); setCheckInTime("15:00"); setCheckOut(null); setCheckOutTime("11:00"); setAdults(2); setChildren(0);
     setRoomType(""); setRequests(""); setAgree(false); setErrors({});
     setAvailableRooms([]); setRoomTypesError("");
-    setPaymentMethod("card"); setCardNo(""); setUpiId("");
+    setBillingDetails({ billingType: "", hours: 0, nights: 0, hourlyRate: 0, totalAmount: 0 });
+    setPaymentMethod("card"); setCardNo(""); setCardName(""); setExpiry(""); setCvv(""); setUpiId(""); setPaymentIntentId("");
   };
+
+  if (initialAvailabilityError) {
+    return (
+      <div className="h_page">
+        <div className="h_atm" />
+        <div className="h_atm_mid" />
+        <div className="h_grid_veil" />
+        <div className="h_grain" />
+        <main className="h_main">
+          <div className="h_wrap" style={{ maxWidth: "820px" }}>
+            <div className="h_card" style={{ textAlign: "center", padding: "2.2rem 1.5rem" }}>
+              <div className="h_card_title" style={{ marginBottom: ".8rem" }}>Room Reservation</div>
+              <div className="h_err_msg" style={{ marginBottom: "1.2rem" }}>{initialAvailabilityError}</div>
+              <p className="h_policy_p" style={{ marginBottom: "1.2rem" }}>
+                Please go back and select another room type.
+              </p>
+              <button type="button" className="h_btn_back" onClick={() => window.history.back()}>
+                ← Go Back
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -461,7 +619,7 @@ export default function BookRoom() {
                   <div>
                     <div className="h_card_title">Room Reservation</div>
                     <div className="h_card_sub">
-                      {step === 1 ? "Guest details & dates" : step === 2 ? "Room selection" : "Review & confirm"}
+                      {step === 1 ? "Guest details & dates" : step === 2 ? "Room selection" : step === 3 ? "Payment details" : "Review & confirm"}
                     </div>
                   </div>
                   <StepIndicator current={step} />
@@ -619,15 +777,20 @@ export default function BookRoom() {
                           <div className="h_areas">
                             {roomTypes.map(r => (
                               <div key={r.id} className={`h_area${roomType === r.id ? " h_asel" : ""}`}
+                                style={{ opacity: !checkIn || !checkOut || r.isAvailable ? 1 : 0.6, cursor: !checkIn || !checkOut || r.isAvailable ? "pointer" : "not-allowed" }}
                                 onClick={() => {
+                                  if (checkIn && checkOut && !r.isAvailable) return;
                                   setRoomType(r.id);
                                   setRoomNo(""); // Reset room number when type changes
                                   setErrors(p => ({ ...p, roomType: null, roomNo: null }));
                                 }}>
                                 <span className="h_area_ico">{r.icon}</span>
                                 <div className="h_area_name">{r.name}</div>
-                                {/* <div className="h_area_desc">{r.desc}</div> */}
+                                {/* <div className="h_area_desc">
+                                  {(r.features?.length ? r.features.slice(0, 2).join(" • ") : r.desc)}
+                                </div> */}
                                 <div className="h_area_price" style={{ color: "var(--h-champ)", fontSize: ".75rem", marginTop: ".5rem" }}>{r.price}</div>
+                                {checkIn && checkOut && <div className="h_area_price" style={{ fontSize: ".7rem", marginTop: ".2rem" }}>{r.isAvailable ? `${r.availableCount} rooms available` : "No rooms available for selected dates"}</div>}
                                 <div className="h_area_chk">✓</div>
                               </div>
                             ))}
@@ -671,41 +834,96 @@ export default function BookRoom() {
                         </div>
 
                         <div className="h_fsec">
-                          <div className="h_sec_lbl">Payment Information</div>
-                          <div className="h_row_2" style={{ marginBottom: "1rem" }}>
-                            <button
-                              type="button"
-                              className={`h_btn_back${paymentMethod === 'card' ? ' h_sel' : ''}`}
-                              style={{ flex: 1, padding: "10px", borderColor: paymentMethod === 'card' ? "#c8965a" : "" }}
-                              onClick={() => setPaymentMethod('card')}
+                          <label className="h_chk_wrap">
+                            <input type="checkbox" className="h_chk" checked={agree}
+                              onChange={e => { setAgree(e.target.checked); setErrors(p => ({ ...p, agree: null })); }} />
+                            <span className="h_chk_lbl">I agree to the <a href="#">Stay Policy</a> and understand our cancellation terms.</span>
+                          </label>
+                          {errors.agree && <div className="h_err_msg">{errors.agree}</div>}
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 3 && (
+                      <div className="h_fbody">
+                        <div className="h_fsec">
+                          <div className="h_sec_lbl">Payment Method</div>
+                          <div className="h_pay_methods" style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+                            <div
+                              className={`h_pay_method${paymentMethod === "card" ? " h_asel" : ""}`}
+                              style={{ flex: 1, padding: "1rem", border: "1px solid var(--h-border)", borderRadius: "var(--h-r-md)", cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                              onClick={() => setPaymentMethod("card")}
                             >
-                              Credit / Debit Card
-                            </button>
-                            <button
-                              type="button"
-                              className={`h_btn_back${paymentMethod === 'upi' ? ' h_sel' : ''}`}
-                              style={{ flex: 1, padding: "10px", borderColor: paymentMethod === 'upi' ? "#c8965a" : "" }}
-                              onClick={() => setPaymentMethod('upi')}
+                              <FaRegCreditCard /> <span>Credit Card</span>
+                            </div>
+                            <div
+                              className={`h_pay_method${paymentMethod === "upi" ? " h_asel" : ""}`}
+                              style={{ flex: 1, padding: "1rem", border: "1px solid var(--h-border)", borderRadius: "var(--h-r-md)", cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                              onClick={() => setPaymentMethod("upi")}
                             >
-                              UPI Payment
-                            </button>
+                              <FaRegCheckCircle /> <span>UPI</span>
+                            </div>
                           </div>
 
                           {paymentMethod === 'card' ? (
-                            <div className="h_field">
-                              <label className="h_label">Card Number</label>
-                              <input
-                                className={`h_input${errors.cardNo ? " h_err" : ""}`}
-                                type="text"
-                                placeholder="16-digit card number"
-                                value={cardNo}
-                                onChange={e => {
-                                  const val = e.target.value.replace(/\D/g, "").slice(0, 16);
-                                  setCardNo(val);
-                                  if (errors.cardNo) setErrors(p => ({ ...p, cardNo: null }));
-                                }}
-                              />
-                              {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
+                            <div className="h_row_2">
+                              <div className="h_field">
+                                <label className="h_label">Card Number</label>
+                                <input
+                                  className={`h_input${errors.cardNo ? " h_err" : ""}`}
+                                  type="text"
+                                  placeholder="0000 0000 0000 0000"
+                                  value={cardNo}
+                                  onChange={e => {
+                                    setCardNo(formatCardNumber(e.target.value));
+                                    if (errors.cardNo) setErrors(p => ({ ...p, cardNo: null }));
+                                  }}
+                                />
+                                {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
+                              </div>
+                              <div className="h_field">
+                                <label className="h_label">Cardholder Name</label>
+                                <input
+                                  className={`h_input${errors.cardName ? " h_err" : ""}`}
+                                  type="text"
+                                  placeholder="Alexandre Dupont"
+                                  value={cardName}
+                                  onChange={e => {
+                                    setCardName(e.target.value);
+                                    if (errors.cardName) setErrors(p => ({ ...p, cardName: null }));
+                                  }}
+                                />
+                                {errors.cardName && <div className="h_err_msg">{errors.cardName}</div>}
+                              </div>
+                              <div className="h_field">
+                                <label className="h_label">Expiry Date</label>
+                                <input
+                                  className={`h_input${errors.expiry ? " h_err" : ""}`}
+                                  type="text"
+                                  placeholder="MM/YY"
+                                  value={expiry}
+                                  onChange={e => {
+                                    setExpiry(formatExpiry(e.target.value));
+                                    if (errors.expiry) setErrors(p => ({ ...p, expiry: null }));
+                                  }}
+                                />
+                                {errors.expiry && <div className="h_err_msg">{errors.expiry}</div>}
+                              </div>
+                              <div className="h_field">
+                                <label className="h_label">CVV</label>
+                                <input
+                                  className={`h_input${errors.cvv ? " h_err" : ""}`}
+                                  type="password"
+                                  maxLength="3"
+                                  placeholder="***"
+                                  value={cvv}
+                                  onChange={e => {
+                                    setCvv(e.target.value.replace(/\D/g, "").slice(0, 3));
+                                    if (errors.cvv) setErrors(p => ({ ...p, cvv: null }));
+                                  }}
+                                />
+                                {errors.cvv && <div className="h_err_msg">{errors.cvv}</div>}
+                              </div>
                             </div>
                           ) : (
                             <div className="h_field">
@@ -724,19 +942,21 @@ export default function BookRoom() {
                             </div>
                           )}
                         </div>
-
-                        <div className="h_fsec">
-                          <label className="h_chk_wrap">
-                            <input type="checkbox" className="h_chk" checked={agree}
-                              onChange={e => { setAgree(e.target.checked); setErrors(p => ({ ...p, agree: null })); }} />
-                            <span className="h_chk_lbl">I agree to the <a href="#">Stay Policy</a> and understand our cancellation terms.</span>
-                          </label>
-                          {errors.agree && <div className="h_err_msg">{errors.agree}</div>}
+                        <div className="h_policy" style={{ background: "rgba(200, 160, 90, 0.05)", padding: "1rem", borderRadius: "8px", border: "1px dashed var(--h-border)" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: ".5rem" }}>
+                            <span>Payable Amount</span>
+                            <strong style={{ color: "var(--h-champ-lt)" }}>₹{totalAmount || 0}</strong>
+                          </div>
+                          <p className="h_policy_p" style={{ fontSize: "11px", margin: 0 }}>
+                            {billingDetails.billingType === "hourly"
+                              ? `Calculated hourly by backend (${billingDetails.hours || 0} hours${billingDetails.hourlyRate ? ` @ ₹${billingDetails.hourlyRate}/hour` : ""}).`
+                              : `Calculated nightly by backend (${billingDetails.nights || 0} nights).`}
+                          </p>
                         </div>
                       </div>
                     )}
 
-                    {step === 3 && (
+                    {step === 4 && (
                       <div className="h_fbody">
                         <div className="h_fsec">
                           <div className="h_sec_lbl">Booking Summary</div>
@@ -748,7 +968,8 @@ export default function BookRoom() {
                             ["Room Number", selectedRoom?.roomNumber || "—"],
                             ["Price per Night", selectedRoomType?.price || "—"],
                             ["Total Amount", totalAmount ? `₹${totalAmount}` : "—"],
-                            ["Payment", paymentMethod === 'card' ? `Card (Ending in ${cardNo.slice(-4)})` : `UPI (${upiId})`],
+                            ["Billing Type", billingDetails.billingType ? billingDetails.billingType.toUpperCase() : "Nightly"],
+                            ["Payment", paymentMethod === 'card' ? `Card (Ending in ${cardNo.slice(-4) || "XXXX"})` : `UPI (${upiId})`],
                             ["Requests", requests || "None"],
                           ].map(([k, v]) => (
                             <div className="h_sum_row" key={k}>
@@ -768,8 +989,8 @@ export default function BookRoom() {
                       <div className="h_fnote"><span><FaLock /></span> Secure Reservation</div>
                       <div className="h_fbtns">
                         {step > 1 && <button type="button" className="h_btn_back" onClick={() => setStep(s => s - 1)}>← Back</button>}
-                        {step < 3
-                          ? <button type="button" className="h_btn_prime" onClick={goNext}>{step === 2 ? "Checkout" : "Continue"} <span className="h_btn_arr">→</span></button>
+                        {step < 4
+                          ? <button type="button" className="h_btn_prime" onClick={goNext} disabled={submitLoading}>{submitLoading ? "Processing..." : step === 3 ? "Proceed to Confirm" : "Continue"} <span className="h_btn_arr">→</span></button>
                           : <button type="submit" className="h_btn_prime" disabled={submitLoading}>{submitLoading ? "Confirming..." : "Confirm Stay"} <span className="h_btn_arr">✓</span></button>
                         }
                       </div>
@@ -792,7 +1013,7 @@ export default function BookRoom() {
                       { key: "Check-Out", val: fmtDate(checkOut) },
                       { key: "Adults", val: adults },
                       { key: "Children", val: children },
-                      { key: "Room", val: roomType ? (selectedRoomType?.name || selectedRoomTypeName || "Selected") : null },
+                      { key: "Room", val: roomType ? (selectedRoomType?.name || "Selected") : null },
                       { key: "Room No", val: selectedRoom?.roomNumber || null },
                       { key: "Total Amount", val: totalAmount > 0 ? `₹${totalAmount}` : null },
                     ].map(({ key, val }) => (

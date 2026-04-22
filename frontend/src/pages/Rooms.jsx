@@ -1,9 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaChevronLeft, FaChevronRight, FaWifi, FaSwimmingPool, FaParking } from "react-icons/fa";
-import { MdHotel, MdKingBed, MdMeetingRoom, MdStar, MdArrowForward } from "react-icons/md";
+import { FaChevronLeft, FaChevronRight, FaWifi, FaSwimmingPool, FaParking, FaSnowflake, FaCoffee, FaConciergeBell, FaDumbbell, FaBath } from "react-icons/fa";
+import { MdHotel, MdKingBed, MdMeetingRoom, MdArrowForward, MdOutlineLocalBar, MdOutlineTv, MdOutlineAir, MdOutlineRestaurant } from "react-icons/md";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+
+const getFeatureIcon = (featureName = "") => {
+    const feature = String(featureName).toLowerCase();
+    if (feature.includes("wifi") || feature.includes("wi-fi") || feature.includes("internet")) {
+        return <FaWifi className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("pool") || feature.includes("swim")) {
+        return <FaSwimmingPool className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("mini bar") || feature.includes("bar")) {
+        return <MdOutlineLocalBar className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("bed")) {
+        return <MdKingBed className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("balcony")) {
+        return <MdMeetingRoom className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("tv") || feature.includes("television")) {
+        return <MdOutlineTv className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("ac") || feature.includes("air") || feature.includes("cooling")) {
+        return <MdOutlineAir className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("gym") || feature.includes("fitness")) {
+        return <FaDumbbell className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("spa")) {
+        return <FaBath className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("breakfast") || feature.includes("meal") || feature.includes("dinner") || feature.includes("restaurant")) {
+        return <MdOutlineRestaurant className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("coffee")) {
+        return <FaCoffee className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("service") || feature.includes("concierge")) {
+        return <FaConciergeBell className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("snow")) {
+        return <FaSnowflake className="z_prestige_amenity_icon" />;
+    }
+    if (feature.includes("parking") || feature.includes("car")) {
+        return <FaParking className="z_prestige_amenity_icon" />;
+    }
+    return <MdHotel className="z_prestige_amenity_icon" />;
+};
 
 const TESTIMONIALS = [
     {
@@ -48,6 +95,7 @@ export default function Rooms() {
                     desc: room.description || "Experience unparalleled comfort in our thoughtfully designed spaces.",
                     price: `₹${Number(room.price_per_night || 0).toLocaleString("en-IN")}`,
                     img: room.image_url || "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=80",
+                    features: Array.isArray(room.features) ? room.features.filter(Boolean) : [],
                     raw: room
                 }));
 
@@ -129,18 +177,14 @@ export default function Rooms() {
                                         <p className="z_prestige_room_desc">{room.desc}</p>
 
                                         <div className="z_prestige_amenities">
-                                            <div className="z_prestige_amenity">
-                                                <MdKingBed className="z_prestige_amenity_icon" />
-                                                <span>King Bed</span>
-                                            </div>
-                                            <div className="z_prestige_amenity">
-                                                <FaWifi className="z_prestige_amenity_icon" />
-                                                <span>Wi-Fi</span>
-                                            </div>
-                                            <div className="z_prestige_amenity">
-                                                <MdMeetingRoom className="z_prestige_amenity_icon" />
-                                                <span>Balcony</span>
-                                            </div>
+                                            {(room.features.length ? room.features : ["Premium Stay", "Luxury Comfort", "24/7 Service"])
+                                                .slice(0, 3)
+                                                .map((feature) => (
+                                                    <div className="z_prestige_amenity" key={`${room.id}-${feature}`}>
+                                                        {getFeatureIcon(feature)}
+                                                        <span>{feature}</span>
+                                                    </div>
+                                                ))}
                                         </div>
 
                                         <Link
