@@ -124,9 +124,9 @@ function SearchOverlay({ open, onClose }) {
     }
 
     const q = query.toLowerCase();
-    const filtered = MENU_ITEMS.filter(item => 
-      item.name.toLowerCase().includes(q) || 
-      item.desc.toLowerCase().includes(q) || 
+    const filtered = MENU_ITEMS.filter(item =>
+      item.name.toLowerCase().includes(q) ||
+      item.desc.toLowerCase().includes(q) ||
       item.category.toLowerCase().includes(q) ||
       item.tag.toLowerCase().includes(q)
     ).slice(0, 6); // Limit results for better UI
@@ -176,8 +176,8 @@ function SearchOverlay({ open, onClose }) {
             <div className="d_search__results-label">Menu Items Found</div>
             <div className="d_search__results-grid">
               {results.map((item) => (
-                <div 
-                  key={item.id} 
+                <div
+                  key={item.id}
                   className="d_search__result-card"
                   onClick={() => handleResultClick(item.id)}
                 >
@@ -192,7 +192,7 @@ function SearchOverlay({ open, onClose }) {
                     <p className="d_search__result-desc">{item.desc}</p>
                     <div className="d_search__result-meta">
                       <span className="d_search__result-tag">{item.tag}</span>
-                      <span className="d_search__result-time"><FiClock size={12}/> {item.time}</span>
+                      <span className="d_search__result-time"><FiClock size={12} /> {item.time}</span>
                     </div>
                   </div>
                   <MdArrowForward className="d_search__result-arrow" />
@@ -207,8 +207,8 @@ function SearchOverlay({ open, onClose }) {
         ) : (
           <div className="d_search__tags">
             {SEARCH_TAGS.map((tag) => (
-              <button 
-                key={tag} 
+              <button
+                key={tag}
                 className="d_search__tag"
                 onClick={() => handleTagClick(tag)}
               >
@@ -272,7 +272,7 @@ function Drawer({ open, onClose, onBookTable, onBookRoom, isLoggedIn, onLogout }
                   <div className="d_drawer__user-icon"><MdLogin /></div>
                   <span>Login / Register</span>
                 </Link>
-            
+
               </>
             )}
           </div>
@@ -341,10 +341,10 @@ function Strip() {
 
 /* ── MAIN HEADER ──────────────────────────────────────────── */
 export default function Header() {
-  const [scrolled,    setScrolled]    = useState(false);
-  const [activeNav,   setActiveNav]   = useState("");
-  const [searchOpen,  setSearchOpen]  = useState(false);
-  const [drawerOpen,  setDrawerOpen]  = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeNav, setActiveNav] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("adminName") || !!localStorage.getItem("userName"));
   const navigate = useNavigate();
@@ -399,12 +399,13 @@ export default function Header() {
   }, []);
 
   const handleBookTable = () => navigate("/bookTable");
-  const handleBookRoom  = () => navigate("/bookRoom");
-  
+  const handleBookRoom = () => navigate("/bookRoom");
+
   const handleLogout = () => {
     localStorage.removeItem("adminName");
     localStorage.removeItem("adminRole");
     localStorage.removeItem("userName");
+    localStorage.clear();
     setIsLoggedIn(false);
     setUserDropdownOpen(false);
     navigate("/");
@@ -473,7 +474,7 @@ export default function Header() {
               >
                 <FiUser />
               </button>
-              
+
               {userDropdownOpen && (
                 <div className="d_user_menu">
                   <div className="d_user_menu__header">
@@ -498,7 +499,7 @@ export default function Header() {
                           <MdLogin className="d_user_menu__icon" />
                           <span>Login / Register</span>
                         </Link>
-                    
+
                       </>
                     )}
                   </div>
