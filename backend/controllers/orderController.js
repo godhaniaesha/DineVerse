@@ -13,7 +13,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET);
 
 export const createOrder = async (req, res) => {
     try {
-        const { tableId, customerName, items, specialInstructions } = req.body;
+        const { tableId, customerName, customerEmail, items, specialInstructions } = req.body;
 
         if (!tableId || !items || items.length === 0) {
             return sendBadRequestResponse(res, "Table ID and items are required");
@@ -32,6 +32,29 @@ export const createOrder = async (req, res) => {
 
         let order = await Order.findOne({ tableId, status: "Active" });
 
+        let finalCustomerName = customerName || "Guest";
+        let finalCustomerEmail = customerEmail || "";
+
+        let activeReservationId = null;
+
+        if (!finalCustomerEmail) {
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+            const endOfToday = new Date();
+            endOfToday.setHours(23, 59, 59, 999);
+            const reservation = await TableReservation.findOne({
+                table: tableId,
+                status: "Confirmed",
+                paymentStatus: "Paid",
+                date: { $gte: startOfToday, $lte: endOfToday }
+            });
+            if (reservation) {
+                finalCustomerName = reservation.guest_name;
+                finalCustomerEmail = reservation.email;
+                activeReservationId = reservation._id;
+            }
+        }
+
         const newItems = items.map(item => ({
             dishId: item.dishId,
             name: item.name,
@@ -46,13 +69,18 @@ export const createOrder = async (req, res) => {
             order.items.push(...newItems);
             order.totalAmount += additionalAmount;
             if (specialInstructions) order.specialInstructions += ` | ${specialInstructions}`;
+            if (finalCustomerEmail) order.customerEmail = finalCustomerEmail;
+            if (finalCustomerName !== "Guest") order.customerName = finalCustomerName;
+            if (activeReservationId) order.reservationId = activeReservationId;
             await order.save();
         } else {
             order = await Order.create({
                 orderID: `${areaPrefix}-${Math.floor(100000 + Math.random() * 900000)}`,
                 tableId,
                 waiterId: req.user._id,
-                customerName: customerName || "Guest",
+                customerName: finalCustomerName,
+                customerEmail: finalCustomerEmail,
+                reservationId: activeReservationId,
                 items: newItems,
                 totalAmount: additionalAmount,
                 specialInstructions,
@@ -86,14 +114,11 @@ export const createBillingPaymentIntent = async (req, res) => {
 
         let finalAmount = order.totalAmount;
         let discountApplied = 0;
-
-
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
 
         const endOfToday = new Date();
         endOfToday.setHours(23, 59, 59, 999);
-
         const reservation = await TableReservation.findOne({
             table: order.tableId,
             date: { $gte: startOfToday, $lte: endOfToday },
@@ -138,7 +163,7 @@ export const confirmBillingAndCheckout = async (req, res) => {
     try {
         const { orderId } = req.params;
 
-        const { paymentIntentId, paymentMethod } = req.body;
+        const { paymentIntentId, paymentMethod, customerEmail } = req.body;
 
         const order = await Order.findById(orderId);
         if (!order) return ThrowError(res, 404, "Order not found");
@@ -159,9 +184,10 @@ export const confirmBillingAndCheckout = async (req, res) => {
             discountApplied = reservation.advanceAmount;
             finalPayableAmount = Math.max(0, order.totalAmount - discountApplied);
             order.customerEmail = reservation.email;
+            order.reservationId = reservation._id;
+        } else if (customerEmail) {
+            order.customerEmail = customerEmail;
         }
-
-
         order.status = "Completed";
         order.totalAmount = finalPayableAmount;
         order.paymentMethod = paymentMethod || "Online";

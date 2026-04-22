@@ -56,12 +56,10 @@ export const getUserBillingHistory = async (req, res) => {
     try {
         const userEmail = req.user.email;
 
-
         const reservations = await TableReservation.find({
             email: userEmail,
             paymentStatus: "Paid"
         }).populate('table', 'area tableNo');
-
 
         const orders = await Order.find({
             customerEmail: userEmail,
@@ -70,18 +68,17 @@ export const getUserBillingHistory = async (req, res) => {
 
         const combinedHistory = [];
 
-
         orders.forEach(o => {
-
             const usedReservation = reservations.find(r =>
-                r.table && o.tableId && r.table._id.toString() === o.tableId._id.toString() &&
-                r.status === "Completed" && r.isDiscountApplied === true
+                (o.reservationId && r._id.toString() === o.reservationId.toString()) ||
+                (!o.reservationId && r.table && o.tableId && r.table._id.toString() === o.tableId._id.toString() && r.status === "Completed" && r.isDiscountApplied === true)
             );
 
             const advance = usedReservation ? usedReservation.advanceAmount : 0;
 
             combinedHistory.push({
                 id: o._id,
+                reservationId: usedReservation ? usedReservation._id : null,
                 date: o.createdAt,
                 service: o.tableId?.area || "Restaurant",
                 transactionId: o.orderID,
@@ -92,14 +89,10 @@ export const getUserBillingHistory = async (req, res) => {
             });
         });
 
-
         reservations.forEach(r => {
-
             const isMerged = combinedHistory.some(ch =>
-                new Date(ch.date).getDate() === new Date(r.date).getDate() &&
-
-                ch.advanceAmount === r.advanceAmount &&
-                ch.type === "Booking & Order"
+                (ch.reservationId && ch.reservationId.toString() === r._id.toString()) ||
+                (!ch.reservationId && new Date(ch.date).toDateString() === new Date(r.date).toDateString() && ch.advanceAmount === r.advanceAmount && ch.type === "Booking & Order")
             );
 
             if (!isMerged) {

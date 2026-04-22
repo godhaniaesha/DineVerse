@@ -9,19 +9,10 @@ import UserModel from '../models/UserModel.js';
 
 export const addCategory = async (req, res) => {
     try {
-        const { cuisineId, name, area, status } = req.body;
+        const { name, area, status } = req.body;
 
-        if (!cuisineId || !name || !area) {
-            return sendBadRequestResponse(res, "CuisineId, name and area are required");
-        }
-
-        if (!mongoose.Types.ObjectId.isValid(cuisineId)) {
-            return sendBadRequestResponse(res, "Invalid Cuisine ID format");
-        }
-
-        const cuisineExists = await Cuisine.findById(cuisineId);
-        if (!cuisineExists) {
-            return ThrowError(res, 404, "Referenced Cuisine not found");
+        if (!name || !area) {
+            return sendBadRequestResponse(res, "Name and area are required");
         }
 
         let img = "";
@@ -40,7 +31,6 @@ export const addCategory = async (req, res) => {
         }
 
         const category = await Category.create({
-            cuisineId,
             name,
             img,
             area: parsedArea,
@@ -59,7 +49,7 @@ export const addCategory = async (req, res) => {
 
 export const getCategories = async (req, res) => {
     try {
-        const categories = await Category.find({}).populate('cuisineId', 'name');
+        const categories = await Category.find({});
         res.status(200).json({
             success: true,
             msg: "Categories fetched successfully",
@@ -83,8 +73,7 @@ export const searchCategories = async (req, res) => {
 
             query.$or = [
                 { name: regex },
-                { area: regex },
-                { cuisineId: { $in: cuisineIds } }
+                { area: regex }
             ];
         }
 
@@ -92,12 +81,7 @@ export const searchCategories = async (req, res) => {
             query.area = { $in: [new RegExp(area, "i")] };
         }
 
-        if (cuisine && cuisine !== "All" && cuisine !== "None") {
-            const cui = await Cuisine.findOne({ name: new RegExp(cuisine, 'i') });
-            if (cui) query.cuisineId = cui._id;
-        }
-
-        const categories = await Category.find(query).populate('cuisineId', 'name');
+        const categories = await Category.find(query);
 
         res.status(200).json({
             success: true,
@@ -117,7 +101,7 @@ export const getCategoryById = async (req, res) => {
             return sendBadRequestResponse(res, "Invalid Category ID format");
         }
 
-        const category = await Category.findById(id).populate('cuisineId', 'name');
+        const category = await Category.findById(id);
         if (!category) {
             return ThrowError(res, 404, "Category not found");
         }
@@ -135,7 +119,7 @@ export const getCategoryById = async (req, res) => {
 export const updateCategory = async (req, res) => {
     try {
         const { id } = req.params;
-        const { cuisineId, name, area, status } = req.body;
+        const { name, area, status } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return sendBadRequestResponse(res, "Invalid Category ID format");
@@ -144,17 +128,6 @@ export const updateCategory = async (req, res) => {
         const category = await Category.findById(id);
         if (!category) {
             return ThrowError(res, 404, "Category not found");
-        }
-
-        if (cuisineId) {
-            if (!mongoose.Types.ObjectId.isValid(cuisineId)) {
-                return sendBadRequestResponse(res, "Invalid Cuisine ID format");
-            }
-            const cuisineExists = await Cuisine.findById(cuisineId);
-            if (!cuisineExists) {
-                return ThrowError(res, 404, "Referenced Cuisine not found");
-            }
-            category.cuisineId = cuisineId;
         }
 
         if (req.file) {
@@ -222,13 +195,31 @@ export const deleteCategory = async (req, res) => {
 export const addDish = async (req, res) => {
     try {
         const {
-            name, short_des, des, cat_id, course,
+            name, short_des, des, cat_id, cuisineId,
             mealType, price, prepTime, ingredients,
             note, area, chef, status
         } = req.body;
 
-        if (!name || !cat_id || !price || !course || !mealType || !area || !chef) {
+        if (!name || !cat_id || !price || !cuisineId || !mealType || !area || !chef) {
             return sendBadRequestResponse(res, "Required fields are missing");
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(cuisineId)) {
+            return sendBadRequestResponse(res, "Invalid Cuisine ID format");
+        }
+
+        const cuisineExists = await Cuisine.findById(cuisineId);
+        if (!cuisineExists) {
+            return ThrowError(res, 404, "Cuisine not found");
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(cat_id)) {
+            return sendBadRequestResponse(res, "Invalid Category ID format");
+        }
+
+        const categoryExists = await Category.findById(cat_id);
+        if (!categoryExists) {
+            return ThrowError(res, 404, "Category not found");
         }
 
 
@@ -306,7 +297,7 @@ export const addDish = async (req, res) => {
             short_des,
             des,
             cat_id,
-            course,
+            cuisineId,
             mealType,
             price: Number(price),
             prepTime,
@@ -332,6 +323,7 @@ export const getDishes = async (req, res) => {
     try {
         const dishes = await Dish.find({})
             .populate('cat_id', 'name')
+            .populate('cuisineId', 'name')
             .populate('chef', 'full_name');
 
         res.status(200).json({
@@ -346,7 +338,7 @@ export const getDishes = async (req, res) => {
 
 export const searchDishes = async (req, res) => {
     try {
-        const { search, category, course, area } = req.query;
+        const { search, category, cuisineId, area } = req.query;
         let query = {};
 
         if (search) {
@@ -364,8 +356,8 @@ export const searchDishes = async (req, res) => {
             if (cat) query.cat_id = cat._id;
         }
 
-        if (course && course !== "All" && course !== "None") {
-            query.course = course;
+        if (cuisineId && cuisineId !== "All" && cuisineId !== "None") {
+            query.cuisineId = cuisineId;
         }
 
         if (area && area !== "All" && area !== "None") {
@@ -375,6 +367,7 @@ export const searchDishes = async (req, res) => {
 
         const dishes = await Dish.find(query)
             .populate('cat_id', 'name')
+            .populate('cuisineId', 'name')
             .populate('chef', 'full_name');
 
         res.status(200).json({
@@ -396,6 +389,7 @@ export const getDishById = async (req, res) => {
 
         const dish = await Dish.findById(id)
             .populate('cat_id', 'name')
+            .populate('cuisineId', 'name')
             .populate('chef', 'full_name');
 
         if (!dish) return ThrowError(res, 404, "Dish not found");
@@ -419,8 +413,9 @@ export const getDishesByArea = async (req, res) => {
         }
 
         const dishes = await Dish.find(query)
-            .populate('cat_id', 'name') // કેટેગરીનું નામ પણ સાથે આવશે
-            .populate('chef', 'full_name') // ચેફનું નામ પણ સાથે આવશે
+            .populate('cat_id', 'name')
+            .populate('cuisineId', 'name')
+            .populate('chef', 'full_name')
             .sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -529,10 +524,18 @@ export const updateDish = async (req, res) => {
             dish.ingredients = cleanIng.split(",").map(i => i.trim()).filter(Boolean);
         }
 
+        if (req.body.cuisineId) {
+            if (!mongoose.Types.ObjectId.isValid(req.body.cuisineId)) {
+                return sendBadRequestResponse(res, "Invalid Cuisine ID format");
+            }
+            const cuisineExists = await Cuisine.findById(req.body.cuisineId);
+            if (!cuisineExists) return ThrowError(res, 404, "Cuisine not found");
+            dish.cuisineId = req.body.cuisineId;
+        }
+
         dish.name = req.body.name || dish.name;
         dish.short_des = req.body.short_des || dish.short_des;
         dish.des = req.body.des || dish.des;
-        dish.course = req.body.course || dish.course;
         dish.mealType = req.body.mealType || dish.mealType;
         dish.price = req.body.price || dish.price;
         dish.prepTime = req.body.prepTime || dish.prepTime;

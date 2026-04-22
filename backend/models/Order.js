@@ -1,4 +1,4 @@
-﻿import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
     orderID: { type: String, unique: true },
@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema({
     waiterId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     customerName: { type: String },
     customerEmail: { type: String },
+    reservationId: { type: mongoose.Schema.Types.ObjectId, ref: "TableReservation" },
     items: [{
         dishId: { type: mongoose.Schema.Types.ObjectId, ref: "Dish" },
         name: { type: String },

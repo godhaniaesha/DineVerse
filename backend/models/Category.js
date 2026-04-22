@@ -1,11 +1,6 @@
-﻿import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema({
-    cuisineId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cuisine',
-        required: true
-    },
     name: {
         type: String,
         required: true

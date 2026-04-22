@@ -1,4 +1,4 @@
-﻿import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 const dishSchema = new mongoose.Schema({
     name: {
@@ -20,9 +20,9 @@ const dishSchema = new mongoose.Schema({
         ref: 'Category',
         required: true
     },
-    course: {
-        type: String,
-        enum: ["Soup", "Appetizer", "Palate Cleanser", "Main Course", "Dessert"],
+    cuisineId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuisine',
         required: true
     },
     mealType: {
@@ -36,6 +36,7 @@ const dishSchema = new mongoose.Schema({
     },
     prepTime: {
         type: String,
+
     },
     ingredients: {
         type: [String],

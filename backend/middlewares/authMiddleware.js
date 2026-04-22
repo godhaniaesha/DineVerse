@@ -1,4 +1,4 @@
-﻿import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import UserModel from "../models/UserModel.js";
 import { ThrowError } from '../utils/Error.utils.js';
 import dotenv from 'dotenv';
@@ -61,13 +61,13 @@ export const authorize = (roles = []) => {
 export const superAdminAuth = authorize('Super Admin');
 export const managerAuth = authorize('Manager');
 export const adminManagerAuth = authorize(['Super Admin', 'Manager']);
-export const waiterAuth = authorize(['Cafe Waiter', 'Res Waiter', 'Bar Waiter', 'Super Admin', 'Manager']);
+export const waiterAuth = authorize(['Cafe Waiter', 'Restaurant Waiter', 'Bar Waiter', 'Super Admin', 'Manager']);
 export const chefAuth = authorize(['Chef', 'Super Admin', 'Manager']);
 export const housekeepingAuth = authorize(['Housekeeping', 'Super Admin', 'Manager']);
 
 export const isStaff = async (req, res, next) => {
     try {
-        if (!req.user || !['Super Admin', 'Manager', 'Housekeeping', 'Cafe Waiter', 'Res Waiter', 'Bar Waiter', 'Chef'].includes(req.user.role)) {
+        if (!req.user || !['Super Admin', 'Manager', 'Housekeeping', 'Cafe Waiter', 'Restaurant Waiter', 'Bar Waiter', 'Chef'].includes(req.user.role)) {
             return ThrowError(res, 403, "Access denied. Staff privileges required.");
         }
         next();
