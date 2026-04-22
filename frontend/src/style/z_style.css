@@ -908,6 +908,269 @@ body {
   }
 }
 
+/* Prestige Collection - Luxury Horizontal Showcase */
+.z_prestige_section {
+  position: relative;
+}
+
+.z_prestige_header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.z_prestige_eyebrow {
+  color: var(--d-room);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.z_prestige_title {
+  font-family: var(--d-font-serif);
+  font-size: 5rem;
+  font-weight: 400;
+  color: var(--d-text-1);
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.z_prestige_title em {
+  color: var(--d-room);
+  font-style: italic;
+}
+
+.z_prestige_subtitle {
+  color: var(--d-text-3);
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.z_prestige_cards {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.z_prestige_card {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  min-height: 600px;
+  position: relative;
+}
+
+.z_prestige_card--reverse {
+  grid-template-columns: 1fr 1.2fr;
+}
+
+.z_prestige_card--reverse .z_prestige_media {
+  order: 2;
+}
+
+.z_prestige_card--reverse .z_prestige_content {
+  order: 1;
+}
+
+/* Media Side */
+.z_prestige_media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--d-r-xl);
+}
+
+.z_prestige_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--d-ease);
+}
+
+.z_prestige_card:hover .z_prestige_img {
+  transform: scale(1.08);
+}
+
+.z_prestige_media_overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(212, 143, 181, 0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.z_prestige_price_badge {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(8, 7, 5, 0.9);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(212, 143, 181, 0.3);
+  padding: 1.5rem 2rem;
+  border-radius: var(--d-r-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.z_prestige_price_from {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--d-room);
+}
+
+.z_prestige_price_value {
+  font-family: var(--d-font-serif);
+  font-size: 2.5rem;
+  color: var(--d-text-1);
+  line-height: 1;
+}
+
+.z_prestige_price_night {
+  font-size: 0.7rem;
+  color: var(--d-text-3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Content Side */
+.z_prestige_content {
+  display: flex;
+  align-items: center;
+  padding: 0 60px;
+}
+
+.z_prestige_content_inner {
+  max-width: 480px;
+}
+
+.z_prestige_room_num {
+  font-family: var(--d-font-serif);
+  font-size: 8rem;
+  font-weight: 900;
+  color: rgba(212, 143, 181, 0.06);
+  line-height: 1;
+  display: block;
+  margin-bottom: -30px;
+  margin-left: -10px;
+}
+
+.z_prestige_room_name {
+  font-family: var(--d-font-serif);
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: var(--d-text-1);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.z_prestige_room_desc {
+  color: var(--d-text-2);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+
+.z_prestige_amenities {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--d-border);
+}
+
+.z_prestige_amenity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.z_prestige_amenity_icon {
+  font-size: 1.8rem;
+  color: var(--d-room);
+  filter: drop-shadow(0 0 8px rgba(212, 143, 181, 0.3));
+}
+
+.z_prestige_amenity span {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--d-text-3);
+}
+
+.z_prestige_cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  background: transparent;
+  border: 1px solid var(--d-room);
+  color: var(--d-room);
+  padding: 1.2rem 2.5rem;
+  border-radius: var(--d-r-pill);
+  text-decoration: none;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 600;
+  transition: all 0.4s var(--d-ease);
+}
+
+.z_prestige_cta:hover {
+  background: var(--d-room);
+  color: #fff;
+  transform: translateX(10px);
+}
+
+.z_prestige_cta_arrow {
+  transition: transform 0.3s var(--d-ease);
+}
+
+.z_prestige_cta:hover .z_prestige_cta_arrow {
+  transform: translateX(5px);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .z_prestige_title { font-size: 4rem; }
+  .z_prestige_room_name { font-size: 2.8rem; }
+  .z_prestige_content { padding: 0 40px; }
+  .z_prestige_room_num { font-size: 6rem; }
+}
+
+@media (max-width: 992px) {
+  .z_prestige_card,
+  .z_prestige_card--reverse {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .z_prestige_card--reverse .z_prestige_media { order: 0; }
+  .z_prestige_card--reverse .z_prestige_content { order: 0; }
+  .z_prestige_media { height: 400px; }
+  .z_prestige_content { padding: 40px 0; }
+  .z_prestige_content_inner { max-width: 100%; }
+  .z_prestige_room_num { font-size: 5rem; margin-bottom: -20px; }
+}
+@media (max-width: 768px) {
+  .z_prestige_cards { gap: 38px; }
+  .z_prestige_content { padding: 16px 8px; }
+  .z_prestige_amenities {margin-bottom: 2rem; padding-bottom: 1rem; }
+  .z_prestige_room_desc { margin-bottom: 1.5rem; }
+  .z_prestige_room_name { margin-bottom: 10px; }
+  .z_prestige_header { margin-bottom: 46px; }
+  .z_prestige_section { padding: 60px 0px !important; }
+}
+
+@media (max-width: 576px) {
+  .z_prestige_title { font-size: 2.8rem; }
+  .z_prestige_room_name { font-size: 2rem; }
+  .z_prestige_amenities { gap: 1.5rem; }
+  .z_prestige_cta { width: 100%; justify-content: center; padding: 1rem 2rem; font-size: 13px;}
+}
+
 /* Rooms - Minimal & Wide */
 .z_room_feature_row {
   display: flex;

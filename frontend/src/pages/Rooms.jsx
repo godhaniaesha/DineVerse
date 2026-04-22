@@ -1,31 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight, FaWifi, FaSwimmingPool, FaParking } from "react-icons/fa";
-import { MdHotel, MdKingBed, MdMeetingRoom } from "react-icons/md";
+import { MdHotel, MdKingBed, MdMeetingRoom, MdStar, MdArrowForward } from "react-icons/md";
 
-const ROOM_ITEMS = [
-    {
-        id: 1,
-        name: "Deluxe Suite",
-        desc: "A spacious suite with a king-sized bed and a private balcony overlooking the city.",
-        price: "$250",
-        img: "https://i.pinimg.com/1200x/f6/bf/2e/f6bf2ead8546606c5da8094f461b7299.jpg"
-    },
-    {
-        id: 2,
-        name: "Executive Room",
-        desc: "Perfect for business travelers, with a dedicated workspace and premium amenities.",
-        price: "$180",
-        img: "https://i.pinimg.com/736x/09/f8/eb/09f8eb6b19adf6a08ba57b1597fdcddd.jpg"
-    },
-    {
-        id: 3,
-        name: "Royal Suite",
-        desc: "The pinnacle of luxury, featuring a separate living area and a spa-like bathroom.",
-        price: "$450",
-        img: "https://i.pinimg.com/1200x/69/79/2f/69792faa9e9bc101a9bd753334c409e4.jpg"
-    }
-];
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 const TESTIMONIALS = [
     {
@@ -44,9 +22,46 @@ const TESTIMONIALS = [
 
 export default function Rooms() {
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
+    const [roomItems, setRoomItems] = useState([]);
+    const [loadingRooms, setLoadingRooms] = useState(false);
+    const [roomsError, setRoomsError] = useState("");
 
     useEffect(() => {
         window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
+        const fetchRoomTypes = async () => {
+            setLoadingRooms(true);
+            setRoomsError("");
+            try {
+                const response = await fetch(`${API_BASE_URL}/rooms/types`);
+                const data = await response.json();
+
+                if (!response.ok || !data?.success) {
+                    throw new Error(data?.msg || "Failed to load room types");
+                }
+
+                const mapped = (data?.data || []).map((room, index) => ({
+                    id: room._id,
+                    name: room.display_name || room.name || `Room Type ${index + 1}`,
+                    desc: room.description || "Experience unparalleled comfort in our thoughtfully designed spaces.",
+                    price: `₹${Number(room.price_per_night || 0).toLocaleString("en-IN")}`,
+                    img: room.image_url || "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=80",
+                    raw: room
+                }));
+
+                setRoomItems(mapped);
+            } catch (error) {
+                console.error("Error fetching room types:", error);
+                setRoomsError("Unable to load room collection at this time.");
+                setRoomItems([]);
+            } finally {
+                setLoadingRooms(false);
+            }
+        };
+
+        fetchRoomTypes();
     }, []);
 
     const nextTestimonial = () => {
@@ -80,39 +95,63 @@ export default function Rooms() {
                 </div>
             </section>
 
-            {/* Room Features - Wide Alternating Layout */}
-            <section className="z_bar_section" style={{ background: 'var(--d-bg)' }}>
+            {/* Prestige Collection - Immersive Horizontal Cards */}
+            <section className="z_prestige_section" style={{ background: 'var(--d-bg)', padding: '100px 0' }}>
                 <div className="container">
-                    <div className="z_bar_section_header">
-                        <span className="z_bar_subtitle" style={{ color: 'var(--d-room)' }}>Our Selection</span>
-                        <h2 className="z_bar_section_title">Signature <em>Suites</em></h2>
+                    <div className="z_prestige_header">
+                        <span className="z_prestige_eyebrow">The Prestige Collection</span>
+                        <h2 className="z_prestige_title">Sanctuary <em>Suites</em></h2>
+                        <p className="z_prestige_subtitle">Discover our exclusive range of {roomItems.length > 0 ? roomItems.length : "premium"} unique accommodations</p>
                     </div>
 
-                    <div className="z_room_showcase">
-                        {ROOM_ITEMS.map((room) => (
-                            <div key={room.id} className="z_room_feature_row">
-                                <div className="z_room_feature_img">
-                                    <img src={room.img} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                </div>
-                                <div className="z_room_feature_info">
-                                    <span style={{ color: 'var(--d-room)', fontWeight: '700', fontSize: '1.2rem' }}>Starting from {room.price}</span>
-                                    <h3 style={{ fontSize: '3rem', margin: '1rem 0', fontFamily: 'var(--d-font-serif)' }}>{room.name}</h3>
-                                    <p className="z_bar_desc" style={{ textAlign: 'left', fontSize: '1.1rem', marginBottom: '2rem' }}>{room.desc}</p>
-                                    <div style={{ display: 'flex', gap: '2rem', marginBottom: '2.5rem' }}>
-                                        <div style={{ textAlign: 'center' }}>
-                                            <MdKingBed style={{ fontSize: '2rem', color: 'var(--d-room)' }} />
-                                            <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>King Bed</p>
-                                        </div>
-                                        <div style={{ textAlign: 'center' }}>
-                                            <FaWifi style={{ fontSize: '2rem', color: 'var(--d-room)' }} />
-                                            <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>Free Wi-Fi</p>
-                                        </div>
-                                        <div style={{ textAlign: 'center' }}>
-                                            <MdMeetingRoom style={{ fontSize: '2rem', color: 'var(--d-room)' }} />
-                                            <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>Balcony</p>
-                                        </div>
+                    <div className="z_prestige_cards">
+                        {loadingRooms && <p className="z_bar_desc">Loading room types...</p>}
+                        {roomsError && <p className="z_bar_desc" style={{ color: "#dc3545" }}>{roomsError}</p>}
+                        {!loadingRooms && !roomsError && roomItems.length === 0 && (
+                            <p className="z_bar_desc">No room types available right now.</p>
+                        )}
+                        {roomItems.map((room, index) => (
+                            <div key={room.id} className={`z_prestige_card ${index % 2 === 1 ? 'z_prestige_card--reverse' : ''}`}>
+                                <div className="z_prestige_media">
+                                    <img src={room.img} alt={room.name} className="z_prestige_img" />
+                                    <div className="z_prestige_media_overlay"></div>
+                                    <div className="z_prestige_price_badge">
+                                        <span className="z_prestige_price_from">From</span>
+                                        <span className="z_prestige_price_value">{room.price.split('.')[0]}</span>
+                                        <span className="z_prestige_price_night">/night</span>
                                     </div>
-                                    <Link to="/bookRoom" className="z_bar_btn_primary" style={{ background: 'var(--d-room)', borderColor: 'var(--d-room)' }}>Book This Room</Link>
+                                </div>
+
+                                <div className="z_prestige_content">
+                                    <div className="z_prestige_content_inner">
+                                        <span className="z_prestige_room_num">0{index + 1}</span>
+                                        <h3 className="z_prestige_room_name">{room.name}</h3>
+                                        <p className="z_prestige_room_desc">{room.desc}</p>
+
+                                        <div className="z_prestige_amenities">
+                                            <div className="z_prestige_amenity">
+                                                <MdKingBed className="z_prestige_amenity_icon" />
+                                                <span>King Bed</span>
+                                            </div>
+                                            <div className="z_prestige_amenity">
+                                                <FaWifi className="z_prestige_amenity_icon" />
+                                                <span>Wi-Fi</span>
+                                            </div>
+                                            <div className="z_prestige_amenity">
+                                                <MdMeetingRoom className="z_prestige_amenity_icon" />
+                                                <span>Balcony</span>
+                                            </div>
+                                        </div>
+
+                                        <Link
+                                            to="/bookRoom"
+                                            state={{ selectedRoomTypeId: room.id, selectedRoomTypeName: room.name }}
+                                            className="z_prestige_cta"
+                                        >
+                                            <span>Reserve Room</span>
+                                            <MdArrowForward className="z_prestige_cta_arrow" />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         ))}
