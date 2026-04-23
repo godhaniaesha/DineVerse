@@ -14,6 +14,7 @@ import { TbSparkles, TbChefHat, TbFlame } from "react-icons/tb";
 import blogService from "../services/blogService";
 import { TAGS, NEWSLETTER_TOPICS } from "../data/blogData";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useSubscription } from "../contexts/SubscriptionContext";
 
 /* ─────────────────── HOOKS ─────────────────── */
 function useReveal(threshold = 0.12) {
@@ -129,24 +130,41 @@ function Newsletter() {
     const [ref, vis] = useReveal();
     const [email, setEmail] = useState("");
     const [sent, setSent] = useState(false);
-    const handleSubmit = (e) => {
+
+    const { subscribeUser ,loading} = useSubscription();
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email) setSent(true);
+
+        try {
+            const res = await subscribeUser(email, []); // you can pass interests here
+            setSent(true);
+            setEmail("");
+        } catch (err) {
+            alert(err.message); // you can replace with toast later
+        }
     };
+
     return (
         <div ref={ref} className={`x_newsletter${vis ? " x_anim_in" : ""}`}>
             <div className="x_nl_glow" />
             <div className="x_nl_inner">
                 <TbSparkles className="x_nl_icon" />
-                <h3 className="x_nl_title">The DineVerse <em>Digest</em></h3>
+
+                <h3 className="x_nl_title">
+                    The DineVerse <em>Digest</em>
+                </h3>
+
                 <p className="x_nl_sub">
                     Stories from our kitchen, bar and café. Delivered fortnightly, never spammy.
                 </p>
+
                 <div className="x_nl_topics">
                     {NEWSLETTER_TOPICS.map((t) => (
                         <span key={t} className="x_nl_topic">{t}</span>
                     ))}
                 </div>
+
                 {sent ? (
                     <div className="x_nl_success">
                         ✓ You're on the list. See you in your inbox.
@@ -161,8 +179,9 @@ function Newsletter() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
-                        <button className="x_nl_btn" type="submit">
-                            Subscribe <FiArrowRight />
+
+                        <button className="x_nl_btn" type="submit" disabled={loading}>
+                            {loading ? "Subscribing..." : "Subscribe"} <FiArrowRight />
                         </button>
                     </form>
                 )}
