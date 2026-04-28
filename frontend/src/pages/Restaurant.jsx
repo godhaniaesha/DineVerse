@@ -99,10 +99,10 @@ export default function Restaurant() {
                                 </div>
                                 <div className={`col-lg-5 ${index % 2 !== 0 ? 'order-lg-1' : ''} z_res_dish_content_col`}>
                                     <div className="z_floating_card">
-                                        <span className="z_res_dish_price">{dish.price}</span>
+                                        {/* <span className="z_res_dish_price">{dish.price}</span> */}
                                         <h3 className="z_res_dish_name">{dish.name}</h3>
                                         <p className="z_res_dish_desc">{dish.desc}</p>
-                                        <Link to="/menu" className="z_bar_btn_outline z_res_dish_btn">View Details</Link>
+                                        <span className="z_bar_btn_outline z_res_dish_btn" style={{ cursor: 'default' }}>Chef's Special</span>
                                     </div>
                                 </div>
                             </div>

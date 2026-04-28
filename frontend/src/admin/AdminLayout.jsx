@@ -418,7 +418,7 @@ export default function AdminLayout() {
       "/admin/restaurant-waiter",
       "/admin/res-book-table",
       "/admin/restaurant-menu",
-      "/admin/orders",
+      "/admin/orders",    
       "/admin/billing",
     ],
     "Bar Waiter": [

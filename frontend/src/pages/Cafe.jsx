@@ -93,8 +93,8 @@ export default function Cafe() {
                                 <img src={drink.img} alt={drink.name} style={{ width: '100%', height: 'auto', display: 'block' }} />
                                 <div style={{ padding: '1rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
-                                        <h3 style={{ margin: 0, fontSize: '1.1rem', fontFamily: 'var(--d-font-serif)' }}>{drink.name}</h3>
-                                        <span style={{ color: 'var(--d-cafe)', fontWeight: '700', fontSize: '0.9rem' }}>{drink.price}</span>
+                                        <h3 style={{ color: 'var(--d-cafe)',fontWeight: '700', margin: 0, fontSize: '1.1rem', fontFamily: 'var(--d-font-serif)' }}>{drink.name}</h3>
+                                        {/* <span style={{ color: 'var(--d-cafe)', fontWeight: '700', fontSize: '0.9rem' }}>{drink.price}</span> */}
                                     </div>
                                     <p style={{ color: 'var(--d-text-3)', fontSize: '0.8rem', margin: 0, lineHeight: '1.4' }}>{drink.desc}</p>
                                 </div>

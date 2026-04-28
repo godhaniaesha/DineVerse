@@ -47,6 +47,7 @@ router.delete('/deleteStaff/:id', UserAuth, superAdminAuth, deleteStaff);
 
 router.post('/rooms/types', UserAuth, adminManagerAuth, upload.single('image_url'), addRoomType);
 router.get('/rooms/types', getRoomTypes);
+router.get('/public/rooms/types', getRoomTypes);
 router.put('/rooms/types/:id', UserAuth, adminManagerAuth, upload.single('image_url'), updateRoomType);
 router.delete('/rooms/types/:id', UserAuth, adminManagerAuth, deleteRoomType);
 

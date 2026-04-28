@@ -3,6 +3,110 @@ import DeleteIconButton from "../components/DeleteIconButton";
 import { useStaff } from "../../contexts/StaffContext";
 import { useAuth } from "../../contexts/AuthContext";
 
+/* ── API CONFIGURATION ───────────────────────────────────────────── */
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+/* ── CUISINE CHECKBOX STYLES ───────────────────────────────────────────── */
+const cuisineCheckboxStyles = `
+  .rooms__cuisine_checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .rooms__cuisine_loading,
+  .rooms__cuisine_empty {
+    color: var(--ad-text-3, #666);
+    font-size: 12px;
+    padding: 8px;
+    background: var(--ad-bg-2, #f5f5f5);
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .rooms__cuisine_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--ad-border, #ddd);
+  border-radius: 6px;
+  background: var(--ad-bg-1, #fff);
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Chrome, Edge, Safari */
+.rooms__cuisine_grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rooms__cuisine_grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.rooms__cuisine_grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.rooms__cuisine_grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+  
+  .rooms__cuisine_checkbox_label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 13px;
+  }
+  
+  .rooms__cuisine_checkbox_label:hover {
+    background-color: #2c2930;
+  }
+  
+  .rooms__cuisine_checkbox {
+    margin: 0;
+    accent-color: var(--ad-primary, #2563eb);
+  }
+  
+  .rooms__cuisine_checkbox_text {
+    color: var(--ad-text-1, #333);
+    user-select: none;
+  }
+  
+  .rooms__cuisine_selected {
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: var(--ad-bg-2, #f0f7ff);
+    border: 1px solid var(--ad-primary-light, #b3d9ff);
+    border-radius: 4px;
+  }
+  
+  .rooms__cuisine_selected small {
+    color: var(--ad-primary, #2563eb);
+    font-size: 11px;
+    font-weight: 500;
+  }
+`;
+
+// Inject styles
+if (!document.getElementById('admin-staff-cuisine-checkbox-styles')) {
+  const style = document.createElement('style');
+  style.id = 'admin-staff-cuisine-checkbox-styles';
+  style.textContent = cuisineCheckboxStyles;
+  document.head.appendChild(style);
+}
+
 const IcEye = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
@@ -29,7 +133,7 @@ const EMPTY = {
   full_name: "",
   role: "Manager",
   department: "",
-  cuisineSpecialization: "",
+  cuisineSpecialization: [],
   phone: "",
   email: "",
   status: "Active",
@@ -55,6 +159,8 @@ export default function AdminStaffManagement() {
   const [form, setForm] = useState(EMPTY);
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [cuisines, setCuisines] = useState([]);
+  const [cuisinesLoading, setCuisinesLoading] = useState(false);
 
   const close = () => {
     setModal(null);
@@ -63,7 +169,34 @@ export default function AdminStaffManagement() {
 
   useEffect(() => {
     getStaff();
+    fetchCuisines();
   }, [getStaff]);
+
+  // Fetch cuisines from backend
+  const fetchCuisines = async () => {
+    try {
+      setCuisinesLoading(true);
+      const response = await fetch(`${API_BASE_URL}/food/getCuisines`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        setCuisines(data.data);
+      } else {
+        console.error('Failed to fetch cuisines:', data.msg);
+        setCuisines([]);
+      }
+    } catch (err) {
+      console.error('Error fetching cuisines:', err);
+      setCuisines([]);
+    } finally {
+      setCuisinesLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
@@ -85,8 +218,8 @@ export default function AdminStaffManagement() {
       formData.append("role", form.role);
       formData.append("department", form.department);
       formData.append("status", form.status);
-      if (form.cuisineSpecialization) {
-        formData.append("cuisineSpecialization", form.cuisineSpecialization);
+      if (form.cuisineSpecialization && form.cuisineSpecialization.length > 0) {
+        formData.append("cuisineSpecialization", JSON.stringify(form.cuisineSpecialization));
       }
 
       const result = await addStaff(formData);
@@ -109,8 +242,8 @@ export default function AdminStaffManagement() {
       formData.append("role", form.role);
       formData.append("department", form.department);
       formData.append("status", form.status);
-      if (form.cuisineSpecialization) {
-        formData.append("cuisineSpecialization", form.cuisineSpecialization);
+      if (form.cuisineSpecialization && form.cuisineSpecialization.length > 0) {
+        formData.append("cuisineSpecialization", JSON.stringify(form.cuisineSpecialization));
       }
       if (form.password) {
         formData.append("password", form.password);
@@ -190,6 +323,7 @@ export default function AdminStaffManagement() {
                       <button className="rooms__icon_btn" onClick={() => {
                         setForm({
                           ...r,
+                          cuisineSpecialization: r.cuisineSpecialization || [],
                           password: "",
                           confirmPassword: ""
                         });
@@ -272,15 +406,51 @@ export default function AdminStaffManagement() {
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="rooms__form_label">Cuisine Specialization</label>
-                  <input
-                    className="rooms__form_input"
-                    value={form.cuisineSpecialization}
-                    onChange={(e) => setForm((f) => ({ ...f, cuisineSpecialization: e.target.value }))}
-                    placeholder="e.g., Italian, Indian"
-                  />
-                </div>
+                {form.role === "Chef" && (
+                  <div>
+                    <label className="rooms__form_label">Cuisine Specialization</label>
+                    <div className="rooms__cuisine_checkboxes bg-transparent" >
+                      {cuisinesLoading ? (
+                        <div className="rooms__cuisine_loading">Loading cuisines...</div>
+                      ) : cuisines.length === 0 ? (
+                        <div className="rooms__cuisine_empty">No cuisines available</div>
+                      ) : (
+                        <div className="rooms__cuisine_grid bg-transparent">
+                          {cuisines.map((cuisine) => (
+                            <label key={cuisine._id} className="rooms__cuisine_checkbox_label">
+                              <input
+                                type="checkbox"
+                                className="rooms__cuisine_checkbox"
+                                value={cuisine.name}
+                                checked={form.cuisineSpecialization.includes(cuisine.name)}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  if (isChecked) {
+                                    setForm((f) => ({ 
+                                      ...f, 
+                                      cuisineSpecialization: [...f.cuisineSpecialization, cuisine.name] 
+                                    }));
+                                  } else {
+                                    setForm((f) => ({ 
+                                      ...f, 
+                                      cuisineSpecialization: f.cuisineSpecialization.filter(c => c !== cuisine.name) 
+                                    }));
+                                  }
+                                }}
+                              />
+                              <span className="rooms__cuisine_checkbox_text">{cuisine.name}</span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                      {form.cuisineSpecialization.length > 0 && (
+                        <div className="rooms__cuisine_selected">
+                          <small>Selected: {form.cuisineSpecialization.join(", ")}</small>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="rooms__form_grid2">
                 <div>
