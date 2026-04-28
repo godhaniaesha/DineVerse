@@ -295,6 +295,30 @@ export const MenuProvider = ({ children }) => {
     }
   };
 
+  // Get categories filtered by role and area
+  const getCategoriesByRoleAndArea = (role, area) => {
+    // For Bar Waiter role, only show categories that have dishes with area "bar"
+    if (role === "Bar Waiter") {
+      const barDishes = mappedDishes.filter(dish => 
+        dish.area && dish.area.includes("bar")
+      );
+      const barCategoryIds = [...new Set(barDishes.map(dish => dish.categoryId))];
+      return categories.filter(category => 
+        barCategoryIds.includes(category._id)
+      );
+    }
+    
+    // For other roles, return all categories
+    return categories;
+  };
+
+  // Get dishes filtered by area
+  const getDishesByArea = (area) => {
+    return mappedDishes.filter(dish => 
+      dish.area && dish.area.some(a => a.toLowerCase() === area.toLowerCase())
+    );
+  };
+
   useEffect(() => {
     fetchDishes();
     fetchCategories();
@@ -331,6 +355,8 @@ export const MenuProvider = ({ children }) => {
          updateCuisine,
          deleteCuisine,
          refreshDishes: fetchDishes,
+         getCategoriesByRoleAndArea,
+         getDishesByArea,
        }}
     >
       {children}

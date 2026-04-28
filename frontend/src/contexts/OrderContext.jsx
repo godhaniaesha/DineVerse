@@ -24,10 +24,11 @@ export const OrderProvider = ({ children }) => {
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/order/getKitchenQueue`, {
+      const res = await fetch(`${API_BASE_URL}/orders/kitchen-queue`, {
         headers: { ...authHeaders }
       });
       const data = await res.json();
+
       if (data.success) {
         setOrders(data.data);
       }
@@ -41,7 +42,7 @@ export const OrderProvider = ({ children }) => {
   const createOrder = useCallback(async (orderData) => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/order/createOrder`, {
+      const res = await fetch(`${API_BASE_URL}/orders/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify(orderData)
@@ -59,8 +60,73 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders, fetchOrders]);
 
+  const updateOrderStatus = useCallback(async (orderId, dishItemId, status) => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `${API_BASE_URL}/orders/update-item-status/${orderId}/${dishItemId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", ...authHeaders },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        await fetchOrders();
+        return { success: true };
+      }
+
+      return { success: false, error: data.msg };
+    } catch (err) {
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders, fetchOrders]);
+
+  const deleteOrder = useCallback(async (orderId) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/order/deleteOrder/${orderId}`, {
+        method: "DELETE",
+        headers: authHeaders
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchOrders();
+        return { success: true };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders, fetchOrders]);
+
+  const getOrdersByTable = useCallback((tableId) => {
+    return orders.filter(order => order.tableId === tableId);
+  }, [orders]);
+
   return (
-    <OrderContext.Provider value={{ orders, loading, error, fetchOrders, createOrder }}>
+    <OrderContext.Provider value={{
+      orders,
+      loading,
+      error,
+      fetchOrders,
+      createOrder,
+      updateOrderStatus,
+      deleteOrder,
+      getOrdersByTable
+    }}>
       {children}
     </OrderContext.Provider>
   );

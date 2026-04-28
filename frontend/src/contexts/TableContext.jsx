@@ -30,9 +30,6 @@ export const TableProvider = ({ children }) => {
         },
       });
       const data = await res.json();
-      console.log(data,"ttdata");
-      
-
       if (data.success) {
         setTables(data.data);
         setError(null);

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { MdOutlineClose } from "react-icons/md";
 import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useOrder } from "../../contexts/OrderContext";
+import { useMenu } from "../../contexts/MenuContext";
 import emptyCart from "../../img/no.png";
 
 
@@ -67,7 +68,9 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
   const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const adminName = localStorage.getItem("adminName") || adminRole;
   const isOrderingRole = ["Waiter", "Cafe Waiter", "Restaurant Waiter", "Bar Waiter", "Bartender"].includes(adminRole);
-  const [items, setItems] = useState(config.items);
+  
+  const { mappedDishes, getCategoriesByRoleAndArea, getDishesByArea, loading } = useMenu();
+  const [items, setItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [lineQuantities, setLineQuantities] = useState({});
@@ -80,6 +83,14 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
     getReservations();
     fetchOrders();
   }, [getReservations, fetchOrders]);
+
+  // Update items based on variant and role
+  useEffect(() => {
+    if (mappedDishes.length > 0) {
+      const areaDishes = getDishesByArea(variant);
+      setItems(areaDishes);
+    }
+  }, [mappedDishes, variant, getDishesByArea]);
 
   useEffect(() => {
     if (reservations.length > 0) {
@@ -102,6 +113,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
             id: r._id,
             tableId: r.table?._id,
             tableNo: r.table?.tableNo || "T-?",
+            customerName: r.guest_name || "Guest",
             waiter: r.waiter || "Unassigned",
             currentOrders: orderItems.length > 0 ? orderItems.join(", ") : "No active orders"
           };
@@ -124,16 +136,24 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
     return { customerName: "", target: "", note: "", items: [] };
   });
 
+  // Get dynamic categories based on role and area
+  const dynamicCategories = useMemo(() => {
+    const allCategories = ["All"];
+    const uniqueCategories = [...new Set(items.map(item => item.categoryName).filter(Boolean))];
+    return [...allCategories, ...uniqueCategories];
+  }, [items]);
+  
+
   const filteredItems = useMemo(() => (
     items.filter((item) => {
-      const matchesCategory = activeCategory === "All" || item.category === activeCategory;
-      const haystack = `${item.name} ${item.description} ${item.category}`.toLowerCase();
+      const matchesCategory = activeCategory === "All" || item.categoryName === activeCategory;
+      const haystack = `${item.name} ${item.desc} ${item.categoryName}`.toLowerCase();
       const matchesSearch = haystack.includes(search.trim().toLowerCase());
       return matchesCategory && matchesSearch;
     })
   ), [activeCategory, items, search]);
 
-  const availableCount = items.filter((item) => item.available).length;
+  const availableCount = items.filter((item) => item.status === "available").length;
   const featuredCount = items.filter((item) => item.featured).length;
   const averagePrice = items.length
     ? Math.round(items.reduce((sum, item) => sum + item.price, 0) / items.length)
@@ -165,7 +185,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
   };
 
   const addToOrder = (item) => {
-    if (!item.available) {
+    if (item.status !== "available") {
       return;
     }
 
@@ -208,41 +228,69 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
     setOrderDraft({ customerName: "", target: "", note: "", items: [] });
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (!orderDraft.items.length) {
+      alert("Please add items to the order first");
       return;
     }
 
-    const nextOrderId = `${variant.toUpperCase()}-${Date.now().toString().slice(-6)}`;
-    const chefByVariant = {
-      cafe: "Cafe Chef 1",
-      restaurant: "Restaurant Chef 1",
-      bar: "Bar Chef 1",
-    };
-    const queuedOrder = {
-      id: nextOrderId,
-      table: orderDraft.target || "-",
-      customer: orderDraft.customerName.trim() || "Walk-in",
-      items: orderDraft.items.map((item) => `${item.name} x${item.quantity}`).join(", "),
-      chef: chefByVariant[variant] ?? "Kitchen Team",
-      waiter: adminName,
-      status: "New Order",
+    if (!orderDraft.target) {
+      alert("Please select a table first");
+      return;
+    }
+
+    // Find the selected table's reservation to get customer details
+    const selectedTable = occupiedTables.find(table => table.tableNo === orderDraft.target);
+    let customerName = orderDraft.customerName.trim();
+    
+    if (selectedTable && selectedTable.customerName && !customerName) {
+      // Auto-fill customer name from reservation if available
+      customerName = selectedTable.customerName;
+    }
+
+    const orderData = {
+      tableId: selectedTable?.tableId,
+      tableNo: orderDraft.target,
+      customerName: customerName || "Walk-in",
+      items: orderDraft.items.map(item => ({
+        dishId: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      specialInstructions: orderDraft.note.trim() || "",
       area: variant,
-      time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false }),
-      note: orderDraft.note.trim() || "-",
-      total: orderTotal,
+      waiter: adminName,
+      totalAmount: orderTotal
     };
-    const savedOrders = localStorage.getItem(ORDER_QUEUE_KEY);
-    const parsedOrders = savedOrders ? JSON.parse(savedOrders) : [];
-    localStorage.setItem(ORDER_QUEUE_KEY, JSON.stringify([queuedOrder, ...parsedOrders]));
-    setLastSubmitted({
-      orderId: nextOrderId,
-      itemCount: totalSelectedItems,
-      total: orderTotal,
-      target: orderDraft.target || "-",
-    });
-    setOrderDraft({ customerName: "", target: "", note: "", items: [] });
+
+    const result = await sendOrderToBackend(orderData);
+    
+    if (result.success) {
+      setLastSubmitted({
+        orderId: result.data._id,
+        itemCount: totalSelectedItems,
+        total: orderTotal,
+        target: orderDraft.target,
+      });
+      setOrderDraft({ customerName: "", target: "", note: "", items: [] });
+      alert("Order sent to kitchen successfully!");
+    } else {
+      alert(`Failed to send order: ${result.error}`);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="ad_page">
+        <h2 className="ad_h2">{title ?? config.title}</h2>
+        <p className="ad_p">{sub ?? config.sub}</p>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <p>Loading menu data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ad_page">
@@ -290,7 +338,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
           />
         </div>
         <div className="ad_scroll_cat" style={{ display: "flex", gap: 10, marginTop: 12 }}>
-          {config.categories.map((category) => (
+          {dynamicCategories.map((category) => (
             <button
               key={category}
               className={`ad_btn${activeCategory === category ? " ad_btn--primary" : ""}`}
@@ -315,7 +363,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
                 }}
               >
                 <img
-                  src={item.image}
+                  src={item.img}
                   alt={item.name}
                   className="ad_gallery_img"
                   style={{ height: 180, marginBottom: 0, borderRadius: 0 }}
@@ -323,16 +371,16 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
                 <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12, height: "100%" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}>
                     <div>
-                      <div className="ad_card__label">{item.category}</div>
+                      <div className="ad_card__label">{item.categoryName}</div>
                       <h3 className="ad_card__title" style={{ marginBottom: 4 }}>{item.name}</h3>
                     </div>
-                    <span className="ad_chip">₹{item.price}</span>
+                    <span className="ad_chip">{item.displayPrice}</span>
                   </div>
 
-                  <p className="ad_p" style={{ marginBottom: 0, fontSize: 14 }}>{item.description}</p>
+                  <p className="ad_p" style={{ marginBottom: 0, fontSize: 14 }}>{item.desc}</p>
 
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    <span className="ad_chip">{item.available ? "Available" : "Hidden"}</span>
+                    <span className="ad_chip">{item.status === "available" ? "Available" : "Hidden"}</span>
                     <span className="ad_chip">{item.prepTime}</span>
                     {item.featured && <span className="ad_chip">Featured</span>}
                   </div>
@@ -348,7 +396,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
                   </div>
 
                   <div style={{ marginTop: "auto", display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    <button className="ad_btn" type="button" onClick={() => addToOrder(item)} disabled={!item.available}>
+                    <button className="ad_btn" type="button" onClick={() => addToOrder(item)} disabled={item.status !== "available"}>
                       Add to Order
                     </button>
                   </div>
@@ -383,9 +431,21 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
               <select
                 className="ad_input"
                 value={orderDraft.target}
-                onChange={(event) =>
-                  setOrderDraft((current) => ({ ...current, target: event.target.value }))
-                }
+                onChange={(event) => {
+                  const selectedTableNo = event.target.value;
+                  const selectedTable = occupiedTables.find(table => table.tableNo === selectedTableNo);
+                  
+                  setOrderDraft((current) => {
+                    let updatedOrder = { ...current, target: selectedTableNo };
+                    
+                    // Auto-fill customer name from reservation if available and customer name is empty
+                    if (selectedTable && selectedTable.customerName && !current.customerName.trim()) {
+                      updatedOrder.customerName = selectedTable.customerName;
+                    }
+                    
+                    return updatedOrder;
+                  });
+                }}
               >
                 <option value="">Select {targetLabel}</option>
                 {occupiedTables.map((table) => (
@@ -420,7 +480,7 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
             )}
 
             <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-              <button className="ad_btn ad_btn--primary" onClick={placeOrder} disabled={!orderDraft.items.length}>
+              <button className="ad_btn ad_btn--primary" onClick={placeOrder} disabled={!orderDraft.items.length || !orderDraft.target}>
                 {submitLabel}
               </button>
               <button className="ad_btn" onClick={clearDraft}>
