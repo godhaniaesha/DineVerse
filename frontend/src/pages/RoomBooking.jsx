@@ -23,12 +23,12 @@ const ROOMS = [
     reviews: 88,
     img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1000&q=80",
     amenities: [
-      { icon: <MdWifi />,             label: "Wi-Fi" },
-      { icon: <MdAcUnit />,           label: "Climate" },
-      { icon: <PiBathtubBold />,      label: "Jacuzzi" },
-      { icon: <MdOutlineBalcony />,   label: "Terrace" },
-      { icon: <IoWineOutline />,      label: "Minibar" },
-      { icon: <TbMountain />,         label: "City View" },
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <PiBathtubBold />, label: "Jacuzzi" },
+      { icon: <MdOutlineBalcony />, label: "Terrace" },
+      { icon: <IoWineOutline />, label: "Minibar" },
+      { icon: <TbMountain />, label: "City View" },
     ],
   },
   {
@@ -42,10 +42,10 @@ const ROOMS = [
     reviews: 142,
     img: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&q=80",
     amenities: [
-      { icon: <MdWifi />,          label: "Wi-Fi" },
-      { icon: <MdAcUnit />,        label: "Climate" },
-      { icon: <PiCoffeeBold />,    label: "Espresso" },
-      { icon: <MdTv />,            label: "Smart TV" },
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <PiCoffeeBold />, label: "Espresso" },
+      { icon: <MdTv />, label: "Smart TV" },
     ],
   },
   {
@@ -59,31 +59,31 @@ const ROOMS = [
     reviews: 201,
     img: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=80",
     amenities: [
-      { icon: <MdWifi />,       label: "Wi-Fi" },
-      { icon: <MdAcUnit />,     label: "Climate" },
-      { icon: <MdTv />,         label: "Smart TV" },
-      { icon: <PiParkBold />,   label: "Garden View" },
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <MdTv />, label: "Smart TV" },
+      { icon: <PiParkBold />, label: "Garden View" },
     ],
   },
   {
-  id: 4,
-  featured: false,
-  name: "Ocean Grand Suite",
-  type: "Luxury Suite",
-  desc: "A luxurious suite designed for ultimate comfort with panoramic ocean views, a private lounge area, king-size bed, and a spacious marble bathroom with rainfall shower and bathtub.",
-  price: "360",
-  rating: 4.9,
-  reviews: 124,
-  img: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=700&q=80",
-  amenities: [
-    { icon: <MdWifi />,           label: "Wi-Fi" },
-    { icon: <MdAcUnit />,         label: "Climate" },
-    { icon: <MdOutlineBalcony />, label: "Balcony" },
-    { icon: <MdTv />,             label: "Smart TV" },
-    { icon: <IoWineOutline />,    label: "Minibar" },
-    { icon: <TbMountain />,       label: "Ocean View" },
-  ],
-}
+    id: 4,
+    featured: false,
+    name: "Ocean Grand Suite",
+    type: "Luxury Suite",
+    desc: "A luxurious suite designed for ultimate comfort with panoramic ocean views, a private lounge area, king-size bed, and a spacious marble bathroom with rainfall shower and bathtub.",
+    price: "360",
+    rating: 4.9,
+    reviews: 124,
+    img: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=700&q=80",
+    amenities: [
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <MdOutlineBalcony />, label: "Balcony" },
+      { icon: <MdTv />, label: "Smart TV" },
+      { icon: <IoWineOutline />, label: "Minibar" },
+      { icon: <TbMountain />, label: "Ocean View" },
+    ],
+  }
 ];
 
 const PERKS = [
@@ -113,8 +113,8 @@ const PERKS = [
 function RoomCard({ room, onBook }) {
   // Truncate description to 20 words
   const words = room.desc.split(" ");
-  const truncatedDesc = words.length > 14 
-    ? words.slice(0, 14).join(" ") + "..." 
+  const truncatedDesc = words.length > 14
+    ? words.slice(0, 14).join(" ") + "..."
     : room.desc;
 
   return (

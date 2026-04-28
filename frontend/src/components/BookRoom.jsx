@@ -167,9 +167,13 @@ export default function BookRoom() {
       let mappedRoomTypes = [];
 
       if (checkIn && checkOut && adults) {
+        const token = localStorage.getItem("authToken"); // Get token from storage
         const response = await fetch(`${API_BASE_URL}/reservations/getAvailableRoomTypes`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // Add bearer token
+          },
           body: JSON.stringify({
             checkIn: formatDateForApi(checkIn),
             checkOut: formatDateForApi(checkOut),
@@ -237,9 +241,13 @@ export default function BookRoom() {
     if (!roomTypeId || !checkIn || !checkOut) return;
     setRoomsLoading(true);
     try {
+      const token = localStorage.getItem("authToken");
       const response = await fetch(`${API_BASE_URL}/reservations/getRoomsByType`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           roomTypeId,
           checkIn: formatDateForApi(checkIn),
@@ -484,7 +492,10 @@ export default function BookRoom() {
 
         const response = await fetch(`${API_BASE_URL}/reservations/createPaymentIntent`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+          },
           body: JSON.stringify(payload)
         });
         const data = await response.json();
@@ -546,7 +557,10 @@ export default function BookRoom() {
 
       const response = await fetch(`${API_BASE_URL}/reservations/confirmBooking`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+        },
         body: JSON.stringify(payload)
       });
       const data = await response.json();
