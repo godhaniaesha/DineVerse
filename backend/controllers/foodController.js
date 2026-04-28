@@ -209,6 +209,8 @@ export const addDish = async (req, res) => {
         }
 
         const cuisineExists = await Cuisine.findById(cuisineId);
+        console.log(cuisineExists, "cuisineExists");
+
         if (!cuisineExists) {
             return ThrowError(res, 404, "Cuisine not found");
         }
@@ -308,6 +310,8 @@ export const addDish = async (req, res) => {
             status: status || "available"
         });
 
+        console.log(dish, "dish");
+
         return res.status(201).json({
             success: true,
             msg: "Dish added successfully",
@@ -325,6 +329,7 @@ export const getDishes = async (req, res) => {
             .populate('cat_id', 'name')
             .populate('cuisineId', 'name')
             .populate('chef', 'full_name');
+        console.log(dishes, "dishes");
 
         res.status(200).json({
             success: true,
