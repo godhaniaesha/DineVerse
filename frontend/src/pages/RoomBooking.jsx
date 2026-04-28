@@ -47,6 +47,81 @@ if (!document.head.querySelector('style[data-room-booking]')) {
   style.setAttribute('data-room-booking', 'true');
   document.head.appendChild(style);
 }
+/* ── ROOMS DATA ───────────────────────────────────────────── */
+const ROOMS = [
+  {
+    id: 1,
+    featured: true,
+    name: "The Grand DineVerse Suite",
+    type: "Signature Suite",
+    desc: "Our crown jewel — a sprawling suite with floor-to-ceiling windows overlooking the city skyline. Hand-picked antique furnishings, a private terrace, soaking tub, and complimentary sommelier service.",
+    price: "420",
+    rating: 5.0,
+    reviews: 88,
+    img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1000&q=80",
+    amenities: [
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <PiBathtubBold />, label: "Jacuzzi" },
+      { icon: <MdOutlineBalcony />, label: "Terrace" },
+      { icon: <IoWineOutline />, label: "Minibar" },
+      { icon: <TbMountain />, label: "City View" },
+    ],
+  },
+  {
+    id: 2,
+    featured: false,
+    name: "Jardin Deluxe Room",
+    type: "Deluxe Room",
+    desc: "Lush garden vistas, king-size bed with linen sheets, espresso station, and a marble rain shower.",
+    price: "220",
+    rating: 4.8,
+    reviews: 142,
+    img: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&q=80",
+    amenities: [
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <PiCoffeeBold />, label: "Espresso" },
+      { icon: <MdTv />, label: "Smart TV" },
+    ],
+  },
+  {
+    id: 3,
+    featured: false,
+    name: "Atelier Classic Room",
+    type: "Classic Room",
+    desc: "Elegant and intimate. Carefully curated art-deco styling, queen bed, and walk-in rainfall shower.",
+    price: "155",
+    rating: 4.7,
+    reviews: 201,
+    img: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=80",
+    amenities: [
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <MdTv />, label: "Smart TV" },
+      { icon: <PiParkBold />, label: "Garden View" },
+    ],
+  },
+  {
+    id: 4,
+    featured: false,
+    name: "Ocean Grand Suite",
+    type: "Luxury Suite",
+    desc: "A luxurious suite designed for ultimate comfort with panoramic ocean views, a private lounge area, king-size bed, and a spacious marble bathroom with rainfall shower and bathtub.",
+    price: "360",
+    rating: 4.9,
+    reviews: 124,
+    img: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=700&q=80",
+    amenities: [
+      { icon: <MdWifi />, label: "Wi-Fi" },
+      { icon: <MdAcUnit />, label: "Climate" },
+      { icon: <MdOutlineBalcony />, label: "Balcony" },
+      { icon: <MdTv />, label: "Smart TV" },
+      { icon: <IoWineOutline />, label: "Minibar" },
+      { icon: <TbMountain />, label: "Ocean View" },
+    ],
+  }
+];
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -79,8 +154,8 @@ const PERKS = [
 function RoomCard({ room, onBook }) {
   // Truncate description to 20 words
   const words = room.desc.split(" ");
-  const truncatedDesc = words.length > 14 
-    ? words.slice(0, 14).join(" ") + "..." 
+  const truncatedDesc = words.length > 14
+    ? words.slice(0, 14).join(" ") + "..."
     : room.desc;
 
   return (

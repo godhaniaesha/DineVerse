@@ -16,20 +16,17 @@ import {
     FiEye,
     FiEyeOff,
     FiAlertCircle,
-    FiStar,
-    FiUsers
+    FiStar
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../style/z_style.css";
 import { useAuth } from "../contexts/AuthContext";
-import { useTableReservation } from "../contexts/TableReservationContext";
 
 export default function Profile() {
     const navigate = useNavigate();
     const { user, logout, changePassword, updateProfile, isAuthenticated, token } = useAuth();
-    const { reservations, getReservations } = useTableReservation();
     const [activeTab, setActiveTab] = useState("profile");
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [showPasswords, setShowPasswords] = useState({
@@ -44,13 +41,6 @@ export default function Profile() {
     const [reviewTags, setReviewTags] = useState("");
     const [reviewProfession, setReviewProfession] = useState("");
     const [reviewMessage, setReviewMessage] = useState("");
-
-    // Fetch table reservations on component mount
-    useEffect(() => {
-        if (token) {
-            getReservations();
-        }
-    }, [token, getReservations]);
 
     const [profileForm, setProfileForm] = useState({
         full_name: "",
@@ -266,175 +256,47 @@ export default function Profile() {
                 return (
                     <div className="z_prof_section">
                         <h2 className="z_prof_section_title">Reservation <span>History</span></h2>
-                        
-                        {/* Tab Navigation */}
-                        <div className="z_booking_tabs">
-                            <button 
-                                className={`z_booking_tab${activeTab === "all" ? " z_booking_tab--active" : ""}`}
-                                onClick={() => setActiveTab("all")}
-                            >
-                                All Bookings
-                            </button>
-                            <button 
-                                className={`z_booking_tab${activeTab === "rooms" ? " z_booking_tab--active" : ""}`}
-                                onClick={() => setActiveTab("rooms")}
-                            >
-                                Rooms
-                            </button>
-                            <button 
-                                className={`z_booking_tab${activeTab === "tables" ? " z_booking_tab--active" : ""}`}
-                                onClick={() => setActiveTab("tables")}
-                            >
-                                Tables
-                            </button>
+                        <div className="z_prof_bookings_list">
+                            {bookingsLoading && <p>Loading bookings...</p>}
+                            {bookingsError && <p style={{ color: "var(--d-danger, #dc3545)" }}>{bookingsError}</p>}
+                            {!bookingsLoading && !bookingsError && bookings.length === 0 && <p>No bookings found yet.</p>}
+                            {bookings.map((booking) => (
+                                <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.type === "Room" ? "var(--d-room)" : "var(--d-restaurant)" }}>
+                                    <div className="z_prof_booking_info">
+                                        <h4>{booking.service}</h4>
+                                        <div className="z_prof_booking_meta">
+                                            <span><FiCalendar /> {formatBookingDate(booking.date)}</span>
+                                            <span><FiClock /> {booking.time || "-"}</span>
+                                        </div>
+                                        <div className="z_prof_booking_meta">
+                                            <span><FiFileText /> {booking.bookingRef || "-"}</span>
+                                        </div>
+                                        {formatStatus(booking.status) === "completed" && (
+                                            <div 
+                                                className="z_prof_booking_stars"
+                                                onClick={() => {
+                                                    setSelectedBooking(booking);
+                                                    setReviewStars(0);
+                                                    setHoverStars(0);
+                                                    setReviewTags([]);
+                                                    setReviewProfession("");
+                                                    setReviewMessage("");
+                                                    setShowReviewModal(true);
+                                                }}
+                                            >
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <FiStar key={star} className="z_prof_star_icon" />
+                                                ))}
+                                                <span className="z_prof_rate_text">Rate your experience</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <span className={`z_prof_booking_status z_prof_status_${formatStatus(booking.status)}`}>
+                                        {booking.status}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-
-                        {/* Room Bookings */}
-                        {activeTab === "rooms" && (
-                            <div className="z_prof_bookings_list">
-                                {bookingsLoading && <p>Loading bookings...</p>}
-                                {bookingsError && <p style={{ color: "var(--d-danger, #dc3545)" }}>{bookingsError}</p>}
-                                {!bookingsLoading && !bookingsError && bookings.filter(b => b.type === "Room").length === 0 && <p>No room bookings found yet.</p>}
-                                {bookings.filter(b => b.type === "Room").map((booking) => (
-                                    <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': "var(--d-room)" }}>
-                                        <div className="z_prof_booking_info">
-                                            <h4>{booking.service}</h4>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiCalendar /> {formatBookingDate(booking.date)}</span>
-                                                <span><FiClock /> {booking.time || "-"}</span>
-                                            </div>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiFileText /> {booking.bookingRef || "-"}</span>
-                                            </div>
-                                            {formatStatus(booking.status) === "completed" && (
-                                                <div 
-                                                    className="z_prof_booking_stars"
-                                                    onClick={() => {
-                                                        setSelectedBooking(booking);
-                                                        setReviewStars(0);
-                                                        setHoverStars(0);
-                                                        setReviewTags([]);
-                                                        setReviewProfession("");
-                                                        setReviewMessage("");
-                                                        setShowReviewModal(true);
-                                                    }}
-                                                >
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <FiStar key={star} className="z_prof_star_icon" />
-                                                    ))}
-                                                    <span className="z_prof_rate_text">Rate your experience</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <span className={`z_prof_booking_status z_prof_status_${formatStatus(booking.status)}`}>
-                                            {booking.status}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Table Bookings */}
-                        {activeTab === "tables" && (
-                            <div className="z_prof_bookings_list">
-                                {reservations.length === 0 && <p>No table reservations found yet.</p>}
-                                {reservations.map((booking) => (
-                                    <div key={booking._id} className="z_prof_booking_card" style={{ '--accent': "#7ab898" }}>
-                                        <div className="z_prof_booking_info">
-                                            <h4>Table Reservation</h4>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiCalendar /> {formatBookingDate(booking.date)}</span>
-                                                <span><FiClock /> {booking.time}</span>
-                                                <span><FiUsers /> {booking.guests || "-"} guests</span>
-                                            </div>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiMapPin /> Table {booking.table?.tableNo || "-"}</span>
-                                            </div>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiPhone /> {booking.phone || "-"}</span>
-                                            </div>
-                                            {booking.occasion && (
-                                                <div className="z_prof_booking_meta">
-                                                    <span><FiFileText /> {booking.occasion}</span>
-                                                </div>
-                                            )}
-                                            {booking.specialRequest && (
-                                                <div className="z_prof_booking_meta">
-                                                    <span>Special: {booking.specialRequest}</span>
-                                                </div>
-                                            )}
-                                            {booking.status === "Completed" && (
-                                                <div 
-                                                    className="z_prof_booking_stars"
-                                                    onClick={() => {
-                                                        setSelectedBooking(booking);
-                                                        setReviewStars(0);
-                                                        setHoverStars(0);
-                                                        setReviewTags([]);
-                                                        setReviewProfession("");
-                                                        setReviewMessage("");
-                                                        setShowReviewModal(true);
-                                                    }}
-                                                >
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <FiStar key={star} className="z_prof_star_icon" />
-                                                    ))}
-                                                    <span className="z_prof_rate_text">Rate your experience</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <span className={`z_prof_booking_status z_prof_status_${formatStatus(booking.status)}`}>
-                                            {booking.status}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* All Bookings */}
-                        {activeTab === "all" && (
-                            <div className="z_prof_bookings_list">
-                                {bookingsLoading && <p>Loading bookings...</p>}
-                                {bookingsError && <p style={{ color: "var(--d-danger, #dc3545)" }}>{bookingsError}</p>}
-                                {!bookingsLoading && !bookingsError && bookings.length === 0 && <p>No bookings found yet.</p>}
-                                {bookings.map((booking) => (
-                                    <div key={booking.id} className="z_prof_booking_card" style={{ '--accent': booking.type === "Room" ? "var(--d-room)" : "var(--d-restaurant)" }}>
-                                        <div className="z_prof_booking_info">
-                                            <h4>{booking.service}</h4>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiCalendar /> {formatBookingDate(booking.date)}</span>
-                                                <span><FiClock /> {booking.time || "-"}</span>
-                                            </div>
-                                            <div className="z_prof_booking_meta">
-                                                <span><FiFileText /> {booking.bookingRef || "-"}</span>
-                                            </div>
-                                            {formatStatus(booking.status) === "completed" && (
-                                                <div 
-                                                    className="z_prof_booking_stars"
-                                                    onClick={() => {
-                                                        setSelectedBooking(booking);
-                                                        setReviewStars(0);
-                                                        setHoverStars(0);
-                                                        setReviewTags([]);
-                                                        setReviewProfession("");
-                                                        setReviewMessage("");
-                                                        setShowReviewModal(true);
-                                                    }}
-                                                >
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <FiStar key={star} className="z_prof_star_icon" />
-                                                    ))}
-                                                    <span className="z_prof_rate_text">Rate your experience</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <span className={`z_prof_booking_status z_prof_status_${formatStatus(booking.status)}`}>
-                                            {booking.status}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 );
             case "billing":
