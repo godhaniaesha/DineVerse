@@ -134,7 +134,7 @@ export default function AdminCategoryManagement() {
           <thead>
             <tr>
               <th>Category Name</th>
-              <th>Cuisine</th>
+              {/* <th>Cuisine</th> */}
               <th>Image</th>
               <th>Area</th>
               <th>Status</th>
@@ -145,7 +145,7 @@ export default function AdminCategoryManagement() {
             {sorted.map((r) => (
               <tr key={r._id}>
                 <td>{r.name}</td>
-                <td>{r.cuisineId?.name || "-"}</td>
+                {/* <td>{r.cuisineId?.name || "-"}</td> */}
                 <td>
                   {r.img ? (
                     <img src={r.img} alt={r.name} className="ad_gallery_img" style={{ width: 60, height: 40, marginBottom: 0, objectFit: 'cover' }} />

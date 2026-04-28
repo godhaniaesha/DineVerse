@@ -53,7 +53,7 @@ export const BADGE_META = {
 /* ─────────── COMPONENT ─────────── */
 export default function Menu() {
     const navigate = useNavigate();
-    const { mappedDishes: mappedItems, loading: menuLoading } = useMenu();
+    const { mappedDishes: mappedItems, loading: menuLoading, categories } = useMenu();
     const [activeCategory, setActiveCategory] = useState("all");
     const [activeSubcategory, setActiveSubcategory] = useState(null);
     const [search, setSearch] = useState("");
@@ -84,7 +84,7 @@ export default function Menu() {
 
     const filtered = mappedItems.filter((item) => {
         const matchCat = activeCategory === "all" || item.category === activeCategory;
-        const matchSubCat = !activeSubcategory || item.subcategory === activeSubcategory;
+        const matchSubCat = !activeSubcategory || item.categoryName === activeSubcategory;
         const q = search.toLowerCase();
         const matchSearch =
             !q ||
@@ -97,11 +97,46 @@ export default function Menu() {
     const featured = filtered.filter((i) => i.featured);
     const regular = filtered.filter((i) => !i.featured);
 
+    const getCategoryIcon = (categoryName) => {
+        const iconMap = {
+            "Appetizers": <GiKnifeFork />,
+            "Mains": <GiKnifeFork />,
+            "Sides": <GiKnifeFork />,
+            "Desserts": <GiKnifeFork />,
+            "Drinks": <GiWineGlass />,
+            "Cocktails": <MdOutlineLocalBar />,
+            "Spirits": <GiBeerStein />,
+            "Wine": <GiWineGlass />,
+            "Beer": <GiBeerStein />,
+            "Mocktails": <GiCoffeeCup />,
+            "Signature": <TbSparkles />,
+            "Toasts": <GiCoffeeCup />,
+            "Light Meals": <GiCoffeeCup />,
+            "Salads": <GiCoffeeCup />,
+            "Snacks": <GiCoffeeCup />,
+            "Tonics": <GiCoffeeCup />
+        };
+        return iconMap[categoryName] || <TbSparkles />;
+    };
+
     const getCurrentSubcategories = () => {
-        if (activeCategory === "restaurant") return RESTAURANT_SUBCATEGORIES;
-        if (activeCategory === "bar") return BAR_SUBCATEGORIES;
-        if (activeCategory === "cafe") return CAFE_SUBCATEGORIES;
-        return [];
+        if (activeCategory === "all") return [];
+        
+        // Filter categories by area based on activeCategory
+        const filteredCategories = categories.filter(cat => {
+            if (activeCategory === "restaurant") return cat.area.includes("Restaurant");
+            if (activeCategory === "bar") return cat.area.includes("Bar");
+            if (activeCategory === "cafe") return cat.area.includes("Cafe");
+            return false;
+        });
+
+        // Map categories to subcategory format
+        return filteredCategories.map(cat => ({
+            id: cat._id,
+            label: cat.name,
+            icon: getCategoryIcon(cat.name),
+            img: cat.img
+        }));
     };
 
     if (menuLoading) {
@@ -169,8 +204,8 @@ export default function Menu() {
                             {getCurrentSubcategories().map((subcat) => (
                                 <button
                                     key={subcat.id}
-                                    className={`x_subcat_btn${activeSubcategory === subcat.id ? " x_subcat_btn--active" : ""}`}
-                                    onClick={() => setActiveSubcategory(subcat.id)}
+                                    className={`x_subcat_btn${activeSubcategory === subcat.label ? " x_subcat_btn--active" : ""}`}
+                                    onClick={() => setActiveSubcategory(subcat.label)}
                                 >
                                     <span className="x_subcat_btn_icon">{subcat.icon}</span>
                                     {subcat.label}

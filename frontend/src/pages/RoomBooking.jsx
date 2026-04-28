@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdHotel, MdWifi, MdAcUnit, MdTv, MdStar, MdOutlineKingBed, MdOutlineBalcony } from "react-icons/md";
 import { PiBathtubBold, PiCoffeeBold, PiParkBold } from "react-icons/pi";
@@ -10,82 +10,48 @@ import { BsShieldCheck } from "react-icons/bs";
 import { LuCalendarCheck } from "react-icons/lu";
 import "./roomBooking.css";
 
-/* ── ROOMS DATA ───────────────────────────────────────────── */
-const ROOMS = [
-  {
-    id: 1,
-    featured: true,
-    name: "The Grand DineVerse Suite",
-    type: "Signature Suite",
-    desc: "Our crown jewel — a sprawling suite with floor-to-ceiling windows overlooking the city skyline. Hand-picked antique furnishings, a private terrace, soaking tub, and complimentary sommelier service.",
-    price: "420",
-    rating: 5.0,
-    reviews: 88,
-    img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1000&q=80",
-    amenities: [
-      { icon: <MdWifi />,             label: "Wi-Fi" },
-      { icon: <MdAcUnit />,           label: "Climate" },
-      { icon: <PiBathtubBold />,      label: "Jacuzzi" },
-      { icon: <MdOutlineBalcony />,   label: "Terrace" },
-      { icon: <IoWineOutline />,      label: "Minibar" },
-      { icon: <TbMountain />,         label: "City View" },
-    ],
-  },
-  {
-    id: 2,
-    featured: false,
-    name: "Jardin Deluxe Room",
-    type: "Deluxe Room",
-    desc: "Lush garden vistas, king-size bed with linen sheets, espresso station, and a marble rain shower.",
-    price: "220",
-    rating: 4.8,
-    reviews: 142,
-    img: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&q=80",
-    amenities: [
-      { icon: <MdWifi />,          label: "Wi-Fi" },
-      { icon: <MdAcUnit />,        label: "Climate" },
-      { icon: <PiCoffeeBold />,    label: "Espresso" },
-      { icon: <MdTv />,            label: "Smart TV" },
-    ],
-  },
-  {
-    id: 3,
-    featured: false,
-    name: "Atelier Classic Room",
-    type: "Classic Room",
-    desc: "Elegant and intimate. Carefully curated art-deco styling, queen bed, and walk-in rainfall shower.",
-    price: "155",
-    rating: 4.7,
-    reviews: 201,
-    img: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=700&q=80",
-    amenities: [
-      { icon: <MdWifi />,       label: "Wi-Fi" },
-      { icon: <MdAcUnit />,     label: "Climate" },
-      { icon: <MdTv />,         label: "Smart TV" },
-      { icon: <PiParkBold />,   label: "Garden View" },
-    ],
-  },
-  {
-  id: 4,
-  featured: false,
-  name: "Ocean Grand Suite",
-  type: "Luxury Suite",
-  desc: "A luxurious suite designed for ultimate comfort with panoramic ocean views, a private lounge area, king-size bed, and a spacious marble bathroom with rainfall shower and bathtub.",
-  price: "360",
-  rating: 4.9,
-  reviews: 124,
-  img: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=700&q=80",
-  amenities: [
-    { icon: <MdWifi />,           label: "Wi-Fi" },
-    { icon: <MdAcUnit />,         label: "Climate" },
-    { icon: <MdOutlineBalcony />, label: "Balcony" },
-    { icon: <MdTv />,             label: "Smart TV" },
-    { icon: <IoWineOutline />,    label: "Minibar" },
-    { icon: <TbMountain />,       label: "Ocean View" },
-  ],
+/* ── LOADING STYLES ───────────────────────────────────────────── */
+const style = document.createElement('style');
+style.textContent = `
+  .d_rooms_loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  
+  .d_rooms_loading__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--d-primary, #2563eb);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .d_rooms_error {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--d-error, #dc2626);
+  }
+`;
+if (!document.head.querySelector('style[data-room-booking]')) {
+  style.setAttribute('data-room-booking', 'true');
+  document.head.appendChild(style);
 }
-];
 
+/* ── API CONFIGURATION ───────────────────────────────────────────── */
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+/* ── ROOMS DATA ───────────────────────────────────────────── */
 const PERKS = [
   {
     icon: <LuCalendarCheck />,
@@ -194,9 +160,128 @@ function RoomCard({ room, onBook }) {
 /* ── MAIN SECTION ─────────────────────────────────────────── */
 export default function RoomBooking() {
   const navigate = useNavigate();
-  const handleBook = (room) => navigate("/bookRoom");
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const handleBook = (room) => navigate("/bookRoom");
   const handleCheckAvail = () => navigate("/bookRoom");
+
+  // Fetch room types from backend
+  useEffect(() => {
+    const fetchRoomTypes = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_BASE_URL}/public/rooms/types`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Transform backend data to match frontend format
+          const transformedRooms = data.data.map((roomType, index) => ({
+            id: roomType._id || index + 1,
+            featured: index === 0, // First room is featured
+            name: roomType.display_name || roomType.name,
+            type: roomType.name,
+            desc: roomType.description || "Experience luxury and comfort in our beautifully designed room.",
+            price: roomType.price_per_night?.toString() || "200",
+            rating: 4.5 + Math.random() * 0.5, // Random rating between 4.5-5.0
+            reviews: Math.floor(Math.random() * 200) + 50, // Random reviews between 50-250
+            img: roomType.image_url || "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=80",
+            amenities: roomType.features?.map((feature, i) => {
+              // Map feature names to icons
+              const iconMap = {
+                'wifi': <MdWifi />,
+                'climate': <MdAcUnit />,
+                'jacuzzi': <PiBathtubBold />,
+                'terrace': <MdOutlineBalcony />,
+                'balcony': <MdOutlineBalcony />,
+                'minibar': <IoWineOutline />,
+                'tv': <MdTv />,
+                'smart tv': <MdTv />,
+                'espresso': <PiCoffeeBold />,
+                'coffee': <PiCoffeeBold />,
+                'garden view': <PiParkBold />,
+                'city view': <TbMountain />,
+                'ocean view': <TbMountain />,
+                'kitchen': <TbToolsKitchen2 />,
+              };
+              
+              const lowerFeature = feature.toLowerCase();
+              let icon = <MdWifi />; // Default icon
+              
+              // Find matching icon
+              for (const [key, value] of Object.entries(iconMap)) {
+                if (lowerFeature.includes(key)) {
+                  icon = value;
+                  break;
+                }
+              }
+              
+              return { icon, label: feature };
+            }) || [
+              { icon: <MdWifi />, label: "Wi-Fi" },
+              { icon: <MdAcUnit />, label: "Climate" },
+              { icon: <MdTv />, label: "Smart TV" },
+            ],
+          }));
+          
+          setRooms(transformedRooms);
+        } else {
+          throw new Error(data.msg || 'Failed to fetch room types');
+        }
+      } catch (err) {
+        console.error('Error fetching room types:', err);
+        setError(err.message);
+        
+        // Fallback to static data if API fails
+        const fallbackRooms = [
+          {
+            id: 1,
+            featured: true,
+            name: "The Grand DineVerse Suite",
+            type: "Signature Suite",
+            desc: "Our crown jewel — a sprawling suite with floor-to-ceiling windows overlooking the city skyline.",
+            price: "420",
+            rating: 5.0,
+            reviews: 88,
+            img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=80",
+            amenities: [
+              { icon: <MdWifi />, label: "Wi-Fi" },
+              { icon: <MdAcUnit />, label: "Climate" },
+              { icon: <PiBathtubBold />, label: "Jacuzzi" },
+              { icon: <MdOutlineBalcony />, label: "Terrace" },
+            ],
+          },
+          {
+            id: 2,
+            featured: false,
+            name: "Deluxe Room",
+            type: "Deluxe Room",
+            desc: "Comfortable and elegant room with modern amenities.",
+            price: "220",
+            rating: 4.8,
+            reviews: 142,
+            img: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&q=80",
+            amenities: [
+              { icon: <MdWifi />, label: "Wi-Fi" },
+              { icon: <MdAcUnit />, label: "Climate" },
+              { icon: <MdTv />, label: "Smart TV" },
+            ],
+          },
+        ];
+        setRooms(fallbackRooms);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoomTypes();
+  }, []);
 
   return (
     <section className="d_rooms_section">
@@ -261,11 +346,22 @@ export default function RoomBooking() {
         </div>
 
         {/* ── ROOMS GRID ── */}
-        <div className="d_rooms_grid">
-          {ROOMS.map((room) => (
-            <RoomCard key={room.id} room={room} onBook={handleBook} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="d_rooms_loading">
+            <div className="d_rooms_loading__spinner"></div>
+            <p>Loading available rooms...</p>
+          </div>
+        ) : error ? (
+          <div className="d_rooms_error">
+            <p>Unable to load rooms. Showing available rooms.</p>
+          </div>
+        ) : (
+          <div className="d_rooms_grid">
+            {rooms.map((room) => (
+              <RoomCard key={room.id} room={room} onBook={handleBook} />
+            ))}
+          </div>
+        )}
 
         {/* ── PERKS ROW ── */}
         <div className="d_rooms_perks">
