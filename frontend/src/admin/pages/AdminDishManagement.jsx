@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 
 const AREAS = ["Restaurant", "Cafe", "Bar"];
-const COURSES = ["Soup", "Appetizer", "Palate Cleanser", "Main Course", "Dessert"];
+// const COURSES = ["Soup", "Appetizer", "Palate Cleanser", "Main Course", "Dessert"];
 const MEALS = ["Veg", "Non-Veg"];
-const SORT_OPTIONS = ["None", "Name A–Z", "Name Z–A", "Area", "Course"];
+const SORT_OPTIONS = ["None", "Name A–Z", "Name Z–A", "Area", "Cuisine"];
 const truncate = (str, len = 35) => str && str.length > len ? str.slice(0, len) + "..." : str;
 
 const EMPTY = {
@@ -17,7 +17,7 @@ const EMPTY = {
     img: null,
     short_des: "",
     des: "",
-    course: "Main Course",
+    cuisineId: "",
     mealType: "Veg",
     price: "",
     prepTime: "",
@@ -31,11 +31,13 @@ const EMPTY = {
 const CHEF_ROLES = new Set(["Cafe Chef", "Restaurant Chef", "Bar Chef"]);
 
 export default function AdminDishManagement() {
-    const { mappedDishes: rows, categories, chefs, loading, addDish, updateDish, deleteDish } = useMenu();
+    const { mappedDishes: rows, categories, cuisines, chefs, loading, addDish, updateDish, deleteDish } = useMenu();
+    console.log("cuisines", cuisines)
+    
     const adminRole = localStorage.getItem("adminRole") || "Super Admin";
     const adminName = localStorage.getItem("adminName") || "";
     const isChefRole = CHEF_ROLES.has(adminRole);
-    
+
     const [modal, setModal] = useState(null);
     const [form, setForm] = useState(EMPTY);
     const [search, setSearch] = useState("");
@@ -83,7 +85,7 @@ export default function AdminDishManagement() {
         formData.append("cat_id", form.cat_id);
         formData.append("short_des", form.short_des);
         formData.append("des", form.des);
-        formData.append("course", form.course);
+        formData.append("cuisineId", form.cuisineId);
         formData.append("mealType", form.mealType);
         formData.append("price", form.price);
         formData.append("prepTime", form.prepTime);
@@ -92,7 +94,7 @@ export default function AdminDishManagement() {
         formData.append("status", form.status);
         formData.append("area", JSON.stringify(form.area));
         formData.append("chef", JSON.stringify(form.chef));
-        
+
         if (form.img instanceof File) {
             formData.append("img", form.img);
         }
@@ -126,7 +128,7 @@ export default function AdminDishManagement() {
         if (sortBy === "Name A–Z") return list.sort((a, b) => a.name.localeCompare(b.name));
         if (sortBy === "Name Z–A") return list.sort((a, b) => b.name.localeCompare(a.name));
         if (sortBy === "Area") return list.sort((a, b) => (a.area[0] || "").localeCompare(b.area[0] || ""));
-        if (sortBy === "Course") return list.sort((a, b) => COURSES.indexOf(a.course) - COURSES.indexOf(b.course));
+        if (sortBy === "Cuisine") return list.sort((a, b) => (a.cuisineName || "").localeCompare(b.cuisineName || ""));
         return list;
     }, [filtered, sortBy]);
 
@@ -169,7 +171,7 @@ export default function AdminDishManagement() {
                         <tr>
                             <th>Name</th>
                             <th>Category</th>
-                            <th>Course</th>
+                            <th>Cuisine</th>
                             <th>Meal</th>
                             <th>Price</th>
                             <th>Area</th>
@@ -180,34 +182,35 @@ export default function AdminDishManagement() {
                     </thead>
                     <tbody>
                         {sorted.map((r) => (
+                            console.log("r", r),
                             <tr key={r.id}>
                                 <td>{r.name}</td>
                                 <td>{r.categoryName}</td>
-                                <td>{r.course}</td>
+                                <td>{r.cuisineName}</td>
                                 <td>{r.mealType}</td>
                                 <td>{r.displayPrice}</td>
                                 <td>{r.area.join(", ")}</td>
                                 <td>{r.chef && r.chef.length ? r.chef.map(c => c.full_name).join(", ") : "-"}</td>
                                 <td><span className="ad_chip">{r.status}</span></td>
                                 <td>
-                                  <div className="d-flex" style={{gap:"6px"}}>
-                                    {!isChefRole ? (
-                                        <>
-                                            <button className="rooms__icon_btn" onClick={() => { 
-                                                setForm({ 
-                                                    ...r, 
-                                                    cat_id: r.categoryId,
-                                                    ingredients: r.ingredients.join(", "),
-                                                    chef: r.chef.map(c => c._id || c)
-                                                }); 
-                                                setModal({ mode: "edit", row: r }); 
-                                            }}><IcEdit /></button>
-                                            <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
-                                        </>
-                                    ) : (
-                                        <span className="ad_chip">View only</span>
-                                    )}
-                                  </div>
+                                    <div className="d-flex" style={{ gap: "6px" }}>
+                                        {!isChefRole ? (
+                                            <>
+                                                <button className="rooms__icon_btn" onClick={() => {
+                                                    setForm({
+                                                        ...r,
+                                                        cat_id: r.categoryId,
+                                                        ingredients: r.ingredients.join(", "),
+                                                        chef: r.chef.map(c => c._id || c)
+                                                    });
+                                                    setModal({ mode: "edit", row: r });
+                                                }}><IcEdit /></button>
+                                                <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
+                                            </>
+                                        ) : (
+                                            <span className="ad_chip">View only</span>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -226,7 +229,7 @@ export default function AdminDishManagement() {
                         </div>
 
                         <div className="rooms__form_row"><label className="rooms__form_label">Name</label><input className="rooms__form_input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} /></div>
-                        
+
                         <div className="rooms__form_row">
                             <label className="rooms__form_label">Image</label>
                             <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
@@ -240,7 +243,7 @@ export default function AdminDishManagement() {
 
                         <div className="rooms__form_row"><label className="rooms__form_label">Short Description</label><input className="rooms__form_input" value={form.short_des} onChange={(e) => setForm((f) => ({ ...f, short_des: e.target.value }))} /></div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Description</label><textarea className="rooms__form_input" value={form.des} onChange={(e) => setForm((f) => ({ ...f, des: e.target.value }))} /></div>
-                        
+
                         <div className="rooms__form_row">
                             <label className="rooms__form_label">Category</label>
                             <select
@@ -259,9 +262,25 @@ export default function AdminDishManagement() {
                             </select>
                         </div>
 
-                        <div className="rooms__form_row"><label className="rooms__form_label">Course</label><select className="rooms__form_select" value={form.course} onChange={(e) => setForm((f) => ({ ...f, course: e.target.value }))}>{COURSES.map((c) => <option key={c}>{c}</option>)}</select></div>
+                        <div className="rooms__form_row">
+                            <label className="rooms__form_label">Cuisine</label>
+                            <select
+                                className="rooms__form_select"
+                                value={form.cuisineId}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, cuisineId: e.target.value }))
+                                }
+                            >
+                                <option value="">Select Cuisine</option>
+                                {cuisines.map((c) => (
+                                    <option key={c._id} value={c._id}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Meal</label><select className="rooms__form_select" value={form.mealType} onChange={(e) => setForm((f) => ({ ...f, mealType: e.target.value }))}>{MEALS.map((m) => <option key={m}>{m}</option>)}</select></div>
-                        
+
                         <div className="rooms__form_grid2">
                             <div><label className="rooms__form_label">Price</label><input type="number" className="rooms__form_input" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} /></div>
                             <div><label className="rooms__form_label">Prep time</label><input className="rooms__form_input" value={form.prepTime} onChange={(e) => setForm((f) => ({ ...f, prepTime: e.target.value }))} /></div>
@@ -269,7 +288,7 @@ export default function AdminDishManagement() {
 
                         <div className="rooms__form_row"><label className="rooms__form_label">Ingredients (comma-separated)</label><input className="rooms__form_input" value={form.ingredients} onChange={(e) => setForm((f) => ({ ...f, ingredients: e.target.value }))} /></div>
                         <div className="rooms__form_row"><label className="rooms__form_label">Note</label><input className="rooms__form_input" value={form.note} onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))} /></div>
-                        
+
                         <div className="rooms__form_row">
                             <label className="rooms__form_label">Assign Chefs</label>
                             <div className="rooms__multi_select_wrapper" ref={chefDropdownRef}>
@@ -374,7 +393,7 @@ export default function AdminDishManagement() {
                         <p className="rooms__delete_msg">Delete {modal.row.name}?</p>
                         <div className="rooms__form_actions">
                             <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
-                            <button className="rooms__btn rooms__btn--danger" onClick={async () => { 
+                            <button className="rooms__btn rooms__btn--danger" onClick={async () => {
                                 const res = await deleteDish(modal.row.id);
                                 if (res.success) {
                                     toast.success("Dish deleted");
