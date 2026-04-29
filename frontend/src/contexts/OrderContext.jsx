@@ -226,10 +226,14 @@ export const OrderProvider = ({ children }) => {
       });
       const data = await res.json();
 
+      if (!res.ok) {
+        return { success: false, error: data.msg || 'Payment intent creation failed' };
+      }
+
       if (data.success) {
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg };
+      return { success: false, error: data.msg || 'Unknown error occurred' };
     } catch (err) {
       console.error("Create billing payment intent error:", err);
       return { success: false, error: "Network error" };
@@ -238,20 +242,25 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders]);
 
-  const confirmBillingAndCheckout = useCallback(async (orderId) => {
+  const confirmBillingAndCheckout = useCallback(async (orderId, paymentData = {}) => {
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE_URL}/orders/confirm-checkout/${orderId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeaders }
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify(paymentData)
       });
       const data = await res.json();
+
+      if (!res.ok) {
+        return { success: false, error: data.msg || 'Checkout confirmation failed' };
+      }
 
       if (data.success) {
         await fetchOrders();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg };
+      return { success: false, error: data.msg || 'Unknown error occurred' };
     } catch (err) {
       console.error("Confirm billing and checkout error:", err);
       return { success: false, error: "Network error" };
