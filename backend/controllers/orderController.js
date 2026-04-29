@@ -464,7 +464,8 @@ export const getChefQueue = async (req, res) => {
             .populate("tableId", "tableNo area")
             .populate("waiterId", "full_name")
             .sort({ createdAt: 1 });
-
+        
+        console.log("Fetched Orders for Chef Queue:", orders);
         res.status(200).json({
             success: true,
             count: orders.length,

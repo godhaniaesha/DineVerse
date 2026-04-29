@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useOrder } from "../../contexts/OrderContext";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
 const KITCHEN_FLOW = ["Pending", "Accepted by Chef", "Cooking", "Ready", "Served / Delivered"];
@@ -17,38 +19,63 @@ const AREA_BY_ROLE = {
   "Bar Chef": "bar",
 };
 
+const CHEF_ROLES = new Set(["Chef"]);
+
 export default function AdminKDS() {
+  const { user } = useAuth();
+  const { orders, loading, fetchChefQueue, updateOrderStatus } = useOrder();
   const role = localStorage.getItem("adminRole") || "Super Admin";
   const roleArea = AREA_BY_ROLE[role] || null;
-  const [rows, setRows] = useState(() => {
-    const savedOrders = localStorage.getItem(ORDER_QUEUE_KEY);
-    if (savedOrders) {
-      try {
-        return JSON.parse(savedOrders);
-      } catch (error) {
-        localStorage.removeItem(ORDER_QUEUE_KEY);
-        return KDS_SEED_ROWS;
-      }
-    }
-    return KDS_SEED_ROWS;
-  });
+  const isChefRole = CHEF_ROLES.has(role);
+
+  // Format orders to match KDS structure
+  const formattedOrders = orders.map(order => ({
+    id: order.orderID,
+    table: order.tableId?.tableNumber || "TBD",
+    items: order.items.map(item => `${item.name} x${item.quantity}`).join(", "),
+    chef: order.items.find(item => item.chefId)?.chefId?.full_name || "Unassigned",
+    status: order.items.find(item => ["Pending", "Accepted by Chef", "Preparing", "Ready"].includes(item.status))?.status || "Pending",
+    area: order.items.find(item => item.dishId?.area)?.dishId?.area || "restaurant"
+  }));
+
+  // Fetch orders on component mount
+  useEffect(() => {
+    fetchChefQueue();
+  }, [fetchChefQueue]);
 
   const canAdvanceFromKds = (status) => ["Pending", "Accepted by Chef", "Cooking"].includes(status);
 
-  const moveKitchenStage = (id) => {
-    const updated = rows.map((row) => {
-      if (row.id !== id) return row;
-      const currentIndex = KITCHEN_FLOW.indexOf(row.status);
-      const nextIndex = Math.min(currentIndex + 1, 3);
-      return { ...row, status: KITCHEN_FLOW[nextIndex] };
-    });
-    setRows(updated);
-    localStorage.setItem(ORDER_QUEUE_KEY, JSON.stringify(updated));
+  const moveKitchenStage = async (id) => {
+    const order = orders.find(o => o.orderID === id);
+    if (!order) return;
+    
+    // Find the first pending item to update
+    const pendingItem = order.items.find(item => ["Pending", "Accepted by Chef", "Preparing"].includes(item.status));
+    if (!pendingItem) return;
+    
+    const currentIndex = KITCHEN_FLOW.indexOf(pendingItem.status);
+    const nextIndex = Math.min(currentIndex + 1, 3);
+    const newStatus = KITCHEN_FLOW[nextIndex];
+    
+    await updateOrderStatus(order._id, newStatus);
   };
 
-  const visibleRows = rows
+  const visibleRows = formattedOrders
     .filter((row) => row.area && (roleArea ? row.area === roleArea : true))
+    .filter((row) => {
+      // For chefs, only show orders assigned to them
+      const matchChef = !isChefRole || (user && row.chef && row.chef.includes(user.full_name));
+      return matchChef;
+    })
     .filter((row) => ["Pending", "Accepted by Chef", "Cooking", "Ready"].includes(row.status));
+
+  if (loading) {
+    return (
+      <div className="ad_page">
+        <div className="ad_h2">Loading Kitchen Queue...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="ad_page">

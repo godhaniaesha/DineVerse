@@ -38,6 +38,24 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders]);
 
+  const fetchChefQueue = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/orders/chef-queue`, {
+        headers: { ...authHeaders }
+      });
+      console.log("res",res)
+      const data = await res.json();
+      if (data.success) {
+        setOrders(data.data);
+      }
+    } catch (err) {
+      console.error("Fetch chef queue error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
   const createOrder = useCallback(async (orderData) => {
     try {
       setLoading(true);
@@ -59,8 +77,29 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders, fetchOrders]);
 
+  const updateOrderStatus = useCallback(async (orderId, newStatus) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/orders/update-item-status/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchChefQueue();
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders, fetchChefQueue]);
+
   return (
-    <OrderContext.Provider value={{ orders, loading, error, fetchOrders, createOrder }}>
+    <OrderContext.Provider value={{ orders, loading, error, fetchOrders, fetchChefQueue, createOrder, updateOrderStatus }}>
       {children}
     </OrderContext.Provider>
   );
