@@ -39,6 +39,24 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders]);
 
+  const fetchChefQueue = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/orders/chef-queue`, {
+        headers: { ...authHeaders }
+      });
+      console.log("res",res)
+      const data = await res.json();
+      if (data.success) {
+        setOrders(data.data);
+      }
+    } catch (err) {
+      console.error("Fetch chef queue error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
   const createOrder = useCallback(async (orderData) => {
     try {
       setLoading(true);

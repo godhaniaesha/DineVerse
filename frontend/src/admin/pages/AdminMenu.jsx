@@ -90,7 +90,7 @@ export default function AdminMenu() {
 
   const filteredItems = MENU_ITEMS.filter((item) => {
     const categoryMatch = activeCategory === "all" || item.category === activeCategory;
-    const subcategoryMatch = !activeSubcategory || item.subcategory === activeSubcategory;
+    const subcategoryMatch = !activeSubcategory || item.categoryName === activeSubcategory;
     return categoryMatch && subcategoryMatch;
   });
 
@@ -128,8 +128,8 @@ export default function AdminMenu() {
             {getCurrentSubcategories().map((subcategory) => (
               <button
                 key={subcategory.id}
-                className={`x_subcat_btn${activeSubcategory === subcategory.id ? " x_subcat_btn--active" : ""}`}
-                onClick={() => setActiveSubcategory(subcategory.id)}
+                className={`x_subcat_btn${activeSubcategory === subcategory.label ? " x_subcat_btn--active" : ""}`}
+                onClick={() => setActiveSubcategory(subcategory.label)}
               >
                 <span className="x_subcat_btn_icon">{subcategory.icon}</span>
                 {subcategory.label}
