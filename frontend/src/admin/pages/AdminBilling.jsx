@@ -1,8 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { MdOutlineClose, MdPayment, MdCheckCircle } from "react-icons/md";
-
-const ORDER_QUEUE_KEY = "admin-order-queue";
-const COMPLETED_PAYMENTS_KEY = "admin-completed-payments";
+import { useOrder } from "../../contexts/OrderContext";
 
 function Modal({ title, onClose, children }) {
   return (
@@ -20,85 +18,56 @@ function Modal({ title, onClose, children }) {
 }
 
 export default function AdminBilling() {
-  const [orders, setOrders] = useState([]);
+  const { getBillingOrders, createBillingPaymentIntent, confirmBillingAndCheckout, loading } = useOrder();
+  const [billingData, setBillingData] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [role] = useState(localStorage.getItem("adminRole") || "Super Admin");
 
   useEffect(() => {
-    const savedOrders = localStorage.getItem(ORDER_QUEUE_KEY);
-    if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
-    }
+    fetchBillingData();
   }, []);
 
-  // Group "Served" orders by table
+  const fetchBillingData = async () => {
+    const area = role === "Super Admin" || role === "Manager" ? undefined : role.split(' ')[0].toLowerCase();
+    const result = await getBillingOrders(area);
+    if (result.success) {
+      setBillingData(result.data);
+    }
+  };
+
+  // Billing data is already grouped by table from API
   const billingGroups = useMemo(() => {
-    const servedOrders = orders.filter(order => order.status === "Served");
-    const groups = {};
+    return billingData;
+  }, [billingData]);
 
-    servedOrders.forEach(order => {
-      const tableKey = order.table || "Walk-in";
-      if (!groups[tableKey]) {
-        groups[tableKey] = {
-          table: tableKey,
-          area: order.area,
-          customer: order.customer,
-          orders: [],
-          total: 0
-        };
-      }
-      groups[tableKey].orders.push(order);
-      groups[tableKey].total += (order.total || 0);
-    });
-
-    return Object.values(groups);
-  }, [orders]);
-
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!selectedTable) return;
 
-    const tableOrdersIds = selectedTable.orders.map(o => o.id);
-    
-    // 1. Mark orders as "Completed" and remove from active queue
-    const updatedOrders = orders.filter(order => !tableOrdersIds.includes(order.id));
-    
-    setOrders(updatedOrders);
-    localStorage.setItem(ORDER_QUEUE_KEY, JSON.stringify(updatedOrders));
+    try {
+      // For each order in the selected table, create billing payment and confirm checkout
+      for (const order of selectedTable.orders) {
+        // Create billing payment intent
+        const paymentResult = await createBillingPaymentIntent(order._id);
+        if (paymentResult.success) {
+          // Confirm billing and checkout
+          await confirmBillingAndCheckout(order._id);
+        }
+      }
 
-    // 2. Store completed payment details
-    const completedPayment = {
-      id: `BILL-${Date.now().toString().slice(-6)}`,
-      table: selectedTable.table,
-      area: selectedTable.area,
-      customer: selectedTable.customer,
-      items: selectedTable.orders.map(o => o.items).flat(), // Assuming items are already stringified
-      total: selectedTable.total,
-      paymentMethod: paymentMethod,
-      timestamp: new Date().toLocaleString(),
-      orders: selectedTable.orders.map(o => ({ id: o.id, items: o.items, total: o.total }))
-    };
+      // Refresh billing data
+      await fetchBillingData();
 
-    const savedCompletedPayments = localStorage.getItem(COMPLETED_PAYMENTS_KEY);
-    const parsedCompletedPayments = savedCompletedPayments ? JSON.parse(savedCompletedPayments) : [];
-    localStorage.setItem(COMPLETED_PAYMENTS_KEY, JSON.stringify([completedPayment, ...parsedCompletedPayments]));
-
-    // 3. Update table status back to "reserved"
-    const areaKey = `admin-${selectedTable.area.toLowerCase()}-tables`; // Ensure key matches
-    const savedTables = localStorage.getItem(areaKey);
-    if (savedTables) {
-      const allTables = JSON.parse(savedTables);
-      const updatedTables = allTables.map(t => 
-        t.tableNo === selectedTable.table ? { ...t, status: "reserved", waiter: "" } : t
-      );
-      localStorage.setItem(areaKey, JSON.stringify(updatedTables));
+      setPaymentSuccess(true);
+      setTimeout(() => {
+        setPaymentSuccess(false);
+        setSelectedTable(null);
+      }, 2000);
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      alert("Failed to process payment. Please try again.");
     }
-
-    setPaymentSuccess(true);
-    setTimeout(() => {
-      setPaymentSuccess(false);
-      setSelectedTable(null);
-    }, 2000);
   };
 
   return (
