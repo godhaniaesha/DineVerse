@@ -99,7 +99,7 @@ export default function Bar() {
                             <div key={drink.id} className="z_bar_item_card">
                                 <img src={drink.img} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 <div className="z_bar_item_overlay">
-                                    <span style={{ color: 'var(--d-bar)', fontWeight: '700', fontSize: '1.2rem' }}>{drink.price}</span>
+                                    {/* <span style={{ color: 'var(--d-bar)', fontWeight: '700', fontSize: '1.2rem' }}>{drink.price}</span> */}
                                     <h3 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>{drink.name}</h3>
                                     <p style={{ color: 'var(--d-text-2)', fontSize: '0.9rem' }}>{drink.desc}</p>
                                 </div>
