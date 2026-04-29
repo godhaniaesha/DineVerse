@@ -1,75 +1,51 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoWineOutline, IoFlameOutline } from "react-icons/io5";
 import { PiBeerSteinBold, PiLeafBold } from "react-icons/pi";
 import { HiSparkles, HiHeart, HiOutlineHeart } from "react-icons/hi2";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { MdOutlineLocalBar } from "react-icons/md";
-import { TbEye } from "react-icons/tb";
+import { GiMartini } from "react-icons/gi";
 import "./barDrinks.css";
 import "../style/z_style.css";
-import { GiMartini } from "react-icons/gi";   // cocktail glass replacement
-/* ── DRINKS DATA ──────────────────────────────────────────── */
-const DRINKS = [
-  {
-    id: 1,
-    name: "Midnight Negroni",
-    desc: "Barrel-aged gin, activated charcoal, vermouth rosso, Campari, orange smoke.",
-    price: "16",
-    category: "cocktails",
-    abv: "28% ABV",
-    tags: ["Stirred", "Spirit-forward", "Classic"],
-    img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80",
-  },
-  {
-    id: 2,
-    name: "Château Margaux '18",
-    desc: "Full-bodied Bordeaux, dark cherry, cedar, silky tannins. Served by the glass.",
-    price: "22",
-    category: "wine",
-    abv: "13.5% ABV",
-    tags: ["Red", "Bordeaux", "Reserve"],
-    img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80",
-  },
-  {
-    id: 3,
-    name: "Elderflower Spritz",
-    desc: "House elderflower cordial, prosecco, fresh cucumber, cracked black pepper.",
-    price: "13",
-    category: "cocktails",
-    abv: "8% ABV",
-    tags: ["Sparkling", "Light", "Floral"],
-    img: "https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?w=600&q=80",
-  },
-  {
-    id: 4,
-    name: "Zero-Proof Sunrise",
-    desc: "Cold-pressed blood orange, hibiscus, ginger shrub, sparkling water.",
-    price: "9",
-    category: "mocktails",
-    abv: "0% ABV",
-    tags: ["Non-alcoholic", "Citrus", "Refreshing"],
-    img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&q=80",
-  },
-];
+import { useMenu } from "../contexts/MenuContext";
 
+/* ── MARQUEE ITEMS ───────────────────────────────────────── */
 const MARQUEE_ITEMS = [
-  "Craft Cocktails", "Natural Wines", "Artisan Beers",
-  "Zero-Proof Creations", "Seasonal Ingredients", "Barrel-Aged Spirits",
-  "Live Bar Every Friday", "Happy Hour 5–7PM",
+  "Craft Cocktails",
+  "Natural Wines",
+  "Artisan Beers",
+  "Zero-Proof Creations",
+  "Seasonal Ingredients",
+  "Barrel-Aged Spirits",
+  "Live Bar Every Friday",
+  "Happy Hour 5–7PM",
 ];
 
-const TABS = [
-  { id: "all", label: "All Drinks", icon: <MdOutlineLocalBar />, count: DRINKS.length },
-  { id: "cocktails", label: "Cocktails", icon: <GiMartini />, count: DRINKS.filter(d => d.category === "cocktails").length },
-  { id: "wine", label: "Wine", icon: <IoWineOutline />, count: DRINKS.filter(d => d.category === "wine").length },
-  { id: "beer", label: "Beer", icon: <PiBeerSteinBold />, count: DRINKS.filter(d => d.category === "beer").length },
-  { id: "mocktails", label: "Mocktails", icon: <PiLeafBold />, count: DRINKS.filter(d => d.category === "mocktails").length },
-];
+// helper: normalize strings
+function toSlug(value) {
+  if (!value) return "";
+  return value
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
 
 /* ── DRINK CARD ───────────────────────────────────────────── */
 function DrinkCard({ drink }) {
   const [faved, setFaved] = useState(false);
+
+  const price =
+    typeof drink.price === "string"
+      ? drink.price.replace("₹", "")
+      : drink.price;
+
+  const abv = drink.cuisine || "ABV N/A";
+
+  const catText =
+    drink.drinkCategory || drink.categoryName || drink.category || "Bar";
 
   return (
     <div className="d_bar_card">
@@ -80,36 +56,38 @@ function DrinkCard({ drink }) {
           className="d_bar_card__img"
           loading="lazy"
         />
-        <span className="d_bar_card__abv">{drink.abv}</span>
-
-        {/* Hover overlay */}
-        {/* <div className="d_bar_card__overlay">
-          <button className="d_bar_card__peek-btn">
-            <TbEye style={{ fontSize: 13 }} />
-            View Drink
-          </button>
-        </div> */}
+        <span className="d_bar_card__abv">{abv}</span>
       </div>
 
       <div className="d_bar_card__body">
-        <span className="d_bar_card__cat">{drink.category}</span>
+        <span className="d_bar_card__cat">{catText}</span>
         <h3 className="d_bar_card__name">{drink.name}</h3>
-        <p className="d_bar_card__desc">{drink.desc}</p>
+        <p className="d_bar_card__desc">
+          {drink.desc || drink.des || drink.short_des}
+        </p>
 
         <div className="d_bar_card__tags">
-          {drink.tags.map((t) => (
-            <span key={t} className="d_bar_card__tag">{t}</span>
+          {(drink.tags || []).map((t) => (
+            <span key={t} className="d_bar_card__tag">
+              {t}
+            </span>
           ))}
         </div>
 
         <div className="d_bar_card__footer">
           <span className="d_bar_card__price">
-            <sup>$</sup>{drink.price}
+            <sup>₹</sup>
+            {price}
           </span>
           <button
-            className={`d_bar_card__fav${faved ? " d_bar_card__fav--active" : ""}`}
+            className={
+              "d_bar_card__fav" +
+              (faved ? " d_bar_card__fav--active" : "")
+            }
             onClick={() => setFaved((v) => !v)}
-            aria-label={faved ? "Remove from favourites" : "Add to favourites"}
+            aria-label={
+              faved ? "Remove from favourites" : "Add to favourites"
+            }
           >
             {faved ? <HiHeart /> : <HiOutlineHeart />}
           </button>
@@ -121,7 +99,12 @@ function DrinkCard({ drink }) {
 
 /* ── MARQUEE DIVIDER ──────────────────────────────────────── */
 function BarMarquee() {
-  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  const doubled = [
+    ...MARQUEE_ITEMS,
+    ...MARQUEE_ITEMS,
+    ...MARQUEE_ITEMS,
+    ...MARQUEE_ITEMS,
+  ];
   return (
     <div className="d_bar_marquee" aria-hidden="true">
       <div className="d_bar_marquee__track">
@@ -139,22 +122,118 @@ function BarMarquee() {
 /* ── MAIN SECTION ─────────────────────────────────────────── */
 export default function BarDrinks() {
   const [activeTab, setActiveTab] = useState("all");
-  const [favorites, setFavorites] = useState(new Set());
   const navigate = useNavigate();
+  const { mappedDishes = [], loading } = useMenu();
 
+  // only Bar dishes (area ma "Bar")
+  const barDishes = useMemo(
+    () =>
+      mappedDishes.filter((d) => {
+        const areas = d.area || [];
+        return areas.includes("Bar");
+      }),
+    [mappedDishes]
+  );
+
+  // drink categories normalize
+  const normalized = useMemo(
+    () =>
+      barDishes.map((d) => {
+        const rawCat =
+          d.drinkCategory ||
+          d.categoryName ||
+          d.category ||
+          "Cocktails";
+
+        const slug = toSlug(rawCat); // cocktails / wine / beer / mocktails
+
+        return {
+          ...d,
+          drinkCategory: rawCat,
+          drinkCategorySlug: slug,
+        };
+      }),
+    [barDishes]
+  );
+
+  // tabs with counts
+  const TABS = useMemo(() => {
+    const counts = {
+      cocktails: 0,
+      wine: 0,
+      beer: 0,
+      mocktails: 0,
+    };
+
+    normalized.forEach((d) => {
+      if (counts[d.drinkCategorySlug] !== undefined) {
+        counts[d.drinkCategorySlug]++;
+      }
+    });
+
+    const total = normalized.length;
+
+    return [
+      {
+        id: "all",
+        label: "All Drinks",
+        icon: <MdOutlineLocalBar />,
+        count: total,
+      },
+      {
+        id: "cocktails",
+        label: "Cocktails",
+        icon: <GiMartini />,
+        count: counts.cocktails,
+      },
+      {
+        id: "wine",
+        label: "Wine",
+        icon: <IoWineOutline />,
+        count: counts.wine,
+      },
+      {
+        id: "beer",
+        label: "Beer",
+        icon: <PiBeerSteinBold />,
+        count: counts.beer,
+      },
+      {
+        id: "mocktails",
+        label: "Mocktails",
+        icon: <PiLeafBold />,
+        count: counts.mocktails,
+      },
+    ];
+  }, [normalized]);
+
+  // LIMIT: All = 4, each category = 4
   const filtered =
     activeTab === "all"
-      ? DRINKS
-      : DRINKS.filter((d) => d.category === activeTab);
+      ? normalized.slice(0, 4)
+      : normalized
+          .filter((d) => d.drinkCategorySlug === activeTab)
+          .slice(0, 4);
 
   const handleExplore = () => navigate("/bar");
   const handleReserve = () => navigate("/bookTable");
 
+  if (loading) {
+    return (
+      <section className="d_bar_section">
+        <div className="d_wrapper">
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            Loading bar menu...
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="d_bar_section">
       <div className="d_wrapper">
-
-        {/* ── HERO SPLIT ── */}
+        {/* HERO SPLIT */}
         <div className="d_bar_hero">
           {/* Right — hero media */}
           <div className="d_bar_hero__right">
@@ -169,18 +248,14 @@ export default function BarDrinks() {
                 ></video>
               </div>
               <div className="z_bar_overlap_img z_slide_shape_arch">
-                <img src="https://i.pinimg.com/736x/ff/32/47/ff32474e9817eda52b828c15c64c9620.jpg" alt="Signature Cocktail" />
+                <img
+                  src="https://i.pinimg.com/736x/ff/32/47/ff32474e9817eda52b828c15c64c9620.jpg"
+                  alt="Signature Cocktail"
+                />
               </div>
             </div>
-
-            {/* <div className="d_bar_hero__float-tag">
-              <span className="d_bar_hero__float-tag-name">Open until 2 AM</span>
-              <span className="d_bar_hero__float-tag-sub">
-                <IoFlameOutline style={{ fontSize: 9, verticalAlign: 'middle', marginRight: 4 }} />
-                Happy Hour 5 – 7 PM
-              </span>
-            </div> */}
           </div>
+
           {/* Left — editorial copy */}
           <div className="d_bar_hero__left">
             <p className="d_bar_hero__eyebrow">
@@ -195,8 +270,8 @@ export default function BarDrinks() {
               </h2>
               <p className="d_bar_hero__body">
                 Step into our dimly lit sanctuary of crafted spirits, natural
-                wines, and house-brewed ales. Our bartenders are artists —
-                each pour a composition of flavour, memory, and mood.
+                wines, and house-brewed ales. Our bartenders are artists — each
+                pour a composition of flavour, memory, and mood.
               </p>
 
               <div className="d_bar_hero__stats">
@@ -225,20 +300,33 @@ export default function BarDrinks() {
           </div>
         </div>
 
-        {/* ── MARQUEE ── */}
+        {/* MARQUEE */}
         <BarMarquee />
 
-        {/* ── TABS ── */}
-        <div className="d_bar_tabs" role="tablist" aria-label="Filter drinks by category">
+        {/* TABS */}
+        <div
+          className="d_bar_tabs"
+          role="tablist"
+          aria-label="Filter drinks by category"
+        >
           {TABS.map((tab) => (
             <button
               key={tab.id}
               role="tab"
               aria-selected={activeTab === tab.id}
-              className={`d_bar_tab${activeTab === tab.id ? " d_bar_tab--active" : ""}`}
+              className={
+                "d_bar_tab" +
+                (activeTab === tab.id ? " d_bar_tab--active" : "")
+              }
               onClick={() => setActiveTab(tab.id)}
             >
-              <span style={{ display: "flex", alignItems: "center", fontSize: 13 }}>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: 13,
+                }}
+              >
                 {tab.icon}
               </span>
               {tab.label}
@@ -247,34 +335,51 @@ export default function BarDrinks() {
           ))}
         </div>
 
-        {/* ── CARDS GRID ── */}
+        {/* CARDS GRID */}
         <div className="d_bar_grid" role="tabpanel">
           {filtered.map((drink) => (
             <DrinkCard key={drink.id} drink={drink} />
           ))}
+          {filtered.length === 0 && (
+            <p style={{ padding: 16, textAlign: "center" }}>
+              No drinks found for this category.
+            </p>
+          )}
         </div>
 
-        {/* ── BOTTOM CTA BANNER ── */}
+        {/* BOTTOM CTA BANNER */}
         <div className="d_bar_banner">
           <div className="d_bar_banner__text">
             <span className="d_bar_banner__label">
-              <HiSparkles style={{ fontSize: 8, marginRight: 6, verticalAlign: 'middle' }} />
+              <HiSparkles
+                style={{
+                  fontSize: 8,
+                  marginRight: 6,
+                  verticalAlign: "middle",
+                }}
+              />
               Private Bar Hire
             </span>
             <h3 className="d_bar_banner__title">
               Host Your Next Event <em>in Style</em>
             </h3>
             <p className="d_bar_banner__sub">
-              Exclusive bar buyouts, bespoke cocktail menus, and dedicated
-              bar staff for your private celebration. From 20 to 120 guests.
+              Exclusive bar buyouts, bespoke cocktail menus, and dedicated bar
+              staff for your private celebration. From 20 to 120 guests.
             </p>
           </div>
           <div className="d_bar_banner__actions">
-            <button className="d_bar_banner__btn-primary" onClick={handleReserve}>
+            <button
+              className="d_bar_banner__btn-primary"
+              onClick={handleReserve}
+            >
               <MdOutlineLocalBar style={{ fontSize: 16 }} />
               Reserve the Bar
             </button>
-            <button className="d_bar_banner__btn-secondary" onClick={handleExplore}>
+            <button
+              className="d_bar_banner__btn-secondary"
+              onClick={handleExplore}
+            >
               View Full Drinks Menu
               <span className="d_bar_banner__btn-arrow">
                 <RiArrowRightSLine />
@@ -282,7 +387,6 @@ export default function BarDrinks() {
             </button>
           </div>
         </div>
-
       </div>
     </section>
   );
