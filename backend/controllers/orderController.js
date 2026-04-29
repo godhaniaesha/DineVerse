@@ -492,21 +492,21 @@ export const getWaiterActiveOrders = async (req, res) => {
     }
 };
 
-export const getAllOrdersAdmin = async (req, res) => {
+export const getCompletedPayments = async (req, res) => {
     try {
-        const { status, area } = req.query;
-        let query = {};
+        const { area, paymentMethod } = req.query;
+        let query = { status: "Completed" };
 
-
-
-        if (status && status !== 'All') query.status = status;
+        if (paymentMethod && paymentMethod !== 'All') {
+            query.paymentMethod = paymentMethod;
+        }
 
         const populateMatch = (area && area !== 'All') ? { area: new RegExp(area, "i") } : {};
 
         const orders = await Order.find(query)
             .populate({ path: 'tableId', match: populateMatch, select: 'tableNo area' })
             .populate("waiterId", "full_name")
-            .sort({ createdAt: -1 });
+            .sort({ updatedAt: -1 });
 
         const filteredOrders = orders.filter(o => o.tableId !== null);
 

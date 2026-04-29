@@ -13,7 +13,7 @@ import { addBlog, getBlogs, deleteBlog, getBlogById, updateBlog, toggleLike } fr
 import { addInquiry, deleteInquiry, getInquiries, getInquiryById, updateInquiryStatus } from '../controllers/inquiryController.js';
 import { getHousekeepingStaff, assignHousekeeper, updateCleanStatus, getHousekeepingTasks, getHousekeepingStats } from '../controllers/housekeepingController.js';
 import { confirmTableBooking, createTablePaymentIntent, getAvailableTablesByArea, getTableReservationsByDate, updateTableReservationStatus } from '../controllers/tableReservationController.js';
-import { acceptDish, confirmBillingAndCheckout, createBillingPaymentIntent, createOrder, getAllOrdersAdmin, getAllOrdersForAdmin, getBillingOrders, getChefQueue, getDashboardStats, getKitchenQueue, getWaiterActiveOrders, markDishReady, updateItemStatus } from '../controllers/orderController.js';
+import { acceptDish, confirmBillingAndCheckout, createBillingPaymentIntent, createOrder, getAllOrdersForAdmin, getBillingOrders, getChefQueue, getCompletedPayments, getDashboardStats, getKitchenQueue, getWaiterActiveOrders, markDishReady, updateItemStatus } from '../controllers/orderController.js';
 import { getUserBookings, getUserBillingHistory } from '../controllers/userProfileController.js';
 import { getAdminDashboardData } from '../controllers/dashboardController.js';
 import { addReview, deleteReview, getAreaReviews, getReviews, getUserReviews } from '../controllers/reviewController.js';
@@ -182,7 +182,7 @@ router.post('/orders/checkout-details/:orderId', UserAuth, adminManagerAuth, cre
 router.post('/orders/confirm-checkout/:orderId', UserAuth, adminManagerAuth, confirmBillingAndCheckout);
 router.get('/orders/chef-queue', UserAuth, chefAuth, getChefQueue);
 router.get('/orders/waiter-active-orders', UserAuth, waiterAuth, getWaiterActiveOrders);
-router.get('/orders/all-orders', UserAuth, adminManagerAuth, getAllOrdersAdmin);
+router.get('/orders/sales-history', UserAuth, adminManagerAuth, getCompletedPayments);
 
 
 router.post('/reviews/add', UserAuth, addReview);
