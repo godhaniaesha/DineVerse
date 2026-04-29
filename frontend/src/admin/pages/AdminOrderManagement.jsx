@@ -4,7 +4,7 @@ import { useOrder } from "../../contexts/OrderContext";
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
 
-const FLOW = ["Pending", "Accepted by Chef", "Cooking", "Ready", "Served / Delivered"];
+const FLOW = ["Pending", "Accepted by Chef", "Preparing", "Ready", "Served / Delivered"];
 
 function truncateText(value, maxChars) {
   if (value === null || value === undefined) return "";
@@ -14,14 +14,21 @@ function truncateText(value, maxChars) {
 }
 
 export default function AdminOrderManagement() {
-  const { orders, loading, error, fetchOrders, updateOrderStatus, deleteOrder } = useOrder();
+  const { orders, loading, error, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders, updateOrderStatus, deleteOrder } = useOrder();
   const [editingId, setEditingId] = useState(null);
   const [viewOrder, setViewOrder] = useState(null);
   const role = localStorage.getItem("adminRole") || "Super Admin";
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    console.log("Current role:", role); // Debug log
+    if (role === "Super Admin" || role === "Manager") {
+      getAllOrdersForAdmin();
+    } else if (role === "Cafe Waiter" || role === "Restaurant Waiter" || role === "Bar Waiter") {
+      getWaiterActiveOrders();
+    } else {
+      fetchOrders(role);
+    }
+  }, [role, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders]);
 
 
   const statusOptions = useMemo(() => {
@@ -34,16 +41,19 @@ export default function AdminOrderManagement() {
     return FLOW;
   }, [role]);
 
+  // Debug: Log orders data
+  useEffect(() => {
+    console.log("Orders data:", orders);
+    console.log("Loading:", loading);
+    console.log("Error:", error);
+  }, [orders, loading, error]);
+
   const handleUpdateStatus = async (orderId, itemId, newStatus) => {
-    const result = await updateOrderStatus(orderId, itemId, newStatus);
-    console.log(result,"res");
-    
+    const result = await updateOrderStatus(orderId, itemId, newStatus, role);
+    console.log(result, "res");
 
     if (result.success) {
       setEditingId(null);
-      const rrr =  await fetchOrders(); 
-      console.log(rrr,"rrrrrrrr");
-           
     } else {
       alert(`Failed to update status: ${result.error}`);
     }
@@ -70,7 +80,9 @@ export default function AdminOrderManagement() {
               <th>Table</th>
               <th>Customer</th>
               <th>Items</th>
-              <th>Waiter</th>
+              {(role === "Super Admin" || role === "Manager") && (
+                <th>Waiter</th>
+              )}
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -80,7 +92,7 @@ export default function AdminOrderManagement() {
               // .filter(filterByRoleAndArea)
               .length === 0 ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
+                <td colSpan={role === "Super Admin" || role === "Manager" ? "6" : "7"} style={{ textAlign: 'center', padding: '2rem' }}>
                   <p style={{ margin: 0, color: '#666' }}>No orders found for your area</p>
                 </td>
               </tr>
@@ -99,17 +111,20 @@ export default function AdminOrderManagement() {
                 )
                 .map((orderRow, index) => (
                   <tr key={`${orderRow._id}-${orderRow.itemIndex}`}>
+
                     <td>
                       {orderRow.itemIndex === 0 && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div>
-                            <button
-                              className="rooms__icon_btn"
-                              onClick={() => setViewOrder(orderRow)}
-                            >
-                              <IcView />
-                            </button>
-                          </div>
+                          {(role !== "Super Admin" && role !== "Manager") && (
+                            <div>
+                              <button
+                                className="rooms__icon_btn"
+                                onClick={() => setViewOrder(orderRow)}
+                              >
+                                <IcView />
+                              </button>
+                            </div>
+                          )}
                           <div>
                             {orderRow._id.slice(-8)}
                             {orderRow.totalItems > 1 && (
@@ -121,6 +136,7 @@ export default function AdminOrderManagement() {
                         </div>
                       )}
                     </td>
+
                     <td>
                       {orderRow.itemIndex === 0 ? (orderRow.tableId?.tableNo || "-") : ""}
                     </td>
@@ -139,11 +155,13 @@ export default function AdminOrderManagement() {
                         <span style={{ color: '#666' }}>No items</span>
                       )}
                     </td>
-                    <td>
-                      <div>
-                        {orderRow.itemIndex === 0 ? (orderRow.waiterId?.full_name || "-") : ""}
-                      </div>
-                    </td>
+                    {(role === "Super Admin" || role === "Manager") && (
+                      <td>
+                        {orderRow.itemIndex === 0
+                          ? (orderRow.waiterId?.full_name || "-")
+                          : ""}
+                      </td>
+                    )}
                     <td>
                       {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
                         <select
@@ -151,7 +169,7 @@ export default function AdminOrderManagement() {
                           value={orderRow.status}
                           onChange={(e) =>
                             handleUpdateStatus(orderRow._id, orderRow.currentItem?._id || orderRow.itemIndex, e.target.value)}
-                          style={{ padding: "4px 8px", minWidth: "120px" }}
+                          style={{ padding: "4px 8px", minWidth: "90px", width: "fit-content" }}
                         >
                           <option value={orderRow.status}>{orderRow.status}</option>
                           {statusOptions
@@ -163,28 +181,43 @@ export default function AdminOrderManagement() {
                             ))}
                         </select>
                       ) : (
-                        <span className="ad_chip">{orderRow.status}</span>
+                        <span className="ad_chip">  {orderRow.currentItem?.status || orderRow.status}</span>
                       )}
                     </td>
                     <td>
-                      {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
+                      {/* View button only for first row (Admin/Manager) */}
+                      {orderRow.itemIndex === 0 && (role === "Super Admin" || role === "Manager") && (
                         <button
-                          className="ad_btn"
-                          onClick={() => setEditingId(null)}
-                          style={{ marginLeft: 8 }}
+                          className="rooms__icon_btn"
+                          onClick={() => setViewOrder(orderRow)}
                         >
-                          Cancel
+                          <IcView />
                         </button>
-                      ) : (
-                        <button
-                          className="ad_btn ad_btn--primary"
-                          onClick={() =>
-                            setEditingId(`${orderRow._id}-${orderRow.itemIndex}`)
-                          }
-                          style={{ marginLeft: 8 }}
-                        >
-                          Edit
-                        </button>
+                      )}
+
+                      {/* ✅ Edit button for ALL rows (Waiters) */}
+                      {(role === "Cafe Waiter" || role === "Restaurant Waiter" || role === "Bar Waiter") && (
+                        <>
+                          {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
+                            <button
+                              className="ad_btn"
+                              onClick={() => setEditingId(null)}
+                              style={{ marginLeft: 8 }}
+                            >
+                              Cancel
+                            </button>
+                          ) : (
+                            <button
+                              className="ad_btn ad_btn--primary"
+                              onClick={() =>
+                                setEditingId(`${orderRow._id}-${orderRow.itemIndex}`)
+                              }
+                              style={{ marginLeft: 8 }}
+                            >
+                              Edit
+                            </button>
+                          )}
+                        </>
                       )}
                     </td>
                   </tr>

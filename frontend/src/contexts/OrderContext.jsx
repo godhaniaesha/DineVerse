@@ -21,10 +21,20 @@ export const OrderProvider = ({ children }) => {
 
   const authHeaders = useMemo(() => (token ? { Authorization: `Bearer ${token}` } : {}), [token]);
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (userRole) => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/orders/kitchen-queue`, {
+      let endpoint;
+
+      // Determine endpoint based on user role
+      if (userRole === "Super Admin" || userRole === "Manager") {
+        endpoint = `${API_BASE_URL}/orders/all-orders`;
+      } else {
+        // For waiters, chefs, and other staff
+        endpoint = `${API_BASE_URL}/orders/kitchen-queue`;
+      }
+
+      const res = await fetch(endpoint, {
         headers: { ...authHeaders }
       });
       const data = await res.json();
@@ -39,13 +49,37 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders]);
 
+  const getAllOrdersForAdmin = useCallback(async (filters = {}) => {
+    try {
+      setLoading(true);
+      const queryString = new URLSearchParams(filters).toString();
+      const endpoint = `${API_BASE_URL}/orders/all-orders${queryString ? `?${queryString}` : ''}`;
+
+      const res = await fetch(endpoint, {
+        headers: { ...authHeaders }
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setOrders(data.data);
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      console.error("Get all orders error:", err);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
   const fetchChefQueue = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE_URL}/orders/chef-queue`, {
         headers: { ...authHeaders }
       });
-      console.log("res",res)
+      console.log("res", res)
       const data = await res.json();
       if (data.success) {
         setOrders(data.data);
@@ -77,8 +111,31 @@ export const OrderProvider = ({ children }) => {
       setLoading(false);
     }
   }, [authHeaders, fetchOrders]);
+  const getWaiterActiveOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching waiter active orders...");
+      const res = await fetch(`${API_BASE_URL}/orders/waiter-active-orders`, {
+        headers: { ...authHeaders }
+      });
+      const data = await res.json();
+      console.log("Waiter orders response:", data);
 
-  const updateOrderStatus = useCallback(async (orderId, dishItemId, status) => {
+      if (data.success) {
+        console.log("Setting orders:", data.data);
+        setOrders(data.data);
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      console.error("Get waiter active orders error:", err);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
+  const updateOrderStatus = useCallback(async (orderId, dishItemId, status, userRole) => {
     try {
       setLoading(true);
 
@@ -98,7 +155,14 @@ export const OrderProvider = ({ children }) => {
       const data = await res.json();
 
       if (data.success) {
-        await fetchOrders();
+        // Refresh data based on user role
+        if (userRole === "Cafe Waiter" || userRole === "Restaurant Waiter" || userRole === "Bar Waiter") {
+          await getWaiterActiveOrders();
+        } else if (userRole === "Super Admin" || userRole === "Manager") {
+          await getAllOrdersForAdmin();
+        } else {
+          await fetchOrders(userRole);
+        }
         return { success: true };
       }
 
@@ -108,7 +172,7 @@ export const OrderProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [authHeaders, fetchOrders]);
+  }, [authHeaders, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders]);
 
   const deleteOrder = useCallback(async (orderId) => {
     try {
@@ -130,6 +194,72 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders, fetchOrders]);
 
+
+
+  const getBillingOrders = useCallback(async (area) => {
+    try {
+      setLoading(true);
+      const endpoint = area ? `${API_BASE_URL}/orders/billing-orders?area=${area}` : `${API_BASE_URL}/orders/billing-orders`;
+      const res = await fetch(endpoint, {
+        headers: { ...authHeaders }
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      console.error("Get billing orders error:", err);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
+  const createBillingPaymentIntent = useCallback(async (orderId) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/orders/checkout-details/${orderId}`, {
+        method: "POST",
+        headers: { ...authHeaders }
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      console.error("Create billing payment intent error:", err);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
+  const confirmBillingAndCheckout = useCallback(async (orderId) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/orders/confirm-checkout/${orderId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders }
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        await fetchOrders();
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      console.error("Confirm billing and checkout error:", err);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders, fetchOrders]);
+
   const getOrdersByTable = useCallback((tableId) => {
     return orders.filter(order => order.tableId === tableId);
   }, [orders]);
@@ -140,6 +270,11 @@ export const OrderProvider = ({ children }) => {
       loading,
       error,
       fetchOrders,
+      getAllOrdersForAdmin,
+      getWaiterActiveOrders,
+      getBillingOrders,
+      createBillingPaymentIntent,
+      confirmBillingAndCheckout,
       createOrder,
       updateOrderStatus,
       deleteOrder,
