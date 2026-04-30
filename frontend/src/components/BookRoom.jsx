@@ -9,6 +9,7 @@ import { useAuth } from "../contexts/AuthContext";
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const normalizePhone = (value) => String(value ?? "").replace(/\D/g, "").slice(0, 10);
 
 function buildCalendar(year, month) {
   const first = new Date(year, month, 1).getDay();
@@ -98,10 +99,25 @@ function CalendarPicker({ label, selectedDate, onSelect, minDate = new Date() })
 export default function BookRoom() {
   const { user } = useAuth();
   const location = useLocation();
-  const selectedRoomTypeId = location.state?.selectedRoomTypeId || "";
-  const selectedRoomTypeName = location.state?.selectedRoomTypeName || "";
+  const navState = location.state || {};
+  const selectedRoomTypeId = navState?.selectedRoomTypeId || "";
+  const selectedRoomTypeName = navState?.selectedRoomTypeName || "";
 
-  const [step, setStep] = useState(1);
+  const initialStep = Number(navState?.startStep || 1);
+  const initialCheckIn =
+    navState?.checkIn ? new Date(`${navState.checkIn}T00:00:00`) : null;
+  const initialCheckOut =
+    navState?.checkOut ? new Date(`${navState.checkOut}T00:00:00`) : null;
+  const safeInitialCheckIn =
+    initialCheckIn && !isNaN(initialCheckIn.getTime()) ? initialCheckIn : null;
+  const safeInitialCheckOut =
+    initialCheckOut && !isNaN(initialCheckOut.getTime()) ? initialCheckOut : null;
+  const initialCheckInTime = navState?.checkInTime || "15:00";
+  const initialCheckOutTime = navState?.checkOutTime || "11:00";
+  const initialAdults = Number.isFinite(Number(navState?.adults)) ? Number(navState?.adults) : 2;
+  const initialChildren = Number.isFinite(Number(navState?.children)) ? Number(navState?.children) : 0;
+
+  const [step, setStep] = useState(() => (initialStep >= 1 && initialStep <= 4 ? initialStep : 1));
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState(genRef);
 
@@ -110,12 +126,12 @@ export default function BookRoom() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [checkIn, setCheckIn] = useState(null);
-  const [checkInTime, setCheckInTime] = useState("15:00");
-  const [checkOut, setCheckOut] = useState(null);
-  const [checkOutTime, setCheckOutTime] = useState("11:00");
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
+  const [checkIn, setCheckIn] = useState(() => safeInitialCheckIn);
+  const [checkInTime, setCheckInTime] = useState(() => initialCheckInTime);
+  const [checkOut, setCheckOut] = useState(() => safeInitialCheckOut);
+  const [checkOutTime, setCheckOutTime] = useState(() => initialCheckOutTime);
+  const [adults, setAdults] = useState(() => initialAdults);
+  const [children, setChildren] = useState(() => initialChildren);
 
   const [roomType, setRoomType] = useState(selectedRoomTypeId || "");
   const [roomNo, setRoomNo] = useState("");
@@ -363,11 +379,12 @@ export default function BookRoom() {
       return parts.length > 1 ? parts.slice(1).join(" ") : "";
     });
     setEmail((prev) => prev || user.email || "");
-    setPhone((prev) => prev || user.phone || "");
+    setPhone((prev) => prev || normalizePhone(user.phone));
   }, [user]);
 
   const validate1 = () => {
     const e = {};
+    const normalizedPhone = normalizePhone(phone);
     if (!firstName.trim()) {
       e.firstName = "First name is required";
     } else if (!/^[A-Za-z ]+$/.test(firstName)) {
@@ -386,9 +403,9 @@ export default function BookRoom() {
       e.email = "Please enter a valid email address";
     }
 
-    if (!phone.trim()) {
+    if (!normalizedPhone) {
       e.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(phone)) {
+    } else if (!/^\d{10}$/.test(normalizedPhone)) {
       e.phone = "Phone number must be 10 digits";
     }
 
@@ -474,11 +491,12 @@ export default function BookRoom() {
       setSubmitError("");
       setSubmitLoading(true);
       try {
+        const normalizedPhone = normalizePhone(phone);
         const payload = {
           first_name: firstName.trim(),
           last_name: lastName.trim(),
           email: user?.email || email.trim(),
-          phone: phone.trim(),
+          phone: normalizedPhone,
           checkIn: formatDateForApi(checkIn),
           checkOut: formatDateForApi(checkOut),
           checkInTime,
@@ -538,11 +556,12 @@ export default function BookRoom() {
     setSubmitLoading(true);
 
     try {
+      const normalizedPhone = normalizePhone(phone);
       const payload = {
         first_name: firstName.trim(),
         last_name: lastName.trim(),
         email: user?.email || email.trim(),
-        phone: phone.trim(),
+        phone: normalizedPhone,
         checkIn: formatDateForApi(checkIn),
         checkOut: formatDateForApi(checkOut),
         checkInTime,
@@ -709,9 +728,9 @@ export default function BookRoom() {
                                 className={`h_input${errors.phone ? " h_err" : ""}`}
                                 type="tel"
                                 placeholder="10-digit number"
-                                value={phone}
+                                  value={String(phone ?? "")}
                                 onChange={e => {
-                                  const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                  const val = normalizePhone(e.target.value);
                                   setPhone(val);
                                   if (errors.phone) setErrors(p => ({ ...p, phone: null }));
                                 }}

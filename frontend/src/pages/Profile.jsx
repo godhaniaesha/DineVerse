@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import {
     FiUser,
     FiCalendar,
@@ -176,6 +178,68 @@ export default function Profile() {
         navigate("/auth");
     };
 
+    const downloadInvoice = (item) => {
+        const doc = new jsPDF();
+        
+        // Brand Identity
+        doc.setFillColor(8, 7, 5); // var(--h-void)
+        doc.rect(0, 0, 210, 40, 'F');
+        
+        doc.setTextColor(200, 150, 90); // var(--h-champ)
+        doc.setFontSize(28);
+        doc.setFont("bodoni", "italic");
+        doc.text("DineVerse", 105, 25, { align: "center" });
+        
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text("Luxury Dining & Stays", 105, 32, { align: "center" });
+
+        // Invoice Info
+        doc.setTextColor(50, 50, 50);
+        doc.setFontSize(20);
+        doc.text("INVOICE", 20, 60);
+        
+        doc.setFontSize(10);
+        doc.text(`Invoice No: ${item.id}`, 20, 70);
+        doc.text(`Date: ${item.date}`, 20, 75);
+        doc.text(`Transaction Status: Completed`, 20, 80);
+
+        // Customer Details
+        doc.setFontSize(12);
+        doc.text("Billed To:", 140, 60);
+        doc.setFontSize(10);
+        doc.text(user?.full_name || "Guest User", 140, 67);
+        doc.text(user?.email || "", 140, 72);
+        doc.text(user?.phone || "", 140, 77);
+
+        // Table
+        doc.autoTable({
+            startY: 95,
+            head: [['Description', 'Service Type', 'Total']],
+            body: [
+                [`Booking Reference ${item.id}`, item.service, item.amount]
+            ],
+            headStyles: { fillColor: [200, 150, 90], textColor: [255, 255, 255] },
+            alternateRowStyles: { fillColor: [250, 250, 250] },
+            margin: { top: 95 }
+        });
+
+        // Summary
+        const finalY = doc.lastAutoTable.finalY + 10;
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Total Amount Paid: ${item.amount}`, 140, finalY + 10);
+
+        // Footer
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(150, 150, 150);
+        doc.text("Thank you for choosing DineVerse. We hope to see you again!", 105, 280, { align: "center" });
+        doc.text("12 Rue de la Paix, Paris | +1 (800) 555-NOIR", 105, 285, { align: "center" });
+
+        doc.save(`Invoice_${item.id}.pdf`);
+    };
+
     const renderContent = () => {
         switch (activeTab) {
             case "profile":
@@ -328,7 +392,10 @@ export default function Profile() {
                                                 <td style={{ opacity: 0.6 }}>{item.id}</td>
                                                 <td className="z_prof_amount">{item.amount}</td>
                                                 <td>
-                                                    <button className="z_prof_download_btn">
+                                                    <button 
+                                                        className="z_prof_download_btn"
+                                                        onClick={() => downloadInvoice(item)}
+                                                    >
                                                         <FiDownload /> Invoice
                                                     </button>
                                                 </td>
