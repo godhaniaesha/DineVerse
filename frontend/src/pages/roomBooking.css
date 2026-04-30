@@ -188,6 +188,30 @@
   font-family: var(--d-font-sans) !important;
 }
 
+/* Inputs inside availability strip */
+.d_rooms_avail__input {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 38px 0 0 !important;
+  margin: 0 !important;
+  font-family: var(--d-font-serif) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: var(--d-text-2) !important;
+  letter-spacing: 0.02em !important;
+}
+
+.d_rooms_avail__input--guests {
+  max-width: 92px !important;
+}
+
+.d_rooms_avail__btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
 .d_rooms_avail__icon {
   position: absolute !important;
   top: 50% !important;
@@ -397,6 +421,16 @@
   flex-shrink: 0 !important;
 }
 
+.d_rooms_card--unavailable {
+  opacity: 0.58 !important;
+  filter: grayscale(0.35) !important;
+}
+
+.d_rooms_card--unavailable .d_rooms_card__avail-dot {
+  background: rgba(160, 160, 160, 0.75) !important;
+  animation: none !important;
+}
+
 @keyframes d_rooms_pulse {
   0%,
   100% {
@@ -583,6 +617,21 @@
   margin-left: 2px !important;
 }
 
+/* Availability text under price */
+.d_rooms_card__availability-text {
+  display: block !important;
+  margin-top: 8px !important;
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em !important;
+  color: var(--d-text-4) !important;
+  text-transform: uppercase !important;
+}
+
+.d_rooms_card__availability-text--unavailable {
+  color: var(--d-error, #dc2626) !important;
+}
+
 .d_rooms_card__book-btn {
   display: inline-flex !important;
   align-items: center !important;
@@ -611,6 +660,25 @@
 
 .d_rooms_card__book-btn:active {
   transform: translateY(0) !important;
+}
+
+.d_rooms_card__book-btn:disabled {
+  opacity: 0.65 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(212, 143, 181, 0.18) !important;
+}
+
+.d_rooms_card__book-btn:disabled:hover {
+  background: var(--d-room-dim) !important;
+  border-color: rgba(212, 143, 181, 0.18) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.d_rooms_card--unavailable .d_rooms_card__book-btn {
+  background: rgba(212, 143, 181, 0.06) !important;
 }
 
 /* ── PERKS ROW ────────────────────────────────────────────── */

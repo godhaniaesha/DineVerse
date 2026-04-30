@@ -158,8 +158,18 @@ function RoomCard({ room, onBook }) {
     ? words.slice(0, 14).join(" ") + "..."
     : room.desc;
 
+  const isAvailable = room.isAvailable !== false;
+  const availableCount = Number(room.availableCount ?? 0);
+  const availabilityText = !isAvailable
+    ? "Sold out"
+    : availableCount > 0
+      ? `${availableCount} available`
+      : "Available";
+
   return (
-    <div className={`d_rooms_card${room.featured ? " d_rooms_card--featured" : ""}`}>
+    <div
+      className={`d_rooms_card${room.featured ? " d_rooms_card--featured" : ""}${!isAvailable ? " d_rooms_card--unavailable" : ""}`}
+    >
 
       {/* Image */}
       <div className="d_rooms_card__img-wrap">
@@ -217,14 +227,20 @@ function RoomCard({ room, onBook }) {
               <sup>$</sup>{room.price}
               <span className="d_rooms_card__price-night">/ night</span>
             </span>
+            <span
+              className={`d_rooms_card__availability-text${!isAvailable ? " d_rooms_card__availability-text--unavailable" : ""}`}
+            >
+              {availabilityText}
+            </span>
           </div>
           <button
             className="d_rooms_card__book-btn"
             onClick={() => onBook(room)}
             aria-label={`Book ${room.name}`}
+            disabled={!isAvailable}
           >
             <MdHotel style={{ fontSize: 15 }} />
-            Book a Room
+            {!isAvailable ? "Sold out" : "Book a Room"}
           </button>
         </div>
       </div>
@@ -238,9 +254,159 @@ export default function RoomBooking() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+  const [checkInTime, setCheckInTime] = useState("15:00");
+  const [checkOutTime, setCheckOutTime] = useState("11:00");
 
-  const handleBook = (room) => navigate("/bookRoom");
-  const handleCheckAvail = () => navigate("/bookRoom");
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState("");
+
+  const handleBook = (room) =>
+    navigate("/bookRoom", {
+      state: {
+        selectedRoomTypeId: room.id,
+        selectedRoomTypeName: room.type || room.name,
+        checkIn: checkIn || undefined,
+        checkOut: checkOut || undefined,
+        adults,
+        children,
+        checkInTime,
+        checkOutTime,
+        startStep: checkIn && checkOut ? 2 : 1,
+      },
+    });
+
+  const handleCheckAvail = async () => {
+    setAvailabilityError("");
+
+    if (!checkIn || !checkOut) {
+      setAvailabilityError("Please select check-in and check-out dates.");
+      return;
+    }
+
+    const checkInDate = new Date(`${checkIn}T00:00:00`);
+    const checkOutDate = new Date(`${checkOut}T00:00:00`);
+    if (isNaN(checkInDate) || isNaN(checkOutDate) || checkOutDate <= checkInDate) {
+      setAvailabilityError("Check-out must be after check-in.");
+      return;
+    }
+
+    if (!adults || Number(adults) < 1) {
+      setAvailabilityError("At least 1 adult is required.");
+      return;
+    }
+
+    setAvailabilityLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(`${API_BASE_URL}/reservations/getAvailableRoomTypes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          checkIn,
+          checkOut,
+          checkInTime,
+          checkOutTime,
+          adults,
+          children,
+        }),
+      });
+
+      if (!response.ok) {
+        const maybe = await response.json().catch(() => null);
+        throw new Error(maybe?.msg || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data?.success || !data?.data?.roomTypes) {
+        throw new Error(data?.msg || "Failed to fetch availability.");
+      }
+
+      const iconMap = {
+        wifi: <MdWifi />,
+        climate: <MdAcUnit />,
+        jacuzzi: <PiBathtubBold />,
+        terrace: <MdOutlineBalcony />,
+        balcony: <MdOutlineBalcony />,
+        minibar: <IoWineOutline />,
+        tv: <MdTv />,
+        "smart tv": <MdTv />,
+        espresso: <PiCoffeeBold />,
+        coffee: <PiCoffeeBold />,
+        "garden view": <PiParkBold />,
+        "city view": <TbMountain />,
+        "ocean view": <TbMountain />,
+        kitchen: <TbToolsKitchen2 />,
+      };
+
+      const transformedRooms = data.data.roomTypes.map((roomType, index) => {
+        const amenities =
+          roomType.features?.map((feature) => {
+            const lowerFeature = String(feature || "").toLowerCase();
+            let icon = <MdWifi />; // default
+            for (const [key, value] of Object.entries(iconMap)) {
+              if (lowerFeature.includes(key)) {
+                icon = value;
+                break;
+              }
+            }
+            return { icon, label: feature };
+          }) || [
+            { icon: <MdWifi />, label: "Wi-Fi" },
+            { icon: <MdAcUnit />, label: "Climate" },
+            { icon: <MdTv />, label: "Smart TV" },
+          ];
+
+        return {
+          id: roomType._id || index + 1,
+          featured: index === 0,
+          name: roomType.display_name || roomType.name,
+          type: roomType.name,
+          desc: roomType.description || "Experience luxury and comfort in our beautifully designed room.",
+          price: roomType.price_per_night?.toString() || "0",
+          rating: 4.5 + Math.random() * 0.5,
+          reviews: Math.floor(Math.random() * 200) + 50,
+          img:
+            roomType.image_url ||
+            "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=80",
+          amenities,
+          availableCount: Number(roomType.availableCount || 0),
+          isAvailable: Boolean(roomType.isAvailable),
+        };
+      });
+
+      setRooms(transformedRooms);
+
+      // If nothing is available for any room type, don't redirect.
+      const hasAnyAvailable = transformedRooms.some((rt) => rt.isAvailable && rt.availableCount > 0);
+      if (!hasAnyAvailable) {
+        setAvailabilityError("No rooms available for selected dates.");
+        return;
+      }
+
+      navigate("/bookRoom", {
+        state: {
+          checkIn,
+          checkOut,
+          adults,
+          children,
+          checkInTime,
+          checkOutTime,
+          startStep: 2,
+        },
+      });
+    } catch (err) {
+      setAvailabilityError(err?.message || "Unable to check availability.");
+    } finally {
+      setAvailabilityLoading(false);
+    }
+  };
 
   // Fetch room types from backend
   useEffect(() => {
@@ -397,35 +563,61 @@ export default function RoomBooking() {
         <div className="d_rooms_avail">
           <div className="d_rooms_avail__field">
             <span className="d_rooms_avail__label">Check-in</span>
-            <span className="d_rooms_avail__value d_rooms_avail__value--placeholder">
-              Select date
-            </span>
+            <input
+              className="d_rooms_avail__input"
+              type="date"
+              value={checkIn}
+              onChange={(e) => setCheckIn(e.target.value)}
+            />
             <LuCalendarCheck className="d_rooms_avail__icon" />
           </div>
           <div className="d_rooms_avail__field">
             <span className="d_rooms_avail__label">Check-out</span>
-            <span className="d_rooms_avail__value d_rooms_avail__value--placeholder">
-              Select date
-            </span>
+            <input
+              className="d_rooms_avail__input"
+              type="date"
+              value={checkOut}
+              onChange={(e) => setCheckOut(e.target.value)}
+            />
             <LuCalendarCheck className="d_rooms_avail__icon" />
           </div>
           <div className="d_rooms_avail__field">
             <span className="d_rooms_avail__label">Guests</span>
-            <span className="d_rooms_avail__value">2 Adults</span>
+            <input
+              className="d_rooms_avail__input d_rooms_avail__input--guests"
+              type="number"
+              min={1}
+              max={10}
+              value={adults}
+              onChange={(e) => {
+                const n = Number(e.target.value);
+                setAdults(Number.isFinite(n) ? Math.max(1, Math.min(10, n)) : 2);
+              }}
+            />
             <MdOutlineKingBed className="d_rooms_avail__icon" />
           </div>
-          <button className="d_rooms_avail__btn" onClick={handleCheckAvail}>
+          <button
+            className="d_rooms_avail__btn"
+            onClick={handleCheckAvail}
+            disabled={!checkIn || !checkOut || availabilityLoading}
+          >
             <HiSparkles style={{ fontSize: 15 }} />
-            Check Availability
+            {availabilityLoading ? "Checking..." : "Check Availability"}
           </button>
         </div>
 
+        {availabilityError ? (
+          <div className="d_rooms_error" style={{ padding: "12px 20px", marginBottom: 22 }}>
+            {availabilityError}
+          </div>
+        ) : null}
+
         {/* ── ROOMS GRID ── */}
-        {loading ? (
+        {loading || availabilityLoading ? (
           <div className="d_rooms_loading">
             <div className="d_rooms_loading__spinner"></div>
-            <p>Loading available rooms...</p>
-          </div>
+            <p>{loading ? "Loading available rooms..." : "Checking available rooms..."}</p>
+-          </div>
         ) : error ? (
           <div className="d_rooms_error">
             <p>Unable to load rooms. Showing available rooms.</p>
