@@ -63,6 +63,8 @@ export default function CafeBookTable() {
                         <tr><td colSpan="7" style={{ textAlign: "center" }}>No reservations found</td></tr>
                     ) : (
                         cafeReservations.map((row) => (
+                            console.log(row,"row"),
+                            
                             <tr 
                                 key={row._id}
                                 onContextMenu={(e) => {

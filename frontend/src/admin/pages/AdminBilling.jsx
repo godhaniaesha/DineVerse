@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { MdOutlineClose, MdPayment, MdCheckCircle } from "react-icons/md";
 import { useOrder } from "../../contexts/OrderContext";
+import { FaCreditCard, FaPaypal } from "react-icons/fa6";
+import { AiFillBank } from "react-icons/ai";
 
 function Modal({ title, onClose, children }) {
   return (
@@ -16,6 +18,24 @@ function Modal({ title, onClose, children }) {
     </>
   );
 }
+const thStyle = {
+  padding: "12px",
+  textAlign: "left",
+  fontSize: "13px",
+  fontWeight: "600",
+  color: "#bbb",
+  borderBottom: "1px solid #3a3a4a"
+};
+
+const tdStyle = {
+  padding: "12px",
+  fontSize: "14px",
+  borderBottom: "1px solid #2a2a3a"
+};
+
+const rowStyle = {
+  transition: "0.2s",
+};
 
 export default function AdminBilling() {
   const { getBillingOrders, createBillingPaymentIntent, confirmBillingAndCheckout, loading } = useOrder();
@@ -28,6 +48,15 @@ export default function AdminBilling() {
   const [customerEmail, setCustomerEmail] = useState("");
   const [role] = useState(localStorage.getItem("adminRole") || "Super Admin");
   const [stripe, setStripe] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  // Payment method specific states
+  const [upiId, setUpiId] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [accountHolderName, setAccountHolderName] = useState("");
 
   useEffect(() => {
     fetchBillingData();
@@ -105,78 +134,102 @@ export default function AdminBilling() {
 
   const handleStripePayment = async () => {
     if (!paymentDetails || paymentDetails.orders.length === 0) return;
-    console.log("paymentDetails", paymentDetails, "||" , paymentDetails.orders);
 
-    try {
-      // setProcessingPayment(true);
+    let newErrors = {};
 
-      // if (!stripe) {
-      //   throw new Error('Stripe is not loaded. Please refresh the page and try again.');
-      // }
-
-      // // Use the first order's client secret for payment
-      // const firstOrder = paymentDetails.orders[0];
-
-      // if (firstOrder.clientSecret) {
-      //   const { error } = await stripe.confirmPayment({
-      //     clientSecret: firstOrder.clientSecret,
-      //     confirmParams: {
-      //       return_url: `${window.location.origin}/billing-success`,
-      //       payment_method_data: {
-      //         billing_details: {
-      //           email: customerEmail || 'customer@example.com',
-      //         },
-      //       },
-      //     },
-      //   });
-
-      //   if (error) {
-      //     throw new Error(error.message);
-      //   }
-
-        // Payment successful, confirm checkout for all orders
-        for (const order of paymentDetails.orders) {
-          console.log("order", order);
-          
-          await confirmBillingAndCheckout(order._id, {
-            paymentIntentId: order.paymentIntentId,
-            paymentMethod: paymentMethod, // Use the actual selected payment method
-            customerEmail: customerEmail || 'customer@example.com'
-          });
-        }
-
-        setPaymentSuccess(true);
-        setTimeout(() => {
-          setPaymentSuccess(false);
-          setSelectedTable(null);
-          setPaymentDetails(null);
-        }, 2000);
-
-        await fetchBillingData();
-      // }
-    } catch (error) {
-      console.error("Stripe payment error:", error);
-      alert(`Payment failed: ${error.message}`);
-    } finally {
-      setProcessingPayment(false);
+    // ✅ Email validation
+    if (!customerEmail || !/^\S+@\S+\.\S+$/.test(customerEmail)) {
+      newErrors.customerEmail = "Enter valid email";
     }
-  };
 
-  const handlePayment = async () => {
-    if (!paymentDetails || paymentDetails.orders.length === 0) return;
+    // ✅ UPI
+    if (paymentMethod === "UPI") {
+      const upiRegex = /^[a-zA-Z0-9.\-_]{2,}@[a-zA-Z]{2,}$/;
+      if (!upiId || !upiRegex.test(upiId)) {
+        newErrors.upiId = "Enter valid UPI ID";
+      }
+    }
+
+    // ✅ Card
+    if (paymentMethod === "Card") {
+      const cleanCard = cardNumber.replace(/\s/g, "");
+
+      if (!/^\d{16}$/.test(cleanCard)) {
+        newErrors.cardNumber = "Card must be 16 digits";
+      }
+
+      const expiryMatch = cardExpiry.match(/^(0[1-9]|1[0-2])\/\d{2}$/);
+      if (!expiryMatch) {
+        newErrors.cardExpiry = "Format MM/YY";
+      } else {
+        const [month, year] = cardExpiry.split("/");
+        const now = new Date();
+        const expiryDate = new Date(`20${year}`, month - 1); // ✅ FIXED
+
+        if (expiryDate <= now) {
+          newErrors.cardExpiry = "Card expired";
+        }
+      }
+
+      if (!/^\d{3}$/.test(cardCvv)) {
+        newErrors.cardCvv = "CVV must be 3 digits";
+      }
+    }
+
+    // ✅ NetBanking
+    if (paymentMethod === "NetBanking") {
+      if (!bankName) {
+        newErrors.bankName = "Select bank";
+      }
+
+      const nameRegex = /^[A-Za-z\s]+$/;
+
+      if (
+        !accountHolderName ||
+        accountHolderName.trim().length < 3 ||
+        !nameRegex.test(accountHolderName.trim())
+      ) {
+        newErrors.accountHolderName = "Enter valid name (letters only)";
+      }
+    }
+
+    // ❌ Stop
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
 
     try {
       setProcessingPayment(true);
 
-      // For UPI, Card, and NetBanking, use Stripe payment
-      await handleStripePayment();
+      for (const order of paymentDetails.orders) {
+        await confirmBillingAndCheckout(order._id, {
+          paymentIntentId: order.paymentIntentId,
+          paymentMethod,
+          customerEmail
+        });
+      }
+
+      setPaymentSuccess(true);
+
+      setTimeout(() => {
+        setPaymentSuccess(false);
+        setSelectedTable(null);
+        setPaymentDetails(null);
+      }, 2000);
+
+      await fetchBillingData();
+
     } catch (error) {
-      console.error("Payment error:", error);
-      alert("Payment processing failed. Please try again.");
+      console.error(error);
+      alert("Payment failed");
     } finally {
       setProcessingPayment(false);
     }
   };
+
 
   return (
     <div className="ad_page">
@@ -231,7 +284,7 @@ export default function AdminBilling() {
               <span className="rooms__modal_title">Payment Details - {selectedTable.table}</span>
               <button className="rooms__modal_close" onClick={() => !paymentSuccess && setSelectedTable(null)}>x</button>
             </div>
-            <div style={{ padding: "20px" }}>
+            <div className="px-3 py-3 sm:px-0">
               {paymentSuccess ? (
                 <div style={{ textAlign: "center", padding: "40px 0" }}>
                   <MdCheckCircle size={64} color="var(--ad-primary)" />
@@ -242,59 +295,136 @@ export default function AdminBilling() {
                 <div>
                   {/* Order Summary */}
                   <div style={{ marginBottom: "24px" }}>
-                    <h4 className="ad_card__label">Order Summary</h4>
-                    <div style={{ maxHeight: "200px", overflowY: "auto", border: "1px solid var(--ad-border)", borderRadius: "8px", padding: "12px", marginTop: "8px" }}>
-                      {selectedTable.orders.map(order => (
-                        <div key={order.id} style={{ marginBottom: "12px", paddingBottom: "12px", borderBottom: "1px dashed var(--ad-border)" }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "600", marginBottom: "8px" }}>
-                            <span>Order {order.id}</span>
-                            <span>₹{order.total.toLocaleString("en-IN")}</span>
-                          </div>
-                          {/* Display individual items */}
-                          {Array.isArray(order.items) ? (
-                            order.items.map((item, index) => (
-                              <div key={index} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: "14px" }}>
-                                <span>{item.name} x {item.quantity}</span>
-                                <span>₹{(item.price * item.quantity).toLocaleString("en-IN")}</span>
-                              </div>
-                            ))
-                          ) : (
-                            <div style={{ fontSize: "13px", color: "#aaa" }}>
-                              {order.items}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    <h4 className="ad_card__label" style={{ marginBottom: "10px" }}>
+                      Order Summary
+                    </h4>
 
-                  {/* Payment Details */}
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px", padding: "16px", background: "var(--ad-bg-2)", borderRadius: "8px" }}>
-                    <div>
-                      <div style={{ fontSize: "14px", color: "#666", marginBottom: "4px" }}>Original Amount</div>
-                      <div style={{ fontSize: "18px", fontWeight: "600" }}>₹{paymentDetails.totalOriginalAmount.toLocaleString("en-IN")}</div>
-                    </div>
-                    {paymentDetails.totalDiscount > 0 && (
-                      <div>
-                        <div style={{ fontSize: "14px", color: "#666", marginBottom: "4px" }}>Discount Applied</div>
-                        <div style={{ fontSize: "18px", fontWeight: "600", color: "#4CAF50" }}>-₹{paymentDetails.totalDiscount.toLocaleString("en-IN")}</div>
-                      </div>
-                    )}
-                    <div>
-                      <div style={{ fontSize: "14px", color: "#666", marginBottom: "4px" }}>Total Payable</div>
-                      <div style={{ fontSize: "24px", fontWeight: "800", color: "var(--ad-primary)" }}>₹{paymentDetails.totalPayable.toLocaleString("en-IN")}</div>
+                    <div
+                      style={{
+                        border: "1px solid #2a2a3a",
+                        borderRadius: "10px",
+                        overflowX: "auto",
+                        background: "#1e1e2f"
+                      }}
+                    >
+                      <table style={{ width: "100%", borderCollapse: "collapse", color: "#fff" }}>
+
+                        {/* HEADER */}
+                        <thead style={{ background: "#1b1524" }}>
+                          <tr>
+                            <th style={thStyle}>Order</th>
+                            <th style={thStyle}>Item</th>
+                            <th style={thStyle}>Qty</th>
+                            <th style={thStyle}>Price</th>
+                            <th style={thStyle}>Total</th>
+                          </tr>
+                        </thead>
+
+                        {/* BODY */}
+                        <tbody>
+                          {selectedTable.orders.map((order, orderIndex) => {
+                            // Handle both array and string formats for items
+                            let items = [];
+                            if (Array.isArray(order.items)) {
+                              items = order.items;
+                            } else if (typeof order.items === "string") {
+                              // Parse string format: "Item1 x2, Item2 x1"
+                              items = order.items.split(",").map(itemStr => {
+                                const parts = itemStr.trim().split(" x");
+                                return {
+                                  name: parts[0] || "",
+                                  quantity: parseInt(parts[1]) || 1,
+                                  price: 0 // Default price for string format
+                                };
+                              });
+                            }
+
+                            if (!items.length) {
+                              return (
+                                <tr key={order._id}>
+                                  <td colSpan="5" style={{ ...tdStyle, color: "#888", textAlign: "center" }}>
+                                    No items found
+                                  </td>
+                                </tr>
+                              );
+                            }
+
+                            return items.map((item, itemIndex) => (
+                              <tr
+                                key={`${order._id}-${itemIndex}`}
+                                style={{
+                                  ...rowStyle,
+                                  backgroundColor: orderIndex % 2 === 0 ? "#1b15247a" : "transparent"
+                                }}
+                              >
+                                {/* ORDER */}
+                                <td style={tdStyle}>
+                                  {itemIndex === 0 && (
+                                    <div>
+                                      <div style={{ fontSize: "11px", textWrap: "nowrap" }}>
+                                        Table {selectedTable.table}
+                                      </div>
+                                    </div>
+                                  )}
+                                </td>
+
+                                {/* ITEM */}
+                                <td style={tdStyle}>
+                                  <div>
+                                    <div style={{ fontWeight: "500" }}>{item.name}</div>
+                                    {item.customization && (
+                                      <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>
+                                        {item.customization}
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+
+                                {/* QTY */}
+                                <td style={{ ...tdStyle, textAlign: "center" }}>
+                                  {item.quantity}
+                                </td>
+
+                                {/* PRICE */}
+                                <td style={{ ...tdStyle, textAlign: "right" }}>
+                                  Rs.{item.price || 0}
+                                </td>
+
+                                {/* TOTAL */}
+                                <td style={{ ...tdStyle, textAlign: "right", fontWeight: "600" }}>
+                                  Rs.{(item.price || 0) * (item.quantity || 0)}
+                                </td>
+                              </tr>
+                            ));
+                          })}
+                        </tbody>
+
+                        {/* FOOTER TOTAL */}
+                        <tfoot style={{ background: "#1b1524" }}>
+                          <tr>
+                            <td colSpan="4" style={{ ...tdStyle, textAlign: "right" }}>
+                              Grand Total
+                            </td>
+                            <td style={{ ...tdStyle, fontWeight: "bold", color: "#4ade80", textAlign: "right" }}>
+                              Rs.{paymentDetails?.totalPayable.toLocaleString("en-IN")}
+                            </td>
+                          </tr>
+                        </tfoot>
+
+                      </table>
                     </div>
                   </div>
 
                   {/* Customer Email */}
                   <div className="rooms__form_row" style={{ marginBottom: "24px" }}>
-                    <label className="rooms__form_label">Customer Email (Optional)</label>
+                    <label className="rooms__form_label">Customer Email</label>
                     <input
                       type="email"
                       className="ad_input"
                       placeholder="customer@example.com"
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -308,7 +438,7 @@ export default function AdminBilling() {
                         style={{ padding: "12px" }}
                         disabled={paymentDetails.totalPayable === 0 || !stripe}
                       >
-                        📱 UPI
+                       <FaPaypal /> UPI
                       </button>
                       <button
                         className={`ad_btn ${paymentMethod === "Card" ? "ad_btn--primary" : ""}`}
@@ -316,7 +446,7 @@ export default function AdminBilling() {
                         style={{ padding: "12px" }}
                         disabled={paymentDetails.totalPayable === 0 || !stripe}
                       >
-                        💳 Card
+                        <FaCreditCard /> Card
                       </button>
                       <button
                         className={`ad_btn ${paymentMethod === "NetBanking" ? "ad_btn--primary" : ""}`}
@@ -324,9 +454,134 @@ export default function AdminBilling() {
                         style={{ padding: "12px" }}
                         disabled={paymentDetails.totalPayable === 0 || !stripe}
                       >
-                        🏦 NetBanking
+                       <AiFillBank /> NetBanking
                       </button>
                     </div>
+                  </div>
+
+                  {/* Payment Method Specific Fields */}
+                  <div className="rooms__form_row" style={{ marginBottom: "24px" }}>
+                    {paymentMethod === "UPI" && (
+                      <div>
+                        <label className="rooms__form_label">UPI ID</label>
+                        <input
+                          type="text"
+                          className="ad_input"
+                          placeholder="Enter UPI ID (e.g., user@paytm)"
+                          value={upiId}
+                          onChange={(e) => setUpiId(e.target.value)}
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {paymentMethod === "Card" && (
+                      <div style={{ display: "grid", gap: "16px" }}>
+                        <div>
+                          <label className="rooms__form_label">Card Number</label>
+                          <input
+                            type="text"
+                            className="ad_input"
+                            placeholder="1234 5678 9012 3456"
+                            value={cardNumber}
+                            onChange={(e) => {
+                              let value = e.target.value.replace(/\D/g, "").slice(0, 16);
+                              value = value.replace(/(.{4})/g, "$1 ").trim();
+
+                              setCardNumber(value);
+                              setErrors(prev => ({ ...prev, cardNumber: "" }));
+                            }}
+                            maxLength="19"
+                            required
+                          />
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                          <div>
+                            <label className="rooms__form_label">Expiry Date</label>
+                            <input
+                              type="text"
+                              className="ad_input"
+                              placeholder="MM/YY"
+                              value={cardExpiry}
+                              onChange={(e) => {
+                                let value = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                if (value.length >= 3) {
+                                  value = value.slice(0, 2) + "/" + value.slice(2);
+                                }
+
+                                setCardExpiry(value);
+                                setErrors(prev => ({ ...prev, cardExpiry: "" }));
+                              }}
+                              maxLength="5"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="rooms__form_label">CVV</label>
+                            <input
+                              type="text"
+                              className="ad_input"
+                              placeholder="123"
+                              value={cardCvv}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, "").slice(0, 3);
+                                setCardCvv(value);
+                                setErrors(prev => ({ ...prev, cardCvv: "" }));
+                              }}
+                              maxLength="3"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {paymentMethod === "NetBanking" && (
+                      <div style={{ display: "grid", gap: "16px" }}>
+                        <div>
+                          <label className="rooms__form_label">Select Bank</label>
+                          <select
+                            className="ad_input"
+                            value={bankName}
+                            onChange={(e) => setBankName(e.target.value)}
+                            required
+                          >
+                            <option value="">Select Bank</option>
+                            <option value="SBI">State Bank of India</option>
+                            <option value="HDFC">HDFC Bank</option>
+                            <option value="ICICI">ICICI Bank</option>
+                            <option value="Axis">Axis Bank</option>
+                            <option value="PNB">Punjab National Bank</option>
+                            <option value="BOB">Bank of Baroda</option>
+                            <option value="Kotak">Kotak Mahindra Bank</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="rooms__form_label">Account Holder Name</label>
+                          <input
+                            type="text"
+                            className="ad_input"
+                            placeholder="Enter account holder name"
+                            value={accountHolderName}
+                            onChange={(e) => {
+                              setAccountHolderName(e.target.value);
+                              setErrors(prev => ({ ...prev, accountHolderName: "" }));
+                            }}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="rooms__form_label">Amount</label>
+                          <input
+                            type="text"
+                            className="ad_input"
+                            value={`${paymentDetails.totalPayable.toLocaleString("en-IN")}`}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Action Buttons */}

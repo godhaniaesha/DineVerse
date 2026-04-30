@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useOrder } from "../../contexts/OrderContext";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
@@ -18,6 +18,12 @@ export default function AdminOrderManagement() {
   const [editingId, setEditingId] = useState(null);
   const [viewOrder, setViewOrder] = useState(null);
   const role = localStorage.getItem("adminRole") || "Super Admin";
+  
+  // Search and filter states for Super Admin/Manager
+  const [search, setSearch] = useState("");
+  const [areaFilter, setAreaFilter] = useState("All");
+  
+  const AREAS = ["Restaurant", "Cafe", "Bar"];
 
   useEffect(() => {
     console.log("Current role:", role); // Debug log
@@ -59,19 +65,67 @@ export default function AdminOrderManagement() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="ad_page">
-        <h2 className="ad_h2">Order Management</h2>
-        <p className="ad_p">Loading orders...</p>
-      </div>
-    );
-  }
+  // Filter logic for Super Admin/Manager
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+    
+    // Only apply filters for Super Admin/Manager
+    if (role !== "Super Admin" && role !== "Manager") {
+      return orders;
+    }
+    
+    return orders.filter((order) => {
+      // Area filter
+      const matchArea = areaFilter === "All" || order.tableId?.area === areaFilter;
+      
+      // Search filter - search in order ID, customer name, table, waiter name, and items
+      const searchText = search.toLowerCase();
+      const orderText = [
+        order._id || "",
+        order.customerName || "",
+        order.tableId?.tableNo || "",
+        order.waiterId?.full_name || "",
+        order.items?.map(item => item.name).join(" ") || ""
+      ].join(" ").toLowerCase();
+      
+      const matchSearch = !search || orderText.includes(searchText);
+      
+      return matchArea && matchSearch;
+    });
+  }, [orders, role, areaFilter, search]);
 
   return (
     <div className="ad_page">
-      <h2 className="ad_h2">Order Management</h2>
-      <p className="ad_p">Track order flow from creation to completion.</p>
+      <div className="rooms__header"> 
+        <div>
+          <h2 className="ad_h2">Order Management</h2>
+          <p className="ad_p">Track order flow from creation to completion.</p>
+        </div>
+      </div>
+      {/* Search and Area Filters for Super Admin/Manager */}
+      {(role === "Super Admin" || role === "Manager") && (
+        <div className="rooms__filters" style={{ marginBottom: 12 }}>
+          <input
+            className="rooms__search"
+            placeholder="Search by order ID, customer, table, waiter, items..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: 300, marginRight: 8 }}
+          />
+          <select 
+            className="rooms__select" 
+            value={areaFilter} 
+            onChange={(e) => setAreaFilter(e.target.value)} 
+            style={{ marginRight: 8 }}
+          >
+            <option value="All">All Areas</option>
+            {AREAS.map((area) => (
+              <option key={area} value={area}>{area}</option>
+            ))}
+          </select>
+        </div>
+      )}
+      
       <div className="ad_table_wrap">
         <table className="ad_table">
           <thead>
@@ -88,7 +142,7 @@ export default function AdminOrderManagement() {
             </tr>
           </thead>
           <tbody>
-            {orders
+            {filteredOrders
               // .filter(filterByRoleAndArea)
               .length === 0 ? (
               <tr>
@@ -97,7 +151,7 @@ export default function AdminOrderManagement() {
                 </td>
               </tr>
             ) : (
-              orders
+              filteredOrders
                 // .filter(filterByRoleAndArea)
                 .flatMap((order) =>
                   order.items && order.items.length > 0

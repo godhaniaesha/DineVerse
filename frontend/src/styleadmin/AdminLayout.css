@@ -758,6 +758,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   font-size: 15px;
   cursor: pointer;
   transition: all var(--ad-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .ad_btn:hover {

@@ -111,6 +111,7 @@ export const OrderProvider = ({ children }) => {
       setLoading(false);
     }
   }, [authHeaders, fetchOrders]);
+
   const getWaiterActiveOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -194,8 +195,6 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders, fetchOrders]);
 
-
-
   const getBillingOrders = useCallback(async (area) => {
     try {
       setLoading(true);
@@ -273,6 +272,29 @@ export const OrderProvider = ({ children }) => {
     return orders.filter(order => order.tableId === tableId);
   }, [orders]);
 
+  const getCompletedPayments = useCallback(async (filters = {}) => {
+    try {
+      setLoading(true);
+      const queryString = new URLSearchParams(filters).toString();
+      const endpoint = `${API_BASE_URL}/orders/sales-history${queryString ? `?${queryString}` : ''}`;
+
+      const res = await fetch(endpoint, {
+        headers: { ...authHeaders }
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        return { success: true, data: data.data };
+      }
+      return { success: false, error: data.msg };
+    } catch (err) {
+      console.error("Get completed payments error:", err);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
+
   return (
     <OrderContext.Provider value={{
       orders,
@@ -287,7 +309,8 @@ export const OrderProvider = ({ children }) => {
       createOrder,
       updateOrderStatus,
       deleteOrder,
-      getOrdersByTable
+      getOrdersByTable,
+      getCompletedPayments
     }}>
       {children}
     </OrderContext.Provider>

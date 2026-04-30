@@ -1,49 +1,5 @@
 import { useEffect, useState } from "react";
-
-const COMPLETED_PAYMENTS_KEY = "admin-completed-payments";
-
-const INITIAL_SALES = [
-  {
-    id: "BILL-1001",
-    table: "T3",
-    area: "Cafe",
-    customer: "Walk-in",
-    items: "Truffle Fries x1, Cold Brew Tonic x1",
-    total: 580,
-    paymentMethod: "UPI / QR",
-    timestamp: "2026-04-08, 14:20:00",
-    orders: [
-      { id: "CAFE-211306", items: "Truffle Fries x1", total: 280 },
-      { id: "CAFE-957147", items: "Cold Brew Tonic x1", total: 300 }
-    ]
-  },
-  {
-    id: "BILL-1002",
-    table: "R2",
-    area: "Restaurant",
-    customer: "John Doe",
-    items: "Paneer Tikka x1, Butter Naan x2",
-    total: 450,
-    paymentMethod: "Cash",
-    timestamp: "2026-04-08, 15:10:00",
-    orders: [
-      { id: "RES-44123", items: "Paneer Tikka x1, Butter Naan x2", total: 450 }
-    ]
-  },
-  {
-    id: "BILL-1003",
-    table: "B1",
-    area: "Bar",
-    customer: "Alice",
-    items: "Mocktail x2",
-    total: 400,
-    paymentMethod: "Card",
-    timestamp: "2026-04-08, 16:05:00",
-    orders: [
-      { id: "BAR-77812", items: "Mocktail x2", total: 400 }
-    ]
-  }
-];
+import { useOrder } from "../../contexts/OrderContext";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>;
 
@@ -63,18 +19,45 @@ function Modal({ title, onClose, children }) {
 }
 
 export default function AdminSalesHistory() {
+  const { getCompletedPayments, loading } = useOrder();
   const [completedPayments, setCompletedPayments] = useState([]);
   const [selectedBill, setSelectedBill] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const savedPayments = localStorage.getItem(COMPLETED_PAYMENTS_KEY);
-    if (savedPayments) {
-      setCompletedPayments(JSON.parse(savedPayments));
-    } else {
-      setCompletedPayments(INITIAL_SALES);
-      localStorage.setItem(COMPLETED_PAYMENTS_KEY, JSON.stringify(INITIAL_SALES));
-    }
+    fetchCompletedPayments();
   }, []);
+
+  const fetchCompletedPayments = async () => {
+    try {
+      const result = await getCompletedPayments();
+      if (result.success) {
+        const transformedData = result.data.map(order => ({
+          id: order.orderID || order._id,
+          table: order.tableId?.tableNo || "N/A",
+          area: order.tableId?.area || "N/A",
+          customer: order.customerName || "Walk-in",
+          items: order.items
+            .map(item => `${item.name} x${item.quantity}`)
+            .join(", "),
+          total: order.totalAmount,
+          paymentMethod: order.paymentMethod || "Online",
+          timestamp: new Date(order.updatedAt).toLocaleString("en-IN"),
+          orders: order.items.map((item, idx) => ({
+            id: `${order.orderID}-${idx + 1}`,
+            items: `${item.name} x${item.quantity}`,
+            total: item.price * item.quantity
+          }))
+        }));
+        setCompletedPayments(transformedData);
+      } else {
+        setError(result.error || "Failed to fetch completed payments");
+      }
+    } catch (err) {
+      console.error("Error fetching completed payments:", err);
+      setError("Error fetching data");
+    }
+  };
 
   const close = () => setSelectedBill(null);
 
@@ -82,6 +65,19 @@ export default function AdminSalesHistory() {
     <div className="ad_page">
       <h2 className="ad_h2">Completed Payments</h2>
       <p className="ad_p">View history of all completed bills and payments.</p>
+
+      {error && (
+        <div style={{ 
+          padding: "12px 16px", 
+          background: "var(--ad-error-soft)", 
+          color: "var(--ad-error)", 
+          borderRadius: "8px", 
+          marginBottom: "20px",
+          border: "1px solid var(--ad-error-dim)"
+        }}>
+          {error}
+        </div>
+      )}
 
       <div className="ad_table_wrap" style={{ marginTop: "20px" }}>
         <table className="ad_table">
@@ -98,7 +94,13 @@ export default function AdminSalesHistory() {
             </tr>
           </thead>
           <tbody>
-            {completedPayments.length > 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="8" style={{ textAlign: "center", padding: "2rem" }}>
+                  Loading...
+                </td>
+              </tr>
+            ) : completedPayments.length > 0 ? (
               completedPayments.map((payment) => (
                 <tr key={payment.id}>
                   <td>{payment.id}</td>

@@ -363,7 +363,17 @@ export const getBillingOrders = async (req, res) => {
         }
 
         const orders = await Order.find(statusQuery)
-            .populate({ path: 'tableId', match: populateMatch, select: 'tableNo area' });
+            .populate({
+                path: 'tableId',
+                match: populateMatch,
+                select: 'tableNo area'
+            })
+            .populate({
+                path: 'items.dishId',
+                select: 'name price'
+            });
+
+        console.log("Orders:", orders);
 
         const validOrders = orders.filter(o => o.tableId !== null);
 
@@ -388,15 +398,35 @@ export const getBillingOrders = async (req, res) => {
             groups[groupKey].total += order.totalAmount;
 
 
-            const itemsString = order.items.map(i => `${i.name} x${i.quantity}`).join(', ');
+            // Debug: log order items to see what we have
+            console.log('Order items for debugging:', JSON.stringify(order.items, null, 2));
+
+            // Include full item data with actual dish prices
+            const itemsWithPrices = order.items.map(i => {
+                const dishPrice = i.dishId?.price;
+                const itemPrice = i.price;
+
+                // ✅ BEST FIX: fallback priority
+                const finalPrice = itemPrice ?? dishPrice ?? 0;
+
+                console.log(`Item: ${i.name}, dishId.price: ${dishPrice}, item.price: ${itemPrice}, final: ${finalPrice}`);
+
+                return {
+                    name: i.name,
+                    quantity: i.quantity,
+                    price: finalPrice,
+                    customization: i.customization || null
+                };
+            });
 
             groups[groupKey].orders.push({
                 _id: order._id,
                 id: order.orderID,
+                orderID: order.orderID,
                 itemsCount: order.items.length,
                 total: order.totalAmount,
                 status: order.status,
-                items: itemsString
+                items: itemsWithPrices
             });
         });
 
@@ -458,13 +488,11 @@ export const getDashboardStats = async (req, res) => {
 
 export const getChefQueue = async (req, res) => {
     try {
-
-
         const orders = await Order.find({ status: "Active" })
             .populate("tableId", "tableNo area")
             .populate("waiterId", "full_name")
             .sort({ createdAt: 1 });
-        
+
         console.log("Fetched Orders for Chef Queue:", orders);
         res.status(200).json({
             success: true,
@@ -478,7 +506,6 @@ export const getChefQueue = async (req, res) => {
 
 export const getWaiterActiveOrders = async (req, res) => {
     try {
-
         const orders = await Order.find({
             waiterId: req.user._id,
             status: "Active"
