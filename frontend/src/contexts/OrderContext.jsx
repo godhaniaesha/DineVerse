@@ -303,6 +303,7 @@ export const OrderProvider = ({ children }) => {
       fetchOrders,
       getAllOrdersForAdmin,
       getWaiterActiveOrders,
+      fetchChefQueue,
       getBillingOrders,
       createBillingPaymentIntent,
       confirmBillingAndCheckout,
