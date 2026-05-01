@@ -216,6 +216,7 @@ export const getKitchenQueue = async (req, res) => {
         const orders = await Order.find({ status: "Active" })
             .populate("tableId", "tableNo area")
             .populate("waiterId", "full_name")
+            .populate("items.chefId", "full_name")
             .sort({ createdAt: 1 });
         res.status(200).json({ success: true, data: orders });
     } catch (error) {
@@ -234,7 +235,7 @@ export const acceptDish = async (req, res) => {
             { _id: orderId, items: { $elemMatch: { _id: dishItemId, status: "Pending" } } },
             { $set: { "items.$.status": "Preparing", "items.$.chefId": req.user._id } },
             { new: true }
-        );
+        ).populate("items.chefId", "full_name");
         if (!order) return sendBadRequestResponse(res, "Dish already taken or not found");
         res.status(200).json({ success: true, data: order });
     } catch (error) {
@@ -267,7 +268,7 @@ export const markDishReady = async (req, res) => {
                 $set: { "items.$.status": "Ready" }
             },
             { new: true }
-        );
+        ).populate("items.chefId", "full_name");
 
         if (!order) {
             return res.status(404).json({
@@ -307,7 +308,7 @@ export const updateItemStatus = async (req, res) => {
             { _id: orderId, "items._id": dishItemId },
             { $set: updateField },
             { new: true }
-        );
+        ).populate("items.chefId", "full_name");
 
         if (!order) return ThrowError(res, 404, "Order or Item not found");
 
@@ -334,6 +335,7 @@ export const getAllOrdersForAdmin = async (req, res) => {
         const orders = await Order.find(query)
             .populate({ path: 'tableId', match: populateMatch, select: 'tableNo area' })
             .populate('waiterId', 'full_name')
+            .populate('items.chefId', 'full_name')
             .sort({ createdAt: -1 });
 
         const filteredOrders = orders.filter(o => o.tableId !== null);
@@ -371,7 +373,8 @@ export const getBillingOrders = async (req, res) => {
             .populate({
                 path: 'items.dishId',
                 select: 'name price'
-            });
+            })
+            .populate('items.chefId', 'full_name');
 
         console.log("Orders:", orders);
 
@@ -491,6 +494,7 @@ export const getChefQueue = async (req, res) => {
         const orders = await Order.find({ status: "Active" })
             .populate("tableId", "tableNo area")
             .populate("waiterId", "full_name")
+            .populate("items.chefId", "full_name")
             .sort({ createdAt: 1 });
 
         console.log("Fetched Orders for Chef Queue:", orders);
@@ -511,6 +515,7 @@ export const getWaiterActiveOrders = async (req, res) => {
             status: "Active"
         })
             .populate("tableId", "tableNo area")
+            .populate("items.chefId", "full_name")
             .sort({ createdAt: -1 });
 
         res.status(200).json({ success: true, count: orders.length, data: orders });
@@ -533,6 +538,7 @@ export const getCompletedPayments = async (req, res) => {
         const orders = await Order.find(query)
             .populate({ path: 'tableId', match: populateMatch, select: 'tableNo area' })
             .populate("waiterId", "full_name")
+            .populate("items.chefId", "full_name")
             .sort({ updatedAt: -1 });
 
         const filteredOrders = orders.filter(o => o.tableId !== null);
