@@ -166,7 +166,7 @@ router.post('/addInquiry', addInquiry);
 router.get('/getInquiries', UserAuth, adminManagerAuth, getInquiries);
 router.get('/getInquiryById/:id', UserAuth, adminManagerAuth, getInquiryById);
 router.patch('/updateInquiryStatus/:id', UserAuth, adminManagerAuth, updateInquiryStatus);
-router.delete('/deleteInquiry/:id', UserAuth, adminManagerAuth, deleteInquiry);
+router.delete('/deleteInquiry/:id', UserAuth, adm654321 `   inManagerAuth, deleteInquiry);
 
 router.post('/orders/create', UserAuth, waiterAuth, createOrder);
 router.get('/orders/kitchen-queue', UserAuth, isStaff, getKitchenQueue);

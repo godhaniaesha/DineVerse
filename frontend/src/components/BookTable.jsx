@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { FaRegCalendarAlt, FaRegClock, FaRegUser, FaRegBuilding, FaRegCreditCard, FaRegCheckCircle, FaRegTimesCircle, FaChevronLeft, FaChevronRight, FaLock } from 'react-icons/fa';
 import { IoRestaurantOutline, IoWineOutline, IoCafeOutline, IoBedOutline } from 'react-icons/io5';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import "../style/h_style.css"
 import { useTableReservation } from "../contexts/TableReservationContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -84,22 +85,35 @@ function CalendarPicker({ selectedDate, onSelect }) {
 }
 
 export default function BookTable() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { getAvailableTables, createPaymentIntent, confirmBooking, getReservations } = useTableReservation();
   const { user } = useAuth();
-  const [step, setStep] = useState(1);
+  
+  // Get initial step and data from URL params
+  const initialStep = parseInt(searchParams.get('step')) || 1;
+  const [step, setStep] = useState(initialStep);
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef] = useState(genRef);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [guests, setGuests] = useState(2);
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState("");
+  
+  // Parse guest count from string like "2 Guests" to number
+  const parseGuests = (guestsStr) => {
+    const match = guestsStr?.match(/\d+/);
+    return match ? parseInt(match[0]) : 2;
+  };
+  
+  // Initialize form data from URL params if available
+  const [firstName, setFirstName] = useState(searchParams.get('firstName') || "");
+  const [lastName, setLastName] = useState(searchParams.get('lastName') || "");
+  const [email, setEmail] = useState(searchParams.get('email') || "");
+  const [phone, setPhone] = useState(searchParams.get('phone') || "");
+  const [guests, setGuests] = useState(parseGuests(searchParams.get('guests')));
+  const [date, setDate] = useState(searchParams.get('date') ? new Date(searchParams.get('date')) : null);
+  const [time, setTime] = useState(searchParams.get('time') || "");
   const [area, setArea] = useState("");
   const [tableId, setTableId] = useState(""); // store table._id instead of tableNo
   const [occasion, setOccasion] = useState("");
-  const [requests, setRequests] = useState("");
+  const [requests, setRequests] = useState(searchParams.get('notes') || "");
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState({});
   const [availableTables, setAvailableTables] = useState([]);
@@ -214,6 +228,12 @@ export default function BookTable() {
 
   const validate1 = () => {
     const e = {};
+    
+    // If we have data from URL params, skip validation for step 1
+    if (searchParams.has('firstName') && searchParams.has('lastName') && searchParams.has('phone') && searchParams.has('email') && searchParams.has('date') && searchParams.has('time') && searchParams.has('guests')) {
+      return true;
+    }
+    
     if (!firstName.trim()) {
       e.firstName = "First name is required";
     } else if (!/^[A-Za-z ]+$/.test(firstName)) {
@@ -368,92 +388,121 @@ export default function BookTable() {
                   <form onSubmit={submit} noValidate>
                     {step === 1 && (
                       <div className="h_fbody">
-                        <div className="h_fsec">
-                          <div className="h_sec_lbl">Guest Information</div>
-                          <div className="h_row_2">
-                            <div className="h_field">
-                              <label className="h_label">First Name</label>
-                              <input
-                                className={`h_input${errors.firstName ? " h_err" : ""}`}
-                                type="text"
-                                placeholder="Alexandre"
-                                value={firstName}
-                                onChange={e => {
-                                  const val = e.target.value.replace(/[^A-Za-z ]/g, "");
-                                  setFirstName(val);
-                                  if (errors.firstName) setErrors(p => ({ ...p, firstName: null }));
-                                }}
-                              />
-                              {errors.firstName && <div className="h_err_msg">{errors.firstName}</div>}
+                        {searchParams.has('firstName') && searchParams.has('lastName') && searchParams.has('phone') && searchParams.has('email') && searchParams.has('date') && searchParams.has('time') && searchParams.has('guests') ? (
+                          // Show summary view when data is pre-filled from TableReservation
+                          <div className="h_fsec">
+                            <div className="h_sec_lbl">Reservation Details</div>
+                            <div className="h_summary_grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", background: "rgba(255,255,255,0.02)", padding: "1.5rem", borderRadius: "12px", border: "1px solid var(--h-border)" }}>
+                              {[
+                                ["Name", `${searchParams.get('firstName')} ${searchParams.get('lastName')}`],
+                                ["Email", searchParams.get('email')],
+                                ["Phone", searchParams.get('phone')],
+                                ["Guests", searchParams.get('guests')],
+                                ["Date", fmtDate(date)],
+                                ["Time", time],
+                                ["Special Requests", searchParams.get('notes') || "None"],
+                              ].map(([k, v]) => (
+                                <div key={k} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                  <span style={{ fontSize: "11px", color: "var(--h-champ-pale)", opacity: 0.6, textTransform: "uppercase", letterSpacing: "1px" }}>{k}</span>
+                                  <span style={{ fontSize: "14px", color: "var(--h-champ-lt)", fontWeight: "500" }}>{v}</span>
+                                </div>
+                              ))}
                             </div>
-                            <div className="h_field">
-                              <label className="h_label">Last Name</label>
-                              <input
-                                className={`h_input${errors.lastName ? " h_err" : ""}`}
-                                type="text"
-                                placeholder="Dupont"
-                                value={lastName}
-                                onChange={e => {
-                                  const val = e.target.value.replace(/[^A-Za-z ]/g, "");
-                                  setLastName(val);
-                                  if (errors.lastName) setErrors(p => ({ ...p, lastName: null }));
-                                }}
-                              />
-                              {errors.lastName && <div className="h_err_msg">{errors.lastName}</div>}
-                            </div>
-                            <div className="h_field">
-                              <label className="h_label">Email Address</label>
-                              <input
-                                className={`h_input${errors.email ? " h_err" : ""}`}
-                                type="email"
-                                placeholder="you@example.com"
-                                value={email}
-                                onChange={e => {
-                                  setEmail(e.target.value);
-                                  if (errors.email) setErrors(p => ({ ...p, email: null }));
-                                }}
-                              />
-                              {errors.email && <div className="h_err_msg">{errors.email}</div>}
-                            </div>
-                            <div className="h_field">
-                              <label className="h_label">Phone Number</label>
-                              <input
-                                className={`h_input${errors.phone ? " h_err" : ""}`}
-                                type="tel"
-                                placeholder="10-digit number"
-                                value={phone}
-                                onChange={e => {
-                                  const val = e.target.value.replace(/\D/g, "").slice(0, 10);
-                                  setPhone(val);
-                                  if (errors.phone) setErrors(p => ({ ...p, phone: null }));
-                                }}
-                              />
-                              {errors.phone && <div className="h_err_msg">{errors.phone}</div>}
+                            <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                              <p style={{ color: "var(--h-champ-lt)", opacity: 0.8 }}>Your basic details are set. Continue to select your seating preferences.</p>
                             </div>
                           </div>
-                          <div className="h_field" style={{ marginTop: ".3rem" }}>
-                            <label className="h_label">Number of Guests</label>
-                            <GuestSelector value={guests} onChange={setGuests} />
-                          </div>
-                        </div>
-                        <div className="h_fsec">
-                          <div className="h_sec_lbl">Select Date</div>
-                          {errors.date && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.date}</div>}
-                          <CalendarPicker selectedDate={date} onSelect={d => { setDate(d); setErrors(p => ({ ...p, date: null })); }} />
-                        </div>
-                        <div className="h_fsec">
-                          <div className="h_sec_lbl">Select Time</div>
-                          {errors.time && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.time}</div>}
-                          <div className="h_times">
-                            {times.map(t => (
-                              <div key={t.label}
-                                className={`h_time${!t.avail ? " h_unavail" : ""}${time === t.label && t.avail ? " h_tsel" : ""}`}
-                                onClick={() => t.avail && setTime(t.label)}>
-                                {t.label}
+                        ) : (
+                          // Show full form when no pre-filled data
+                          <>
+                            <div className="h_fsec">
+                              <div className="h_sec_lbl">Guest Information</div>
+                              <div className="h_row_2">
+                                <div className="h_field">
+                                  <label className="h_label">First Name</label>
+                                  <input
+                                    className={`h_input${errors.firstName ? " h_err" : ""}`}
+                                    type="text"
+                                    placeholder="Alexandre"
+                                    value={firstName}
+                                    onChange={e => {
+                                      const val = e.target.value.replace(/[^A-Za-z ]/g, "");
+                                      setFirstName(val);
+                                      if (errors.firstName) setErrors(p => ({ ...p, firstName: null }));
+                                    }}
+                                  />
+                                  {errors.firstName && <div className="h_err_msg">{errors.firstName}</div>}
+                                </div>
+                                <div className="h_field">
+                                  <label className="h_label">Last Name</label>
+                                  <input
+                                    className={`h_input${errors.lastName ? " h_err" : ""}`}
+                                    type="text"
+                                    placeholder="Dupont"
+                                    value={lastName}
+                                    onChange={e => {
+                                      const val = e.target.value.replace(/[^A-Za-z ]/g, "");
+                                      setLastName(val);
+                                      if (errors.lastName) setErrors(p => ({ ...p, lastName: null }));
+                                    }}
+                                  />
+                                  {errors.lastName && <div className="h_err_msg">{errors.lastName}</div>}
+                                </div>
+                                <div className="h_field">
+                                  <label className="h_label">Email Address</label>
+                                  <input
+                                    className={`h_input${errors.email ? " h_err" : ""}`}
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    value={email}
+                                    onChange={e => {
+                                      setEmail(e.target.value);
+                                      if (errors.email) setErrors(p => ({ ...p, email: null }));
+                                    }}
+                                  />
+                                  {errors.email && <div className="h_err_msg">{errors.email}</div>}
+                                </div>
+                                <div className="h_field">
+                                  <label className="h_label">Phone Number</label>
+                                  <input
+                                    className={`h_input${errors.phone ? " h_err" : ""}`}
+                                    type="tel"
+                                    placeholder="10-digit number"
+                                    value={phone}
+                                    onChange={e => {
+                                      const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                      setPhone(val);
+                                      if (errors.phone) setErrors(p => ({ ...p, phone: null }));
+                                    }}
+                                  />
+                                  {errors.phone && <div className="h_err_msg">{errors.phone}</div>}
+                                </div>
                               </div>
-                            ))}
-                          </div>
-                        </div>
+                              <div className="h_field" style={{ marginTop: ".3rem" }}>
+                                <label className="h_label">Number of Guests</label>
+                                <GuestSelector value={guests} onChange={setGuests} />
+                              </div>
+                            </div>
+                            <div className="h_fsec">
+                              <div className="h_sec_lbl">Select Date</div>
+                              {errors.date && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.date}</div>}
+                              <CalendarPicker selectedDate={date} onSelect={d => { setDate(d); setErrors(p => ({ ...p, date: null })); }} />
+                            </div>
+                            <div className="h_fsec">
+                              <div className="h_sec_lbl">Select Time</div>
+                              {errors.time && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.time}</div>}
+                              <div className="h_times">
+                                {times.map(t => (
+                                  <div key={t.label}
+                                    className={`h_time${!t.avail ? " h_unavail" : ""}${time === t.label && t.avail ? " h_tsel" : ""}`}
+                                    onClick={() => t.avail && setTime(t.label)}>
+                                    {t.label}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
 

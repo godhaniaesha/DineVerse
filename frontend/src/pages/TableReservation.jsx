@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { MdTableRestaurant, MdPhone, MdPerson, MdAccessTime, MdCalendarToday } from "react-icons/md";
+import { MdTableRestaurant, MdPhone, MdPerson, MdAccessTime, MdCalendarToday, MdEmail } from "react-icons/md";
 import { HiSparkles } from "react-icons/hi2";
 import { PiUsersThreeBold, PiCheckCircleBold } from "react-icons/pi";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { TbNotes } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 import "./tableReservation.css";
 
 const TIME_SLOTS = [
@@ -14,7 +15,8 @@ const TIME_SLOTS = [
 const GUEST_OPTIONS = ["1 Guest","2 Guests","3 Guests","4 Guests","5 Guests","6 Guests","7–10 Guests","10+ Guests"];
 
 export default function TableReservation() {
-  const [form, setForm] = useState({ date:"", time:"", guests:"", name:"", phone:"", notes:"" });
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ date:"", time:"", guests:"", guest_name:"", phone:"", email:"", notes:"" });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -23,21 +25,41 @@ export default function TableReservation() {
     if (errors[k]) setErrors(e => ({ ...e, [k]: "" }));
   };
 
-  const validate = () => {
+  const validateFirstStep = () => {
     const e = {};
     if (!form.date)   e.date   = "Please pick a date";
     if (!form.time)   e.time   = "Please select a time";
     if (!form.guests) e.guests = "Please select guests";
-    if (!form.name.trim())  e.name  = "Your name is required";
+    if (!form.guest_name.trim())  e.guest_name  = "Your name is required";
     if (!form.phone.trim()) e.phone = "Phone number is required";
+    if (!form.email.trim()) e.email = "Email address is required";
+    else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email)) e.email = "Please enter a valid email address";
     return e;
   };
 
-  const handleSubmit = (ev) => {
+  const handleFirstStepSubmit = (ev) => {
     ev.preventDefault();
-    const e = validate();
+    const e = validateFirstStep();
     if (Object.keys(e).length) { setErrors(e); return; }
-    setSubmitted(true);
+    
+    // Split guest_name into first and last name
+    const nameParts = form.guest_name.trim().split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    
+    // Navigate to BookTable with step 2 and pass the form data
+    const queryParams = new URLSearchParams({
+      step: '2',
+      date: form.date,
+      time: form.time,
+      guests: form.guests,
+      firstName: firstName,
+      lastName: lastName,
+      phone: form.phone,
+      email: form.email,
+      notes: form.notes
+    });
+    navigate(`/bookTable?${queryParams.toString()}`);
   };
 
   return (
@@ -89,11 +111,11 @@ export default function TableReservation() {
                 <div className="d_resv_success__icon"><PiCheckCircleBold /></div>
                 <h3 className="d_resv_success__title">Table Reserved!</h3>
                 <p className="d_resv_success__msg">
-                  Thank you, <strong style={{ color: "var(--d-text-1)" }}>{form.name}</strong>.
+                  Thank you, <strong style={{ color: "var(--d-text-1)" }}>{form.guest_name}</strong>.
                   Your table for {form.guests} on {form.date} at {form.time} is confirmed.
                   We'll send a reminder to your phone.
                 </p>
-                <button className="d_resv_success__reset" onClick={() => { setSubmitted(false); setForm({ date:"",time:"",guests:"",name:"",phone:"",notes:"" }); }}>
+                <button className="d_resv_success__reset" onClick={() => { setSubmitted(false); setForm({ date:"",time:"",guests:"",guest_name:"",phone:"",email:"",notes:"" }); }}>
                   Make Another Reservation
                 </button>
               </div>
@@ -102,7 +124,7 @@ export default function TableReservation() {
                 <h3 className="d_resv_form__heading">Reserve a Table</h3>
                 <p className="d_resv_form__sub">Complete the form and we'll confirm within minutes.</p>
 
-                <form className="d_resv_form" onSubmit={handleSubmit} noValidate>
+                <form className="d_resv_form" onSubmit={handleFirstStepSubmit} noValidate>
 
                   {/* Date */}
                   <div className="d_resv_form__group">
@@ -142,7 +164,7 @@ export default function TableReservation() {
                   </div>
 
                   {/* Guests */}
-                  <div className="d_resv_form__group d_resv_form__group--full">
+                  <div className="d_resv_form__group ">
                     <label className="d_resv_form__label">
                       <span className="d_resv_form__label-icon"><PiUsersThreeBold /></span>
                       Number of Guests
@@ -160,7 +182,22 @@ export default function TableReservation() {
                     </div>
                     {errors.guests && <span style={{ fontSize: 11, color: "#e06060" }}>{errors.guests}</span>}
                   </div>
-
+                  {/* Email */}
+                  <div className="d_resv_form__group">
+                    <label className="d_resv_form__label">
+                      <span className="d_resv_form__label-icon"><MdEmail /></span>
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      className="d_resv_form__input"
+                      placeholder="you@example.com"
+                      style={errors.email ? { borderColor: "#e06060" } : {}}
+                      value={form.email}
+                      onChange={e => update("email", e.target.value)}
+                    />
+                    {errors.email && <span style={{ fontSize: 11, color: "#e06060" }}>{errors.email}</span>}
+                  </div>
                   {/* Name */}
                   <div className="d_resv_form__group">
                     <label className="d_resv_form__label">
@@ -171,11 +208,11 @@ export default function TableReservation() {
                       type="text"
                       className="d_resv_form__input"
                       placeholder="Full name"
-                      style={errors.name ? { borderColor: "#e06060" } : {}}
-                      value={form.name}
-                      onChange={e => update("name", e.target.value)}
+                      style={errors.guest_name ? { borderColor: "#e06060" } : {}}
+                      value={form.guest_name}
+                      onChange={e => update("guest_name", e.target.value)}
                     />
-                    {errors.name && <span style={{ fontSize: 11, color: "#e06060" }}>{errors.name}</span>}
+                    {errors.guest_name && <span style={{ fontSize: 11, color: "#e06060" }}>{errors.guest_name}</span>}
                   </div>
 
                   {/* Phone */}
@@ -211,7 +248,7 @@ export default function TableReservation() {
 
                   <button type="submit" className="d_resv_form__submit">
                     <MdTableRestaurant style={{ fontSize: 16 }} />
-                    Reserve Table
+                    Continue to Preferences
                     <RiArrowRightSLine style={{ fontSize: 17 }} />
                   </button>
                 </form>
