@@ -15,6 +15,7 @@ import blogService from "../services/blogService";
 import { TAGS, NEWSLETTER_TOPICS } from "../data/blogData";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSubscription } from "../contexts/SubscriptionContext";
+import { getRelativeTime, getFormattedDateTime } from "../utils/timeHelper";
 
 /* ─────────────────── HOOKS ─────────────────── */
 function useReveal(threshold = 0.12) {
@@ -49,12 +50,12 @@ function BlogCard({ post, delay = 0, onRead, onLikeToggle }) {
                 alert('Please login to like posts');
                 return;
             }
-            
+
             await blogService.toggleLike(post._id, authToken);
             const newLiked = !liked;
             setLiked(newLiked);
             setLikesCount(prev => newLiked ? prev + 1 : prev - 1);
-            
+
             if (onLikeToggle) {
                 onLikeToggle(post._id, newLiked);
             }
@@ -80,17 +81,18 @@ function BlogCard({ post, delay = 0, onRead, onLikeToggle }) {
             </div>
             <div className="x_bc_body">
                 <div className="x_bc_meta">
-                    <span className="x_meta_item"><FiClock />{post.readTime || "5 min read"}</span>
-                    <span className="x_meta_item"><FiEye />{post.views || 0}</span>
+                    <span className="x_meta_item"><FiClock />{getFormattedDateTime(post.createdAt)}</span>
                 </div>
                 <h3 className="x_bc_title">{post.title}</h3>
                 <p className="x_bc_excerpt">{post.short_des}</p>
                 <div className="x_bc_foot">
                     <div className="x_author_row x_author_row--sm">
-                        <img src={post.addedBy?.avatar || "/api/placeholder/40/40"} alt={post.addedBy?.name || "Author"} className="x_avatar x_avatar--sm" />
+                        <div className="x_avatar x_avatar--sm" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#c49f5c', color: '#fff', fontSize: '18px', fontWeight: '600' }}>
+                            <FiUser />
+                        </div>
                         <div className="x_author_info">
-                            <span className="x_author_name">{post.addedBy?.name || "DineVerse Team"}</span>
-                            <span className="x_author_role">{new Date(post.createdAt).toLocaleDateString()}</span>
+                            <span className="x_author_name">{post.addedBy?.full_name || "DineVerse Team"}</span>
+                            <span className="x_author_role">{getFormattedDateTime(post.createdAt)}</span>
                         </div>
                     </div>
                     <div className="x_bc_actions">
@@ -118,7 +120,7 @@ function TrendingCard({ post, rank }) {
             <div className="x_trending_body">
                 <span className="x_trending_tag">{post.area || post.tag}</span>
                 <p className="x_trending_title x_wid">{post.title}</p>
-                <span className="x_trending_meta"><FiClock />{post.readTime || "5 min read"}</span>
+                <span className="x_trending_meta"><FiClock />{getFormattedDateTime(post.createdAt)}</span>
             </div>
             <img src={post.coverImg} alt="" className="x_trending_img" />
         </Link>
@@ -131,7 +133,7 @@ function Newsletter() {
     const [email, setEmail] = useState("");
     const [sent, setSent] = useState(false);
 
-    const { subscribeUser ,loading} = useSubscription();
+    const { subscribeUser, loading } = useSubscription();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -233,9 +235,9 @@ export default function Blog() {
     };
 
     const onLikeToggle = (postId, isLiked) => {
-        setPosts(prevPosts => 
-            prevPosts.map(post => 
-                post._id === postId 
+        setPosts(prevPosts =>
+            prevPosts.map(post =>
+                post._id === postId
                     ? { ...post, likes: isLiked ? [...(post.likes || []), localStorage.getItem('userId')] : (post.likes || []).filter(id => id !== localStorage.getItem('userId')) }
                     : post
             )
@@ -258,18 +260,18 @@ export default function Blog() {
         const normalizedArea = normalizeText(p.area);
         const normalizedTag = normalizeText(p.tag);
         const matchTag = activeTag === "All" || normalizedArea === normalizedActiveTag || normalizedTag === normalizedActiveTag;
-        
+
         const q = normalizeText(search);
         const normalizedTitle = normalizeText(p.title);
         const normalizedAuthorName = normalizeText(p.addedBy?.name || "DineVerse Team");
         const matchSearch = !q || normalizedTitle.includes(q) || normalizedAuthorName.includes(q) || normalizedArea.includes(q) || normalizedTag.includes(q);
         const shouldInclude = !p.featured && matchTag && matchSearch;
-        
+
         // Debug logging for first few posts
         if (posts.indexOf(p) < 3) {
             console.log(`Post: ${p.title}, Area: ${p.area} -> ${normalizedArea}, ActiveTag: ${activeTag} -> ${normalizedActiveTag}, MatchTag: ${matchTag}, ShouldInclude: ${shouldInclude}`);
         }
-        
+
         return shouldInclude;
     });
     const totalPages = Math.max(1, Math.ceil(regular.length / postsPerPage));
@@ -444,7 +446,7 @@ export default function Blog() {
                                                 disabled={currentPage >= totalPages}
                                                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                                             >
-                                              <FaChevronRight />
+                                                <FaChevronRight />
                                             </button>
                                         </div>
                                     )}
@@ -457,7 +459,7 @@ export default function Blog() {
                                     <p>Loading articles...</p>
                                 </div>
                             )}
-                            
+
                             {error && (
                                 <div className="x_empty_state">
                                     <span className="x_empty_icon">⚠️</span>
@@ -470,7 +472,7 @@ export default function Blog() {
                                     </button>
                                 </div>
                             )}
-                            
+
                             {!loading && !error && regular.length === 0 && (search || activeTag !== "All") && (
                                 <div className="x_empty_state">
                                     <span className="x_empty_icon">📖</span>

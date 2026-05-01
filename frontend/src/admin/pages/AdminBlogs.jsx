@@ -75,7 +75,7 @@ export default function AdminBlogs() {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const data = await blogService.getAllBlogs();
+      const data = await blogService.getAllBlogsAdmin();
       console.log(data, "data");
       const list = Array.isArray(data.data) ? data.data : data;
       setBlogs(list);

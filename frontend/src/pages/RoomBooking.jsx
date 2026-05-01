@@ -348,7 +348,7 @@ export default function RoomBooking() {
               just moments from the dining floor and bar.
             </p>
             <button className="d_rooms_header__cta" onClick={() => navigate("/bookRoom")}>
-              View All Rooms
+              Book Room
               <span className="d_rooms_header__cta-arrow">
                 <RiArrowRightSLine />
               </span>
@@ -426,11 +426,6 @@ export default function RoomBooking() {
             <HiSparkles style={{ fontSize: 8, marginRight: 6, verticalAlign: "middle" }} />
             Best rate guarantee | Breakfast included | Free cancellation
           </p>
-          <button className="d_rooms_cta_btn" onClick={handleCheckAvail}>
-            <MdHotel className="d_rooms_cta_btn__icon" />
-            Book a Room
-            <RiArrowRightSLine style={{ fontSize: 18 }} />
-          </button>
         </div>
       </div>
     </section>

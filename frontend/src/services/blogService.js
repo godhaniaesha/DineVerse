@@ -4,13 +4,24 @@ import axios from "axios";
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 const blogService = {
-  // Get all blogs
+  // Get all published blogs (for frontend)
   getAllBlogs: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/getBlogs?status=published`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+      throw error;
+    }
+  },
+
+  // Get all blogs including drafts (for admin)
+  getAllBlogsAdmin: async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/getBlogs`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching blogs:", error);
+      console.error("Error fetching all blogs:", error);
       throw error;
     }
   },

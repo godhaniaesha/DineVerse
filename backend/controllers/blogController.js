@@ -38,14 +38,18 @@ export const addBlog = async (req, res) => {
 };
 export const getBlogs = async (req, res) => {
     try {
-        const blogs = await Blog.find({})
+        const { status } = req.query;
+        
+        // Build query filter
+        const query = {};
+        if (status && (status === "published" || status === "draft")) {
+            query.status = status;
+        }
+
+        const blogs = await Blog.find(query)
             .populate("addedBy", "full_name img")
             .populate("likes", "full_name")
             .sort({ createdAt: -1 });
-
-        if (blogs.length === 0) {
-            return ThrowError(res, 404, "Blogs not found");
-        }
 
         const formatted = blogs.map(blog => ({
             ...blog._doc,
