@@ -347,6 +347,8 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("adminName") || !!localStorage.getItem("userName"));
+  const [adminRole, setAdminRole] = useState(localStorage.getItem("adminRole") || "");
   const navigate = useNavigate();
   const location = useLocation();
   const userDropdownRef = useRef(null);
