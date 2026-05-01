@@ -139,6 +139,8 @@ const LoginForm = ({ onSuccess, onToast }) => {
         "/admin/room-bookings",
         "/admin/staff",
         "/admin/cuisines",
+        "/admin/categories",
+        "/admin/dishes",
         "/admin/orders",
         "/admin/kds",
         "/admin/waiter-panel",

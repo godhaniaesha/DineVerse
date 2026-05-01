@@ -1,8 +1,65 @@
-﻿import Room from '../models/Room.js';
+import Room from '../models/Room.js';
 import UserModel from '../models/UserModel.js';
+import { RoomReservation } from '../models/RoomReservation.js';
 import { ThrowError } from '../utils/Error.utils.js';
 import { sendBadRequestResponse } from '../utils/Response.utils.js';
 import mongoose from 'mongoose';
+
+const formatDateTime = (value) => {
+    if (!value) return "";
+
+    return new Date(value).toLocaleString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+};
+
+const attachCheckoutReservationData = async (rooms) => {
+    if (!rooms.length) return [];
+
+    const roomIds = rooms.map((room) => room._id);
+    const checkedOutReservations = await RoomReservation.find({
+        room: { $in: roomIds },
+        status: "Checked Out"
+    })
+        .sort({ updatedAt: -1, createdAt: -1 })
+        .lean();
+
+    const latestReservationByRoom = new Map();
+
+    checkedOutReservations.forEach((reservation) => {
+        const roomId = reservation.room?.toString();
+        if (roomId && !latestReservationByRoom.has(roomId)) {
+            latestReservationByRoom.set(roomId, reservation);
+        }
+    });
+
+    return rooms.map((roomDoc) => {
+        const room = roomDoc.toObject ? roomDoc.toObject() : roomDoc;
+        const reservation = latestReservationByRoom.get(room._id.toString());
+
+        return {
+            ...room,
+            checkoutReservation: reservation ? {
+                id: reservation._id,
+                bookingRef: reservation.bookingRef,
+                guestName: `${reservation.first_name} ${reservation.last_name}`.trim(),
+                phone: reservation.phone,
+                email: reservation.email,
+                checkIn: reservation.checkIn,
+                checkOut: reservation.checkOut,
+                checkInTime: reservation.checkInTime,
+                checkOutTime: reservation.checkOutTime,
+                checkedOutAt: reservation.updatedAt,
+                checkedOutAtFormatted: formatDateTime(reservation.updatedAt)
+            } : null
+        };
+    });
+};
+
 export const getHousekeepingStaff = async (req, res) => {
     try {
         const staff = await UserModel.find({ role: 'Housekeeping', status: 'Active' }).select('-password');
@@ -15,6 +72,7 @@ export const getHousekeepingStaff = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
+
 export const assignHousekeeper = async (req, res) => {
     try {
         const { roomId, housekeeperId } = req.body;
@@ -32,11 +90,15 @@ export const assignHousekeeper = async (req, res) => {
             roomId,
             {
                 assignedHousekeeper: housekeeperId,
-                cleanStatus: 'Pending',
-                status: 'Maintenance'
+                cleanStatus: 'In Progress',
+                status: 'Maintenance',
+                lastUpdatedBy: null,
+                lastUpdatedByName: "",
+                cleanedAt: null
             },
             { new: true }
-        ).populate('assignedHousekeeper', 'full_name');
+        ).populate('assignedHousekeeper', 'full_name')
+            .populate('lastUpdatedBy', 'full_name');
 
         if (!room) return ThrowError(res, 404, "Room not found");
 
@@ -49,9 +111,11 @@ export const assignHousekeeper = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
+
 export const updateCleanStatus = async (req, res) => {
     try {
         const { roomId, cleanStatus } = req.body;
+        const validStatuses = ['In Progress', 'Done'];
 
         if (!mongoose.Types.ObjectId.isValid(roomId)) {
             return sendBadRequestResponse(res, "Invalid Room ID format");
@@ -61,13 +125,21 @@ export const updateCleanStatus = async (req, res) => {
             return sendBadRequestResponse(res, "Clean status is required");
         }
 
+        if (!validStatuses.includes(cleanStatus)) {
+            return sendBadRequestResponse(res, "Clean status must be In Progress or Done");
+        }
+
         const currentRoom = await Room.findById(roomId);
         if (!currentRoom) return ThrowError(res, 404, "Room not found");
 
         const oldStatus = currentRoom.cleanStatus;
-        let updateData = { cleanStatus: cleanStatus };
+        const updateData = {
+            cleanStatus,
+            lastUpdatedBy: req.user._id,
+            lastUpdatedByName: req.user.full_name || ""
+        };
 
-        if (cleanStatus === 'Clean') {
+        if (cleanStatus === 'Done') {
             updateData.status = 'Available';
             updateData.cleanedAt = new Date();
             updateData.assignedHousekeeper = null;
@@ -77,7 +149,8 @@ export const updateCleanStatus = async (req, res) => {
         }
 
         const updatedRoom = await Room.findByIdAndUpdate(roomId, updateData, { new: true })
-            .populate('assignedHousekeeper', 'full_name');
+            .populate('assignedHousekeeper', 'full_name')
+            .populate('lastUpdatedBy', 'full_name');
 
         res.status(200).json({
             success: true,
@@ -88,6 +161,7 @@ export const updateCleanStatus = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
+
 export const approveRoomCleaning = async (req, res) => {
     try {
         const { roomId } = req.body;
@@ -100,8 +174,11 @@ export const approveRoomCleaning = async (req, res) => {
             roomId,
             {
                 status: 'Available',
-                cleanStatus: 'Clean',
-                assignedHousekeeper: null
+                cleanStatus: 'Done',
+                assignedHousekeeper: null,
+                lastUpdatedBy: req.user._id,
+                lastUpdatedByName: req.user.full_name || "",
+                cleanedAt: new Date()
             },
             { new: true }
         );
@@ -117,35 +194,39 @@ export const approveRoomCleaning = async (req, res) => {
         return ThrowError(res, 500, error.message);
     }
 };
+
 export const getHousekeepingTasks = async (req, res) => {
     try {
-        const { role, _id } = req.user;
-        let query = {};
-        if (role === 'Housekeeping') {
-            query = {
-                assignedHousekeeper: _id,
-                cleanStatus: { $in: ['Pending', 'In Progress', 'Dirty'] }
-            };
-        } else {
-            query = {
-                $or: [
-                    { cleanStatus: { $in: ['Pending', 'In Progress', 'Dirty'] } },
-                    { status: 'Maintenance' }
-                ]
-            };
-        }
-
-        const rooms = await Room.find(query)
-            .populate('assignedHousekeeper', 'full_name')
-            .populate('roomType', 'display_name');
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
 
+        const activeCleaningQuery = {
+            $or: [
+                { status: 'Maintenance', cleanStatus: 'In Progress' },
+                { cleanStatus: 'In Progress' },
+                { cleanStatus: 'Done', cleanedAt: { $gte: startOfToday } }
+            ]
+        };
+
+        const rooms = await Room.find(activeCleaningQuery)
+            .populate('assignedHousekeeper', 'full_name')
+            .populate('lastUpdatedBy', 'full_name')
+            .populate('roomType', 'display_name')
+            .sort({ cleanStatus: 1, cleanedAt: -1, updatedAt: -1 });
+
+        const tasks = await attachCheckoutReservationData(rooms);
+
         const [roomsToCleanCount, inProgressCount, cleanedTodayCount] = await Promise.all([
-            Room.countDocuments({ cleanStatus: 'Pending' }),
-            Room.countDocuments({ cleanStatus: 'In Progress' }),
             Room.countDocuments({
-                cleanStatus: 'Clean',
+                status: 'Maintenance',
+                cleanStatus: 'In Progress'
+            }),
+            Room.countDocuments({
+                status: 'Maintenance',
+                cleanStatus: 'In Progress'
+            }),
+            Room.countDocuments({
+                cleanStatus: 'Done',
                 cleanedAt: { $gte: startOfToday }
             })
         ]);
@@ -159,13 +240,14 @@ export const getHousekeepingTasks = async (req, res) => {
                     inProgress: inProgressCount,
                     cleanedToday: cleanedTodayCount
                 },
-                tasks: rooms
+                tasks
             }
         });
     } catch (error) {
         return ThrowError(res, 500, error.message);
     }
 };
+
 export const getHousekeepingStats = async (req, res) => {
     try {
         const startOfToday = new Date();
@@ -174,10 +256,16 @@ export const getHousekeepingStats = async (req, res) => {
         endOfToday.setHours(23, 59, 59, 999);
 
         const [roomsToClean, inProgress, cleanedToday] = await Promise.all([
-            Room.countDocuments({ cleanStatus: 'Pending' }),
-            Room.countDocuments({ cleanStatus: 'In Progress' }),
             Room.countDocuments({
-                cleanStatus: 'Clean',
+                status: 'Maintenance',
+                cleanStatus: 'In Progress'
+            }),
+            Room.countDocuments({
+                status: 'Maintenance',
+                cleanStatus: 'In Progress'
+            }),
+            Room.countDocuments({
+                cleanStatus: 'Done',
                 cleanedAt: { $gte: startOfToday, $lte: endOfToday }
             })
         ]);

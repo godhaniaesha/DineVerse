@@ -69,7 +69,7 @@ router.get('/reservations/guests', UserAuth, adminManagerAuth, getGuests);
 router.get('/reservations/guests/search', UserAuth, adminManagerAuth, searchGuests);
 router.get('/reservations/search', UserAuth, adminManagerAuth, searchReservations);
 router.get('/reservations/getAdminReservations', UserAuth, adminManagerAuth, getAdminReservations);
-router.get('/reservations/getAll', UserAuth, adminManagerAuth, getReservations);
+router.get('/reservations/getAll', UserAuth, housekeepingAuth, getReservations);
 router.get('/reservations/getById/:id', UserAuth, adminManagerAuth, getReservationById);
 router.patch('/reservations/updateStatus/:id', UserAuth, adminManagerAuth, updateReservationStatus);
 

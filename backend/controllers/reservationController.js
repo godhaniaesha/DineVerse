@@ -552,25 +552,57 @@ export const updateReservationStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
+        const normalizedStatusMap = {
+            "checkout": "Checked Out",
+            "checked out": "Checked Out",
+            "check out": "Checked Out",
+            "checkin": "Checked In",
+            "checked in": "Checked In",
+            "check in": "Checked In",
+            "no show": "No Show"
+        };
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return ThrowError(res, 400, "Invalid Reservation ID");
         }
 
+        if (!status) {
+            return ThrowError(res, 400, "Status is required");
+        }
+
+        const normalizedStatus =
+            normalizedStatusMap[String(status).trim().toLowerCase()] || status;
+        const validStatuses = ["Confirmed", "Cancelled", "Checked In", "Checked Out", "No Show"];
+
+        if (!validStatuses.includes(normalizedStatus)) {
+            return ThrowError(res, 400, "Invalid reservation status");
+        }
+
         const reservation = await RoomReservation.findById(id);
         if (!reservation) return ThrowError(res, 404, "Reservation not found");
 
-        reservation.status = status;
+        reservation.status = normalizedStatus;
 
-        if (status === "Checked In") {
+        if (normalizedStatus === "Checked In") {
             await Room.findByIdAndUpdate(reservation.room, { status: "Occupied" });
-        } else if (status === "Checked Out") {
+        } else if (normalizedStatus === "Checked Out") {
             await Room.findByIdAndUpdate(reservation.room, {
                 status: "Maintenance",
-                cleanStatus: "Pending"
+                cleanStatus: "In Progress",
+                cleanedAt: null,
+                assignedHousekeeper: null,
+                lastUpdatedBy: null,
+                lastUpdatedByName: ""
             });
-        } else if (status === "Cancelled") {
-            await Room.findByIdAndUpdate(reservation.room, { status: "Available" });
+        } else if (normalizedStatus === "Cancelled") {
+            await Room.findByIdAndUpdate(reservation.room, {
+                status: "Available",
+                cleanStatus: "Done",
+                cleanedAt: null,
+                assignedHousekeeper: null,
+                lastUpdatedBy: null,
+                lastUpdatedByName: ""
+            });
         }
 
         await reservation.save();

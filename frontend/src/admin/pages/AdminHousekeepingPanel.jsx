@@ -69,8 +69,25 @@ export default function AdminHousekeepingPanel() {
     return room.roomType?.display_name || room.roomType || 'Standard';
   };
 
-  const getHousekeeperName = (room) => {
-    return room.assignedHousekeeper?.full_name || 'Not Assigned';
+  const getLastUpdatedBy = (room) => {
+    return room.lastUpdatedByName || room.lastUpdatedBy?.full_name || 'Not Updated';
+  };
+
+  const getAssignedHousekeeper = (room) => {
+    return (
+      room.assignedHousekeeper?.full_name ||
+      room.lastUpdatedByName ||
+      room.lastUpdatedBy?.full_name ||
+      "Not Assigned"
+    );
+  };
+
+  const getCheckoutDetails = (room) => {
+    return room.checkoutReservation || {};
+  };
+
+  const getDisplayValue = (value, fallback = "-") => {
+    return value ? value : fallback;
   };
 
   if (loading) {
@@ -125,38 +142,48 @@ export default function AdminHousekeepingPanel() {
         <table className="ad_table">
           <thead>
             <tr>
+              <th>Booking Ref</th>
+              <th>Guest</th>
+              <th>Contact</th>
               <th>Room</th>
               <th>Type</th>
-              <th>Status</th>
-              <th>Clean Status</th>
-              <th>Last Updated By</th>
+              <th>Checked Out At</th>
+              <th>Cleaning Status</th>
+              <th>Updated By</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {tasks.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+                <td colSpan="10" style={{ textAlign: 'center', padding: '40px' }}>
                   No housekeeping tasks found
                 </td>
               </tr>
             ) : (
-              tasks.map((task) => (
-                <tr key={task._id}>
-                  <td>{task.roomNumber}</td>
-                  <td>{getRoomTypeDisplay(task)}</td>
-                  <td><span className="ad_chip">{task.status}</span></td>
-                  <td><span className="ad_chip">{task.cleanStatus}</span></td>
-                  <td>{getHousekeeperName(task)}</td>
-                  <td>
-                    <div className="d-flex" style={{ gap: "6px" }}>
-                      <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
-                        <FiEdit2 />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+              tasks.map((task) => {
+                const checkout = getCheckoutDetails(task);
+
+                return (
+                  <tr key={task._id}>
+                    <td>{getDisplayValue(checkout.bookingRef)}</td>
+                    <td>{getDisplayValue(checkout.guestName)}</td>
+                    <td>{getDisplayValue(checkout.phone || checkout.email)}</td>
+                    <td>{task.roomNumber}</td>
+                    <td>{getRoomTypeDisplay(task)}</td>
+                    <td>{getDisplayValue(checkout.checkedOutAtFormatted)}</td>
+                    <td><span className="ad_chip">{task.cleanStatus}</span></td>
+                    <td>{getLastUpdatedBy(task)}</td>
+                    <td>
+                      <div className="d-flex" style={{ gap: "6px" }}>
+                        <button className="rooms__icon_btn" title="Edit Clean Status" onClick={() => openEdit(task)}>
+                          <FiEdit2 />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -180,10 +207,8 @@ export default function AdminHousekeepingPanel() {
             <div style={{ marginBottom: "16px" }}>
               <label htmlFor="clean_status" style={{ fontSize: "12px", fontWeight: "700", color: "#666" }}>New Clean Status</label>
               <select className="rooms__form_select" id="clean_status" defaultValue={modal.task.cleanStatus} >
-                <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
-                <option value="Clean">Clean</option>
-                <option value="Dirty">Dirty</option>
+                <option value="Done">Done</option>
               </select>
             </div>
             <div className="rooms__form_actions">

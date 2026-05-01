@@ -12,6 +12,7 @@ import { MenuProvider } from './contexts/MenuContext';
 import { GalleryProvider } from './contexts/GalleryContext';
 import { TableProvider } from './contexts/TableContext';
 import { TableReservationProvider } from './contexts/TableReservationContext';
+import { ReservationProvider } from './contexts/ReservationContext';
 import { OrderProvider } from './contexts/OrderContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 
@@ -25,11 +26,13 @@ const RootProviders = ({ children }) => {
             <GalleryProvider>
               <TableProvider>
                 <TableReservationProvider>
-                  <OrderProvider>
-                    <SubscriptionProvider>
-                      {children}
-                    </SubscriptionProvider>
-                  </OrderProvider>
+                  <ReservationProvider>
+                    <OrderProvider>
+                      <SubscriptionProvider>
+                        {children}
+                      </SubscriptionProvider>
+                    </OrderProvider>
+                  </ReservationProvider>
                 </TableReservationProvider>
               </TableProvider>
             </GalleryProvider>
