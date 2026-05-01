@@ -17,7 +17,9 @@ const orderSchema = new mongoose.Schema({
             enum: ["Pending", "Accepted by Chef", "Preparing", "Ready", "Served / Delivered"],
             default: "Pending"
         },
-        chefId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+        chefId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        createdAt: { type: Date, default: Date.now },
+        updatedAt: { type: Date, default: Date.now }
     }],
     totalAmount: { type: Number },
     status: { type: String, enum: ["Active", "Completed", "Cancelled"], default: "Active" },

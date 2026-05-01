@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
@@ -18,7 +19,8 @@ function truncateText(value, maxChars) {
 }
 
 export default function AdminOrderManagement() {
-  const { orders, loading, error, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders, updateOrderStatus, deleteOrder } = useOrder();
+  const { user } = useAuth();
+  const { orders, loading, error, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders, fetchChefQueue, updateOrderStatus, deleteOrder } = useOrder();
   const [editingId, setEditingId] = useState(null);
   const [viewOrder, setViewOrder] = useState(null);
   const role = localStorage.getItem("adminRole") || "Super Admin";
@@ -38,15 +40,17 @@ export default function AdminOrderManagement() {
       getAllOrdersForAdmin();
     } else if (role === "Cafe Waiter" || role === "Restaurant Waiter" || role === "Bar Waiter") {
       getWaiterActiveOrders();
+    } else if (role.includes("Chef")) {
+      fetchChefQueue(); // Use chef-specific endpoint for chefs
     } else {
       fetchOrders(role);
     }
-  }, [role, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders]);
+  }, [role, fetchOrders, getAllOrdersForAdmin, getWaiterActiveOrders, fetchChefQueue]);
 
 
   const statusOptions = useMemo(() => {
     if (role === "Cafe Chef" || role === "Restaurant Chef" || role === "Bar Chef") {
-      return ["Pending", "Accepted by Chef", "Cooking", "Ready"];
+      return ["Pending", "Accepted by Chef", "Preparing", "Ready"];
     }
     if (role === "Cafe Waiter" || role === "Restaurant Waiter" || role === "Bar Waiter") {
       return ["Ready", "Served / Delivered"];
@@ -78,9 +82,21 @@ export default function AdminOrderManagement() {
     
     // For Chef role, filter orders to only show items assigned to this chef
     if (isChef) {
+      console.log("👨‍🍳 Chef Data Check:");
+      console.log("- User from useAuth:", user);
+      console.log("- User full_name:", user?.full_name);
+      console.log("- All Orders:", orders);
+      console.log("- Order items:", orders.map(o => o.items).flat());
+      
       return orders.map((order) => {
-        // Filter items to only show those assigned to this chef
-        const filteredItems = order.items?.filter(item => item.chefId === chefId) || [];
+        // Filter items to only show those assigned to this chef (using full_name like AdminKDS.jsx)
+        const filteredItems = order.items?.filter(item => {
+          console.log(`Item: ${item.name}, chefId: ${item.chefId}, comparing with user: ${user?.full_name}`);
+          // Use the same logic as AdminKDS.jsx - compare with user.full_name
+          return item.chefId?.full_name === user?.full_name;
+        }) || [];
+        
+        console.log(`Order ${order.orderID} - Filtered items:`, filteredItems.length);
         
         // Return order with only filtered items
         return {
@@ -90,6 +106,11 @@ export default function AdminOrderManagement() {
       }).filter((order) => {
         // Only show orders that have items assigned to this chef
         return order.items && order.items.length > 0;
+      }).sort((a, b) => {
+        // Sort by item createdAt for priority (oldest first = highest priority)
+        const aTime = a.items?.[0]?.createdAt ? new Date(a.items[0].createdAt) : new Date(0);
+        const bTime = b.items?.[0]?.createdAt ? new Date(b.items[0].createdAt) : new Date(0);
+        return aTime - bTime;
       });
     }
     
@@ -215,42 +236,70 @@ export default function AdminOrderManagement() {
                     <td>
                       {isChef ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {orderRow.currentItem?.status === 'Pending' && (
-                            <span style={{ 
-                              backgroundColor: '#ef4444', 
-                              color: 'white', 
-                              padding: '2px 8px', 
-                              borderRadius: '12px', 
-                              fontSize: '11px',
-                              fontWeight: 'bold'
-                            }}>
-                              HIGH
-                            </span>
-                          )}
-                          {orderRow.currentItem?.status === 'Accepted by Chef' && (
-                            <span style={{ 
-                              backgroundColor: '#f59e0b', 
-                              color: 'white', 
-                              padding: '2px 8px', 
-                              borderRadius: '12px', 
-                              fontSize: '11px',
-                              fontWeight: 'bold'
-                            }}>
-                              MED
-                            </span>
-                          )}
-                          {orderRow.currentItem?.status === 'Cooking' && (
-                            <span style={{ 
-                              backgroundColor: '#10b981', 
-                              color: 'white', 
-                              padding: '2px 8px', 
-                              borderRadius: '12px', 
-                              fontSize: '11px',
-                              fontWeight: 'bold'
-                            }}>
-                              IN PROG
-                            </span>
-                          )}
+                          {(() => {
+                            const itemCreatedAt = orderRow.currentItem?.createdAt;
+                            if (!itemCreatedAt) {
+                              return (
+                                <span style={{ 
+                                  backgroundColor: '#6b7280', 
+                                  color: 'white', 
+                                  padding: '2px 8px', 
+                                  borderRadius: '12px', 
+                                  fontSize: '11px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  UNKNOWN
+                                </span>
+                              );
+                            }
+                            
+                            const now = new Date();
+                            const createdTime = new Date(itemCreatedAt);
+                            const timeDiff = now - createdTime; // Difference in milliseconds
+                            const minutesDiff = Math.floor(timeDiff / (1000 * 60)); // Convert to minutes
+                            
+                            // Priority based on time elapsed
+                            if (minutesDiff < 5) {
+                              return (
+                                <span style={{ 
+                                  backgroundColor: '#10b981', 
+                                  color: 'white', 
+                                  padding: '2px 8px', 
+                                  borderRadius: '12px', 
+                                  fontSize: '11px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  LOW
+                                </span>
+                              );
+                            } else if (minutesDiff < 15) {
+                              return (
+                                <span style={{ 
+                                  backgroundColor: '#f59e0b', 
+                                  color: 'white', 
+                                  padding: '2px 8px', 
+                                  borderRadius: '12px', 
+                                  fontSize: '11px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  MED
+                                </span>
+                              );
+                            } else {
+                              return (
+                                <span style={{ 
+                                  backgroundColor: '#ef4444', 
+                                  color: 'white', 
+                                  padding: '2px 8px', 
+                                  borderRadius: '12px', 
+                                  fontSize: '11px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  HIGH
+                                </span>
+                              );
+                            }
+                          })()}
                         </div>
                       ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -333,7 +382,7 @@ export default function AdminOrderManagement() {
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <IcClock />
-                          {orderRow.createdAt ? new Date(orderRow.createdAt).toLocaleTimeString('en-US', { 
+                          {orderRow.currentItem?.createdAt ? new Date(orderRow.currentItem.createdAt).toLocaleTimeString('en-US', { 
                             hour: '2-digit', 
                             minute: '2-digit' 
                           }) : '-'}
@@ -350,46 +399,14 @@ export default function AdminOrderManagement() {
                     <td>
                       {isChef ? (
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
-                            <>
-                              <select
-                                className="ad_input"
-                                value={orderRow.status}
-                                onChange={(e) =>
-                                  handleUpdateStatus(orderRow._id, orderRow.currentItem?._id || orderRow.itemIndex, e.target.value)}
-                                style={{ padding: "4px 8px", minWidth: "90px", width: "fit-content" }}
-                              >
-                                <option value={orderRow.status}>{orderRow.status}</option>
-                                {statusOptions
-                                  .filter((opt) => opt !== orderRow.status)
-                                  .map((opt) => (
-                                    <option key={opt} value={opt}>
-                                      {opt}
-                                    </option>
-                                  ))}
-                              </select>
-                              <button
-                                className="ad_btn"
-                                onClick={() => setEditingId(null)}
-                                style={{ padding: "4px 12px" }}
-                              >
-                                Cancel
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <span className="ad_chip">{orderRow.currentItem?.status || orderRow.status}</span>
-                              <button
-                                className="ad_btn ad_btn--primary"
-                                onClick={() =>
-                                  setEditingId(`${orderRow._id}-${orderRow.itemIndex}`)
-                                }
-                                style={{ padding: "4px 12px" }}
-                              >
-                                Update
-                              </button>
-                            </>
-                          )}
+                          <span className="ad_chip">{orderRow.currentItem?.status || orderRow.status}</span>
+                          <button
+                            className="ad_btn ad_btn--primary"
+                            onClick={() => window.location.href = '/admin/kds'}
+                            style={{ padding: "4px 12px" }}
+                          >
+                            Go to KDS
+                          </button>
                         </div>
                       ) : (
                         <>
