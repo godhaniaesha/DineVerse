@@ -2,6 +2,7 @@ import { Order } from "../models/Order.js";
 import Table from "../models/Table.js";
 import { TableReservation } from "../models/TableReservation.js";
 import Dish from "../models/Dish.js";
+import UserModel from "../models/UserModel.js";
 import { ThrowError } from "../utils/Error.utils.js";
 import { sendBadRequestResponse } from "../utils/Response.utils.js";
 import mongoose from "mongoose";
@@ -10,6 +11,104 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET);
+
+// Helper function to get chef's current queue count
+const getChefQueueCount = async (chefId) => {
+    try {
+        const activeOrders = await Order.find({
+            'items.chefId': chefId,
+            'items.status': { $in: ['Pending', 'Accepted by Chef', 'Preparing'] }
+        });
+        
+        let queueCount = 0;
+        activeOrders.forEach(order => {
+            order.items.forEach(item => {
+                if (item.chefId && item.chefId.toString() === chefId.toString() && 
+                    ['Pending', 'Accepted by Chef', 'Preparing'].includes(item.status)) {
+                    queueCount += item.quantity || 1;
+                }
+            });
+        });
+        
+        return queueCount;
+    } catch (error) {
+        console.error('Error getting chef queue count:', error);
+        return 999; // Return high number if error, so this chef won't be selected
+    }
+};
+
+// Helper function to find the best chef for a dish
+const findBestChefForDish = async (dishId) => {
+    try {
+        console.log(`🔍 Finding chef for dish ID: ${dishId}`);
+        const dish = await Dish.findById(dishId).populate('chef');
+        
+        if (!dish) {
+            console.log(`❌ Dish not found for ID: ${dishId}`);
+            return null;
+        }
+        
+        console.log(`🍽️ Found dish: ${dish.name}, Available chefs: ${dish.chef?.length || 0}`);
+        
+        if (!dish.chef || dish.chef.length === 0) {
+            console.log(`❌ No chefs assigned to dish: ${dish.name}`);
+            return null;
+        }
+
+        // Get active chefs for this dish
+        const activeChefs = dish.chef.filter(chef => chef.status === 'Active');
+        console.log(`✅ Active chefs for this dish: ${activeChefs.length}`);
+        
+        if (activeChefs.length === 0) {
+            console.log(`❌ No active chefs available for dish: ${dish.name}`);
+            return null;
+        }
+
+        // Get queue count for each chef
+        const chefQueueCounts = await Promise.all(
+            activeChefs.map(async (chef) => {
+                const queueCount = await getChefQueueCount(chef._id);
+                console.log(`👨‍🍳 Chef ${chef.full_name} (ID: ${chef._id}) - Current queue: ${queueCount}`);
+                return {
+                    chefId: chef._id,
+                    queueCount,
+                    chef
+                };
+            })
+        );
+
+        // Sort by queue count (ascending) and return the chef with minimum queue
+        chefQueueCounts.sort((a, b) => a.queueCount - b.queueCount);
+        
+        const selectedChef = chefQueueCounts[0];
+        console.log(`🎯 Selected chef: ${selectedChef.chef.full_name} (Queue: ${selectedChef.queueCount})`);
+        
+        return selectedChef.chefId;
+    } catch (error) {
+        console.error('Error finding best chef for dish:', error);
+        return null;
+    }
+};
+
+// Helper function to allocate chefs to items
+const allocateChefsToItems = async (items) => {
+    const allocatedItems = [];
+    
+    console.log('🍳 Starting chef allocation for items:', items.length);
+    
+    for (const item of items) {
+        console.log(`📝 Processing item: ${item.name} (Dish ID: ${item.dishId})`);
+        const bestChefId = await findBestChefForDish(item.dishId);
+        console.log(`👨‍🍳 Assigned Chef ID: ${bestChefId || 'No chef available'}`);
+        allocatedItems.push({
+            ...item,
+            chefId: bestChefId
+        });
+    }
+    
+    console.log('✅ Chef allocation completed. Allocated items:', allocatedItems);
+    return allocatedItems;
+};
 
 export const createOrder = async (req, res) => {
     try {
@@ -55,18 +154,19 @@ export const createOrder = async (req, res) => {
             }
         }
 
-        const newItems = items.map(item => ({
+        // Allocate chefs to items automatically
+        const itemsWithChefs = await allocateChefsToItems(items.map(item => ({
             dishId: item.dishId,
             name: item.name,
             quantity: item.quantity,
             price: item.price,
             status: "Pending"
-        }));
+        })));
 
         const additionalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
         if (order) {
-            order.items.push(...newItems);
+            order.items.push(...itemsWithChefs);
             order.totalAmount += additionalAmount;
             if (specialInstructions) order.specialInstructions += ` | ${specialInstructions}`;
             if (finalCustomerEmail) order.customerEmail = finalCustomerEmail;
@@ -81,7 +181,7 @@ export const createOrder = async (req, res) => {
                 customerName: finalCustomerName,
                 customerEmail: finalCustomerEmail,
                 reservationId: activeReservationId,
-                items: newItems,
+                items: itemsWithChefs,
                 totalAmount: additionalAmount,
                 specialInstructions,
                 status: "Active"
@@ -298,8 +398,10 @@ export const updateItemStatus = async (req, res) => {
             return sendBadRequestResponse(res, "Invalid status");
         }
 
-        const updateField = { "items.$.status": status };
-
+        const updateField = { 
+            "items.$.status": status,
+            "items.$.updatedAt": new Date()
+        };
 
         if (chefId) updateField["items.$.chefId"] = chefId;
 
