@@ -153,6 +153,23 @@ export const TableReservationProvider = ({ children }) => {
       setLoading(false);
     }
   }, [authHeaders]);
+  const getUserTableReservations = useCallback(async () => {
+    try {
+      setLoading(true);
+      const result = await callApiWithFallback({
+        endpoints: [
+          "/table/getUserTableReservations",
+          "/getUserTableReservations",
+        ],
+        options: { method: "GET", headers: { ...authHeaders } },
+      });
+      return result;
+    } catch (_) {
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders, callApiWithFallback]);
   return (
     <TableReservationContext.Provider
       value={{
@@ -164,6 +181,7 @@ export const TableReservationProvider = ({ children }) => {
         confirmBooking,
         getReservations,
         updateReservationStatus,
+        getUserTableReservations,
       }}
     >
       {children}
