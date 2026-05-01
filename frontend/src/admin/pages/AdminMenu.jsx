@@ -3,10 +3,7 @@ import { FiClock } from "react-icons/fi";
 import "../../style/x_style.css";
 import {
   BADGE_META,
-  BAR_SUBCATEGORIES,
-  CAFE_SUBCATEGORIES,
   CATEGORIES,
-  RESTAURANT_SUBCATEGORIES,
 } from "../../pages/Menu";
 import { useMenu } from "../../contexts/MenuContext";
 
@@ -54,7 +51,7 @@ function MenuCard({ item, hovered, visible, onHover, registerRef }) {
 }
 
 export default function AdminMenu() {
-  const { mappedDishes: MENU_ITEMS, loading } = useMenu();
+  const { mappedDishes: menuItems, categories, loading } = useMenu();
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeSubcategory, setActiveSubcategory] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
@@ -79,23 +76,39 @@ export default function AdminMenu() {
 
     Object.values(cardRefs.current).forEach((element) => element && observer.observe(element));
     return () => observer.disconnect();
-  }, [activeCategory, activeSubcategory, MENU_ITEMS]);
+  }, [activeCategory, activeSubcategory, menuItems]);
 
-  const getCurrentSubcategories = () => {
-    if (activeCategory === "restaurant") return RESTAURANT_SUBCATEGORIES;
-    if (activeCategory === "bar") return BAR_SUBCATEGORIES;
-    if (activeCategory === "cafe") return CAFE_SUBCATEGORIES;
-    return [];
+  const getCategoryIcon = (categoryName) => {
+    const label = String(categoryName || "").toLowerCase();
+    const matchedCategory = CATEGORIES.find((category) => label.includes(category.label.toLowerCase()));
+    return matchedCategory?.icon || CATEGORIES[0]?.icon;
   };
 
-  const filteredItems = MENU_ITEMS.filter((item) => {
+  const getCurrentSubcategories = () => {
+    if (activeCategory === "all") return [];
+
+    const filteredCategories = categories.filter((category) => {
+      if (activeCategory === "restaurant") return category.area.includes("Restaurant");
+      if (activeCategory === "bar") return category.area.includes("Bar");
+      if (activeCategory === "cafe") return category.area.includes("Cafe");
+      return false;
+    });
+
+    return filteredCategories.map((category) => ({
+      id: category._id,
+      label: category.name,
+      icon: getCategoryIcon(category.name),
+    }));
+  };
+
+  const filteredItems = menuItems.filter((item) => {
     const categoryMatch = activeCategory === "all" || item.category === activeCategory;
     const subcategoryMatch = !activeSubcategory || item.categoryName === activeSubcategory;
     return categoryMatch && subcategoryMatch;
   });
 
   if (loading) {
-    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading...</div>;
+    return <div style={{ padding: "20px", textAlign: "center" }}>Loading...</div>;
   }
 
   return (

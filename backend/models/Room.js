@@ -31,13 +31,22 @@ const roomSchema = new mongoose.Schema({
     },
     cleanStatus: {
         type: String,
-        enum: ['Clean', 'Dirty', 'In Progress', 'Pending'],
-        default: 'Pending'
+        enum: ['In Progress', 'Done'],
+        default: 'Done'
     },
     assignedHousekeeper: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         default: null
+    },
+    lastUpdatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    lastUpdatedByName: {
+        type: String,
+        default: ""
     },
     cleanedAt: {
         type: Date,

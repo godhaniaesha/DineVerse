@@ -307,6 +307,7 @@ export default function AdminLayout() {
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
+
       "/admin/orders",
       "/admin/kds",
       "/admin/waiter-panel",
@@ -338,6 +339,8 @@ export default function AdminLayout() {
       "/admin/room-bookings",
       "/admin/staff",
       "/admin/cuisines",
+      "/admin/categories",
+      "/admin/dishes",
       "/admin/orders",
       "/admin/kds",
       "/admin/waiter-panel",
