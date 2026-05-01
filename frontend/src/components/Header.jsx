@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiSearch, FiUser, FiClock } from "react-icons/fi";
-import { MdTableRestaurant, MdHotel, MdLogout, MdPerson, MdLogin, MdAppRegistration, MdArrowForward } from "react-icons/md";
+import { MdTableRestaurant, MdHotel, MdLogout, MdPerson, MdLogin, MdAppRegistration, MdArrowForward, MdAdminPanelSettings } from "react-icons/md";
 import { IoWineOutline } from "react-icons/io5";
 import { PiCoffeeBold, PiKnifeBold } from "react-icons/pi";
 import { RiRestaurantLine } from "react-icons/ri";
@@ -347,6 +347,7 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("adminName") || !!localStorage.getItem("userName"));
+  const [adminRole, setAdminRole] = useState(localStorage.getItem("adminRole") || "");
   const navigate = useNavigate();
   const location = useLocation();
   const userDropdownRef = useRef(null);
@@ -407,8 +408,14 @@ export default function Header() {
     localStorage.removeItem("userName");
     localStorage.clear();
     setIsLoggedIn(false);
+    setAdminRole("");
     setUserDropdownOpen(false);
     navigate("/");
+  };
+
+  const handleGoToAdmin = () => {
+    navigate("/admin");
+    setUserDropdownOpen(false);
   };
 
   return (
@@ -487,6 +494,15 @@ export default function Header() {
                           <MdPerson className="d_user_menu__icon" />
                           <span>My Profile</span>
                         </Link>
+                        {(adminRole === "Manager" || adminRole === "Super Admin") && (
+                          <>
+                            <div className="d_user_menu__sep" />
+                            <button className="d_user_menu__link" onClick={handleGoToAdmin}>
+                              <MdAdminPanelSettings className="d_user_menu__icon" />
+                              <span>Admin Dashboard</span>
+                            </button>
+                          </>
+                        )}
                         <div className="d_user_menu__sep" />
                         <button className="d_user_menu__link d_user_menu__link--logout" onClick={handleLogout}>
                           <MdLogout className="d_user_menu__icon" />

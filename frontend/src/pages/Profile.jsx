@@ -63,9 +63,6 @@ export default function Profile() {
     const [bookingsError, setBookingsError] = useState("");
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            navigate("/auth");
-        }
         if (user) {
             setProfileForm({
                 full_name: user.full_name || "",
@@ -74,7 +71,7 @@ export default function Profile() {
                 img: null
             });
         }
-    }, [isAuthenticated, user, navigate]);
+    }, [user]);
 
     useEffect(() => {
         const fetchBookings = async () => {

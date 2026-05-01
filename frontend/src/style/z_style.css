@@ -1615,6 +1615,13 @@ body {
   border: 1px solid rgba(255, 95, 95, 0.2);
 }
 
+.z_prof_status_checked_out {
+  background: var(--d-surface-2);
+  color: var(--d-text-1);
+  border: 1px solid var(--d-border);
+
+}
+
 /* Billing - Modern Card Display */
 .z_prof_billing_card_box {
   background: linear-gradient(135deg, var(--d-surface-3), var(--d-surface));
