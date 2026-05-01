@@ -3415,6 +3415,25 @@ body {
   align-items: flex-start;
 }
 
+.z_info_link {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.z_info_link:hover .z_info_icon_wrap {
+  transform: translateY(-2px);
+  border-color: rgba(200, 150, 90, 0.35);
+}
+
+.z_info_link:hover .z_info_text span,
+.z_info_link:hover .z_info_text strong {
+  color: var(--d-gold);
+}
+
 .z_info_icon_wrap {
   width: 40px;
   height: 40px;
@@ -3425,6 +3444,7 @@ body {
   justify-content: center;
   flex-shrink: 0;
   border: 1px solid rgba(200, 150, 90, 0.1);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .z_footer_icon {

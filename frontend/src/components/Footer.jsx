@@ -68,31 +68,51 @@ export default function Footer() {
                                 <h4 className="z_footer_heading">Connect</h4>
                                 <ul className="z_footer_info list-unstyled">
                                     <li className="z_info_item">
-                                        <div className="z_info_icon_wrap">
-                                            <MdLocationOn className="z_footer_icon" />
-                                        </div>
-                                        <div className="z_info_text">
-                                            <strong>Location</strong>
-                                            <span>123 DineVerse Lane, Vesu district, Surat, GJ 395007</span>
-                                        </div>
+                                        <a
+                                            href="https://www.google.com/maps/search/?api=1&query=123+DineVerse+Lane%2C+Vesu+district%2C+Surat%2C+GJ+395007"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="z_info_link"
+                                            aria-label="Open DineVerse location in Google Maps"
+                                        >
+                                            <div className="z_info_icon_wrap">
+                                                <MdLocationOn className="z_footer_icon" />
+                                            </div>
+                                            <div className="z_info_text">
+                                                <strong>Location</strong>
+                                                <span>123 DineVerse Lane, Vesu district, Surat, GJ 395007</span>
+                                            </div>
+                                        </a>
                                     </li>
                                     <li className="z_info_item">
-                                        <div className="z_info_icon_wrap">
-                                            <MdEmail className="z_footer_icon" />
-                                        </div>
-                                        <div className="z_info_text">
-                                            <strong>Email Us</strong>
-                                            <span>hello@dineverse.com</span>
-                                        </div>
+                                        <a
+                                            href="mailto:hello@dineverse.com"
+                                            className="z_info_link"
+                                            aria-label="Send email to DineVerse"
+                                        >
+                                            <div className="z_info_icon_wrap">
+                                                <MdEmail className="z_footer_icon" />
+                                            </div>
+                                            <div className="z_info_text">
+                                                <strong>Email Us</strong>
+                                                <span>hello@dineverse.com</span>
+                                            </div>
+                                        </a>
                                     </li>
                                     <li className="z_info_item">
-                                        <div className="z_info_icon_wrap">
-                                            <MdPhone className="z_footer_icon" />
-                                        </div>
-                                        <div className="z_info_text">
-                                            <strong>Call Us</strong>
-                                            <span>+91 98765 43210</span>
-                                        </div>
+                                        <a
+                                            href="tel:+919876543210"
+                                            className="z_info_link"
+                                            aria-label="Call DineVerse"
+                                        >
+                                            <div className="z_info_icon_wrap">
+                                                <MdPhone className="z_footer_icon" />
+                                            </div>
+                                            <div className="z_info_text">
+                                                <strong>Call Us</strong>
+                                                <span>+91 98765 43210</span>
+                                            </div>
+                                        </a>
                                     </li>
                                 </ul>
                             </div>

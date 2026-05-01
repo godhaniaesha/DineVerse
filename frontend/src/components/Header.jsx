@@ -9,6 +9,7 @@ import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine } from "react-icons/ri";
 import "./header.css";
 import { useMenu } from "../contexts/MenuContext";
+import { useAuth } from "../contexts/AuthContext";
 
 /* ── DATA ─────────────────────────────────────────────────── */
 
@@ -346,11 +347,11 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("adminName") || !!localStorage.getItem("userName"));
-  const [adminRole, setAdminRole] = useState(localStorage.getItem("adminRole") || "");
   const navigate = useNavigate();
   const location = useLocation();
   const userDropdownRef = useRef(null);
+  const { user, token, logout } = useAuth();
+  const isLoggedIn = Boolean(user && token);
 
   /* Scroll listener */
   useEffect(() => {
@@ -403,14 +404,10 @@ export default function Header() {
   const handleBookRoom = () => navigate("/bookRoom");
 
   const handleLogout = () => {
-    localStorage.removeItem("adminName");
-    localStorage.removeItem("adminRole");
-    localStorage.removeItem("userName");
-    localStorage.clear();
-    setIsLoggedIn(false);
-    setAdminRole("");
+    logout();
     setUserDropdownOpen(false);
-    navigate("/");
+    setDrawerOpen(false);
+    navigate("/auth", { replace: true });
   };
 
   const handleGoToAdmin = () => {
