@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LineChart,
   Line,
@@ -12,6 +13,7 @@ import {
 import dashboardService from "../../services/dashboardService";
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState({
     kpiCards: [],
     bestSellingDishes: [],
@@ -122,7 +124,7 @@ export default function AdminDashboard() {
                   localStorage.removeItem("authUser");
                   localStorage.removeItem("adminRole");
                   localStorage.removeItem("adminName");
-                  window.location.href = "/login";
+                  navigate("/auth", { replace: true });
                 }}
               >
                 Go to Login
