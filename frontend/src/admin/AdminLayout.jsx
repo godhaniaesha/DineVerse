@@ -567,17 +567,6 @@ export default function AdminLayout() {
           </div>
 
           <div className="ad_topbar__actions">
-            {/* <button className="ad_topbar__icon_btn" aria-label="Search">
-              {Icons.search}
-            </button>
-
-            <button className="ad_topbar__icon_btn" aria-label="Notifications">
-              {Icons.bell}
-              <span className="ad_topbar__notif_dot" />
-            </button> */}
-
-            {/* <div className="ad_topbar__divider" aria-hidden="true" /> */}
-
             <button
               className="ad_topbar__user_btn"
               aria-label="Account menu"
@@ -607,6 +596,13 @@ export default function AdminLayout() {
             </button>
             <div ref={userMenuRef} className={`ad_user_menu${userMenuOpen ? " ad_user_menu--open" : ""}`}>
               <NavLink className="ad_user_menu__item" to="/admin/profile">My Profile</NavLink>
+              {(adminRole === "Super Admin" || adminRole === "Manager") && (
+                <>
+                  <NavLink className="ad_user_menu__item" to="/" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                   Go to User Side
+                  </NavLink>
+                </>
+              )}
               <button className="ad_user_menu__item" type="button" onClick={() => setShowLogoutModal(true)}>Logout</button>
             </div>
           </div>
