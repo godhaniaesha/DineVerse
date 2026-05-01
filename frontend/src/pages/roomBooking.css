@@ -201,10 +201,35 @@
   font-weight: 400 !important;
   color: var(--d-text-2) !important;
   letter-spacing: 0.02em !important;
+  cursor: pointer !important;
+}
+
+/* Hide native calendar icon but keep it clickable over the whole field */
+.d_rooms_avail__input::-webkit-calendar-picker-indicator {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  z-index: 2 !important;
 }
 
 .d_rooms_avail__input--guests {
   max-width: 92px !important;
+  cursor: text !important;
+  -moz-appearance: textfield !important;
+}
+
+/* Disable the overlay for the guest input since it's not a date */
+.d_rooms_avail__input--guests::-webkit-calendar-picker-indicator,
+.d_rooms_avail__input--guests::-webkit-inner-spin-button,
+.d_rooms_avail__input--guests::-webkit-outer-spin-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
 
 .d_rooms_avail__btn:disabled {
@@ -220,6 +245,7 @@
   color: var(--d-text-4) !important;
   font-size: 16px !important;
   display: flex !important;
+  pointer-events: none !important;
 }
 
 .d_rooms_avail__btn {
