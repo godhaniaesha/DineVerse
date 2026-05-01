@@ -25,6 +25,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../style/z_style.css";
 import { useAuth } from "../contexts/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -133,13 +135,13 @@ export default function Profile() {
             
             const result = await updateProfile(user._id, formData);
             if (result.success) {
-                alert("Profile updated successfully!");
+                toast.success("Profile updated successfully!");
             } else {
-                alert(result.error || "Failed to update profile");
+                toast.error(result.error || "Failed to update profile");
             }
         } catch (error) {
             console.error(error);
-            alert("Error updating profile");
+            toast.error("Error updating profile");
         } finally {
             setLoading(false);
         }
@@ -148,7 +150,7 @@ export default function Profile() {
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-            alert("Passwords do not match");
+            toast.error("Passwords do not match");
             return;
         }
         
@@ -160,14 +162,14 @@ export default function Profile() {
             );
             
             if (result.success) {
-                alert("Password changed successfully!");
+                toast.success("Password changed successfully!");
                 setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
             } else {
-                alert(result.error || "Failed to change password");
+                toast.error(result.error || "Failed to change password");
             }
         } catch (error) {
             console.error(error);
-            alert("Error changing password");
+            toast.error("Error changing password");
         } finally {
             setLoading(false);
         }
@@ -492,6 +494,7 @@ export default function Profile() {
 
     return (
         <div className="z_prof_page_wrapper">
+            <ToastContainer position="top-right" autoClose={3000} />
 
             <div className="z_prof_hero_banner"></div>
 
@@ -669,7 +672,7 @@ export default function Profile() {
                                 <button
                                     className="z_modal_btn z_modal_btn_confirm z_review_submit"
                                     onClick={() => {
-                                        alert("Review submitted! Thank you for your feedback.");
+                                        toast.success("Review submitted! Thank you for your feedback.");
                                         setShowReviewModal(false);
                                     }}
                                 >
