@@ -3,6 +3,10 @@ import { useOrder } from "../../contexts/OrderContext";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
+const IcChef = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L6 8C6 11.3142 8.68579 14 12 14C15.3142 14 18 11.3142 18 8V2"/><path d="M6 8C2.68629 8 0 10.6863 0 14C0 17.3137 2.68629 20 6 20H18C21.3137 20 24 17.3137 24 14C24 10.6863 21.3137 8 18 8"/><path d="M9 11L9 14"/><path d="M15 11L15 14"/></svg>;
+
+const IcClock = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>;
+
 
 const FLOW = ["Pending", "Accepted by Chef", "Preparing", "Ready", "Served / Delivered"];
 
@@ -18,6 +22,9 @@ export default function AdminOrderManagement() {
   const [editingId, setEditingId] = useState(null);
   const [viewOrder, setViewOrder] = useState(null);
   const role = localStorage.getItem("adminRole") || "Super Admin";
+  const chefName = localStorage.getItem("adminName") || "";
+  const chefId = localStorage.getItem("adminId") || "";
+  const isChef = role.includes("Chef");
   
   // Search and filter states for Super Admin/Manager
   const [search, setSearch] = useState("");
@@ -65,41 +72,78 @@ export default function AdminOrderManagement() {
     }
   };
 
-  // Filter logic for Super Admin/Manager
+  // Filter logic for Super Admin/Manager and Chef
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
     
-    // Only apply filters for Super Admin/Manager
-    if (role !== "Super Admin" && role !== "Manager") {
-      return orders;
+    // For Chef role, filter orders to only show items assigned to this chef
+    if (isChef) {
+      return orders.map((order) => {
+        // Filter items to only show those assigned to this chef
+        const filteredItems = order.items?.filter(item => item.chefId === chefId) || [];
+        
+        // Return order with only filtered items
+        return {
+          ...order,
+          items: filteredItems
+        };
+      }).filter((order) => {
+        // Only show orders that have items assigned to this chef
+        return order.items && order.items.length > 0;
+      });
     }
     
-    return orders.filter((order) => {
-      // Area filter
-      const matchArea = areaFilter === "All" || order.tableId?.area === areaFilter;
-      
-      // Search filter - search in order ID, customer name, table, waiter name, and items
-      const searchText = search.toLowerCase();
-      const orderText = [
-        order._id || "",
-        order.customerName || "",
-        order.tableId?.tableNo || "",
-        order.waiterId?.full_name || "",
-        order.items?.map(item => item.name).join(" ") || ""
-      ].join(" ").toLowerCase();
-      
-      const matchSearch = !search || orderText.includes(searchText);
-      
-      return matchArea && matchSearch;
-    });
-  }, [orders, role, areaFilter, search]);
+    // For Super Admin/Manager, apply existing filters
+    if (role === "Super Admin" || role === "Manager") {
+      return orders.filter((order) => {
+        // Area filter
+        const matchArea = areaFilter === "All" || order.tableId?.area === areaFilter;
+        
+        // Search filter - search in order ID, customer name, table, waiter name, and items
+        const searchText = search.toLowerCase();
+        const orderText = [
+          order._id || "",
+          order.customerName || "",
+          order.tableId?.tableNo || "",
+          order.waiterId?.full_name || "",
+          order.items?.map(item => item.name).join(" ") || ""
+        ].join(" ").toLowerCase();
+        
+        const matchSearch = !search || orderText.includes(searchText);
+        
+        return matchArea && matchSearch;
+      });
+    }
+    
+    // For other roles (Waiters), return all orders
+    return orders;
+  }, [orders, role, areaFilter, search, isChef, chefId]);
 
   return (
     <div className="ad_page">
       <div className="rooms__header"> 
         <div>
-          <h2 className="ad_h2">Order Management</h2>
-          <p className="ad_p">Track order flow from creation to completion.</p>
+          <h2 className="ad_h2">
+            {isChef ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <IcChef />
+                My Kitchen Orders
+              </span>
+            ) : (
+              'Order Management'
+            )}
+          </h2>
+          <p className="ad_p">
+            {isChef ? 
+              `Dishes assigned to you for preparation` : 
+              'Track order flow from creation to completion.'
+            }
+          </p>
+          {isChef && chefName && (
+            <p className="ad_p" style={{ fontSize: '14px', color: '#9ca3af', marginTop: '4px' }}>
+              Chef: {chefName}
+            </p>
+          )}
         </div>
       </div>
       {/* Search and Area Filters for Super Admin/Manager */}
@@ -130,10 +174,12 @@ export default function AdminOrderManagement() {
         <table className="ad_table">
           <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Table</th>
-              <th>Customer</th>
-              <th>Items</th>
+              <th>{isChef ? "Priority" : "Order ID"}</th>
+              {!isChef && <th>Table</th>}
+              {!isChef && <th>Customer</th>}
+              <th>{isChef ? "Dish Details" : "Items"}</th>
+              {isChef && <th>Table</th>}
+              {isChef && <th>Order Time</th>}
               {(role === "Super Admin" || role === "Manager") && (
                 <th>Waiter</th>
               )}
@@ -167,7 +213,46 @@ export default function AdminOrderManagement() {
                   <tr key={`${orderRow._id}-${orderRow.itemIndex}`}>
 
                     <td>
-                      {orderRow.itemIndex === 0 && (
+                      {isChef ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {orderRow.currentItem?.status === 'Pending' && (
+                            <span style={{ 
+                              backgroundColor: '#ef4444', 
+                              color: 'white', 
+                              padding: '2px 8px', 
+                              borderRadius: '12px', 
+                              fontSize: '11px',
+                              fontWeight: 'bold'
+                            }}>
+                              HIGH
+                            </span>
+                          )}
+                          {orderRow.currentItem?.status === 'Accepted by Chef' && (
+                            <span style={{ 
+                              backgroundColor: '#f59e0b', 
+                              color: 'white', 
+                              padding: '2px 8px', 
+                              borderRadius: '12px', 
+                              fontSize: '11px',
+                              fontWeight: 'bold'
+                            }}>
+                              MED
+                            </span>
+                          )}
+                          {orderRow.currentItem?.status === 'Cooking' && (
+                            <span style={{ 
+                              backgroundColor: '#10b981', 
+                              color: 'white', 
+                              padding: '2px 8px', 
+                              borderRadius: '12px', 
+                              fontSize: '11px',
+                              fontWeight: 'bold'
+                            }}>
+                              IN PROG
+                            </span>
+                          )}
+                        </div>
+                      ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           {(role !== "Super Admin" && role !== "Manager") && (
                             <div>
@@ -191,24 +276,70 @@ export default function AdminOrderManagement() {
                       )}
                     </td>
 
-                    <td>
-                      {orderRow.itemIndex === 0 ? (orderRow.tableId?.tableNo || "-") : ""}
-                    </td>
-                    <td>
-                      {orderRow.itemIndex === 0 ? (orderRow.customerName || "Walk-in") : ""}
-                    </td>
+                    {!isChef && (
+                      <td>
+                        {orderRow.itemIndex === 0 ? (orderRow.tableId?.tableNo || "-") : ""}
+                      </td>
+                    )}
+                    {!isChef && (
+                      <td>
+                        {orderRow.itemIndex === 0 ? (orderRow.customerName || "Walk-in") : ""}
+                      </td>
+                    )}
                     <td>
                       {orderRow.currentItem ? (
                         <div>
-                          <div style={{ fontWeight: 'bold' }}>{orderRow.currentItem.name}</div>
+                          <div style={{ 
+                            fontWeight: 'bold',
+                            fontSize: isChef ? '14px' : '13px',
+                            color: isChef && orderRow.currentItem?.status === 'Pending' ? '#ef4444' : 'inherit'
+                          }}>
+                            {orderRow.currentItem.name}
+                          </div>
                           <div style={{ fontSize: '12px', color: '#666' }}>
                             Qty: {orderRow.currentItem.quantity} | ₹{orderRow.currentItem.price}
+                            {isChef && (
+                              <span style={{ marginLeft: '8px', color: '#9ca3af' }}>
+                                • {orderRow.tableId?.area}
+                              </span>
+                            )}
                           </div>
+                          {isChef && orderRow.currentItem?.specialInstructions && (
+                            <div style={{ 
+                              fontSize: '11px', 
+                              color: '#f59e0b', 
+                              marginTop: '4px',
+                              fontStyle: 'italic'
+                            }}>
+                              📝 {orderRow.currentItem.specialInstructions}
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <span style={{ color: '#666' }}>No items</span>
                       )}
                     </td>
+                    {isChef && (
+                      <td>
+                        <div style={{ fontSize: '13px' }}>
+                          <div>{orderRow.tableId?.tableNo || "-"}</div>
+                          <div style={{ fontSize: '11px', color: '#666' }}>
+                            {orderRow.tableId?.area || "-"}
+                          </div>
+                        </div>
+                      </td>
+                    )}
+                    {isChef && (
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <IcClock />
+                          {orderRow.createdAt ? new Date(orderRow.createdAt).toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          }) : '-'}
+                        </div>
+                      </td>
+                    )}
                     {(role === "Super Admin" || role === "Manager") && (
                       <td>
                         {orderRow.itemIndex === 0
@@ -217,25 +348,72 @@ export default function AdminOrderManagement() {
                       </td>
                     )}
                     <td>
-                      {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
-                        <select
-                          className="ad_input"
-                          value={orderRow.status}
-                          onChange={(e) =>
-                            handleUpdateStatus(orderRow._id, orderRow.currentItem?._id || orderRow.itemIndex, e.target.value)}
-                          style={{ padding: "4px 8px", minWidth: "90px", width: "fit-content" }}
-                        >
-                          <option value={orderRow.status}>{orderRow.status}</option>
-                          {statusOptions
-                            .filter((opt) => opt !== orderRow.status)
-                            .map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                        </select>
+                      {isChef ? (
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
+                            <>
+                              <select
+                                className="ad_input"
+                                value={orderRow.status}
+                                onChange={(e) =>
+                                  handleUpdateStatus(orderRow._id, orderRow.currentItem?._id || orderRow.itemIndex, e.target.value)}
+                                style={{ padding: "4px 8px", minWidth: "90px", width: "fit-content" }}
+                              >
+                                <option value={orderRow.status}>{orderRow.status}</option>
+                                {statusOptions
+                                  .filter((opt) => opt !== orderRow.status)
+                                  .map((opt) => (
+                                    <option key={opt} value={opt}>
+                                      {opt}
+                                    </option>
+                                  ))}
+                              </select>
+                              <button
+                                className="ad_btn"
+                                onClick={() => setEditingId(null)}
+                                style={{ padding: "4px 12px" }}
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="ad_chip">{orderRow.currentItem?.status || orderRow.status}</span>
+                              <button
+                                className="ad_btn ad_btn--primary"
+                                onClick={() =>
+                                  setEditingId(`${orderRow._id}-${orderRow.itemIndex}`)
+                                }
+                                style={{ padding: "4px 12px" }}
+                              >
+                                Update
+                              </button>
+                            </>
+                          )}
+                        </div>
                       ) : (
-                        <span className="ad_chip">  {orderRow.currentItem?.status || orderRow.status}</span>
+                        <>
+                          {editingId === `${orderRow._id}-${orderRow.itemIndex}` ? (
+                            <select
+                              className="ad_input"
+                              value={orderRow.status}
+                              onChange={(e) =>
+                                handleUpdateStatus(orderRow._id, orderRow.currentItem?._id || orderRow.itemIndex, e.target.value)}
+                              style={{ padding: "4px 8px", minWidth: "90px", width: "fit-content" }}
+                            >
+                              <option value={orderRow.status}>{orderRow.status}</option>
+                              {statusOptions
+                                .filter((opt) => opt !== orderRow.status)
+                                .map((opt) => (
+                                  <option key={opt} value={opt}>
+                                    {opt}
+                                  </option>
+                                ))}
+                            </select>
+                          ) : (
+                            <span className="ad_chip">  {orderRow.currentItem?.status || orderRow.status}</span>
+                          )}
+                        </>
                       )}
                     </td>
                     <td>
@@ -272,6 +450,17 @@ export default function AdminOrderManagement() {
                             </button>
                           )}
                         </>
+                      )}
+                      
+                      {/* View button for Chef - always visible */}
+                      {isChef && (
+                        <button
+                          className="rooms__icon_btn"
+                          onClick={() => setViewOrder(orderRow)}
+                          style={{ marginLeft: 8 }}
+                        >
+                          <IcView />
+                        </button>
                       )}
                     </td>
                   </tr>
