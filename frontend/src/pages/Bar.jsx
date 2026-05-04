@@ -53,6 +53,24 @@ export default function Bar() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.3
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        const revealElements = document.querySelectorAll('.reveal');
+        revealElements.forEach(el => observer.observe(el));
+
+        return () => observer.disconnect();
     }, []);
 
     const nextTestimonial = () => {
@@ -88,18 +106,20 @@ export default function Bar() {
 
 
             {/* Signature Cocktails Section - Grid Layout */}
-            <section className="z_bar_section">
+            <section className="z_bar_section reveal reveal-up">
                 <div className="container">
-                    <div className="z_bar_section_header">
+                    <div className="z_bar_section_header reveal reveal-up">
                         <span className="z_bar_subtitle" style={{ color: 'var(--d-bar)' }}>Signature Menu</span>
                         <h2 className="z_bar_section_title">Our Crafted <em>Mixology</em></h2>
                     </div>
                     <div className="z_bar_grid_display">
-                        {COCKTAILS.map((drink) => (
-                            <div key={drink.id} className="z_bar_item_card">
+                        {COCKTAILS.map((drink, index) => (
+                            <div 
+                                key={drink.id} 
+                                className={`z_bar_item_card reveal reveal-up delay-${(index % 3) + 1}`} 
+                            >
                                 <img src={drink.img} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 <div className="z_bar_item_overlay">
-                                    {/* <span style={{ color: 'var(--d-bar)', fontWeight: '700', fontSize: '1.2rem' }}>{drink.price}</span> */}
                                     <h3 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>{drink.name}</h3>
                                     <p style={{ color: 'var(--d-text-2)', fontSize: '0.9rem' }}>{drink.desc}</p>
                                 </div>
@@ -110,7 +130,7 @@ export default function Bar() {
             </section>
 
             {/* Immersive Video Section - Full Width */}
-            <section className="z_bar_video_immersive" style={{ height: '600px', position: 'relative', overflow: 'hidden' }}>
+            <section className="z_bar_video_immersive reveal reveal-scale" style={{ height: '600px', position: 'relative', overflow: 'hidden' }}>
                 <video
                     autoPlay
                     muted
@@ -121,8 +141,8 @@ export default function Bar() {
                 ></video>
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
                     <div className="container">
-                        <h2 className="z_bar_section_title" style={{ color: '#fff', fontSize: '4rem' }}>Crafted <em>With Passion</em></h2>
-                        <p style={{ color: 'var(--d-text-1)', fontSize: '1.2rem', maxWidth: '600px', margin: '1rem auto' }}>Watch our master mixologists create liquid poetry, one ingredient at a time.</p>
+                        <h2 className="z_bar_section_title reveal reveal-up delay-2" style={{ color: '#fff', fontSize: '4rem' }}>Crafted <em>With Passion</em></h2>
+                        <p className="reveal reveal-up delay-3" style={{ color: 'var(--d-text-1)', fontSize: '1.2rem', maxWidth: '600px', margin: '1rem auto' }}>Watch our master mixologists create liquid poetry, one ingredient at a time.</p>
                     </div>
                 </div>
             </section>
@@ -131,35 +151,34 @@ export default function Bar() {
                 <div className="container">
                     <div className="row g-5 align-items-center">
                         <div className="col-lg-6">
-                            <div style={{ position: 'relative' }}>
+                            <div className="reveal reveal-left" style={{ position: 'relative' }}>
                                 <img 
                                     src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=80" 
                                     alt="Mixology" 
                                     style={{ width: '100%', borderRadius: 'var(--d-r-lg)', boxShadow: 'var(--d-shadow-lg)', filter: 'grayscale(30%)' }}
                                 />
-                                {/* <div className="z_club_btn" style={{ position: 'absolute', bottom: '-20px', right: '-20px', background: 'var(--d-bar)', padding: '2rem', borderRadius: 'var(--d-r-md)' }}>
-                                    <h4 style={{ color: '#000', margin: 0 }}>Join The Club</h4>
-                                </div> */}
                             </div>
                         </div>
                         <div className="col-lg-6">
-                            <span className="z_bar_subtitle" style={{ color: 'var(--current-accent)' }}>The Workshop</span>
-                            <h2 className="z_bar_section_title" style={{ textAlign: 'left', marginBottom: '2rem' }}>The <em>Mixologist's</em> Masterclass</h2>
-                            <p className="z_bar_desc" style={{ textAlign: 'left', margin: '0 0 2rem 0' }}>
-                                Step behind the bar and discover the secrets of high-end mixology. 
-                                Our experts will guide you through the history, techniques, and flavors of our signature drinks.
-                            </p>
-                            <div className="row g-4">
-                                <div className="col-6">
-                                    <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
-                                        <MdWineBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
-                                        <h5 style={{ marginTop: '1rem' }}>Rare Spirits</h5>
+                            <div className="reveal reveal-right">
+                                <span className="z_bar_subtitle" style={{ color: 'var(--current-accent)' }}>The Workshop</span>
+                                <h2 className="z_bar_section_title" style={{ textAlign: 'left', marginBottom: '2rem' }}>The <em>Mixologist's</em> Masterclass</h2>
+                                <p className="z_bar_desc" style={{ textAlign: 'left', margin: '0 0 2rem 0' }}>
+                                    Step behind the bar and discover the secrets of high-end mixology. 
+                                    Our experts will guide you through the history, techniques, and flavors of our signature drinks.
+                                </p>
+                                <div className="row g-4">
+                                    <div className="col-6 reveal reveal-up delay-1">
+                                        <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
+                                            <MdWineBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
+                                            <h5 style={{ marginTop: '1rem' }}>Rare Spirits</h5>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-6">
-                                    <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
-                                        <MdLocalBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
-                                        <h5 style={{ marginTop: '1rem' }}>Botanicals</h5>
+                                    <div className="col-6 reveal reveal-up delay-2">
+                                        <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
+                                            <MdLocalBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
+                                            <h5 style={{ marginTop: '1rem' }}>Botanicals</h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +188,7 @@ export default function Bar() {
             </section>
 
             {/* Testimonial Slider Section */}
-            <section className="z_bar_testimonial_section" style={{ background: 'var(--d-bg)', borderTop: '1px solid var(--d-border)' }}>
+            <section className="z_bar_testimonial_section reveal reveal-up" style={{ background: 'var(--d-bg)', borderTop: '1px solid var(--d-border)' }}>
                 <div className="z_bar_testimonial_container">
                     <button className="z_bar_testimonial_nav z_bar_testimonial_prev" onClick={prevTestimonial}>
                         <FaChevronLeft />
