@@ -372,6 +372,7 @@ export const confirmBooking = async (req, res) => {
             user: finalUserId,
             specialRequest: specialRequest || "",
             totalAmount: billing.totalAmount,
+            advanceAmount: 10, // Fixed 10 USD advance payment
             nights: billing.nights || 1,
             paymentStatus: "Paid",
             paymentIntentId,

@@ -32,6 +32,7 @@ const roomReservationSchema = new mongoose.Schema(
         },
         specialRequest: { type: String, default: "" },
         totalAmount: { type: Number, required: true },
+        advanceAmount: { type: Number, default: 0 },
         nights: { type: Number, required: true },
         paymentStatus: {
             type: String,

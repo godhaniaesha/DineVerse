@@ -977,13 +977,15 @@ export default function BookRoom() {
                         </div>
                         <div className="h_policy" style={{ background: "rgba(200, 160, 90, 0.05)", padding: "1rem", borderRadius: "8px", border: "1px dashed var(--h-border)" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: ".5rem" }}>
-                            <span>Payable Amount</span>
-                            <strong style={{ color: "var(--h-champ-lt)" }}>₹{totalAmount || 0}</strong>
+                            <span>Total Stay Amount</span>
+                            <strong style={{ color: "var(--h-champ-lt)" }}>${totalAmount || 0}</strong>
                           </div>
-                          <p className="h_policy_p" style={{ fontSize: "11px", margin: 0 }}>
-                            {billingDetails.billingType === "hourly"
-                              ? `Calculated hourly by backend (${billingDetails.hours || 0} hours${billingDetails.hourlyRate ? ` @ ₹${billingDetails.hourlyRate}/hour` : ""}).`
-                              : `Calculated nightly by backend (${billingDetails.nights || 0} nights).`}
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: ".5rem" }}>
+                            <span>Advance Payment (Required)</span>
+                            <strong style={{ color: "var(--h-champ-lt)" }}>$10</strong>
+                          </div>
+                          <p className="h_policy_p" style={{ fontSize: "11px", margin: 0, opacity: 0.7 }}>
+                            You only pay $10 today to secure your suite. The remaining amount will be payable at check-in.
                           </p>
                         </div>
                       </div>

@@ -171,7 +171,7 @@ function RoomCard({ room, onBook }) {
 
         <div className="d_rooms_card__footer">
           <div className="d_rooms_card__price-wrap">
-            <span className="d_rooms_card__price-label">From</span>
+            <span className="d_rooms_card__price-label">Starting from</span>
             <span className="d_rooms_card__price">
               <sup>$</sup>
               {room.price}
