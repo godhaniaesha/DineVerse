@@ -3743,7 +3743,7 @@ body {
 
 .z_bar_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(48px, 9vw, 70px);;
   line-height: 1.1;
   margin-bottom: 2rem;
 }
@@ -3881,7 +3881,7 @@ body {
 
 .z_bar_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(48px, 9vw, 70px);;
   line-height: 1.1;
   margin-bottom: 2rem;
 }
@@ -5019,10 +5019,10 @@ body {
 
   .z_slide_title {
     font-family: var(--d-font-serif);
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2.5rem, 5vw, 3rem);
     color: var(--d-text-1);
-    line-height: 1.2;
     margin-bottom: 2rem;
+    font-weight: 100 !important;
     /* Add margin to create space for the button */
   }
 
@@ -5754,10 +5754,10 @@ body {
 
 .z_slide_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.5rem, 5vw, 3rem);
   color: var(--d-text-1);
-  line-height: 1.2;
   margin-bottom: 2rem;
+  font-weight: 100 !important;
   /* Add margin to create space for the button */
 }
 

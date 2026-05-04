@@ -164,10 +164,10 @@ export default function Menu() {
                             <span>Est. 2019 · Surat</span>
                             <span className="x_eyebrow_line" />
                         </div>
-                        <h1 className="x_title">
+                        <h1 className="z_bar_title">
                             <em>DineVerse</em> Menu
                         </h1>
-                        <p className="x_subtitle">
+                        <p className="z_bar_desc">
                             Restaurant &amp; Bar — curated with intention
                         </p>
 

@@ -16,7 +16,7 @@ export default function Home() {
       <FeaturedMenu />
       <BarDrinks />
       <RoomBooking />
-      <TableReservation />
+      {/* <TableReservation /> */}
       <Testimonials />
       <GallerySlider />
     </>

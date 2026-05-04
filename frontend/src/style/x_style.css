@@ -101,7 +101,7 @@ body {
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
-  font-size: 11px;
+  font-size: 14.4px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--d-gold);
@@ -115,12 +115,12 @@ body {
 }
 
 .x_eyebrow_icon {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .x_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(48px, 8vw, 84px);
+  font-size: clamp(48px, 9vw, 70px);
   font-weight: 300;
   line-height: 1;
   color: var(--d-text-1);
@@ -1551,7 +1551,7 @@ body {
 
 .x_bh_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(48px, 9vw, 100px);
+  font-size: clamp(48px, 9vw, 70px);;
   font-weight: 300;
   line-height: 1.0;
   letter-spacing: -0.02em;
