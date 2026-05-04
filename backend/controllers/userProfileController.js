@@ -5,17 +5,25 @@ import { ThrowError } from "../utils/Error.utils.js";
 
 export const getUserBookings = async (req, res) => {
     try {
+        const userId = req.user._id;
         const email = req.user.email;
-        if (!email) {
-            return ThrowError(res, 400, "User email not found");
-        }
 
-        const tableReservations = await TableReservation.find({ email })
-            .select("area date time status bookingRef")
+        const emailRegex =
+            typeof email === "string" && email.trim()
+                ? new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i")
+                : null;
+
+        const ownerFilter = emailRegex
+            ? { $or: [{ user: userId }, { email: emailRegex }] }
+            : { user: userId };
+
+        const tableReservations = await TableReservation.find(ownerFilter)
+            .populate("table", "tableNo area floor")
             .sort({ date: -1 });
 
-        const roomReservations = await RoomReservation.find({ email })
-            .select("checkIn checkOut status bookingRef")
+        const roomReservations = await RoomReservation.find(ownerFilter)
+            .populate("roomType", "display_name price_per_night")
+            .populate("room", "roomNumber floor")
             .sort({ checkIn: -1 });
 
         const formattedBookings = [
@@ -26,16 +34,32 @@ export const getUserBookings = async (req, res) => {
                 time: tr.time,
                 status: tr.status,
                 bookingRef: tr.bookingRef,
-                type: "Table"
+                type: "Table",
+                guests: tr.guests,
+                adults: tr.guests,
+                children: 0,
+                tableName: tr.table?.tableNo ? `Table ${tr.table.tableNo}` : "Premium Table",
+                floor: tr.table?.floor || "Ground Floor",
+                totalAmount: tr.advanceAmount || 0,
+                specialRequests: tr.specialRequest || ""
             })),
             ...roomReservations.map(rr => ({
                 id: rr._id,
                 service: "Room Booking",
                 date: rr.checkIn,
-                time: "14:00",
+                checkOut: rr.checkOut,
+                time: rr.checkInTime || "14:00",
+                checkOutTime: rr.checkOutTime || "11:00",
                 status: rr.status,
                 bookingRef: rr.bookingRef,
-                type: "Room"
+                type: "Room",
+                adults: rr.adults,
+                children: rr.children,
+                roomNo: rr.room?.roomNumber || "Suite",
+                roomType: rr.roomType?.display_name || "Luxury Suite",
+                totalAmount: rr.totalAmount,
+                advanceAmount: rr.advanceAmount || 0,
+                specialRequests: rr.specialRequest || ""
             }))
         ];
 

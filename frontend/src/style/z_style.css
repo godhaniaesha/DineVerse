@@ -66,6 +66,17 @@
   --d-strip-h: 38px;
 }
 
+html, body, #root {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none !important;
+}
+
 /* Bar Page Specifics */
 .z_bar_page {
   background-color: var(--d-bg);
@@ -1135,40 +1146,107 @@ body {
 
 /* Responsive */
 @media (max-width: 1200px) {
-  .z_prestige_title { font-size: 4rem; }
-  .z_prestige_room_name { font-size: 2.8rem; }
-  .z_prestige_content { padding: 0 40px; }
-  .z_prestige_room_num { font-size: 6rem; }
+  .z_prestige_title {
+    font-size: 4rem;
+  }
+
+  .z_prestige_room_name {
+    font-size: 2.8rem;
+  }
+
+  .z_prestige_content {
+    padding: 0 40px;
+  }
+
+  .z_prestige_room_num {
+    font-size: 6rem;
+  }
 }
 
 @media (max-width: 992px) {
+
   .z_prestige_card,
   .z_prestige_card--reverse {
     grid-template-columns: 1fr;
     min-height: auto;
   }
-  .z_prestige_card--reverse .z_prestige_media { order: 0; }
-  .z_prestige_card--reverse .z_prestige_content { order: 0; }
-  .z_prestige_media { height: 400px; }
-  .z_prestige_content { padding: 40px 0; }
-  .z_prestige_content_inner { max-width: 100%; }
-  .z_prestige_room_num { font-size: 5rem; margin-bottom: -20px; }
+
+  .z_prestige_card--reverse .z_prestige_media {
+    order: 0;
+  }
+
+  .z_prestige_card--reverse .z_prestige_content {
+    order: 0;
+  }
+
+  .z_prestige_media {
+    height: 400px;
+  }
+
+  .z_prestige_content {
+    padding: 40px 0;
+  }
+
+  .z_prestige_content_inner {
+    max-width: 100%;
+  }
+
+  .z_prestige_room_num {
+    font-size: 5rem;
+    margin-bottom: -20px;
+  }
 }
+
 @media (max-width: 768px) {
-  .z_prestige_cards { gap: 38px; }
-  .z_prestige_content { padding: 16px 8px; }
-  .z_prestige_amenities {margin-bottom: 2rem; padding-bottom: 1rem; }
-  .z_prestige_room_desc { margin-bottom: 1.5rem; }
-  .z_prestige_room_name { margin-bottom: 10px; }
-  .z_prestige_header { margin-bottom: 46px; }
-  .z_prestige_section { padding: 60px 0px !important; }
+  .z_prestige_cards {
+    gap: 38px;
+  }
+
+  .z_prestige_content {
+    padding: 16px 8px;
+  }
+
+  .z_prestige_amenities {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+  }
+
+  .z_prestige_room_desc {
+    margin-bottom: 1.5rem;
+  }
+
+  .z_prestige_room_name {
+    margin-bottom: 10px;
+  }
+
+  .z_prestige_header {
+    margin-bottom: 46px;
+  }
+
+  .z_prestige_section {
+    padding: 60px 0px !important;
+  }
 }
 
 @media (max-width: 576px) {
-  .z_prestige_title { font-size: 2.8rem; }
-  .z_prestige_room_name { font-size: 2rem; }
-  .z_prestige_amenities { gap: 1.5rem; }
-  .z_prestige_cta { width: 100%; justify-content: center; padding: 1rem 2rem; font-size: 13px;}
+  .z_prestige_title {
+    font-size: 2.8rem;
+  }
+
+  .z_prestige_room_name {
+    font-size: 2rem;
+  }
+
+  .z_prestige_amenities {
+    gap: 1.5rem;
+  }
+
+  .z_prestige_cta {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 2rem;
+    font-size: 13px;
+  }
 }
 
 /* Rooms - Minimal & Wide */
@@ -1206,6 +1284,396 @@ body {
   .z_room_feature_img {
     width: 100%;
     height: 350px;
+  }
+}
+
+.z_prof_view_btn {
+  background: rgba(212, 143, 181, 0.15);
+  border: 1px solid rgba(212, 143, 181, 0.4);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: var(--d-r-pill);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s var(--d-ease);
+  cursor: pointer;
+}
+
+.z_prof_view_btn:hover {
+  background: var(--d-room);
+  border-color: var(--d-room);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(212, 143, 181, 0.4);
+}
+
+/* Luxury Ticket Modal UI */
+.z_view_ticket_card {
+  width: 95%;
+  max-width: 850px;
+  background: var(--d-surface);
+  border-radius: var(--d-r-xl);
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+  animation: ticketReveal 0.6s var(--d-ease) forwards;
+}
+
+@keyframes ticketReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.z_ticket_side_branding {
+  width: 30%;
+  background: linear-gradient(180deg, #1a1612 0%, #080705 100%);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 2px dashed rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.z_ticket_logo {
+  font-family: var(--d-font-serif);
+  font-size: 1.5rem;
+  color: var(--d-room);
+  letter-spacing: 2px;
+}
+
+.z_ticket_ref_wrap {
+  margin-top: 2rem;
+}
+
+.z_ticket_ref_label {
+  font-size: 0.65rem;
+  color: var(--d-text-4);
+  letter-spacing: 2px;
+}
+
+.z_ticket_ref_id {
+  font-size: 1.4rem;
+  color: var(--d-text-1);
+  font-family: var(--d-font-sans);
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+.z_ticket_status_stamp {
+  margin-top: auto;
+}
+
+.z_stamp_text {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 2px solid;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transform: rotate(-15deg);
+  opacity: 0.8;
+}
+
+.z_stamp_completed {
+  color: #4caf50;
+  border-color: #4caf50;
+}
+
+.z_stamp_pending {
+  color: #ff9800;
+  border-color: #ff9800;
+}
+
+.z_stamp_cancelled {
+  color: #f44336;
+  border-color: #f44336;
+}
+
+.z_ticket_main_content {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  position: relative;
+}
+
+.z_ticket_close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  color: var(--d-text-4);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.z_ticket_close:hover {
+  color: var(--d-text-1);
+}
+
+.z_ticket_header {
+  margin-bottom: 3rem;
+}
+
+.z_ticket_title {
+  font-family: var(--d-font-serif);
+  font-size: 2.8rem;
+  color: var(--d-text-1);
+  margin-bottom: 0.5rem;
+}
+
+.z_ticket_subtitle {
+  color: var(--d-room);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 600;
+}
+
+.z_ticket_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.z_ticket_item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.z_ticket_icon {
+  font-size: 1.4rem;
+  color: var(--d-room);
+  margin-top: 4px;
+}
+
+.z_ticket_info label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--d-text-4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.z_ticket_info span {
+  font-size: 16px;
+  color: var(--d-text-2);
+  font-weight: 500;
+}
+
+.z_ticket_requests {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  border-radius: var(--d-r-md);
+  margin-bottom: 2rem;
+  border-left: 3px solid var(--d-room);
+}
+
+.z_ticket_requests label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--d-text-4);
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.z_ticket_requests p {
+  color: var(--d-text-2);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.z_ticket_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 2rem;
+}
+
+.z_ticket_total label {
+  font-size: 0.75rem;
+  color: var(--d-text-4);
+  text-transform: uppercase;
+}
+
+.z_ticket_price {
+  font-size: 2.2rem;
+  font-family: var(--d-font-serif);
+  color: var(--d-text-1);
+}
+
+.z_ticket_barcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.z_barcode_strip {
+  width: 120px;
+  height: 40px;
+  background: repeating-linear-gradient(90deg, #fff 0, #fff 2px, transparent 2px, transparent 5px);
+  opacity: 0.3;
+}
+
+.z_ticket_barcode span {
+  font-size: 0.6rem;
+  color: var(--d-text-4);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+  .z_view_ticket_card {
+    flex-direction: column;
+  }
+
+  .z_ticket_side_branding {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.05);
+  }
+
+  .z_ticket_grid {
+    grid-template-columns: 1fr;
+  }
+
+  .z_ticket_main_content {
+    padding: 2rem;
+  }
+}
+
+/* --- Responsive Reservation History & Ticket Modal --- */
+
+@media (max-width: 1024px) {
+  .z_prof_booking_card {
+    padding: 1.5rem 2rem;
+  }
+
+  .z_prof_booking_title_area h4 {
+    font-size: 1.5rem;
+  }
+
+  .z_prof_booking_meta {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Booking Cards */
+  .z_prof_booking_header {
+    /* flex-direction: column; */
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .z_prof_booking_status {
+    align-self: flex-start;
+    min-width: auto;
+    padding: 0.5rem 1.2rem;
+  }
+
+  .z_prof_booking_meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Ticket Modal Redesign for Mobile */
+  .z_view_ticket_card {
+    flex-direction: column;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .z_ticket_side_branding {
+    width: 100%;
+    padding: 1.5rem;
+    flex-direction: row;
+    align-items: center;
+    border-right: none;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+  }
+
+  .z_ticket_ref_wrap {
+    margin-top: 0;
+    text-align: right;
+  }
+
+  .z_ticket_status_stamp {
+    display: none;
+    /* Hide stamp on mobile to save space or move it */
+  }
+
+  .z_ticket_main_content {
+    padding: 2rem;
+  }
+
+  .z_ticket_title {
+    font-size: 2rem;
+  }
+
+  .z_ticket_grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .z_ticket_info span {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .z_prof_booking_card {
+    padding: 1.2rem;
+  }
+
+  .z_prof_view_btn {
+    align-self: flex-end;
+  }
+
+  .z_prof_booking_meta {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .z_ticket_main_content {
+    padding: 1.5rem;
+  }
+
+  .z_ticket_footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .z_ticket_total.text-end {
+    text-align: left !important;
   }
 }
 
@@ -1535,10 +2003,8 @@ body {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--d-border);
   border-radius: var(--d-r-lg);
-  padding: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 1.8rem 2.5rem;
+  margin-bottom: 1.5rem;
   transition: all 0.4s var(--d-ease);
   position: relative;
   overflow: hidden;
@@ -1550,69 +2016,118 @@ body {
   left: 0;
   top: 0;
   height: 100%;
-  width: 4px;
+  width: 5px;
   background: var(--accent, var(--d-gold));
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .z_prof_booking_card:hover {
   background: rgba(255, 255, 255, 0.04);
-  border-color: var(--d-gold-subtle);
-  transform: scale(1.02);
+  border-color: rgba(212, 143, 181, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-.z_prof_booking_info h4 {
+.z_prof_booking_main {
+  width: 100%;
+}
+
+.z_prof_booking_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.z_prof_booking_title_area h4 {
   font-family: var(--d-font-serif);
   color: var(--d-text-1);
-  margin: 0 0 0.6rem 0;
-  font-size: 1.6rem;
+  margin: 0;
+  font-size: 1.8rem;
   font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .z_prof_booking_meta {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   color: var(--d-text-3);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
 }
 
 .z_prof_booking_meta span {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.8rem;
+  margin-right: 1rem;
 }
 
-.z_prof_booking_status {
-  padding: 0.6rem 1.5rem;
-  border-radius: var(--d-r-pill);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
+.z_prof_booking_meta svg {
+  color: var(--d-room);
+  font-size: 1rem;
+}
+
+.z_prof_booking_ref {
+  font-family: var(--d-font-sans);
   letter-spacing: 1px;
 }
 
-.z_prof_status_confirmed {
-  background: var(--d-cafe-dim);
-  color: var(--d-cafe);
-  border: 1px solid rgba(122, 184, 152, 0.2);
+.z_prof_booking_status {
+  padding: 0.7rem 1.8rem;
+  border-radius: var(--d-r-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.z_prof_status_confirmed,
+.z_prof_status_available {
+  background: rgba(122, 184, 152, 0.1);
+  color: #7ab898;
+  border: 1px solid rgba(122, 184, 152, 0.3);
 }
 
 .z_prof_status_pending {
-  background: var(--d-restaurant-dim);
-  color: var(--d-restaurant);
-  border: 1px solid rgba(200, 150, 90, 0.2);
+  background: rgba(200, 150, 90, 0.1);
+  color: var(--d-gold);
+  border: 1px solid rgba(200, 150, 90, 0.3);
 }
 
 .z_prof_status_completed {
-  background: var(--d-gold-dim);
-  color: var(--d-gold);
-  border: 1px solid rgba(200, 150, 90, 0.2);
+  background: rgba(212, 143, 181, 0.1);
+  color: var(--d-room);
+  border: 1px solid rgba(212, 143, 181, 0.3);
 }
 
-.z_prof_status_cancel {
-  background: #ff00000a;
-  color: var(--d-restaurant);
-  border: 1px solid rgba(255, 95, 95, 0.2);
+@media (max-width: 992px) {
+  .z_prof_booking_header {
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .z_prof_booking_status {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .z_prof_booking_card {
+    padding: 1.5rem;
+  }
+
+  .z_prof_booking_meta {
+    gap: 1.2rem;
+  }
+
+  .z_prof_booking_title_area h4 {
+    font-size: 1.4rem;
+  }
 }
 
 /* Billing - Modern Card Display */
@@ -2152,22 +2667,24 @@ body {
       rgba(200, 150, 90, 0.04));
   box-shadow: 0 0 25px rgba(200, 150, 90, 0.15);
 }
+
 .z_prof_eye_btn {
-    anchor-name: none;
-    position: absolute;
-    right: 6px;
-    background: transparent;
-    border: 1px solid rgb(200 160 90 / 0%);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    color: #c8965aa3;
-    justify-content: center;
-    padding: 0.6rem;
-    transition: all 0.3s var(--d-ease);
-    min-width: 40px;
-    min-height: 40px;
+  anchor-name: none;
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: 1px solid rgb(200 160 90 / 0%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #c8965aa3;
+  justify-content: center;
+  padding: 0.6rem;
+  transition: all 0.3s var(--d-ease);
+  min-width: 40px;
+  min-height: 40px;
 }
+
 /* 
 .z_prof_eye_btn {
   position: absolute;
@@ -2363,7 +2880,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
   animation: modalFadeIn 0.3s var(--d-ease);
 }
 
@@ -2508,24 +3025,24 @@ body {
 /* Review and Stars Styles */
 .z_prof_booking_stars {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.8rem;
+  /* align-items: center; */
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: var(--d-r-sm);
   transition: all 0.3s var(--d-ease);
 }
 
 .z_prof_booking_stars:hover {
-  background: var(--d-gold-subtle);
+  background: transparent;
 }
 
 .z_prof_star_icon {
   color: var(--d-text-4);
-  font-size: 1.2rem;
-  opacity: 0.5;
-  transition: all 0.2s var(--d-ease);
+  font-size: 1.1rem;
+  opacity: 0.6;
+  transition: all 0.3s var(--d-ease);
 }
 
 .z_prof_booking_stars:hover .z_prof_star_icon {
@@ -2534,10 +3051,11 @@ body {
 }
 
 .z_prof_rate_text {
-  color: var(--d-text-3);
-  font-size: 0.8rem;
+  color: var(--d-text-4);
+  font-size: 0.75rem;
   font-weight: 500;
-  text-wrap: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Review Modal */
@@ -2634,10 +3152,10 @@ body {
 }
 
 .z_review_form .z_prof_field_group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  position: relative;
 }
 
 /* Textarea */
@@ -2696,11 +3214,13 @@ body {
     font-size: 0.8rem;
   }
 }
+
 @media (max-width: 374px) {
- .z_prof_booking_stars {
-    padding: 0rem;
+  .z_prof_booking_stars {
+    padding: 1rem 0 0 0;
     gap: 0.2rem;
- }
+    flex-wrap: wrap;
+  }
 }
 
 .z_reg_stat-content h3 {

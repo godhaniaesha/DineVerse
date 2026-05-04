@@ -222,7 +222,7 @@ function RoomCard({ room, onBook }) {
         {/* Footer */}
         <div className="d_rooms_card__footer">
           <div className="d_rooms_card__price-wrap">
-            <span className="d_rooms_card__price-label">From</span>
+            <span className="d_rooms_card__price-label">Starting from</span>
             <span className="d_rooms_card__price">
               <sup>$</sup>{room.price}
               <span className="d_rooms_card__price-night">/ night</span>
@@ -617,7 +617,7 @@ export default function RoomBooking() {
           <div className="d_rooms_loading">
             <div className="d_rooms_loading__spinner"></div>
             <p>{loading ? "Loading available rooms..." : "Checking available rooms..."}</p>
--          </div>
+          </div>
         ) : error ? (
           <div className="d_rooms_error">
             <p>Unable to load rooms. Showing available rooms.</p>

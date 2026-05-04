@@ -45,15 +45,21 @@
 html {
   scroll-behavior: smooth;
   background: var(--h-void);
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar {
+  display: none !important;
 }
 
 body {
-  font-family: "Jost", sans-serif;
-  background: var(--h-void);
-  color: var(--h-ivory);
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+body::-webkit-scrollbar {
+  display: none !important;
 }
 
 .h_page {

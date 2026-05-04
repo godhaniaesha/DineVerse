@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight, FaUtensils, FaGlassWhiskey, FaStar } from "react-icons/fa";
 import { GiWineGlass } from "react-icons/gi";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const DISH_ITEMS = [
     {
@@ -47,6 +49,11 @@ export default function Restaurant() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        AOS.init({
+            duration: 500,
+            once: true,
+            easing: 'ease-out',
+        });
     }, []);
 
     const nextTestimonial = () => {
@@ -64,18 +71,18 @@ export default function Restaurant() {
                 backgroundImage: `url('https://www.fourcentric.com/wp-content/uploads/2025/01/fc-french-scaled.webp')`
             }}>
                 <div className="z_bar_hero_overlay"></div>
-                <div className="z_bar_hero_content">
-                    <div className="z_bar_hero_badge">
+                <div className="z_bar_hero_content" data-aos="fade-up">
+                    <div className="z_bar_hero_badge" data-aos="fade-down" data-aos-delay="50">
                         <div className="z_bar_badge_line"></div>
                         <span className="z_bar_tag">Haute Cuisine</span>
                         <div className="z_bar_badge_line"></div>
                     </div>
-                    <h1 className="z_bar_title">The Epicurean <br /><em>Masterpiece</em></h1>
-                    <p className="z_bar_desc">
+                    <h1 className="z_bar_title" data-aos="zoom-in" data-aos-delay="100">The Epicurean <br /><em>Masterpiece</em></h1>
+                    <p className="z_bar_desc" data-aos="fade-up" data-aos-delay="150">
                         Where culinary tradition meets modern innovation.
                         Experience a symphony of flavors choreographed by our award-winning chefs.
                     </p>
-                    <div className="z_bar_hero_btns">
+                    <div className="z_bar_hero_btns" data-aos="fade-up" data-aos-delay="200">
                         <Link to="/bookTable" className="z_bar_btn_primary" style={{ background: 'var(--d-restaurant)', borderColor: 'var(--d-restaurant)' }}>Reserve a Table</Link>
                     </div>
                 </div>
@@ -84,7 +91,7 @@ export default function Restaurant() {
             {/* Signature Showcase - Floating Design */}
             <section className="z_bar_section" style={{ background: 'var(--d-bg)', paddingTop: '80px', paddingBottom: '0px' }}>
                 <div className="container">
-                    <div className="z_bar_section_header" style={{ marginBottom: '60px' }}>
+                    <div className="z_bar_section_header" style={{ marginBottom: '60px' }} data-aos="fade-up">
                         <span className="z_bar_subtitle" style={{ color: 'var(--d-restaurant)' }}>The Tasting Menu</span>
                         <h2 className="z_bar_section_title">Chef's <em>Signature</em> Creations</h2>
                     </div>
@@ -92,12 +99,12 @@ export default function Restaurant() {
                     <div className="z_res_showcase_flow">
                         {DISH_ITEMS.map((dish, index) => (
                             <div key={dish.id} className="row g-0 align-items-center z_res_dish_row">
-                                <div className={`col-lg-7 ${index % 2 !== 0 ? 'order-lg-2' : ''}`}>
+                                <div className={`col-lg-7 ${index % 2 !== 0 ? 'order-lg-2' : ''}`} data-aos={index % 2 === 0 ? "fade-right" : "fade-left"}>
                                     <div className="z_parallax_container z_res_dish_img">
                                         <img src={dish.img} alt={dish.name} className="z_reveal_img" />
                                     </div>
                                 </div>
-                                <div className={`col-lg-5 ${index % 2 !== 0 ? 'order-lg-1' : ''} z_res_dish_content_col`}>
+                                <div className={`col-lg-5 ${index % 2 !== 0 ? 'order-lg-1' : ''} z_res_dish_content_col`} data-aos={index % 2 === 0 ? "fade-left" : "fade-right"} data-aos-delay="50">
                                     <div className="z_floating_card">
                                         {/* <span className="z_res_dish_price">{dish.price}</span> */}
                                         <h3 className="z_res_dish_name">{dish.name}</h3>
@@ -112,7 +119,7 @@ export default function Restaurant() {
             </section>
 
             {/* Immersive Culinary Video */}
-            <section className="z_res_video_section">
+            <section className="z_res_video_section" data-aos="fade">
                 <video
                     autoPlay
                     muted
@@ -122,7 +129,7 @@ export default function Restaurant() {
                     src="/video/201947-916877801.mp4"
                 ></video>
                 <div className="z_res_video_overlay">
-                    <div className="container text-center">
+                    <div className="container text-center" data-aos="zoom-in">
                         <h2 className="z_bar_section_title z_res_video_title">Passion in <em>Every Plate</em></h2>
                         <div className="z_res_video_divider"></div>
                         <p className="z_res_video_desc">Experience the dedication and artistry that goes into every single serving.</p>
@@ -134,7 +141,7 @@ export default function Restaurant() {
             <section className="z_res_wine_section">
                 <div className="container">
                     <div className="row g-4 align-items-stretch">
-                        <div className="col-lg-4">
+                        <div className="col-lg-4" data-aos="fade-right">
                             <div className="z_glass_header z_res_wine_header">
                                 <span className="z_bar_subtitle" style={{ color: 'var(--d-restaurant)' }}>Sommelier's Choice</span>
                                 <h2 className="z_bar_section_title z_res_wine_title">The <em>Wine</em> Cellar</h2>
@@ -143,14 +150,14 @@ export default function Restaurant() {
                         </div>
                         <div className="col-lg-8">
                             <div className="row g-4 h-100">
-                                <div className="col-md-6">
+                                <div className="col-md-6" data-aos="flip-left" data-aos-delay="50">
                                     <div className="z_wine_feature h-100 z_res_wine_feature">
                                         <GiWineGlass className="z_res_wine_icon" />
                                         <h3 className="z_res_wine_feat_title">Vintage Selection</h3>
                                         <p className="z_res_wine_feat_desc">Rare vintages and limited editions from around the globe.</p>
                                     </div>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-md-6" data-aos="flip-left" data-aos-delay="100">
                                     <div className="z_wine_feature h-100 z_res_wine_feature">
                                         <FaStar className="z_res_wine_icon" />
                                         <h3 className="z_res_wine_feat_title">Michelin Standards</h3>
@@ -164,18 +171,18 @@ export default function Restaurant() {
             </section>
 
             {/* Testimonials - Minimalist Elegance */}
-            <section className="z_res_testimonial_section">
+            <section className="z_res_testimonial_section" data-aos="fade-up">
                 <div className="container">
                     <div className="row justify-content-center text-center">
                         <div className="col-lg-10">
-                            <div className="z_res_testimonial_quote">"</div>
-                            <h2 className="z_res_testimonial_content">{TESTIMONIALS[currentTestimonial].content}</h2>
-                            <div className="z_res_testimonial_author_wrap">
+                            <div className="z_res_testimonial_quote" data-aos="zoom-in" data-aos-delay="50">"</div>
+                            <h2 className="z_res_testimonial_content" data-aos="fade-up" data-aos-delay="100">{TESTIMONIALS[currentTestimonial].content}</h2>
+                            <div className="z_res_testimonial_author_wrap" data-aos="fade-up" data-aos-delay="150">
                                 <div className="z_res_testimonial_line"></div>
                                 <span className="z_res_testimonial_author">{TESTIMONIALS[currentTestimonial].author}</span>
                                 <div className="z_res_testimonial_line"></div>
                             </div>
-                            <div className="z_res_testimonial_btns">
+                            <div className="z_res_testimonial_btns" data-aos="fade-up" data-aos-delay="200">
                                 <button onClick={prevTestimonial} className="z_res_testimonial_btn z_method_hover"><FaChevronLeft /></button>
                                 <button onClick={nextTestimonial} className="z_res_testimonial_btn z_method_hover"><FaChevronRight /></button>
                             </div>
