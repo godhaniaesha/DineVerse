@@ -8,24 +8,24 @@ import "aos/dist/aos.css";
 const DISH_ITEMS = [
     {
         id: 1,
-        name: "Seared Scallops",
-        desc: "With saffron risotto and a lemon-butter sauce.",
-        price: "$28",
-        img: "https://i.pinimg.com/736x/c0/f2/6a/c0f26a4c05ff228be22ca915327692a1.jpg"
+        name: "Paneer Tikka Skewers",
+        desc: "grilled paneer cubes with veggies on skewers",
+        price: "$32",
+        img: "https://i.pinimg.com/1200x/b5/14/85/b51485f323c2441fad3c64e5d77651c1.jpg"
     },
     {
         id: 2,
-        name: "Filet Mignon",
-        desc: "8oz center-cut, with truffle mashed potatoes and grilled asparagus.",
-        price: "$45",
-        img: "https://i.pinimg.com/736x/4a/de/de/4adede9899cf5f61c2e9a2784ff12e85.jpg"
+        name: "Spaghetti Aglio e Olio",
+        desc: "Garlic, olive oil, and chili–tossed spaghetti with a light, aromatic flavor.",
+        price: "$26",
+        img: "https://i.pinimg.com/1200x/0c/23/95/0c23952cce070f7e131c746426bfc760.jpg"
     },
     {
         id: 3,
-        name: "Lobster Thermidor",
-        desc: "A classic, rich and creamy, baked in its shell.",
-        price: "$55",
-        img: "https://i.pinimg.com/1200x/74/4c/b1/744cb1dd548cf968adb9f348c7637aee.jpg"
+        name: "Vegetarian Tacos",
+        desc: "soft tacos filled with veggies, beans, and toppings",
+        price: "$28",
+        img: "https://images.unsplash.com/photo-1563917193-7f0a5264a1ac?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
 ];
 
@@ -71,18 +71,18 @@ export default function Restaurant() {
                 backgroundImage: `url('https://www.fourcentric.com/wp-content/uploads/2025/01/fc-french-scaled.webp')`
             }}>
                 <div className="z_bar_hero_overlay"></div>
-                <div className="z_bar_hero_content" data-aos="fade-up">
-                    <div className="z_bar_hero_badge" data-aos="fade-down" data-aos-delay="50">
+                <div className="z_bar_hero_content" >
+                    <div className="z_bar_hero_badge" >
                         <div className="z_bar_badge_line"></div>
                         <span className="z_bar_tag">Haute Cuisine</span>
                         <div className="z_bar_badge_line"></div>
                     </div>
-                    <h1 className="z_bar_title" data-aos="zoom-in" data-aos-delay="100">The Epicurean <br /><em>Masterpiece</em></h1>
-                    <p className="z_bar_desc" data-aos="fade-up" data-aos-delay="150">
+                    <h1 className="z_bar_title" >The Epicurean <br /><em>Masterpiece</em></h1>
+                    <p className="z_bar_desc">
                         Where culinary tradition meets modern innovation.
                         Experience a symphony of flavors choreographed by our award-winning chefs.
                     </p>
-                    <div className="z_bar_hero_btns" data-aos="fade-up" data-aos-delay="200">
+                    <div className="z_bar_hero_btns">
                         <Link to="/bookTable" className="z_bar_btn_primary" style={{ background: 'var(--d-restaurant)', borderColor: 'var(--d-restaurant)' }}>Reserve a Table</Link>
                     </div>
                 </div>

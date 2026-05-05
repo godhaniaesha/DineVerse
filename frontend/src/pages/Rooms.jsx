@@ -132,18 +132,18 @@ export default function Rooms() {
             {/* Hero Section */}
             <section className="z_bar_hero" style={{ backgroundImage: `url('https://avatars.mds.yandex.net/get-altay/13482651/2a00000192ea5b8aa6b2e24ecd9b7b364ee4/orig')` }}>
                 <div className="z_bar_hero_overlay"></div>
-                <div className="z_bar_hero_content" data-aos="fade-up">
-                    <div className="z_bar_hero_badge" data-aos="fade-down" data-aos-delay="100">
+                <div className="z_bar_hero_content" >
+                    <div className="z_bar_hero_badge" >
                         <div className="z_bar_badge_line" style={{ background: 'var(--d-room)' }}></div>
                         <span className="z_bar_tag" style={{ color: 'var(--d-room)' }}>Luxury Stays</span>
                         <div className="z_bar_badge_line" style={{ background: 'var(--d-room)' }}></div>
                     </div>
-                    <h1 className="z_bar_title" data-aos="zoom-in" data-aos-delay="200">Refined <em>Comfort</em></h1>
-                    <p className="z_bar_desc" data-aos="fade-up" data-aos-delay="300">
+                    <h1 className="z_bar_title">Refined <em>Comfort</em></h1>
+                    <p className="z_bar_desc" >
                         Experience the perfect blend of elegance and tranquility.
                         Your sanctuary awaits in the heart of the city.
                     </p>
-                    <div className="z_bar_hero_btns" data-aos="fade-up" data-aos-delay="400">
+                    <div className="z_bar_hero_btns">
                         <Link to="/bookRoom" className="z_bar_btn_primary" style={{ background: 'var(--d-room)', borderColor: 'var(--d-room)' }}>Book Your Stay</Link>
                         <Link to="/gallerypage" className="z_bar_btn_outline">View Gallery</Link>
                     </div>

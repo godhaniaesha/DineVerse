@@ -63,7 +63,6 @@ export const getUserBookings = async (req, res) => {
             }))
         ];
 
-
         formattedBookings.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         return res.status(200).json({

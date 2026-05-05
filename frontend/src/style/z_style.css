@@ -66,17 +66,6 @@
   --d-strip-h: 38px;
 }
 
-html, body, #root {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-html::-webkit-scrollbar, 
-body::-webkit-scrollbar,
-#root::-webkit-scrollbar {
-  display: none !important;
-}
-
 /* Bar Page Specifics */
 .z_bar_page {
   background-color: var(--d-bg);

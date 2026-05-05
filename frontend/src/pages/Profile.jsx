@@ -290,7 +290,7 @@ export default function Profile() {
                 <img
                   src={
                     user?.img ||
-                    "https://i.pinimg.com/1200x/40/2a/f5/402af5cd2471b12298d546c82b201988.jpg"
+                    "https://i.pinimg.com/736x/f1/df/38/f1df3837de839d070e9f068649f4edc8.jpg"
                   }
                   alt="Profile"
                   className="z_prof_avatar"
@@ -668,7 +668,7 @@ export default function Profile() {
               <img
                 src={
                   user?.img ||
-                  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
+                  "https://i.pinimg.com/736x/f1/df/38/f1df3837de839d070e9f068649f4edc8.jpg"
                 }
                 alt="Profile"
                 className="z_prof_avatar"

@@ -1,15 +1,3 @@
-/* Luxury Scrollbar - Hide for a cleaner look while keeping functionality */
-html, body, #root {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
-}
-
-html::-webkit-scrollbar, 
-body::-webkit-scrollbar,
-#root::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, and Opera */
-}
-
 /* Toastify luxury theme override using h_style.css variables */
 .Toastify__toast-container {
   width: min(92vw, 400px);
