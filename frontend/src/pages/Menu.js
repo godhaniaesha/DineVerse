@@ -68,16 +68,23 @@ export default function Menu() {
 
     /* intersection observer for staggered reveal */
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         const obs = new IntersectionObserver(
             (entries) => {
                 entries.forEach((e) => {
                     if (e.isIntersecting) {
+                        e.target.classList.add('active');
                         setVisibleIds((prev) => new Set([...prev, e.target.dataset.id]));
                     }
                 });
             },
             { threshold: 0.12 }
         );
+        
+        const revealElements = document.querySelectorAll('.reveal');
+        revealElements.forEach(el => obs.observe(el));
+        
         Object.values(cardRefs.current).forEach((el) => el && obs.observe(el));
         return () => obs.disconnect();
     }, [activeCategory, activeSubcategory, search, mappedItems]);
@@ -157,7 +164,7 @@ export default function Menu() {
                 <header className="x_header">
                     <div className="x_header_noise" />
                     <div className="x_header_glow" />
-                    <div className="x_header_inner">
+                    <div className="x_header_inner reveal reveal-up">
                         <div className="x_eyebrow">
                             <span className="x_eyebrow_line" />
                             <TbChefHat className="x_eyebrow_icon" />
@@ -175,7 +182,7 @@ export default function Menu() {
                 </header>
 
                 {/* ── CATEGORY STRIP ── */}
-                <nav className="x_cat_strip">
+                <nav className="x_cat_strip reveal reveal-up delay-2">
                     <div className="x_cat_inner">
                         {CATEGORIES.map((cat) => (
                             <button
@@ -337,7 +344,7 @@ const MenuCard = forwardRef(function MenuCard({ item, hovered, visible, onHover,
         <article
             ref={ref}
             data-id={item.id}
-            className={`x_menu_card${visible ? " x_visible" : ""}${hovered ? " x_hovered" : ""}`}
+            className={`x_menu_card reveal reveal-up ${visible ? " x_visible" : ""}${hovered ? " x_hovered" : ""}`}
             style={{ "--accent": accent }}
             onMouseEnter={() => onHover(item.id)}
             onMouseLeave={() => onHover(null)}

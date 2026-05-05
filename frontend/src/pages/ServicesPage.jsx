@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Utensils, Wine, Building2, Ticket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import '../style/ServicePage.css';
+import '../style/z_style.css';
 
 const SERVICES = [
   {
@@ -112,12 +113,34 @@ const FAQ = [
 const ServicePage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="sp_page">
       {/* HERO */}
       <section className="sp_hero">
         <div className="sp_hero_inner">
-          <div className="sp_hero_content">
+          <div className="sp_hero_content reveal reveal-left">
             <span className="sp_eyebrow">Services & Experiences</span>
             <h1 className="sp_title">
               Crafted indulgence,
@@ -129,12 +152,12 @@ const ServicePage = () => {
               from dawn espresso rituals to after-midnight tastings.
             </p>
 
-            <div className="sp_hero_cta_row">
+            <div className="sp_hero_cta_row reveal reveal-up delay-2">
               <button className="sp_btn_primary" onClick={() => navigate('/menu')}>View all services</button>
               <button className="sp_btn_ghost" onClick={() => navigate('/bookTable')}>Plan your visit</button>
             </div>
 
-            <div className="sp_highlights">
+            <div className="sp_highlights reveal reveal-up delay-3">
               {HIGHLIGHTS.map((item) => (
                 <div key={item.label} className="sp_highlight_item">
                   <span className="sp_highlight_value">{item.value}</span>
@@ -145,13 +168,13 @@ const ServicePage = () => {
             </div>
           </div>
 
-          <div className="sp_hero_panel">
+          <div className="sp_hero_panel reveal reveal-right">
             <div className="sp_hero_panel_inner">
-              <div className="sp_hero_tag">Open Daily</div>
-              <p className="sp_hero_panel_text">
+              <div className="sp_hero_tag reveal reveal-up delay-2">Open Daily</div>
+              <p className="sp_hero_panel_text reveal reveal-up delay-3">
                 From breakfast in bed to private tasting menus, our team curates every detail so you can simply arrive and unwind.
               </p>
-              <div className="sp_hero_badge_row">
+              <div className="sp_hero_badge_row reveal reveal-up delay-4">
                 <span className="sp_hero_badge">Concierge 24/7</span>
                 <span className="sp_hero_badge">City centre</span>
               </div>
@@ -163,7 +186,7 @@ const ServicePage = () => {
       {/* SERVICES GRID */}
       <section className="d_serv_wrapper sp_services_section">
         <div className="d_serv_container">
-          <header className="d_serv_header sp_services_header">
+          <header className="d_serv_header sp_services_header reveal reveal-up">
             <span className="d_serv_eyebrow">Exquisite Offerings</span>
             <h2 className="d_serv_main_title">All Services</h2>
             <p className="sp_services_intro">
@@ -174,8 +197,8 @@ const ServicePage = () => {
 
           <div className="d_serv_slider">
             <div className="d_serv_grid">
-              {SERVICES.map((service) => (
-                <article key={service.id} className="d_serv_card">
+              {SERVICES.map((service, index) => (
+                <article key={service.id} className={`d_serv_card `}>
                   <div className="d_serv_card_glow" />
 
                   <div className="d_serv_icon_box">
@@ -207,14 +230,14 @@ const ServicePage = () => {
       {/* WHY STAY WITH US */}
       <section className="sp_why">
         <div className="sp_why_inner">
-          <header className="sp_section_header">
+          <header className="sp_section_header reveal reveal-up">
             <span className="sp_section_eyebrow">Why guests return</span>
             <h2 className="sp_section_title">More than just a stay.</h2>
           </header>
 
           <div className="sp_why_grid">
-            {WHY_POINTS.map((item) => (
-              <div key={item.title} className="sp_why_card">
+            {WHY_POINTS.map((item, index) => (
+              <div key={item.title} className={`sp_why_card reveal reveal-up delay-${(index % 3) + 1}`}>
                 <h3 className="sp_why_title">{item.title}</h3>
                 <p className="sp_why_desc">{item.desc}</p>
               </div>
@@ -226,7 +249,7 @@ const ServicePage = () => {
       {/* SERVICE TIMELINE */}
       <section className="sp_timeline">
         <div className="sp_timeline_inner">
-          <header className="sp_section_header sp_timeline_header">
+          <header className="sp_section_header sp_timeline_header reveal reveal-up">
             <span className="sp_section_eyebrow">A day at the house</span>
             <h2 className="sp_section_title">How your day can flow.</h2>
             <p className="sp_timeline_intro">
@@ -236,7 +259,7 @@ const ServicePage = () => {
 
           <div className="sp_timeline_track">
             {TIMELINE.map((slot, index) => (
-              <div key={slot.time} className="sp_timeline_item">
+              <div key={slot.time} className={`sp_timeline_item reveal reveal-left delay-${(index % 4) + 1}`}>
                 <div className="sp_timeline_point" />
                 <div className="sp_timeline_line" />
                 {/* {index < TIMELINE.length - 1 && } */}
@@ -254,14 +277,14 @@ const ServicePage = () => {
       {/* FAQ */}
       <section className="sp_faq">
         <div className="sp_faq_inner">
-          <header className="sp_section_header">
+          <header className="sp_section_header reveal reveal-up">
             <span className="sp_section_eyebrow">Questions</span>
             <h2 className="sp_section_title">Everything you might ask.</h2>
           </header>
 
           <div className="sp_faq_grid">
-            {FAQ.map((item) => (
-              <details key={item.q} className="sp_faq_item">
+            {FAQ.map((item, index) => (
+              <details key={item.q} className={`sp_faq_item reveal reveal-up delay-${(index % 3) + 1}`}>
                 <summary className="sp_faq_question">{item.q}</summary>
                 <p className="sp_faq_answer">{item.a}</p>
               </details>
@@ -272,15 +295,15 @@ const ServicePage = () => {
 
       {/* BOTTOM CTA */}
       <section className="sp_bottom_cta">
-        <div className="sp_bottom_cta_inner">
-          <div className="sp_bottom_cta_text">
+        <div className="sp_bottom_cta_inner reveal reveal-scale">
+          <div className="sp_bottom_cta_text reveal reveal-left delay-2">
             <h2>Ready to design your stay?</h2>
             <p>
               Share your dates and we will craft a bespoke itinerary across dining,
               rooms, and experiences tailored around you.
             </p>
           </div>
-          <div className="sp_bottom_cta_actions">
+          <div className="sp_bottom_cta_actions reveal reveal-right delay-2">
             <button className="sp_btn_primary sp_btn_primary--sm">Talk to concierge</button>
             <button className="sp_btn_ghost sp_btn_ghost--sm">Download brochure</button>
           </div>

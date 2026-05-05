@@ -1,12 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../style/TermsAndConditionsPage.css';
+import '../style/z_style.css';
 
 const TermsAndConditionsPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="tc_page">
       {/* HERO / INTRO */}
       <section className="tc_hero">
-        <div className="tc_container">
+        <div className="tc_container reveal reveal-up">
           <span className="tc_eyebrow">Legal & Use</span>
           <h1 className="tc_title">Terms & Conditions</h1>
           <p className="tc_intro">
@@ -22,11 +45,11 @@ const TermsAndConditionsPage = () => {
       <section className="tc_content">
         <div className="tc_container">
           {/* 1. Acceptance */}
-          <section id="acceptance" className="tc_block">
+          <section id="acceptance" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">1. Acceptance of terms</h2>
             <p className="tc_block_text">
               By accessing or using our website, making a reservation, or staying with us, you agree
-              to be bound by these Terms & Conditions and any additional terms referenced here.[web:65]
+              to be bound by these Terms & Conditions and any additional terms referenced here.
             </p>
             <p className="tc_block_text">
               If you do not agree with these terms, you should not use this website or proceed with a booking.
@@ -35,11 +58,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 2. Reservations & bookings */}
-          <section id="bookings" className="tc_block">
+          <section id="bookings" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">2. Reservations and bookings</h2>
             <p className="tc_block_text">
               When you make a reservation, you confirm that all information provided is accurate,
-              complete, and up to date.[web:61]
+              complete, and up to date.
             </p>
             <ul className="tc_list">
               <li>All bookings are subject to availability and our confirmation.</li>
@@ -53,11 +76,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 3. Prices & payments */}
-          <section id="payments" className="tc_block">
+          <section id="payments" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">3. Prices and payments</h2>
             <p className="tc_block_text">
               All prices shown on our website are displayed in the currency indicated and are subject to change
-              until your booking is confirmed.[web:61]
+              until your booking is confirmed.
             </p>
             <ul className="tc_list">
               <li>
@@ -74,11 +97,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 4. Cancellations */}
-          <section id="cancellations" className="tc_block">
+          <section id="cancellations" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">4. Cancellations, no-shows, and changes</h2>
             <p className="tc_block_text">
               Our cancellation and modification rules depend on the rate or package you select at the
-              time of booking.[web:61]
+              time of booking.
             </p>
             <ul className="tc_list">
               <li>
@@ -97,11 +120,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 5. Guest conduct */}
-          <section id="conduct" className="tc_block">
+          <section id="conduct" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">5. Guest conduct and use of services</h2>
             <p className="tc_block_text">
               We aim to provide a calm and respectful environment for all guests. You agree to use our
-              property and services in a responsible manner at all times.[web:61]
+              property and services in a responsible manner at all times.
             </p>
             <ul className="tc_list">
               <li>
@@ -118,11 +141,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 6. Intellectual property */}
-          <section id="ip" className="tc_block">
+          <section id="ip" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">6. Website content and intellectual property</h2>
             <p className="tc_block_text">
               All content on this website, including text, images, graphics, logos, and layouts, is owned by us
-              or used under licence.[web:62]
+              or used under licence.
             </p>
             <ul className="tc_list">
               <li>
@@ -140,11 +163,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 7. Liability */}
-          <section id="liability" className="tc_block">
+          <section id="liability" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">7. Disclaimer and limitation of liability</h2>
             <p className="tc_block_text">
               We aim to keep all information on this website accurate and up to date, but it is provided
-              “as is” without any guarantees.[web:62]
+              “as is” without any guarantees.
             </p>
             <ul className="tc_list">
               <li>
@@ -161,11 +184,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 8. Governing law */}
-          <section id="law" className="tc_block">
+          <section id="law" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">8. Governing law and disputes</h2>
             <p className="tc_block_text">
               These Terms & Conditions are governed by the laws that apply in the jurisdiction where our
-              property is located, without regard to conflict of law rules.[web:65]
+              property is located, without regard to conflict of law rules.
             </p>
             <p className="tc_block_text">
               Any disputes arising out of or relating to these terms, your booking, or your stay may be
@@ -174,11 +197,11 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 9. Changes */}
-          <section id="changes" className="tc_block">
+          <section id="changes" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">9. Changes to these Terms & Conditions</h2>
             <p className="tc_block_text">
               We may update these Terms & Conditions from time to time to reflect changes in our services,
-              website, or legal requirements.[web:65]
+              website, or legal requirements.
             </p>
             <p className="tc_block_text">
               Any changes will take effect when posted on this page. Your continued use of the website
@@ -187,7 +210,7 @@ const TermsAndConditionsPage = () => {
           </section>
 
           {/* 10. Contact */}
-          <section id="contact" className="tc_block">
+          <section id="contact" className="tc_block reveal reveal-up">
             <h2 className="tc_block_title">10. Contact us</h2>
             <p className="tc_block_text">
               If you have any questions about these Terms & Conditions, please contact us:

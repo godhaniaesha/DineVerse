@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdTableRestaurant, MdPhone, MdPerson, MdAccessTime, MdCalendarToday, MdEmail } from "react-icons/md";
 import { HiSparkles } from "react-icons/hi2";
 import { PiUsersThreeBold, PiCheckCircleBold } from "react-icons/pi";
@@ -19,6 +19,28 @@ export default function TableReservation() {
   const [form, setForm] = useState({ date:"", time:"", guests:"", guest_name:"", phone:"", email:"", notes:"" });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [submitted]);
 
   const update = (k, v) => {
     setForm(f => ({ ...f, [k]: v }));
@@ -68,14 +90,14 @@ export default function TableReservation() {
         <div className="d_resv_layout">
 
           {/* ── LEFT: atmospheric visual ── */}
-          <div className="d_resv_visual">
+          <div className="d_resv_visual reveal reveal-left">
             <img
               src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=85"
               alt="DineVerse dining room"
               className="d_resv_visual__img"
             />
             <div className="d_resv_visual__overlay" />
-            <div className="d_resv_visual__content">
+            <div className="d_resv_visual__content reveal reveal-up delay-2">
               <p className="d_resv_visual__eyebrow">
                 <HiSparkles style={{ fontSize: 8, marginRight: 7, verticalAlign: "middle" }} />
                 Reserve Your Evening
@@ -105,7 +127,7 @@ export default function TableReservation() {
           </div>
 
           {/* ── RIGHT: form ── */}
-          <div className="d_resv_form_panel">
+          <div className="d_resv_form_panel reveal reveal-right">
             {submitted ? (
               <div className="d_resv_success">
                 <div className="d_resv_success__icon"><PiCheckCircleBold /></div>

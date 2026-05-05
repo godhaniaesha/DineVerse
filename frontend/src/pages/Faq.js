@@ -253,7 +253,28 @@ export default function Faq() {
   const [heroVis, setHeroVis] = useState(false);
   const [showPopular, setShowPopular] = useState(false);
 
-  useEffect(() => { setTimeout(() => setHeroVis(true), 80); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setTimeout(() => setHeroVis(true), 80);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [activeCategory, search, showPopular]);
 
   const filtered = FAQS.filter((f) => {
     const matchCat = activeCategory === "all" || f.cat === activeCategory;
@@ -314,7 +335,7 @@ export default function Faq() {
         </header>
 
         {/* ── STATS ── */}
-        <div className="x_faq_stats_wrap">
+        <div className="x_faq_stats_wrap ">
           <div className="x_faq_stats_grid">
             <StatCard value={`${FAQS.length}+`}   label="Questions Answered"  icon={<TbHelp />}       delay="0s" />
             <StatCard value="5"      label="Topic Categories"   icon={<GiKnifeFork />}   delay="0.10s" />
@@ -324,7 +345,7 @@ export default function Faq() {
         </div>
 
         {/* ── CATEGORY STRIP ── */}
-        <nav className="x_faq_nav">
+        <nav className="x_faq_nav reveal reveal-up delay-3">
           <div className="x_faq_nav_inner">
             {CATEGORIES.map((c) => (
               <button

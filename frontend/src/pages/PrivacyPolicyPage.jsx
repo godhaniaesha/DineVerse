@@ -1,12 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../style/PrivacyPolicyPage.css';
+import '../style/z_style.css';
 
 const PrivacyPolicyPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="pp_page">
       {/* HERO / INTRO */}
       <section className="pp_hero">
-        <div className="pp_container">
+        <div className="pp_container reveal reveal-up">
           <span className="pp_eyebrow">Legal & Privacy</span>
           <h1 className="pp_title">Privacy Policy</h1>
           <p className="pp_intro">
@@ -41,15 +64,15 @@ const PrivacyPolicyPage = () => {
         <div className="pp_container">
 
           {/* 1. Info we collect */}
-          <section id="info-we-collect" className="pp_block">
+          <section id="info-we-collect" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">1. Information we collect</h2>
             <p className="pp_block_text">
               We may collect different types of information depending on how you interact with us,
-              for example when you browse our website, make a reservation, or contact our team.[web:51]
+              for example when you browse our website, make a reservation, or contact our team.
             </p>
 
             <div className="pp_two_col">
-              <div className="pp_col">
+              <div className="pp_col reveal reveal-left delay-1">
                 <h3 className="pp_subtitle">1.1 Information you provide directly</h3>
                 <ul className="pp_list">
                   <li>Name and contact details (such as email address and phone number).</li>
@@ -58,7 +81,7 @@ const PrivacyPolicyPage = () => {
                   <li>Messages you send us via forms, email, or chat.</li>
                 </ul>
               </div>
-              <div className="pp_col">
+              <div className="pp_col reveal reveal-right delay-1">
                 <h3 className="pp_subtitle">1.2 Information collected automatically</h3>
                 <ul className="pp_list">
                   <li>Device and browser information.</li>
@@ -71,10 +94,10 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 2. How we use */}
-          <section id="how-we-use" className="pp_block">
+          <section id="how-we-use" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">2. How we use your information</h2>
             <p className="pp_block_text">
-              We use your information only for legitimate purposes connected to providing and improving our services.[web:52]
+              We use your information only for legitimate purposes connected to providing and improving our services.
             </p>
             <ul className="pp_list">
               <li>To process reservations, payments, and manage your stay experience.</li>
@@ -86,11 +109,11 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 3. Cookies */}
-          <section id="cookies" className="pp_block">
+          <section id="cookies" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">3. Cookies and tracking technologies</h2>
             <p className="pp_block_text">
               Our website may use cookies and similar technologies to remember your preferences and
-              understand how visitors use the site.[web:52]
+              understand how visitors use the site.
             </p>
             <ul className="pp_list">
               <li>
@@ -110,10 +133,10 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 4. Sharing */}
-          <section id="sharing" className="pp_block">
+          <section id="sharing" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">4. How we share your information</h2>
             <p className="pp_block_text">
-              We do not sell your personal information. We may share it only in limited situations:[web:51]
+              We do not sell your personal information. We may share it only in limited situations:
             </p>
             <ul className="pp_list">
               <li>
@@ -132,11 +155,11 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 5. Security */}
-          <section id="security" className="pp_block">
+          <section id="security" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">5. How we protect your data</h2>
             <p className="pp_block_text">
               We use technical and organisational measures designed to protect your information from
-              unauthorised access, loss, or misuse.[web:52]
+              unauthorised access, loss, or misuse.
             </p>
             <ul className="pp_list">
               <li>Encrypted connections (HTTPS) on our website where appropriate.</li>
@@ -149,10 +172,10 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 6. Rights */}
-          <section id="rights" className="pp_block">
+          <section id="rights" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">6. Your choices and rights</h2>
             <p className="pp_block_text">
-              Depending on your location and local laws, you may have certain rights regarding your personal information.[web:52]
+              Depending on your location and local laws, you may have certain rights regarding your personal information.
             </p>
             <ul className="pp_list">
               <li>Access: You can request a copy of the personal data we hold about you.</li>
@@ -167,10 +190,10 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 7. Changes */}
-          <section id="changes" className="pp_block">
+          <section id="changes" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">7. Changes to this Privacy Policy</h2>
             <p className="pp_block_text">
-              We may update this Privacy Policy from time to time to reflect changes in our services or legal requirements.[web:52]
+              We may update this Privacy Policy from time to time to reflect changes in our services or legal requirements.
             </p>
             <p className="pp_block_text">
               When we make important changes, we will update the “Effective date” at the top of this page
@@ -179,7 +202,7 @@ const PrivacyPolicyPage = () => {
           </section>
 
           {/* 8. Contact */}
-          <section id="contact" className="pp_block">
+          <section id="contact" className="pp_block reveal reveal-up">
             <h2 className="pp_block_title">8. Contact us</h2>
             <p className="pp_block_text">
               If you have any questions about this Privacy Policy or how we handle your data, you can contact us at:

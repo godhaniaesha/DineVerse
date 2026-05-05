@@ -219,6 +219,7 @@ export default function AdminKDS() {
           </section>
         ))}
         {visibleItems.length === 0 && <section className="ad_card">No kitchen tickets in queue.</section>}
+
       </div>
     </div>
   );
