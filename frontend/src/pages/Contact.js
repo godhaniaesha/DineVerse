@@ -259,7 +259,28 @@ function ContactForm() {
 /* ─── MAIN PAGE ─── */
 export default function Contact() {
   const [heroVis, setHeroVis] = useState(false);
-  useEffect(() => { setTimeout(() => setHeroVis(true), 80); }, []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setTimeout(() => setHeroVis(true), 80);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -285,7 +306,7 @@ export default function Contact() {
         </section>
 
         {/* ── QUICK ACTIONS ── */}
-        <div className="x_quick_bar">
+        <div className="x_quick_bar reveal reveal-up delay-2">
           <a href="tel:+919876543210" className="x_quick_item">
             <FiPhone className="x_quick_icon" />
             <span>Call Us</span>
@@ -309,9 +330,9 @@ export default function Contact() {
           <div className="x_contact_grid">
 
             {/* LEFT — info panel */}
-            <aside className="x_info_panel">
+            <aside className="x_info_panel reveal reveal-left">
               {/* Address */}
-              <div className="x_info_block">
+              <div className="x_info_block reveal reveal-up delay-1">
                 <h3 className="x_info_block_title">
                   <FiMapPin className="x_info_block_icon" /> Find Us
                 </h3>
@@ -331,7 +352,7 @@ export default function Contact() {
               </div>
 
               {/* Map embed placeholder */}
-              <div className="x_map_embed">
+              <div className="x_map_embed reveal reveal-scale delay-2">
                 <div className="x_map_overlay">
                   <FiMapPin className="x_map_pin" />
                   <span>DineVerse, Surat</span>
@@ -348,7 +369,7 @@ export default function Contact() {
               </div>
 
               {/* Hours accordion */}
-              <div className="x_info_block">
+              <div className="x_info_block reveal reveal-up delay-3">
                 <h3 className="x_info_block_title">
                   <FiClock className="x_info_block_icon" /> Opening Hours
                 </h3>
@@ -358,7 +379,7 @@ export default function Contact() {
               </div>
 
               {/* Social */}
-              <div className="x_info_block">
+              <div className="x_info_block reveal reveal-up delay-4">
                 <h3 className="x_info_block_title">Follow DineVerse</h3>
                 <div className="x_socials">
                   {[
@@ -376,7 +397,7 @@ export default function Contact() {
             </aside>
 
             {/* RIGHT — form */}
-            <section className="x_form_panel">
+            <section className="x_form_panel reveal reveal-right">
               <div className="x_form_panel_head">
                 <span className="x_kicker">Write to Us</span>
                 <h2 className="x_form_panel_title">Send a <em>Message</em></h2>

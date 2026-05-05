@@ -99,6 +99,28 @@ export default function GalleryPage() {
   const [isHovering, setIsHovering] = useState(false);
   const containerRef = useRef(null);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [loading, activeTab]);
+
   // Filter only visible images and map them with shapes
   const allVisibleImages = images
     .filter((img) => img.visibility === "Visible")
@@ -147,7 +169,7 @@ export default function GalleryPage() {
     <main className="gp_page">
       {/* HERO */}
       <section className="gp_hero">
-        <div className="gp_container">
+        <div className="gp_container reveal reveal-up">
           <span className="gp_eyebrow">Spaces & Moments</span>
           <h1 className="gp_title">Gallery</h1>
           <p className="gp_intro">
@@ -161,7 +183,7 @@ export default function GalleryPage() {
       <section className="gp_section">
         <div className="gp_container">
           {/* Tabs */}
-          <div className="gp_tabs" role="tablist">
+          <div className="gp_tabs reveal reveal-up delay-2" role="tablist">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
@@ -180,7 +202,7 @@ export default function GalleryPage() {
 
           {/* Masonry grid with custom cursor logic restricted to the grid area */}
           <div
-            className="gp_grid_area"
+            className="gp_grid_area reveal reveal-scale delay-3"
             style={{ position: "relative" }}
             ref={containerRef}
             onMouseMove={handleMouseMove}
@@ -202,7 +224,8 @@ export default function GalleryPage() {
               {filtered.map((item, idx) => (
                 <div
                   key={item.id}
-                  className={`gp_item ${item.shape}`}
+                  className={`gp_item ${item.shape} reveal reveal-up`}
+                  style={{ transitionDelay: `${(idx % 6) * 0.1}s` }}
                   onClick={() => openLightbox(idx)}
                   role="button"
                   tabIndex={0}

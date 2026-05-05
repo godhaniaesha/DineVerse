@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   FaStar, FaAward, FaGlassMartiniAlt, FaMusic, FaLinkedinIn, FaInstagram, FaTwitter,
   FaLeaf, FaWineBottle, FaRegLightbulb, FaGlobeAmericas, FaHandsHelping, FaConciergeBell
@@ -121,6 +121,28 @@ export default function About() {
   const [activeTeamFilter, setActiveTeamFilter] = useState("All");
   const filters = ["All", "Kitchen", "Bar", "Service"];
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [activeTeamFilter]);
+
   const filteredTeam = TEAM.filter(m => {
     if (activeTeamFilter === "All") return true;
     if (activeTeamFilter === "Kitchen") return ["Executive Chef & Founder","Pastry Chef","Sous Chef"].includes(m.title);
@@ -191,7 +213,7 @@ export default function About() {
         <div className="container">
           <div className="row g-5 align-items-center">
             {/* Images */}
-            <div className="col-lg-5 h_anim_right h_d1">
+            <div className="col-lg-5 reveal reveal-left">
               <div className="h_story_img_wrap" style={{ paddingBottom: "1.25rem", paddingRight: "1.25rem" }}>
                 <div className="h_story_img_frame">
                   <img
@@ -207,7 +229,7 @@ export default function About() {
             </div>
 
             {/* Story text */}
-            <div className="col-lg-7 h_anim_up h_d2">
+            <div className="col-lg-7 reveal reveal-right">
               <div className="h_story_body">
                 <div className="h_section_head">
                   <div className="h_section_eyebrow">Our Story</div>
@@ -264,7 +286,7 @@ export default function About() {
       <section className="h_section h_section_alt">
         <div className="container">
           <div className="row">
-            <div className="col-xl-5 h_anim_up">
+            <div className="col-xl-5 reveal reveal-left">
               <div className="h_section_head">
                 <div className="h_section_eyebrow">Our Journey</div>
                 <h2 className="h_section_title">
@@ -274,9 +296,9 @@ export default function About() {
                   From a single-room cellar to a two-starred institution — the milestones that shaped who we are today.
                 </p>
               </div>
-              <div className="h_timeline h_anim_up h_d2">
+              <div className="h_timeline">
                 {TIMELINE.map((t, i) => (
-                  <div className="h_timeline_item" key={t.year}>
+                  <div className={`h_timeline_item reveal reveal-up delay-${(i % 5) + 1}`} key={t.year}>
                     <div className="h_timeline_dot">
                       <div className="h_timeline_dot_inner" />
                     </div>
@@ -293,7 +315,7 @@ export default function About() {
             </div>
 
             {/* Values */}
-            <div className="col-xl-7 h_anim_up h_d2" style={{ marginTop: "0" }}>
+            <div className="col-xl-7 reveal reveal-right" style={{ marginTop: "0" }}>
               <div className="h_section_head" style={{ marginTop: "0.5rem" }}>
                 <div className="h_section_eyebrow">Our Philosophy</div>
                 <h2 className="h_section_title">
@@ -303,8 +325,7 @@ export default function About() {
               <div className="h_values_row">
                 {VALUES.map((v, i) => (
                   <div
-                    className={`h_value_card h_anim_up`}
-                    style={{ animationDelay: `${0.08 * (i + 1)}s` }}
+                    className={`h_value_card reveal reveal-up delay-${(i % 3) + 1}`}
                     key={v.title}
                   >
                     <div className="h_value_icon_wrap">{v.icon}</div>
@@ -323,15 +344,15 @@ export default function About() {
       ══════════════════════════════════════ */}
       <section className="h_section" style={{ padding: "3rem 0" }}>
         <div className="container">
-          <div className="text-center mb-4 h_anim_up">
+          <div className="text-center mb-4 reveal reveal-up">
             <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>Recognition</div>
             <h2 className="h_section_title" style={{ textAlign: "center" }}>
               Honoured by the <em>World's Best</em>
             </h2>
           </div>
-          <div className="h_awards_row h_anim_up h_d2">
-            {AWARDS.map(a => (
-              <div className="h_award_item" key={a.name}>
+          <div className="h_awards_row">
+            {AWARDS.map((a, i) => (
+              <div className={`h_award_item reveal reveal-up delay-${(i % 4) + 1}`} key={a.name}>
                 <span className="h_award_icon">{a.icon}</span>
                 <div className="h_award_name">{a.name}</div>
                 <div className="h_award_year">{a.year}</div>
@@ -346,7 +367,7 @@ export default function About() {
       ══════════════════════════════════════ */}
       <section className="h_section h_section_alt">
         <div className="container">
-          <div className="h_section_head text-center h_anim_up">
+          <div className="h_section_head text-center reveal reveal-up">
             <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>The People Behind the Magic</div>
             <h2 className="h_section_title" style={{ textAlign: "center" }}>
               Meet Our <em>Extraordinary Team</em>
@@ -357,7 +378,7 @@ export default function About() {
           </div>
 
           {/* Filter Tabs */}
-          <div className="d-flex justify-content-center gap-2 flex-wrap mb-5 h_anim_up h_d2">
+          <div className="d-flex justify-content-center gap-2 flex-wrap mb-5 reveal reveal-up delay-2">
             {filters.map(f => (
               <button
                 key={f}
@@ -372,8 +393,7 @@ export default function About() {
           <div className="h_team_grid">
             {filteredTeam.map((member, i) => (
               <div
-                className={`h_chef_card h_anim_up ${member.featured ? "h_featured" : ""}`}
-                style={{ animationDelay: `${0.1 * (i + 1)}s` }}
+                className={`h_chef_card reveal reveal-up delay-${(i % 3) + 1} ${member.featured ? "h_featured" : ""}`}
                 key={member.id}
               >
                 <div className="h_chef_img_wrap">
@@ -412,7 +432,7 @@ export default function About() {
       ══════════════════════════════════════ */}
       <section className="h_section">
         <div className="container">
-          <div className="h_section_head text-center h_anim_up">
+          <div className="h_section_head text-center reveal reveal-up">
             <div className="h_section_eyebrow" style={{ justifyContent: "center" }}>The Space</div>
             <h2 className="h_section_title" style={{ textAlign: "center" }}>
               An Atmosphere Like <em>Nowhere Else</em>
@@ -423,7 +443,7 @@ export default function About() {
           </div>
 
           {/* Photo Mosaic */}
-          <div className="h_ambience_grid h_anim_up h_d1">
+          <div className="h_ambience_grid reveal reveal-scale">
             {AMBIENCE_IMAGES.map((item, i) => (
               <div className={`h_amb_item h_amb_${i + 1}`} key={i}>
                 <img src={item.img} alt={item.label} />
@@ -436,8 +456,7 @@ export default function About() {
           <div className="h_ambience_cards">
             {AMBIENCE_CARDS.map((c, i) => (
               <div
-                className={`h_amb_desc_card h_anim_up`}
-                style={{ animationDelay: `${0.12 * (i + 1)}s` }}
+                className={`h_amb_desc_card reveal reveal-up delay-${(i % 3) + 1}`}
                 key={c.title}
               >
                 <span className="h_amb_desc_icon">{c.icon}</span>
