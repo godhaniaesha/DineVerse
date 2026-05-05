@@ -9,9 +9,6 @@ import {
   FiLogOut,
   FiEdit2,
   FiMapPin,
-  FiPhone,
-  FiMail,
-  FiCheckCircle,
   FiClock,
   FiDownload,
   FiFileText,
@@ -21,8 +18,6 @@ import {
   FiStar,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import "../style/z_style.css";
 import { useAuth } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";

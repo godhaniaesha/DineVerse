@@ -4,9 +4,9 @@ import { useOrder } from "../../contexts/OrderContext";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
-const IcChef = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L6 8C6 11.3142 8.68579 14 12 14C15.3142 14 18 11.3142 18 8V2"/><path d="M6 8C2.68629 8 0 10.6863 0 14C0 17.3137 2.68629 20 6 20H18C21.3137 20 24 17.3137 24 14C24 10.6863 21.3137 8 18 8"/><path d="M9 11L9 14"/><path d="M15 11L15 14"/></svg>;
+const IcChef = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L6 8C6 11.3142 8.68579 14 12 14C15.3142 14 18 11.3142 18 8V2" /><path d="M6 8C2.68629 8 0 10.6863 0 14C0 17.3137 2.68629 20 6 20H18C21.3137 20 24 17.3137 24 14C24 10.6863 21.3137 8 18 8" /><path d="M9 11L9 14" /><path d="M15 11L15 14" /></svg>;
 
-const IcClock = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>;
+const IcClock = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>;
 
 
 const FLOW = ["Pending", "Accepted by Chef", "Preparing", "Ready", "Served / Delivered"];
@@ -27,11 +27,11 @@ export default function AdminOrderManagement() {
   const chefName = localStorage.getItem("adminName") || "";
   const chefId = localStorage.getItem("adminId") || "";
   const isChef = role.includes("Chef");
-  
+
   // Search and filter states for Super Admin/Manager
   const [search, setSearch] = useState("");
   const [areaFilter, setAreaFilter] = useState("All");
-  
+
   const AREAS = ["Restaurant", "Cafe", "Bar"];
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function AdminOrderManagement() {
   // Filter logic for Super Admin/Manager and Chef
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
-    
+
     // For Chef role, filter orders to only show items assigned to this chef
     if (isChef) {
       console.log("👨‍🍳 Chef Data Check:");
@@ -87,7 +87,7 @@ export default function AdminOrderManagement() {
       console.log("- User full_name:", user?.full_name);
       console.log("- All Orders:", orders);
       console.log("- Order items:", orders.map(o => o.items).flat());
-      
+
       return orders.map((order) => {
         // Filter items to only show those assigned to this chef (using full_name like AdminKDS.jsx)
         const filteredItems = order.items?.filter(item => {
@@ -95,9 +95,9 @@ export default function AdminOrderManagement() {
           // Use the same logic as AdminKDS.jsx - compare with user.full_name
           return item.chefId?.full_name === user?.full_name;
         }) || [];
-        
+
         console.log(`Order ${order.orderID} - Filtered items:`, filteredItems.length);
-        
+
         // Return order with only filtered items
         return {
           ...order,
@@ -113,13 +113,13 @@ export default function AdminOrderManagement() {
         return aTime - bTime;
       });
     }
-    
+
     // For Super Admin/Manager, apply existing filters
     if (role === "Super Admin" || role === "Manager") {
       return orders.filter((order) => {
         // Area filter
         const matchArea = areaFilter === "All" || order.tableId?.area === areaFilter;
-        
+
         // Search filter - search in order ID, customer name, table, waiter name, and items
         const searchText = search.toLowerCase();
         const orderText = [
@@ -129,20 +129,20 @@ export default function AdminOrderManagement() {
           order.waiterId?.full_name || "",
           order.items?.map(item => item.name).join(" ") || ""
         ].join(" ").toLowerCase();
-        
+
         const matchSearch = !search || orderText.includes(searchText);
-        
+
         return matchArea && matchSearch;
       });
     }
-    
+
     // For other roles (Waiters), return all orders
     return orders;
   }, [orders, role, areaFilter, search, isChef, chefId]);
 
   return (
     <div className="ad_page">
-      <div className="rooms__header"> 
+      <div className="rooms__header">
         <div>
           <h2 className="ad_h2">
             {isChef ? (
@@ -155,8 +155,8 @@ export default function AdminOrderManagement() {
             )}
           </h2>
           <p className="ad_p">
-            {isChef ? 
-              `Dishes assigned to you for preparation` : 
+            {isChef ?
+              `Dishes assigned to you for preparation` :
               'Track order flow from creation to completion.'
             }
           </p>
@@ -177,10 +177,10 @@ export default function AdminOrderManagement() {
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: 300, marginRight: 8 }}
           />
-          <select 
-            className="rooms__select" 
-            value={areaFilter} 
-            onChange={(e) => setAreaFilter(e.target.value)} 
+          <select
+            className="rooms__select"
+            value={areaFilter}
+            onChange={(e) => setAreaFilter(e.target.value)}
             style={{ marginRight: 8 }}
           >
             <option value="All">All Areas</option>
@@ -190,7 +190,7 @@ export default function AdminOrderManagement() {
           </select>
         </div>
       )}
-      
+
       <div className="ad_table_wrap">
         <table className="ad_table">
           <thead>
@@ -240,11 +240,11 @@ export default function AdminOrderManagement() {
                             const itemCreatedAt = orderRow.currentItem?.createdAt;
                             if (!itemCreatedAt) {
                               return (
-                                <span style={{ 
-                                  backgroundColor: '#6b7280', 
-                                  color: 'white', 
-                                  padding: '2px 8px', 
-                                  borderRadius: '12px', 
+                                <span style={{
+                                  backgroundColor: '#6b7280',
+                                  color: 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
                                   fontSize: '11px',
                                   fontWeight: 'bold'
                                 }}>
@@ -252,20 +252,20 @@ export default function AdminOrderManagement() {
                                 </span>
                               );
                             }
-                            
+
                             const now = new Date();
                             const createdTime = new Date(itemCreatedAt);
                             const timeDiff = now - createdTime; // Difference in milliseconds
                             const minutesDiff = Math.floor(timeDiff / (1000 * 60)); // Convert to minutes
-                            
+
                             // Priority based on time elapsed
                             if (minutesDiff < 5) {
                               return (
-                                <span style={{ 
-                                  backgroundColor: '#10b981', 
-                                  color: 'white', 
-                                  padding: '2px 8px', 
-                                  borderRadius: '12px', 
+                                <span style={{
+                                  backgroundColor: '#10b981',
+                                  color: 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
                                   fontSize: '11px',
                                   fontWeight: 'bold'
                                 }}>
@@ -274,11 +274,11 @@ export default function AdminOrderManagement() {
                               );
                             } else if (minutesDiff < 15) {
                               return (
-                                <span style={{ 
-                                  backgroundColor: '#f59e0b', 
-                                  color: 'white', 
-                                  padding: '2px 8px', 
-                                  borderRadius: '12px', 
+                                <span style={{
+                                  backgroundColor: '#f59e0b',
+                                  color: 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
                                   fontSize: '11px',
                                   fontWeight: 'bold'
                                 }}>
@@ -287,11 +287,11 @@ export default function AdminOrderManagement() {
                               );
                             } else {
                               return (
-                                <span style={{ 
-                                  backgroundColor: '#ef4444', 
-                                  color: 'white', 
-                                  padding: '2px 8px', 
-                                  borderRadius: '12px', 
+                                <span style={{
+                                  backgroundColor: '#ef4444',
+                                  color: 'white',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
                                   fontSize: '11px',
                                   fontWeight: 'bold'
                                 }}>
@@ -302,26 +302,30 @@ export default function AdminOrderManagement() {
                           })()}
                         </div>
                       ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {(role !== "Super Admin" && role !== "Manager") && (
-                            <div>
-                              <button
-                                className="rooms__icon_btn"
-                                onClick={() => setViewOrder(orderRow)}
-                              >
-                                <IcView />
-                              </button>
+                        <>
+                          {orderRow.itemIndex === 0 && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              {(role !== "Super Admin" && role !== "Manager") && (
+                                <div>
+                                  <button
+                                    className="rooms__icon_btn"
+                                    onClick={() => setViewOrder(orderRow)}
+                                  >
+                                    <IcView />
+                                  </button>
+                                </div>
+                              )}
+                              <div>
+                                {orderRow._id.slice(-8)}
+                                {orderRow.totalItems > 1 && (
+                                  <div style={{ fontSize: '11px', color: '#666' }}>
+                                    {orderRow.totalItems} items
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           )}
-                          <div>
-                            {orderRow._id.slice(-8)}
-                            {orderRow.totalItems > 1 && (
-                              <div style={{ fontSize: '11px', color: '#666' }}>
-                                {orderRow.totalItems} items
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        </>
                       )}
                     </td>
 
@@ -338,7 +342,7 @@ export default function AdminOrderManagement() {
                     <td>
                       {orderRow.currentItem ? (
                         <div>
-                          <div style={{ 
+                          <div style={{
                             fontWeight: 'bold',
                             fontSize: isChef ? '14px' : '13px',
                             color: isChef && orderRow.currentItem?.status === 'Pending' ? '#ef4444' : 'inherit'
@@ -354,9 +358,9 @@ export default function AdminOrderManagement() {
                             )}
                           </div>
                           {isChef && orderRow.currentItem?.specialInstructions && (
-                            <div style={{ 
-                              fontSize: '11px', 
-                              color: '#f59e0b', 
+                            <div style={{
+                              fontSize: '11px',
+                              color: '#f59e0b',
                               marginTop: '4px',
                               fontStyle: 'italic'
                             }}>
@@ -382,9 +386,9 @@ export default function AdminOrderManagement() {
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <IcClock />
-                          {orderRow.currentItem?.createdAt ? new Date(orderRow.currentItem.createdAt).toLocaleTimeString('en-US', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
+                          {orderRow.currentItem?.createdAt ? new Date(orderRow.currentItem.createdAt).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
                           }) : '-'}
                         </div>
                       </td>
@@ -468,7 +472,7 @@ export default function AdminOrderManagement() {
                           )}
                         </>
                       )}
-                      
+
                       {/* View button for Chef - always visible */}
                       {isChef && (
                         <button
