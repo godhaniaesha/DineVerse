@@ -5,6 +5,7 @@ import { IoBedOutline } from 'react-icons/io5';
 import { MdOutlineKingBed, MdOutlineVilla, MdOutlineVpnKey } from 'react-icons/md';
 import "../style/h_style.css"
 import { useAuth } from "../contexts/AuthContext";
+import { useReservations } from "../contexts/ReservationContext";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -98,6 +99,7 @@ function CalendarPicker({ label, selectedDate, onSelect, minDate = new Date() })
 
 export default function BookRoom() {
   const { user } = useAuth();
+  const { createPaymentIntent, confirmBooking } = useReservations();
   const location = useLocation();
   const navState = location.state || {};
   const selectedRoomTypeId = navState?.selectedRoomTypeId || "";
@@ -480,10 +482,6 @@ export default function BookRoom() {
     return pricePerNight * nights;
   };
 
-  const totalAmount = calculateTotal();
-  const selectedRoomType = roomTypes.find(r => r.id === roomType);
-  const selectedRoom = availableRooms.find((room) => room._id === roomNo);
-
   const goNext = async () => {
     if (step === 1 && validate1()) setStep(2);
     if (step === 2 && validate2()) setStep(3);
@@ -505,33 +503,27 @@ export default function BookRoom() {
           children,
           roomTypeId: roomType,
           roomId: roomNo,
-          specialRequest: requests
+          specialRequest: requests,
+          userId: user?._id
         };
 
-        const response = await fetch(`${API_BASE_URL}/reservations/createPaymentIntent`, {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-          },
-          body: JSON.stringify(payload)
-        });
-        const data = await response.json();
+        const result = await createPaymentIntent(payload);
 
-        if (!response.ok || !data?.success) {
-          throw new Error(data?.msg || "Payment initialization failed");
+        if (!result.success) {
+          throw new Error(result.error || "Payment initialization failed");
         }
 
-        setPaymentIntentId(data?.data?.paymentIntentId || "");
+        const data = result.data;
+        setPaymentIntentId(data?.paymentIntentId || "");
         setBillingDetails({
-          billingType: data?.data?.billingType || billingDetails.billingType || "",
-          hours: Number(data?.data?.hours || billingDetails.hours || 0),
-          nights: Number(data?.data?.nights || billingDetails.nights || 0),
-          hourlyRate: Number(data?.data?.hourlyRate || billingDetails.hourlyRate || 0),
-          totalAmount: Number(data?.data?.totalAmount || billingDetails.totalAmount || 0)
+          billingType: data?.billingType || billingDetails.billingType || "",
+          hours: Number(data?.hours || billingDetails.hours || 0),
+          nights: Number(data?.nights || billingDetails.nights || 0),
+          hourlyRate: Number(data?.hourlyRate || billingDetails.hourlyRate || 0),
+          totalAmount: Number(data?.totalAmount || billingDetails.totalAmount || 0)
         });
-        if (data?.data?.totalAmount) {
-          const updatedTotal = Number(data.data.totalAmount);
+        if (data?.totalAmount) {
+          const updatedTotal = Number(data.totalAmount);
           setRoomTypes((prev) =>
             prev.map((rt) => (rt.id === roomType ? { ...rt, totalAmount: updatedTotal } : rt))
           );
@@ -574,21 +566,14 @@ export default function BookRoom() {
         paymentIntentId
       };
 
-      const response = await fetch(`${API_BASE_URL}/reservations/confirmBooking`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await response.json();
+      const result = await confirmBooking(payload);
 
-      if (!response.ok || !data?.success) {
-        throw new Error(data?.msg || "Booking failed");
+      if (!result.success) {
+        throw new Error(result.error || "Booking failed");
       }
 
-      setBookingRef(data?.data?.bookingRef || genRef());
+      const data = result.data;
+      setBookingRef(data?.bookingRef || genRef());
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error.message || "Unable to confirm booking");
@@ -598,6 +583,10 @@ export default function BookRoom() {
   };
 
   const fmtDate = d => d ? d.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" }) : null;
+
+  const totalAmount = calculateTotal();
+  const selectedRoomType = roomTypes.find(r => r.id === roomType);
+  const selectedRoom = availableRooms.find((room) => room._id === roomNo);
 
   const reset = () => {
     setSubmitted(false); setStep(1); setFirstName(""); setLastName(""); setEmail(""); setPhone("");
