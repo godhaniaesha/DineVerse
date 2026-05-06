@@ -99,6 +99,80 @@ export const ReservationProvider = ({ children }) => {
     }
   }, [authHeaders]);
 
+  const createPaymentIntent = useCallback(
+    async (bookingData) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/reservations/createPaymentIntent`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
+          body: JSON.stringify(bookingData),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          return { success: true, data: data.data };
+        }
+
+        setError(data.msg || "Failed to create payment intent");
+        return {
+          success: false,
+          error: data.msg || "Failed to create payment intent",
+        };
+      } catch (err) {
+        console.error("Payment intent creation error:", err);
+        setError("Network error. Please try again.");
+        return { success: false, error: "Network error. Please try again." };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authHeaders],
+  );
+
+  const confirmBooking = useCallback(
+    async (bookingData) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/reservations/confirmBooking`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
+          body: JSON.stringify(bookingData),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          // Refresh reservations list
+          await getReservations();
+          return { success: true, data: data.data };
+        }
+
+        setError(data.msg || "Failed to confirm booking");
+        return {
+          success: false,
+          error: data.msg || "Failed to confirm booking",
+        };
+      } catch (err) {
+        console.error("Booking confirmation error:", err);
+        setError("Network error. Please try again.");
+        return { success: false, error: "Network error. Please try again." };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authHeaders, getReservations],
+  );
+
   const updateReservationStatus = useCallback(
     async (id, status) => {
       setLoading(true);
@@ -152,6 +226,8 @@ export const ReservationProvider = ({ children }) => {
         loading,
         error,
         getReservations,
+        createPaymentIntent,
+        confirmBooking,
         updateReservationStatus,
       }}
     >

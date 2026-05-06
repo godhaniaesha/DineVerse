@@ -36,7 +36,7 @@ const roomReservationSchema = new mongoose.Schema(
         nights: { type: Number, required: true },
         paymentStatus: {
             type: String,
-            enum: ["Pending", "Paid", "Failed", "Refunded"],
+            enum: ["Pending", "PartiallyPaid", "Paid", "Failed", "Refunded"],
             default: "Pending"
         },
         paymentIntentId: { type: String, default: null },
