@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { MdStar, MdStarBorder } from "react-icons/md";
 import { HiSparkles } from "react-icons/hi2";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import "./testimonials.css";
 
 const REVIEWS = [
@@ -89,6 +91,12 @@ export default function Testimonials() {
   const [perPage, setPerPage] = useState(3);
 
   useEffect(() => {
+    AOS.init({
+      duration: 500,
+      once: true,
+      easing: 'ease-out',
+    });
+
     const handleResize = () => {
       if (window.innerWidth <= 640) {
         setPerPage(1);
@@ -117,7 +125,7 @@ export default function Testimonials() {
       <div className="d_wrapper">
 
         {/* Header */}
-        <div className="d_testi_header">
+        <div className="d_testi_header" data-aos="fade-up">
           <p className="d_testi_header__eyebrow">
             <span className="d_testi_header__eyebrow-line" />
             Guest Stories
@@ -134,8 +142,8 @@ export default function Testimonials() {
         {/* Review cards */}
         <div className="d_testi_slider">
           <div className="d_testi_track">
-            {visible.map(r => (
-              <div key={r.id} className="d_testi_card">
+            {visible.map((r, index) => (
+              <div key={r.id} className="d_testi_card" data-aos="fade-up" data-aos-delay={index * 100}>
                 <span className="d_testi_card__quote-mark">"</span>
                 <StarRow rating={r.rating} />
                 <p className="d_testi_card__text">"{r.text}"</p>

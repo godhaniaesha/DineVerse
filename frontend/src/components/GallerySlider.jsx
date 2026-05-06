@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { MdClose } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useGallery } from "../contexts/GalleryContext";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import "../style/z_style.css";
 
 const SHAPES = [
@@ -20,6 +22,14 @@ export default function GallerySlider() {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        AOS.init({
+            duration: 500,
+            once: true,
+            easing: 'ease-out',
+        });
+    }, []);
 
     // Filter only visible images and map them with shapes (limit to first 6)
     const visibleImages = images
@@ -57,11 +67,11 @@ export default function GallerySlider() {
 
     return (
         <section className="z_slide_wrapper">
-            <div className="z_slide_header">
+            <div className="z_slide_header" data-aos="fade-up">
                 <span className="z_slide_subtitle">Visual Experience</span>
                 <h2 className="z_slide_title">A Symphony of <em>Flavors & Aesthetics</em></h2>
 
-                <Link to="/gallerypage">
+                <Link to="/gallerypage" data-aos="fade-left" data-aos-delay="200">
                     <button className="z_slide_view_gallery_btn">
                         View Full Gallery
                     </button>
@@ -74,6 +84,8 @@ export default function GallerySlider() {
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
+                data-aos="fade-up"
+                data-aos-delay="300"
             >
                 {/* Custom Cursor Follower */}
                 <div

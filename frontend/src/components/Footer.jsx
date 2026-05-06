@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HiSparkles } from 'react-icons/hi2';
 import { MdPhone, MdEmail, MdLocationOn, MdAccessTime, MdArrowForward } from 'react-icons/md';
 import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function Footer() {
+    useEffect(() => {
+        AOS.init({
+            duration: 500,
+            once: true,
+            easing: 'ease-out',
+        });
+    }, []);
+
     return (
         <footer className="z_footer">
             {/* Background Elements */}
@@ -14,7 +24,7 @@ export default function Footer() {
             <div className="container position-relative">
                 <div className="row g-5">
                     {/* Brand & About */}
-                    <div className="col-lg-4 col-md-12 z_footer_col">
+                    <div className="col-lg-4 col-md-12 z_footer_col" data-aos="fade-right">
                         <div className="z_footer_brand">
                             <Link to="/" className="z_footer_logo_link">
                                 <h2 className="z_footer_logo">
@@ -28,10 +38,10 @@ export default function Footer() {
                                 every moment with obsessive intention and refined aesthetics.
                             </p>
                             <div className="z_footer_socials">
-                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="Facebook"><FaFacebookF /></a>
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="Instagram"><FaInstagram /></a>
-                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="Twitter"><FaTwitter /></a>
-                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="LinkedIn"><FaLinkedinIn /></a>
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="Facebook" data-aos="zoom-in" data-aos-delay="100"><FaFacebookF /></a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="Instagram" data-aos="zoom-in" data-aos-delay="200"><FaInstagram /></a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="Twitter" data-aos="zoom-in" data-aos-delay="300"><FaTwitter /></a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="z_footer_social_link" title="LinkedIn" data-aos="zoom-in" data-aos-delay="400"><FaLinkedinIn /></a>
                             </div>
                         </div>
                     </div>
@@ -40,7 +50,7 @@ export default function Footer() {
                     <div className="col-lg-8">
                         <div className="row g-4">
                             {/* Quick Links */}
-                            <div className="col-md-3 col-6 z_footer_col">
+                            <div className="col-md-3 col-6 z_footer_col" data-aos="fade-up" data-aos-delay="100">
                                 <h4 className="z_footer_heading">Explore</h4>
                                 <ul className="z_footer_links list-unstyled mb-0">
                                     <li><Link to="/"><MdArrowForward className="z_link_icon" /> Home</Link></li>
@@ -52,7 +62,7 @@ export default function Footer() {
                             </div>
 
                             {/* Booking Links */}
-                            <div className="col-md-3 col-6 z_footer_col mb-3">
+                            <div className="col-md-3 col-6 z_footer_col mb-3" data-aos="fade-up" data-aos-delay="200">
                                 <h4 className="z_footer_heading">Reservations</h4>
                                 <ul className="z_footer_links list-unstyled mb-0">
                                     <li><Link to="/bookTable"><MdArrowForward className="z_link_icon" /> Book a Table</Link></li>
@@ -64,7 +74,7 @@ export default function Footer() {
                             </div>
 
                             {/* Contact Info */}
-                            <div className="col-md-6 z_footer_col">
+                            <div className="col-md-6 z_footer_col" data-aos="fade-left" data-aos-delay="300">
                                 <h4 className="z_footer_heading">Connect</h4>
                                 <ul className="z_footer_info list-unstyled">
                                     <li className="z_info_item">
@@ -123,7 +133,7 @@ export default function Footer() {
                 {/* Newsletter / Subscription Section Placeholder could go here */}
 
                 {/* Bottom Bar */}
-                <div className="z_footer_bottom">
+                <div className="z_footer_bottom" data-aos="fade-up" data-aos-offset="0">
                     <div className="row align-items-center">
                         <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
                             <p className="z_footer_copy mb-0">

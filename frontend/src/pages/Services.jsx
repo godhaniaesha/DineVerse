@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Utensils, Wine, Building2, Ticket } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import '../style/services.css';
 
 const SERVICES = [
@@ -35,11 +37,19 @@ const SERVICES = [
 ];
 
 const Services = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 500,
+      once: true,
+      easing: 'ease-out',
+    });
+  }, []);
+
   return (
     <section className="d_serv_wrapper">
       <div className="d_serv_container">
 
-        <header className="d_serv_header">
+        <header className="d_serv_header" data-aos="fade-up">
           <span className="d_serv_eyebrow">Exquisite Offerings</span>
           <h2 className="d_serv_main_title">Our Services</h2>
         </header>
@@ -48,9 +58,9 @@ const Services = () => {
 
           <div className="d_serv_grid">
 
-            {SERVICES.map((service) => (
+            {SERVICES.map((service, index) => (
 
-              <div key={service.id} className="d_serv_card">
+              <div key={service.id} className="d_serv_card" data-aos="fade-up" data-aos-delay={index * 100}>
 
                 <div className="d_serv_card_glow"></div>
 

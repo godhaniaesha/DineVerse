@@ -2055,7 +2055,7 @@ body {
 .z_prof_bookings_list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  /* gap: 1.5rem; */
 }
 
 .z_prof_booking_card {

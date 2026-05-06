@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { HiArrowLongRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import '../style/hero.css';
 
 const SLIDES = [
@@ -32,6 +34,12 @@ const Hero = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    AOS.init({
+      duration: 500,
+      once: true,
+      easing: 'ease-out',
+    });
+
     const timer = setInterval(() => {
       setActive((prev) => (prev + 1) % SLIDES.length);
     }, 6000);
@@ -48,11 +56,11 @@ const Hero = () => {
           </div>
 
           <div className="d_hero_sec_content">
-            <span className="d_hero_sec_eyebrow">{slide.label}</span>
-            <h1 className="d_hero_sec_title">{slide.title}</h1>
-            <p className="d_hero_sec_desc">{slide.desc}</p>
+            <span className="d_hero_sec_eyebrow" data-aos="fade-down" data-aos-delay="100">{slide.label}</span>
+            <h1 className="d_hero_sec_title" data-aos="zoom-in" data-aos-delay="200">{slide.title}</h1>
+            <p className="d_hero_sec_desc" data-aos="fade-up" data-aos-delay="300">{slide.desc}</p>
             
-            <div className="d_hero_sec_cta_group">
+            <div className="d_hero_sec_cta_group" data-aos="fade-up" data-aos-delay="400">
               <button className="d_hero_sec_btn d_hero_sec_btn--gold" onClick={() => navigate('/services')}>Discover More</button>
               <button className="d_hero_sec_btn" onClick={() => navigate('/gallerypage')}>Virtual Tour</button>
             </div>
@@ -62,7 +70,7 @@ const Hero = () => {
       ))}
 
       {/* Modern Editorial Controls */}
-      <div className="d_hero_sec_controls">
+      <div className="d_hero_sec_controls" data-aos="fade-left" data-aos-delay="500">
         <span className="d_hero_sec_number">{SLIDES[active].id}</span>
         <div className="d_hero_sec_progress">
           <div 

@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoWineOutline, IoFlameOutline } from "react-icons/io5";
 import { PiBeerSteinBold, PiLeafBold } from "react-icons/pi";
-import { HiSparkles, HiHeart, HiOutlineHeart } from "react-icons/hi2";
+import { HiSparkles } from "react-icons/hi2";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { MdOutlineLocalBar } from "react-icons/md";
 import { GiMartini } from "react-icons/gi";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import "./barDrinks.css";
 import "../style/z_style.css";
 import { useMenu } from "../contexts/MenuContext";
@@ -34,9 +36,7 @@ function toSlug(value) {
 }
 
 /* ── DRINK CARD ───────────────────────────────────────────── */
-function DrinkCard({ drink }) {
-  const [faved, setFaved] = useState(false);
-
+function DrinkCard({ drink, aos, aosDelay }) {
   const price =
     typeof drink.price === "string"
       ? drink.price.replace("₹", "")
@@ -48,7 +48,7 @@ function DrinkCard({ drink }) {
     drink.drinkCategory || drink.categoryName || drink.category || "Bar";
 
   return (
-    <div className="d_bar_card">
+    <div className="d_bar_card" data-aos={aos} data-aos-delay={aosDelay}>
       <div className="d_bar_card__img-wrap">
         <img
           src={drink.img}
@@ -79,18 +79,6 @@ function DrinkCard({ drink }) {
             <sup>₹</sup>
             {price}
           </span>
-          <button
-            className={
-              "d_bar_card__fav" +
-              (faved ? " d_bar_card__fav--active" : "")
-            }
-            onClick={() => setFaved((v) => !v)}
-            aria-label={
-              faved ? "Remove from favourites" : "Add to favourites"
-            }
-          >
-            {faved ? <HiHeart /> : <HiOutlineHeart />}
-          </button>
         </div>
       </div>
     </div>
@@ -124,6 +112,14 @@ export default function BarDrinks() {
   const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
   const { mappedDishes = [], loading } = useMenu();
+
+  useEffect(() => {
+    AOS.init({
+      duration: 500,
+      once: true,
+      easing: 'ease-out',
+    });
+  }, []);
 
   // only Bar dishes (area ma "Bar")
   const barDishes = useMemo(
@@ -236,7 +232,7 @@ export default function BarDrinks() {
         {/* HERO SPLIT */}
         <div className="d_bar_hero">
           {/* Right — hero media */}
-          <div className="d_bar_hero__right">
+          <div className="d_bar_hero__right" data-aos="fade-left">
             <div className="z_bar_media_container">
               <div className="z_bar_main_video">
                 <video
@@ -247,7 +243,7 @@ export default function BarDrinks() {
                   src="/video/kfhg.mp4"
                 ></video>
               </div>
-              <div className="z_bar_overlap_img z_slide_shape_arch">
+              <div className="z_bar_overlap_img z_slide_shape_arch" data-aos="zoom-in" data-aos-delay="200">
                 <img
                   src="https://i.pinimg.com/736x/ff/32/47/ff32474e9817eda52b828c15c64c9620.jpg"
                   alt="Signature Cocktail"
@@ -257,24 +253,24 @@ export default function BarDrinks() {
           </div>
 
           {/* Left — editorial copy */}
-          <div className="d_bar_hero__left">
-            <p className="d_bar_hero__eyebrow">
+          <div className="d_bar_hero__left" data-aos="fade-right">
+            <p className="d_bar_hero__eyebrow" data-aos="fade-down" data-aos-delay="100">
               <span className="d_bar_hero__eyebrow-gem">◆</span>
               The Bar at DineVerse
             </p>
 
             <div className="d_bar_hero__content">
-              <h2 className="d_bar_hero__title">
+              <h2 className="d_bar_hero__title" data-aos="zoom-in" data-aos-delay="200">
                 Where Every Sip
                 <em>Tells a Story</em>
               </h2>
-              <p className="d_bar_hero__body">
+              <p className="d_bar_hero__body" data-aos="fade-up" data-aos-delay="300">
                 Step into our dimly lit sanctuary of crafted spirits, natural
                 wines, and house-brewed ales. Our bartenders are artists — each
                 pour a composition of flavour, memory, and mood.
               </p>
 
-              <div className="d_bar_hero__stats">
+              <div className="d_bar_hero__stats" data-aos="fade-up" data-aos-delay="400">
                 <div className="d_bar_hero__stat">
                   <span className="d_bar_hero__stat-num">80+</span>
                   <span className="d_bar_hero__stat-label">Spirits</span>
@@ -289,7 +285,7 @@ export default function BarDrinks() {
                 </div>
               </div>
 
-              <button className="d_bar_hero__cta" onClick={handleExplore}>
+              <button className="d_bar_hero__cta" onClick={handleExplore} data-aos="fade-up" data-aos-delay="500">
                 <IoWineOutline style={{ fontSize: 16 }} />
                 Explore Drinks
                 <span className="d_bar_hero__cta-arrow">
@@ -301,13 +297,16 @@ export default function BarDrinks() {
         </div>
 
         {/* MARQUEE */}
-        <BarMarquee />
+        <div data-aos="fade">
+          <BarMarquee />
+        </div>
 
         {/* TABS */}
         <div
           className="d_bar_tabs"
           role="tablist"
           aria-label="Filter drinks by category"
+          data-aos="fade-up"
         >
           {TABS.map((tab) => (
             <button
@@ -337,8 +336,8 @@ export default function BarDrinks() {
 
         {/* CARDS GRID */}
         <div className="d_bar_grid" role="tabpanel">
-          {filtered.map((drink) => (
-            <DrinkCard key={drink.id} drink={drink} />
+          {filtered.map((drink, index) => (
+            <DrinkCard key={drink.id} drink={drink} aos="fade-up" aosDelay={index * 50} />
           ))}
           {filtered.length === 0 && (
             <p style={{ padding: 16, textAlign: "center" }}>
@@ -348,7 +347,7 @@ export default function BarDrinks() {
         </div>
 
         {/* BOTTOM CTA BANNER */}
-        <div className="d_bar_banner">
+        <div className="d_bar_banner" data-aos="zoom-in">
           <div className="d_bar_banner__text">
             <span className="d_bar_banner__label">
               <HiSparkles

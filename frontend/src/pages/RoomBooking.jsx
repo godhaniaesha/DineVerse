@@ -9,6 +9,8 @@ import { IoWineOutline } from "react-icons/io5";
 import { BsShieldCheck } from "react-icons/bs";
 import { LuCalendarCheck } from "react-icons/lu";
 import { useRooms } from "../contexts/RoomContext";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import "./roomBooking.css";
 
 const style = document.createElement("style");
@@ -129,7 +131,7 @@ const transformRoomType = (roomType, index) => ({
 
 const transformRoomTypes = (roomTypes = []) => roomTypes.map(transformRoomType);
 
-function RoomCard({ room, onBook }) {
+function RoomCard({ room, onBook, aos, aosDelay }) {
   const words = room.desc.split(" ");
   const truncatedDesc = words.length > 14 ? `${words.slice(0, 14).join(" ")}...` : room.desc;
 
@@ -138,7 +140,11 @@ function RoomCard({ room, onBook }) {
   const availabilityText = !isAvailable ? "Sold out" : availableCount > 0 ? `${availableCount} available` : "Available";
 
   return (
-    <div className={`d_rooms_card${room.featured ? " d_rooms_card--featured" : ""}${!isAvailable ? " d_rooms_card--unavailable" : ""}`}>
+    <div 
+      className={`d_rooms_card${room.featured ? " d_rooms_card--featured" : ""}${!isAvailable ? " d_rooms_card--unavailable" : ""}`}
+      data-aos={aos}
+      data-aos-delay={aosDelay}
+    >
       <div className="d_rooms_card__img-wrap">
         <img src={room.img} alt={room.name} className="d_rooms_card__img" loading="lazy" />
 
@@ -210,6 +216,14 @@ export default function RoomBooking() {
   const checkOutTime = "11:00";
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState("");
+
+  useEffect(() => {
+    AOS.init({
+      duration: 500,
+      once: true,
+      easing: 'ease-out',
+    });
+  }, []);
 
   const handleBook = (room) =>
     navigate("/bookRoom", {
@@ -331,7 +345,7 @@ export default function RoomBooking() {
     <section className="d_rooms_section">
       <div className="d_wrapper">
         <div className="d_rooms_header">
-          <div className="d_rooms_header__left">
+          <div className="d_rooms_header__left" data-aos="fade-right">
             <p className="d_rooms_header__eyebrow">
               <span className="d_rooms_header__eyebrow-line" />
               Stays & Suites
@@ -342,7 +356,7 @@ export default function RoomBooking() {
               <em>Refined Luxury</em>
             </h2>
           </div>
-          <div className="d_rooms_header__right">
+          <div className="d_rooms_header__right" data-aos="fade-left">
             <p className="d_rooms_header__desc">
               Each room at DineVerse is a world of its own - thoughtfully designed spaces where comfort meets artistry,
               just moments from the dining floor and bar.
@@ -389,7 +403,7 @@ export default function RoomBooking() {
         </div> */}
 
         {availabilityError ? (
-          <div className="d_rooms_error" style={{ padding: "12px 20px", marginBottom: 22 }}>
+          <div className="d_rooms_error" style={{ padding: "12px 20px", marginBottom: 22 }} data-aos="fade">
             {availabilityError}
           </div>
         ) : null}
@@ -400,20 +414,26 @@ export default function RoomBooking() {
             <p>{loading ? "Loading available rooms..." : "Checking available rooms..."}</p>
           </div>
         ) : error ? (
-          <div className="d_rooms_error">
+          <div className="d_rooms_error" data-aos="fade">
             <p>{error}</p>
           </div>
         ) : (
           <div className="d_rooms_grid">
-            {rooms.map((room) => (
-              <RoomCard key={room.id} room={room} onBook={handleBook} />
+            {rooms.map((room, index) => (
+              <RoomCard 
+                key={room.id} 
+                room={room} 
+                onBook={handleBook} 
+                aos="fade-up" 
+                aosDelay={index * 100}
+              />
             ))}
           </div>
         )}
 
         <div className="d_rooms_perks">
           {PERKS.map((perk, index) => (
-            <div key={index} className="d_rooms_perk">
+            <div key={index} className="d_rooms_perk" data-aos="fade-up" data-aos-delay={index * 100}>
               <div className="d_rooms_perk__icon-wrap">{perk.icon}</div>
               <span className="d_rooms_perk__title">{perk.title}</span>
               <p className="d_rooms_perk__desc">{perk.desc}</p>
@@ -421,7 +441,7 @@ export default function RoomBooking() {
           ))}
         </div>
 
-        <div className="d_rooms_cta_row">
+        <div className="d_rooms_cta_row" data-aos="fade-up">
           <p className="d_rooms_cta_row__note">
             <HiSparkles style={{ fontSize: 8, marginRight: 6, verticalAlign: "middle" }} />
             Best rate guarantee | Breakfast included | Free cancellation

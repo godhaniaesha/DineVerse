@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PiCoffeeBold, PiKnifeBold } from "react-icons/pi";
 import { IoWineOutline, IoFlameOutline } from "react-icons/io5";
@@ -7,6 +7,8 @@ import { HiSparkles } from "react-icons/hi2";
 import { MdStar } from "react-icons/md";
 import { BADGE_META } from "./Menu";
 import { useMenu } from "../contexts/MenuContext";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import "./featuredMenu.css";
 
 const TABS = [
@@ -99,7 +101,7 @@ function Badge({ type }) {
 }
 
 /* ── MENU CARD ────────────────────────────────────────────── */
-function MenuCard({ item }) {
+function MenuCard({ item, aos, aosDelay }) {
   const navigate = useNavigate();
   const price =
     typeof item.price === "string"
@@ -117,7 +119,7 @@ function MenuCard({ item }) {
   const catSlug = toSlug(catName); // restaurant / cafe / bar
 
   return (
-    <div className="d_featured__card">
+    <div className="d_featured__card" data-aos={aos} data-aos-delay={aosDelay}>
       <Badge type={badge} />
 
       {/* Image */}
@@ -167,6 +169,14 @@ export default function FeaturedMenu() {
   const [activeTab, setActiveTab] = useState("all");
   const { mappedDishes: MENU_ITEMS = [], loading } = useMenu();
 
+  useEffect(() => {
+    AOS.init({
+      duration: 500,
+      once: true,
+      easing: 'ease-out',
+    });
+  }, []);
+
   // category normalize: restaurant / cafe / bar
   const normalized = useMemo(
     () =>
@@ -211,7 +221,7 @@ export default function FeaturedMenu() {
     <section className="d_featured">
       <div className="d_wrapper">
         {/* Header */}
-        <div className="d_featured__header">
+        <div className="d_featured__header" data-aos="fade-up">
           <p className="d_featured__eyebrow">
             <span className="d_featured__eyebrow-line" />
             Our Menu
@@ -231,6 +241,8 @@ export default function FeaturedMenu() {
           className="d_featured__tabs"
           role="tablist"
           aria-label="Filter menu by category"
+          data-aos="fade-up"
+          data-aos-delay="100"
         >
           {TABS.map((tab) => (
             <button
@@ -251,13 +263,13 @@ export default function FeaturedMenu() {
 
         {/* Grid */}
         <div className="d_featured__grid" role="tabpanel">
-          {filtered.map((item) => (
-            <MenuCard key={item.id} item={item} />
+          {filtered.map((item, index) => (
+            <MenuCard key={item.id} item={item} aos="fade-up" aosDelay={index * 50} />
           ))}
         </div>
 
         {/* CTA */}
-        <div className="d_featured__cta-row">
+        <div className="d_featured__cta-row" data-aos="fade-up" data-aos-delay="200">
           <Link
             to="/menu"
             className="d_featured__cta"

@@ -8,7 +8,7 @@
 .d_rooms_section {
   position: relative !important;
   background: var(--d-bg) !important;
-  padding: 70px 0 80px !important;
+  padding: 70px 0 0px !important;
   overflow: hidden !important;
 }
 
@@ -865,7 +865,7 @@
 
 @media (max-width: 860px) {
   .d_rooms_section {
-    padding: 72px 0 80px !important;
+    padding: 72px 0 0px !important;
   }
   .d_rooms_header {
     flex-direction: column !important;

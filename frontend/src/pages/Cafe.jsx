@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight, FaCoffee, FaLeaf, FaClock } from "react-icons/fa";
 import { GiCoffeeBeans, GiCroissant } from "react-icons/gi";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const COFFEE_ITEMS = [
     {
@@ -47,6 +49,11 @@ export default function Cafe() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        AOS.init({
+            duration: 500,
+            once: true,
+            easing: 'ease-out',
+        });
     }, []);
 
     const nextTestimonial = () => {
@@ -70,7 +77,7 @@ export default function Cafe() {
                     </div>
                     <h1 className="z_bar_title">The Soul of <br /><em>Premium Coffee</em></h1>
                     <p className="z_bar_desc">
-                        Discover a world of rich aromas and delightful pastries. 
+                        Discover a world of rich aromas and delightful pastries.
                         A perfect start to your morning, or a relaxing sweet escape.
                     </p>
                     <div className="z_bar_hero_btns">
@@ -83,17 +90,17 @@ export default function Cafe() {
             {/* Coffee Experience - Masonry Layout */}
             <section className="z_bar_section" style={{ background: 'var(--d-bg)' }}>
                 <div className="container">
-                    <div className="z_bar_section_header">
+                    <div className="z_bar_section_header" data-aos="fade-up">
                         <span className="z_bar_subtitle" style={{ color: 'var(--d-cafe)' }}>Morning Ritual</span>
                         <h2 className="z_bar_section_title">Our <em>Artisanal</em> Brews</h2>
                     </div>
                     <div className="z_cafe_masonry">
-                        {COFFEE_ITEMS.map((drink) => (
-                            <div key={drink.id} className="z_cafe_masonry_item">
+                        {COFFEE_ITEMS.map((drink, index) => (
+                            <div key={drink.id} className="z_cafe_masonry_item" data-aos="fade-up" data-aos-delay={index * 100}>
                                 <img src={drink.img} alt={drink.name} style={{ width: '100%', height: 'auto', display: 'block' }} />
                                 <div style={{ padding: '1rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
-                                        <h3 style={{ color: 'var(--d-cafe)',fontWeight: '700', margin: 0, fontSize: '1.1rem', fontFamily: 'var(--d-font-serif)' }}>{drink.name}</h3>
+                                        <h3 style={{ color: 'var(--d-cafe)', fontWeight: '700', margin: 0, fontSize: '1.1rem', fontFamily: 'var(--d-font-serif)' }}>{drink.name}</h3>
                                         {/* <span style={{ color: 'var(--d-cafe)', fontWeight: '700', fontSize: '0.9rem' }}>{drink.price}</span> */}
                                     </div>
                                     <p style={{ color: 'var(--d-text-3)', fontSize: '0.8rem', margin: 0, lineHeight: '1.4' }}>{drink.desc}</p>
@@ -101,7 +108,7 @@ export default function Cafe() {
                             </div>
                         ))}
                         {/* Extra item for masonry look */}
-                        <div className="z_cafe_masonry_item" style={{ background: 'var(--d-cafe)', color: '#000', padding: '1.2rem' }}>
+                        <div className="z_cafe_masonry_item" style={{ background: 'var(--d-cafe)', color: '#000', padding: '1.2rem' }} data-aos="fade-up" data-aos-delay="300">
                             <h3 style={{ fontFamily: 'var(--d-font-serif)', fontSize: '1.4rem', marginBottom: '0.6rem' }}>Freshly Roasted</h3>
                             <p style={{ margin: '0 0 0.8rem 0', fontSize: '0.85rem', lineHeight: '1.4' }}>We roast our beans in small batches every single morning to ensure the peak of flavor.</p>
                             <Link to="/menu" style={{ color: '#000', fontWeight: '700', textDecoration: 'underline', fontSize: '0.85rem' }}>See Roasting Schedule</Link>
@@ -114,7 +121,7 @@ export default function Cafe() {
             <section style={{ padding: '40px 0', background: 'var(--d-surface-2)' }}>
                 <div className="container">
                     <div className="row align-items-center g-4">
-                        <div className="col-lg-6">
+                        <div className="col-lg-6" data-aos="fade-right">
                             <div style={{ borderRadius: 'var(--d-r-lg)', overflow: 'hidden', height: '300px', boxShadow: 'var(--d-shadow-lg)', border: '1px solid var(--d-border)' }}>
                                 <video
                                     autoPlay
@@ -126,7 +133,7 @@ export default function Cafe() {
                                 ></video>
                             </div>
                         </div>
-                        <div className="col-lg-6">
+                        <div className="col-lg-6" data-aos="fade-left">
                             <div className="px-md-4">
                                 <span className="z_bar_subtitle" style={{ color: 'var(--d-cafe)' }}>The Pour</span>
                                 <h2 className="z_bar_section_title" style={{ textAlign: 'left', fontSize: '1.8rem', marginTop: '0.5rem', marginBottom: '1rem' }}>The <em>Perfect</em> Extraction</h2>
@@ -143,21 +150,21 @@ export default function Cafe() {
             <section className="z_cafe_methods_section" style={{ padding: '60px 0', background: 'var(--d-bg)' }}>
                 <div className="container">
                     <div className="row g-3 justify-content-center">
-                        <div className="col-lg-4 col-md-6">
+                        <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="50">
                             <div style={{ textAlign: 'center', padding: '1.5rem', border: '1px solid var(--d-border)', borderRadius: 'var(--d-r-lg)', transition: 'all 0.3s ease', background: 'var(--d-surface-2)', height: '100%' }} className="z_method_hover">
                                 <GiCoffeeBeans style={{ color: 'var(--d-cafe)', fontSize: '2rem', marginBottom: '0.8rem' }} />
                                 <h3 style={{ fontFamily: 'var(--d-font-serif)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>Ethically Sourced</h3>
                                 <p style={{ color: 'var(--d-text-2)', fontSize: '0.8rem', marginBottom: 0, lineHeight: '1.4' }}>Direct trade partnerships with sustainable farms across the globe.</p>
                             </div>
                         </div>
-                        <div className="col-lg-4 col-md-6">
+                        <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                             <div style={{ textAlign: 'center', padding: '1.5rem', border: '1px solid var(--d-border)', borderRadius: 'var(--d-r-lg)', transition: 'all 0.3s ease', background: 'var(--d-surface-2)', height: '100%' }} className="z_method_hover">
                                 <FaCoffee style={{ color: 'var(--d-cafe)', fontSize: '2rem', marginBottom: '0.8rem' }} />
                                 <h3 style={{ fontFamily: 'var(--d-font-serif)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>Expert Roasting</h3>
                                 <p style={{ color: 'var(--d-text-2)', fontSize: '0.8rem', marginBottom: 0, lineHeight: '1.4' }}>Small-batch roasting to bring out the unique profile of every bean.</p>
                             </div>
                         </div>
-                        <div className="col-lg-4 col-md-6">
+                        <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
                             <div style={{ textAlign: 'center', padding: '1.5rem', border: '1px solid var(--d-border)', borderRadius: 'var(--d-r-lg)', transition: 'all 0.3s ease', background: 'var(--d-surface-2)', height: '100%' }} className="z_method_hover">
                                 <FaLeaf style={{ color: 'var(--d-cafe)', fontSize: '2rem', marginBottom: '0.8rem' }} />
                                 <h3 style={{ fontFamily: 'var(--d-font-serif)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>Pure Ingredients</h3>
@@ -169,23 +176,23 @@ export default function Cafe() {
             </section>
 
             {/* Testimonials - Cafe Style */}
-            <section style={{ padding: '60px 0', background: 'var(--d-surface-2)' }}>
+            <section style={{ padding: '60px 0', background: 'var(--d-surface-2)' }} data-aos="fade-up">
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8" style={{ textAlign: 'center' }}>
-                            <div style={{ width: '36px', height: '36px', background: 'var(--d-cafe)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                            <div style={{ width: '36px', height: '36px', background: 'var(--d-cafe)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }} data-aos="zoom-in" data-aos-delay="100">
                                 <FaClock style={{ color: '#000', fontSize: '0.9rem' }} />
                             </div>
-                            <h2 style={{ fontFamily: 'var(--d-font-serif)', fontSize: '1.5rem', marginBottom: '1rem' }}>{TESTIMONIALS[currentTestimonial].title}</h2>
-                            <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: 'var(--d-text-2)', maxWidth: '550px', margin: '0 auto' }}>"{TESTIMONIALS[currentTestimonial].content}"</p>
-                            <div style={{ marginTop: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem' }}>
+                            <h2 style={{ fontFamily: 'var(--d-font-serif)', fontSize: '1.5rem', marginBottom: '1rem' }} data-aos="fade-up" data-aos-delay="200">{TESTIMONIALS[currentTestimonial].title}</h2>
+                            <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: 'var(--d-text-2)', maxWidth: '550px', margin: '0 auto' }} data-aos="fade-up" data-aos-delay="300">"{TESTIMONIALS[currentTestimonial].content}"</p>
+                            <div style={{ marginTop: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem' }} data-aos="fade-up" data-aos-delay="400">
                                 <div style={{ height: '1px', width: '15px', background: 'var(--d-cafe)' }}></div>
                                 <span style={{ fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.65rem', color: 'var(--d-cafe)' }}>{TESTIMONIALS[currentTestimonial].author}</span>
                                 <div style={{ height: '1px', width: '15px', background: 'var(--d-cafe)' }}></div>
                             </div>
-                            
+
                             {/* Navigation for Testimonials */}
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.8rem', marginTop: '1.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.8rem', marginTop: '1.5rem' }} data-aos="fade-up" data-aos-delay="500">
                                 <button onClick={prevTestimonial} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-text-2)', padding: '0.4rem', borderRadius: '50%', cursor: 'pointer', transition: 'all 0.3s' }} className="z_testimonial_nav_btn">
                                     <FaChevronLeft size={10} />
                                 </button>

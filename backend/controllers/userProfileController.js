@@ -132,7 +132,6 @@ export const getUserBillingHistory = async (req, res) => {
             }
         });
 
-
         combinedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         res.status(200).json({
