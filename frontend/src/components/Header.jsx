@@ -62,10 +62,6 @@ const STRIP_ITEMS = [
   "Seasonal Tasting Menu",
 ];
 
-const SEARCH_TAGS = [
-  "Espresso", "Pasta", "Cocktails",
-  "Brunch", "Fine Wine", "Suite", "Vegan", "Tasting Menu",
-];
 
 /* ── LOGO ─────────────────────────────────────────────────── */
 function Logo({ onClick }) {
@@ -108,6 +104,7 @@ function SearchOverlay({ open, onClose }) {
   const { mappedDishes: MENU_ITEMS } = useMenu();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (open) {
@@ -119,21 +116,99 @@ function SearchOverlay({ open, onClose }) {
   }, [open]);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        console.log('Fetching categories...');
+        const response = await fetch('http://localhost:8000/api/food/getCategories');
+        const data = await response.json();
+        console.log('Categories response:', data);
+        
+        if (data.success && data.data) {
+          const categoryNames = data.data.map(cat => cat.name);
+          console.log('Category names:', categoryNames);
+          setCategories(categoryNames);
+        } else {
+          console.log('No categories found or API error');
+          // Fallback to some default categories if API fails
+          setCategories(['Appetizers', 'Main Course', 'Desserts', 'Beverages', 'Salads', 'Soups']);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        // Fallback to some default categories if API fails
+        setCategories(['Appetizers', 'Main Course', 'Desserts', 'Beverages', 'Salads', 'Soups']);
+      }
+    };
+    
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     if (!query.trim() || !MENU_ITEMS) {
       setResults([]);
       return;
     }
 
     const q = query.toLowerCase();
-    const filtered = MENU_ITEMS.filter(item =>
-      item.name.toLowerCase().includes(q) ||
-      item.desc.toLowerCase().includes(q) ||
-      item.category.toLowerCase().includes(q) ||
-      item.tag.toLowerCase().includes(q)
-    ).slice(0, 6); // Limit results for better UI
+    console.log('Searching for:', q);
+    console.log('Available categories from API:', categories);
+    
+    // Show all dish categories for comparison
+    const dishCategories = MENU_ITEMS.map(item => item.category).filter(Boolean);
+    console.log('Categories in dishes:', [...new Set(dishCategories)]);
+    
+    // Check if the query matches any category exactly
+    const isCategorySearch = categories.some(cat => cat.toLowerCase() === q);
+    console.log('Is category search:', isCategorySearch);
+    
+    // Mapping of food categories to dish areas
+    const categoryToAreaMap = {
+      'appetizer': ['restaurant'],
+      'sides': ['restaurant'],
+      'mains': ['restaurant'],
+      'dessert': ['restaurant', 'cafe'],
+      'spirits': ['bar'],
+      'drinks': ['bar', 'cafe'],
+      'cocktails': ['bar'],
+      'wine': ['bar'],
+      'beer': ['bar'],
+      'mocktails': ['bar'],
+      'signature': ['bar'],
+      'toasts': ['cafe'],
+      'light meals': ['cafe'],
+      'salads': ['cafe'],
+      'snacks': ['cafe'],
+      'tonics': ['bar']
+    };
+    
+    const filtered = MENU_ITEMS.filter(item => {
+      const itemCategory = item.category ? item.category.toLowerCase() : '';
+      const itemName = item.name ? item.name.toLowerCase() : '';
+      const itemDesc = item.desc ? item.desc.toLowerCase() : '';
+      const itemTag = item.tag ? item.tag.toLowerCase() : '';
+      
+      console.log(`Checking item: ${item.name}, category: "${item.category}" (lowercase: "${itemCategory}")`);
+      
+      // If it's a category search, filter by mapped areas
+      if (isCategorySearch) {
+        const mappedAreas = categoryToAreaMap[q] || [];
+        const matches = mappedAreas.includes(itemCategory);
+        console.log(`Category search match for "${item.name}": ${matches} (item area: "${itemCategory}", mapped areas for "${q}": [${mappedAreas.join(', ')}])`);
+        return matches;
+      }
+      
+      // Otherwise search in all fields
+      const matches = itemName.includes(q) || 
+                     itemDesc.includes(q) || 
+                     itemCategory.includes(q) || 
+                     itemTag.includes(q);
+      console.log(`General match for "${item.name}": ${matches}`);
+      return matches;
+    }).slice(0, 6); // Limit results for better UI
 
+    console.log('Final filtered results:', filtered);
+    console.log('Number of results:', filtered.length);
     setResults(filtered);
-  }, [query, MENU_ITEMS]);
+  }, [query, MENU_ITEMS, categories]);
 
   const handleResultClick = (id) => {
     navigate(`/dish/${id}`);
@@ -207,16 +282,23 @@ function SearchOverlay({ open, onClose }) {
           </div>
         ) : (
           <div className="d_search__tags">
-            {SEARCH_TAGS.map((tag) => (
-              <button
-                key={tag}
-                className="d_search__tag"
-                onClick={() => handleTagClick(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
+            {console.log('Rendering categories:', categories)}
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <button
+                  key={category}
+                  className="d_search__tag"
+                  onClick={() => handleTagClick(category)}
+                >
+                  {category}
+                </button> 
+              ))
+            ) : (
+              <div style={{padding: '10px', color: '#666'}}>
+                Loading categories...
+              </div>
+            )}
+           </div>
         )}
       </div>
     </div>
