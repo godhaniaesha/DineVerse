@@ -23,10 +23,21 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  useEffect(() => {
+  useEffect(() => { 
     fetchDashboardData();
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+  console.log('====================================');
+  console.log(dashboardData);
+  console.log('====================================');
 
   const fetchDashboardData = async () => {
     try {
@@ -187,19 +198,33 @@ export default function AdminDashboard() {
 
         <section className="ad_card" style={{ overflow: "hidden" }}>
           <h3 className="ad_card__title">Top Menu Items</h3>
-          <div style={{ width: "100%", height: 300 }}>
+          <div style={{ width: "100%", height: isMobile ? 240 : 300 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={dashboardData.topChartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                margin={{
+                  top: 10,
+                  right: isMobile ? 5 : 10,
+                  left: isMobile ? -30 : -20,
+                  bottom: 0,
+                }}
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke="#ddd"
                   vertical={false}
                 />
-                <XAxis dataKey="time" stroke="#666" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#666" tick={{ fontSize: 10 }} />
+                <XAxis
+                  dataKey="time"
+                  stroke="#666"
+                  tick={{ fontSize: isMobile ? 9 : 10 }}
+                  interval={isMobile ? "preserveStartEnd" : 0}
+                />
+                <YAxis
+                  stroke="#666"
+                  tick={{ fontSize: isMobile ? 9 : 10 }}
+                  width={isMobile ? 30 : 40}
+                />
                 <Tooltip
                   cursor={{ fill: "rgba(212,163,115,0.08)" }} // soft hover highlight
                   contentStyle={{
@@ -207,22 +232,29 @@ export default function AdminDashboard() {
                     border: "none",
                     borderRadius: "10px",
                     boxShadow: "0 6px 18px rgba(0,0,0,0.1)",
-                    padding: "8px 12px",
+                    padding: isMobile ? "6px 8px" : "8px 12px",
                     backdropFilter: "blur(6px)",
+                    zIndex: 100,
                   }}
                   labelStyle={{
                     color: "#888",
-                    fontSize: "11px",
+                    fontSize: isMobile ? "10px" : "11px",
                     marginBottom: "2px",
                   }}
                   itemStyle={{
                     color: "#333",
                     fontWeight: "600",
-                    fontSize: "13px",
+                    fontSize: isMobile ? "11px" : "13px",
                   }}
                   formatter={(value) => `${value} orders`}
                 />{" "}
-                <Legend wrapperStyle={{ fontSize: "10px" }} />
+                <Legend
+                  wrapperStyle={{
+                    fontSize: isMobile ? "9px" : "10px",
+                    paddingTop: isMobile ? "10px" : "0",
+                    left: isMobile ? 0 : "auto",
+                  }}
+                />
                 {dashboardData.bestSellingDishes.map((dish, index) => {
                   const colors = ["#d4a373", "#ff6b6b", "#4ecdc4", "#a78bfa"];
                   return (
@@ -231,8 +263,8 @@ export default function AdminDashboard() {
                       type="monotone"
                       dataKey={dish.name}
                       stroke={colors[index % colors.length]}
-                      strokeWidth={2}
-                      dot={{ r: 3 }}
+                      strokeWidth={isMobile ? 1.5 : 2}
+                      dot={isMobile ? { r: 2 } : { r: 3 }}
                       activeDot={{ r: 5 }}
                     />
                   );

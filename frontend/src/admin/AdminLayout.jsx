@@ -523,9 +523,7 @@ export default function AdminLayout() {
                   >
                     {link.icon}
                     {link.label}
-                    {link.badge && (
-                      <span className="ad_link__badge">{link.badge}</span>
-                    )}
+                    
                   </NavLink>
                 ))}
               </nav>
