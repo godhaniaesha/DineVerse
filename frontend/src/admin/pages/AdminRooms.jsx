@@ -293,7 +293,7 @@ export default function AdminRooms() {
                     {roomTypeOptions.map(t => <option key={t}>{t}</option>)}
                 </select>
                 <select className="rooms__select" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-                    <option value="All">All statuses</option>
+                    <option value="All">All status</option>
                     {Object.entries(STATUS_LABELS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                 </select>
                 {hasFilter && (
