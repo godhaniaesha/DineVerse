@@ -173,7 +173,7 @@ export default function AdminUsers() {
           onChange={(e) => setStatusFilter(e.target.value)}
           style={{ marginRight: 8 }}
         >
-          <option value="All">All Statuses</option>
+          <option value="All">All Status</option>
           {STATUSES.map((status) => (
             <option key={status} value={status}>{status}</option>
           ))}

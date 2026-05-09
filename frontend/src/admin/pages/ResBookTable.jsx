@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useAuth } from "../../contexts/AuthContext";
+import { MdCheck, MdDoneAll, MdClose } from "react-icons/md";
 
 const IcCheck = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20 6L9 17l-5-5"/></svg>;
 
@@ -80,17 +81,40 @@ export default function ResBookTable() {
                   <td>{row.guests} guests</td>
                   <td><span className="ad_chip">{row.status}</span></td>
                   <td>
-                    <div className="d-flex align-items-center" style={{ gap: "6px" }}>
+                    <div className="d-flex align-items-center" style={{ gap: "8px" }}>
                       {row.status === "Confirmed" ? (
-                        <button className="rooms__icon_btn rooms__icon_btn--primary" title="Accept Booking" onClick={() => acceptBooking(row._id)}><IcCheck /></button>
+                        <button 
+                          className="rooms__icon_btn" 
+                          title="Accept Booking" 
+                          onClick={() => acceptBooking(row._id)}
+                          style={{ color: "var(--ad-champ)", borderColor: "rgba(200, 150, 90, 0.3)" }}
+                        >
+                          <MdCheck size={18} />
+                        </button>
                       ) : row.status === "Arrived" ? (
-                          <span style={{ fontSize: "14px", color: "var(--ad-champ-lt)", fontWeight: "500" }}>{row.waiter || "Self"}</span>
+                          <span style={{ fontSize: "14px", color: "var(--ad-champ-lt)", fontWeight: "500", marginRight: "4px" }}>{row.waiter || "Self"}</span>
                       ) : null}
+                      
                       {row.status === "Arrived" && (
-                        <button className="rooms__icon_btn" title="Complete Booking" onClick={() => completeBooking(row._id)}>✓</button>
+                        <button 
+                          className="rooms__icon_btn" 
+                          title="Complete Booking" 
+                          onClick={() => completeBooking(row._id)} 
+                          style={{ color: "var(--ad-champ)", borderColor: "rgba(200, 150, 90, 0.3)" }}
+                        >
+                          <MdDoneAll size={18} />
+                        </button>
                       )}
+                      
                       {(row.status === "Confirmed" || row.status === "Arrived") && (
-                        <button className="rooms__icon_btn" title="Cancel Booking" onClick={() => cancelBooking(row._id)} style={{ color: "#ff4444" }}>×</button>
+                        <button 
+                          className="rooms__icon_btn" 
+                          title="Cancel Booking" 
+                          onClick={() => cancelBooking(row._id)} 
+                          style={{ color: "var(--ad-champ)", opacity: 0.7, borderColor: "rgba(255, 255, 255, 0.1)" }}
+                        >
+                          <MdClose size={18} />
+                        </button>
                       )}
                     </div>
                   </td>
