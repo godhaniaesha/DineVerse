@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "../../styleadmin/AdminRooms.css";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useRooms } from "../../contexts/RoomContext";
+import Pagination from "../components/Pagination";
 
 const STATUS_LABELS = { "Available": "Available", "Occupied": "Occupied", "Reserved": "Reserved", "Maintenance": "Maintenance" };
 const STATUS_CYCLE = ["Available", "Occupied", "Reserved", "Maintenance"];
@@ -160,6 +161,8 @@ export default function AdminRooms() {
     const [search, setSearch] = useState("");
     const [modal, setModal] = useState(null);
     const [editForm, setEditForm] = useState(EMPTY_FORM);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         console.log("AdminRooms - useEffect - calling getRooms and getRoomTypes");
@@ -240,6 +243,20 @@ export default function AdminRooms() {
 
     const hasFilter = filterType !== "All Types" || filterStatus !== "All" || search;
     const roomTypeOptions = ["All Types", ...roomTypes.map(rt => rt.display_name || rt.name)];
+
+    /* Pagination */
+    const paginatedRooms = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return filtered.slice(startIndex, endIndex);
+    }, [filtered, currentPage]);
+
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+    /* Reset to page 1 when filters change */
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterType, filterStatus, search]);
 
     return (
         <div className="rooms">
@@ -329,7 +346,7 @@ export default function AdminRooms() {
                                 <tr>
                                     <td colSpan={8} className="rooms__empty">No rooms match your filters</td>
                                 </tr>
-                            ) : filtered.map(room => (
+                            ) : paginatedRooms.map(room => (
                                 <tr key={room._id} onClick={() => openView(room)}>
                                     <td className="rooms__td_number">#{room.roomNumber}</td>
                                     <td>
@@ -360,6 +377,14 @@ export default function AdminRooms() {
                     </table>
                 </div>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                itemsPerPage={itemsPerPage}
+                totalItems={filtered.length}
+            />
 
             {/* LEGEND */}
             <div className="rooms__legend">

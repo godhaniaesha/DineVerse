@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useStaff } from "../../contexts/StaffContext";
 import { useAuth } from "../../contexts/AuthContext";
+import Pagination from "../components/Pagination";
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -161,6 +162,8 @@ export default function AdminStaffManagement() {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [cuisines, setCuisines] = useState([]);
   const [cuisinesLoading, setCuisinesLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const close = () => {
     setModal(null);
@@ -270,6 +273,15 @@ export default function AdminStaffManagement() {
 
   const staffWithoutSuperAdmin = staff.filter(s => s.role !== "Super Admin");
 
+  /* Pagination */
+  const paginatedStaff = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return staffWithoutSuperAdmin.slice(startIndex, endIndex);
+  }, [staffWithoutSuperAdmin, currentPage]);
+
+  const totalPages = Math.ceil(staffWithoutSuperAdmin.length / itemsPerPage);
+
   return (
     <div className="ad_page">
       <div className="rooms__header">
@@ -309,7 +321,7 @@ export default function AdminStaffManagement() {
                 <td colSpan={8} className="rooms__empty">No staff found</td>
               </tr>
             ) : (
-              staffWithoutSuperAdmin.map((r) => (
+              paginatedStaff.map((r) => (
                 <tr key={r._id}>
                   <td>{r.full_name}</td>
                   <td>{r.role}</td>
@@ -340,6 +352,14 @@ export default function AdminStaffManagement() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={staffWithoutSuperAdmin.length}
+      />
 
       {/* Add/Edit Modal */}
       {(modal?.mode === "add" || modal?.mode === "edit") && (

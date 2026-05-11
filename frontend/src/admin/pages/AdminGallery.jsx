@@ -1,7 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useGallery } from "../../contexts/GalleryContext";
 import { toast } from "react-toastify";
+import Pagination from "../components/Pagination";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 const IcEye = () => (
@@ -27,6 +28,8 @@ export default function AdminGallery() {
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({ title: "", category: "Ambiance", img: null, visibility: "Visible" });
   const fileInputRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -82,6 +85,20 @@ export default function AdminGallery() {
   const visibleCount = images.filter((image) => image.visibility === "Visible").length;
   const hiddenCount = images.length - visibleCount;
 
+  /* Pagination */
+  const paginatedImages = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return images.slice(startIndex, endIndex);
+  }, [images, currentPage]);
+
+  const totalPages = Math.ceil(images.length / itemsPerPage);
+
+  /* Reset to page 1 when images change */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [images.length]);
+
   if (loading) return <div className="ad_page"><div className="ad_h2">Loading Gallery...</div></div>;
 
   return (
@@ -123,7 +140,7 @@ export default function AdminGallery() {
         <table className="ad_table">
           <thead><tr><th>Preview</th><th>Title</th><th>Category</th><th>Visibility</th><th>Actions</th></tr></thead>
           <tbody>
-            {images.map((image) => (
+            {paginatedImages.map((image) => (
               <tr key={image._id}>
                 <td><img src={image.img} alt={image.title} className="ad_gallery_img" style={{ width: 120, height: 72, marginBottom: 0, objectFit: 'cover' }} /></td>
                 <td>{image.title}</td>
@@ -151,6 +168,13 @@ export default function AdminGallery() {
         </table>
       </div>
 
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={images.length}
+      />
 
       {modal?.mode === "add" && (
         <>

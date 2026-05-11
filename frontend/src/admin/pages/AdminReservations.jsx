@@ -174,8 +174,10 @@ export default function AdminReservations() {
               </tr>
             ) : (
               latestTenReservations.map((row) => (
+                console.log(row,"row"),
+                
                 <tr key={row.id}>
-                  <td>{row.id}</td>
+                  <td>{row.reservation}</td>
                   <td>{row.guest}</td>
                   <td>{row.date}</td>
                   <td>{row.time}</td>

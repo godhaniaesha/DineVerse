@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTable } from "../../contexts/TableContext";
 import DeleteIconButton from "../components/DeleteIconButton";
+import Pagination from "../components/Pagination";
 
 const EMPTY_FORM = {
   tableNo: "",
@@ -45,6 +46,8 @@ export default function AdminTables() {
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [areaFilter, setAreaFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // 🔄 Map backend → frontend
   const rows = tables.map((t) => ({
@@ -128,6 +131,24 @@ export default function AdminTables() {
     }
   };
 
+  /* Pagination */
+  const filtered = useMemo(() => {
+    return rows.filter((row) => areaFilter === "All" || row.area === areaFilter);
+  }, [rows, areaFilter]);
+
+  const paginatedRows = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filtered.slice(startIndex, endIndex);
+  }, [filtered, currentPage]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  /* Reset to page 1 when filters change */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [areaFilter]);
+
   return (
     <div className="ad_page">
       {/* HEADER */}
@@ -178,9 +199,7 @@ export default function AdminTables() {
                 </td>
               </tr>
             ) : (
-              rows
-                .filter((row) => areaFilter === "All" || row.area === areaFilter)
-                .map((row) => (
+              paginatedRows.map((row) => (
                   <tr key={row.id}>
                     <td>{row.tableNo}</td>
                     <td>{row.area}</td>
@@ -209,6 +228,14 @@ export default function AdminTables() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={filtered.length}
+      />
 
       {/* ADD / EDIT MODAL */}
       {(modal?.mode === "add" || modal?.mode === "edit") && (
