@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
+import Pagination from "../components/Pagination";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
@@ -31,6 +32,8 @@ export default function AdminOrderManagement() {
   // Search and filter states for Super Admin/Manager
   const [search, setSearch] = useState("");
   const [areaFilter, setAreaFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const AREAS = ["Restaurant", "Cafe", "Bar"];
 
@@ -140,6 +143,20 @@ export default function AdminOrderManagement() {
     return orders;
   }, [orders, role, areaFilter, search, isChef, chefId]);
 
+  // Pagination
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredOrders.slice(startIndex, endIndex);
+  }, [filteredOrders, currentPage]);
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, areaFilter]);
+
   return (
     <div className="ad_page">
       <div className="rooms__header">
@@ -209,30 +226,26 @@ export default function AdminOrderManagement() {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders
-              // .filter(filterByRoleAndArea)
-              .length === 0 ? (
+            {paginatedOrders.length === 0 ? (
               <tr>
                 <td colSpan={role === "Super Admin" || role === "Manager" ? "6" : "7"} style={{ textAlign: 'center', padding: '2rem' }}>
                   <p style={{ margin: 0, color: '#666' }}>No orders found for your area</p>
                 </td>
               </tr>
             ) : (
-              filteredOrders
-                // .filter(filterByRoleAndArea)
+              paginatedOrders
                 .flatMap((order) =>
                   order.items && order.items.length > 0
                     ? order.items.map((item, itemIndex) => ({
                       ...order,
                       currentItem: item,
                       itemIndex: itemIndex,
-                      totalItems: order.items.length
+                      totalItems: order.items.length,
                     }))
                     : [{ ...order, currentItem: null, itemIndex: 0, totalItems: 0 }]
                 )
                 .map((orderRow, index) => (
                   <tr key={`${orderRow._id}-${orderRow.itemIndex}`}>
-
                     <td>
                       {isChef ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -490,6 +503,15 @@ export default function AdminOrderManagement() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={filteredOrders.length}
+      />
+
       {viewOrder && (
         <>
 

@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useAuth } from "../../contexts/AuthContext";
+import Pagination from "../components/Pagination";
 
 const IcCheck = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20 6L9 17l-5-5" /></svg>;
 
@@ -23,6 +24,8 @@ export default function CafeBookTable() {
     const { reservations, loading, getReservations, updateReservationStatus } = useTableReservation();
     const { user } = useAuth();
     const [modal, setModal] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     const adminName = user?.full_name || localStorage.getItem("adminName") || "Waiter";
 
@@ -48,6 +51,15 @@ export default function CafeBookTable() {
 
     const cafeReservations = reservations.filter(r => r.area === "Cafe");
 
+    // Pagination
+    const paginatedData = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return cafeReservations.slice(startIndex, endIndex);
+    }, [cafeReservations, currentPage]);
+
+    const totalPages = Math.ceil(cafeReservations.length / itemsPerPage);
+
     return (
         <div className="ad_page">
             <div className="rooms__header">
@@ -62,7 +74,7 @@ export default function CafeBookTable() {
                         ) : cafeReservations.length === 0 ? (
                             <tr><td colSpan="7" style={{ textAlign: "center" }}>No reservations found</td></tr>
                         ) : (
-                            cafeReservations.map((row) => (
+                            paginatedData.map((row) => (
                                 console.log(row, "row"),
 
                                 <tr
@@ -101,6 +113,14 @@ export default function CafeBookTable() {
                     </tbody>
                 </table>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                itemsPerPage={itemsPerPage}
+                totalItems={cafeReservations.length}
+            />
         </div>
     );
 }

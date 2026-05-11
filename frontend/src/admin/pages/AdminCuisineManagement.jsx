@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useMenu } from "../../contexts/MenuContext";
 import { toast } from "react-toastify";
+import Pagination from "../components/Pagination";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
 
@@ -11,17 +12,23 @@ const truncate = (str, len = 35) => str && str.length > len ? str.slice(0, len) 
 
 const EMPTY = { name: "", img: null, area: "Restaurant", status: "Active", description: "" };
 const CHEF_ROLES = new Set(["Cafe Chef", "Restaurant Chef", "Bar Chef"]);
+const MANAGER_ROLES = new Set(["Super Admin", "Manager"]);
+
+const canEdit = (adminRole) => MANAGER_ROLES.has(adminRole);
 
 export default function AdminCuisineManagement() {
   const { cuisines: rows, loading, addCuisine, updateCuisine, deleteCuisine } = useMenu();
   const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const isChefRole = CHEF_ROLES.has(adminRole);
+  const canEditItems = canEdit(adminRole);
   
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [search, setSearch] = useState("");
   const [areaFilter, setAreaFilter] = useState("All");
   const [sortBy, setSortBy] = useState("None");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const fileInputRef = useRef(null);
 
   const close = () => {
@@ -81,6 +88,20 @@ export default function AdminCuisineManagement() {
     return list;
   }, [filtered, sortBy]);
 
+  // Pagination
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sorted.slice(startIndex, endIndex);
+  }, [sorted, currentPage]);
+
+  const totalPages = Math.ceil(sorted.length / itemsPerPage);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, areaFilter, sortBy]);
+
   if (loading) return <div className="ad_page"><div className="ad_h2">Loading Cuisines...</div></div>;
 
   return (
@@ -90,7 +111,7 @@ export default function AdminCuisineManagement() {
           <h2 className="ad_h2">Cuisine Management</h2>
           <p className="ad_p">Create and manage cuisines by area with search and sort.</p>
         </div>
-        {!isChefRole && (
+        {canEditItems && (
           <button className="rooms__add_btn" onClick={() => { setForm(EMPTY); setModal({ mode: "add" }); }}>
             Add Cuisine
           </button>
@@ -127,7 +148,7 @@ export default function AdminCuisineManagement() {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((r) => (
+            {paginatedData.map((r) => (
               <tr key={r._id}>
                 <td>{r.name}</td>
                 <td>
@@ -142,7 +163,7 @@ export default function AdminCuisineManagement() {
                 <td><span className="ad_chip">{r.status}</span></td>
                 <td>
                   <div className="d-flex" style={{gap:"6px"}}>
-                  {!isChefRole ? (
+                  {canEditItems ? (
                     <>
                       <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, img: r.img }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
                       <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
@@ -154,14 +175,22 @@ export default function AdminCuisineManagement() {
                 </td>
               </tr>
             ))}
-            {sorted.length === 0 && (
+            {paginatedData.length === 0 && (
               <tr><td colSpan={7} className="rooms__empty">No cuisines match filters</td></tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {!isChefRole && (modal?.mode === "add" || modal?.mode === "edit") && (
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={sorted.length}
+      />
+
+      {canEditItems && (modal?.mode === "add" || modal?.mode === "edit") && (
         <>
           <div className="rooms__modal_overlay" onClick={close} />
           <div className="rooms__modal_box">
@@ -191,7 +220,7 @@ export default function AdminCuisineManagement() {
           </div>
         </>
       )}
-      {!isChefRole && modal?.mode === "delete" && (
+      {canEditItems && modal?.mode === "delete" && (
         <>
           <div className="rooms__modal_overlay" onClick={close} />
           <div className="rooms__modal_box">
