@@ -196,6 +196,7 @@ export default function AdminBilling() {
     // ❌ Stop
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      alert(`Validation Error: ${Object.values(newErrors).join(", ")}`);
       return;
     }
 
@@ -423,9 +424,18 @@ export default function AdminBilling() {
                       className="ad_input"
                       placeholder="customer@example.com"
                       value={customerEmail}
-                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      onChange={(e) => {
+                        setCustomerEmail(e.target.value);
+                        setErrors(prev => ({ ...prev, customerEmail: "" }));
+                      }}
                       required
+                      style={{ borderColor: errors.customerEmail ? "#ff4444" : "" }}
                     />
+                    {errors.customerEmail && (
+                      <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                        {errors.customerEmail}
+                      </p>
+                    )}
                   </div>
 
                   {/* Payment Method Selection */}
@@ -469,9 +479,18 @@ export default function AdminBilling() {
                           className="ad_input"
                           placeholder="Enter UPI ID (e.g., user@paytm)"
                           value={upiId}
-                          onChange={(e) => setUpiId(e.target.value)}
+                          onChange={(e) => {
+                            setUpiId(e.target.value);
+                            setErrors(prev => ({ ...prev, upiId: "" }));
+                          }}
                           required
+                          style={{ borderColor: errors.upiId ? "#ff4444" : "" }}
                         />
+                        {errors.upiId && (
+                          <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                            {errors.upiId}
+                          </p>
+                        )}
                       </div>
                     )}
 
@@ -493,7 +512,13 @@ export default function AdminBilling() {
                             }}
                             maxLength="19"
                             required
+                            style={{ borderColor: errors.cardNumber ? "#ff4444" : "" }}
                           />
+                          {errors.cardNumber && (
+                            <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                              {errors.cardNumber}
+                            </p>
+                          )}
                         </div>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                           <div>
@@ -514,7 +539,13 @@ export default function AdminBilling() {
                               }}
                               maxLength="5"
                               required
+                              style={{ borderColor: errors.cardExpiry ? "#ff4444" : "" }}
                             />
+                            {errors.cardExpiry && (
+                              <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                                {errors.cardExpiry}
+                              </p>
+                            )}
                           </div>
                           <div>
                             <label className="rooms__form_label">CVV</label>
@@ -530,7 +561,13 @@ export default function AdminBilling() {
                               }}
                               maxLength="3"
                               required
+                              style={{ borderColor: errors.cardCvv ? "#ff4444" : "" }}
                             />
+                            {errors.cardCvv && (
+                              <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                                {errors.cardCvv}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -543,8 +580,12 @@ export default function AdminBilling() {
                           <select
                             className="ad_input"
                             value={bankName}
-                            onChange={(e) => setBankName(e.target.value)}
+                            onChange={(e) => {
+                              setBankName(e.target.value);
+                              setErrors(prev => ({ ...prev, bankName: "" }));
+                            }}
                             required
+                            style={{ borderColor: errors.bankName ? "#ff4444" : "" }}
                           >
                             <option value="">Select Bank</option>
                             <option value="SBI">State Bank of India</option>
@@ -556,6 +597,11 @@ export default function AdminBilling() {
                             <option value="Kotak">Kotak Mahindra Bank</option>
                             <option value="Other">Other</option>
                           </select>
+                          {errors.bankName && (
+                            <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                              {errors.bankName}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className="rooms__form_label">Account Holder Name</label>
@@ -569,7 +615,13 @@ export default function AdminBilling() {
                               setErrors(prev => ({ ...prev, accountHolderName: "" }));
                             }}
                             required
+                            style={{ borderColor: errors.accountHolderName ? "#ff4444" : "" }}
                           />
+                          {errors.accountHolderName && (
+                            <p style={{ color: "#ff4444", fontSize: "12px", marginTop: "4px" }}>
+                              {errors.accountHolderName}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className="rooms__form_label">Amount</label>

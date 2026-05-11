@@ -606,6 +606,7 @@ export default function BookRoom() {
         <div className="h_grain" />
         <main className="h_main">
           <div className="h_wrap" style={{ maxWidth: "820px" }}>
+
             <div className="h_card" style={{ textAlign: "center", padding: "2.2rem 1.5rem" }}>
               <div className="h_card_title" style={{ marginBottom: ".8rem" }}>Room Reservation</div>
               <div className="h_err_msg" style={{ marginBottom: "1.2rem" }}>{initialAvailabilityError}</div>
@@ -624,7 +625,7 @@ export default function BookRoom() {
 
   return (
     <>
-      <div className="h_page">
+      <div className="h_page">   
         <div className="h_atm" />
         <div className="h_atm_mid" />
         <div className="h_grid_veil" />

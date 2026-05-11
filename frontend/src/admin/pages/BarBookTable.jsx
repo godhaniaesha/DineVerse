@@ -84,13 +84,12 @@ export default function BarBookTable() {
                       {row.status === "Confirmed" ? (
                         <button className="rooms__icon_btn rooms__icon_btn--primary" title="Accept Booking" onClick={() => acceptBooking(row._id)}><IcCheck /></button>
                       ) : row.status === "Arrived" ? (
-                          <span style={{ fontSize: "14px", color: "var(--ad-champ-lt)", fontWeight: "500" }}>{row.waiter || "Self"}</span>
+                        <span style={{ fontSize: "14px", color: "var(--ad-champ-lt)", fontWeight: "500" }}>{row.waiter || "Self"}</span>
                       ) : null}
                       {row.status === "Arrived" && (
-                        <button className="rooms__icon_btn" title="Complete Booking" onClick={() => completeBooking(row._id)}>✓</button>
-                      )}
-                      {(row.status === "Confirmed" || row.status === "Arrived") && (
-                        <button className="rooms__icon_btn" title="Cancel Booking" onClick={() => cancelBooking(row._id)} style={{ color: "#ff4444" }}>×</button>
+                        <span style={{ fontSize: "14px", color: "var(--ad-champ-lt)", fontWeight: "500" }}>
+                          {/* {row.waiter || "Self"} */}
+                        </span>
                       )}
                     </div>
                   </td>
