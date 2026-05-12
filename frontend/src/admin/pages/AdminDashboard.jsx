@@ -70,12 +70,12 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
 
-      if (error.message === "Authentication failed. Please login again.") {
+      if (error.msg === "Authentication failed. Please login again.") {
         setError(
           "Authentication failed. Please login again to access the dashboard.",
         );
       } else if (
-        error.message === "No authentication token found. Please login again."
+        error.msg === "No authentication token found. Please login again."
       ) {
         setError("Please login to access the dashboard.");
       } else {

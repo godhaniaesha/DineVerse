@@ -40,7 +40,7 @@ export const subscribe = async (req, res) => {
         if (error.code === 11000) {
             return ThrowError(res, 400, "Email already exists");
         }
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -55,7 +55,7 @@ export const getAllSubscriptions = async (req, res) => {
             data: subscriptions
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -74,6 +74,6 @@ export const deleteSubscription = async (req, res) => {
             msg: "Subscription deleted successfully"
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

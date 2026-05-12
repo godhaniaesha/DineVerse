@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import { MdOutlineClose } from "react-icons/md";
 import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useOrder } from "../../contexts/OrderContext";
@@ -230,12 +231,12 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
 
   const placeOrder = async () => {
     if (!orderDraft.items.length) {
-      alert("Please add items to the order first");
+      toast.error("Please add items to the order first");
       return;
     }
 
     if (!orderDraft.target) {
-      alert("Please select a table first");
+      toast.error("Please select a table first");
       return;
     }
 
@@ -274,9 +275,9 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
         target: orderDraft.target,
       });
       setOrderDraft({ customerName: "", target: "", note: "", items: [] });
-      alert("Order sent to kitchen successfully!");
+      toast.success("Order sent to kitchen successfully!");
     } else {
-      alert(`Failed to send order: ${result.error}`);
+      toast.error(`Failed to send order: ${result.error}`);
     }
   };
 

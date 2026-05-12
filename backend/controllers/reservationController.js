@@ -110,7 +110,7 @@ export const validateGuestDetails = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getAvailableRoomTypes = async (req, res) => {
@@ -188,7 +188,7 @@ export const getAvailableRoomTypes = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getRoomsByType = async (req, res) => {
@@ -254,7 +254,7 @@ export const getRoomsByType = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const createPaymentIntent = async (req, res) => {
@@ -325,7 +325,7 @@ export const createPaymentIntent = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const confirmBooking = async (req, res) => {
@@ -408,7 +408,7 @@ export const confirmBooking = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -445,7 +445,7 @@ export const getReservationById = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getReservations = async (req, res) => {
@@ -472,7 +472,7 @@ export const getReservations = async (req, res) => {
             data: formatted
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -546,7 +546,7 @@ export const searchReservations = async (req, res) => {
             data: combined
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateReservationStatus = async (req, res) => {
@@ -614,7 +614,7 @@ export const updateReservationStatus = async (req, res) => {
             data: reservation
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -668,7 +668,7 @@ export const getGuests = async (req, res) => {
             data: guests
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -732,7 +732,7 @@ export const searchGuests = async (req, res) => {
             data: guests
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -793,6 +793,6 @@ export const getAdminReservations = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

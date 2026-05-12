@@ -34,7 +34,7 @@ export const TableProvider = ({ children }) => {
         setTables(data.data);
         setError(null);
       } else {
-        setError(data.msg);
+        setError(data.msg || data.message);
       }
     } catch (err) {
       setError("Failed to fetch tables");
@@ -63,9 +63,9 @@ export const TableProvider = ({ children }) => {
         await fetchTables();
         return { success: true };
       }
-      return { success: false, error: data.msg };
+      return { success: false, error: data.msg || data.message };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: err.msg };
     }
   };
 
@@ -87,9 +87,9 @@ export const TableProvider = ({ children }) => {
         await fetchTables();
         return { success: true };
       }
-      return { success: false, error: data.msg };
+      return { success: false, error: data.msg || data.message };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: err.msg };
     }
   };
 
@@ -109,9 +109,9 @@ export const TableProvider = ({ children }) => {
         await fetchTables();
         return { success: true };
       }
-      return { success: false, error: data.msg };
+      return { success: false, error: data.msg || data.message };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: err.msg };
     }
   };
 

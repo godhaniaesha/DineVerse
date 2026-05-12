@@ -91,6 +91,59 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   display: block;
 }
 
+/* ─── TOAST NOTIFICATIONS ─────────────────────────────────────────── */
+
+.Toastify__toast {
+  border-radius: var(--ad-r-md);
+  background: var(--ad-surface-alt);
+  color: var(--ad-text-1);
+  border: 1px solid var(--ad-border);
+  font-family: var(--ad-font-sans);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.Toastify__toast--success {
+  border-left: 4px solid #4CAF50;
+}
+
+.Toastify__toast--error {
+  border-left: 4px solid #f44336;
+}
+
+.Toastify__toast--info {
+  border-left: 4px solid var(--ad-gold);
+}
+
+.Toastify__toast--warning {
+  border-left: 4px solid #FFC107;
+}
+
+.Toastify__progress-bar--success {
+  background: #4CAF50;
+}
+
+.Toastify__progress-bar--error {
+  background: #f44336;
+}
+
+.Toastify__progress-bar--info {
+  background: var(--ad-gold);
+}
+
+.Toastify__close-button {
+  color: var(--ad-text-3);
+  opacity: 0.7;
+}
+
+.Toastify__close-button:hover {
+  color: var(--ad-text-1);
+}
+
+.Toastify__toast-body {
+  font-size: 14px;
+  font-weight: 500;
+}
+
 @keyframes ad_fadeIn {
   from {
     opacity: 0;

@@ -249,7 +249,7 @@ export default function BookRoom() {
       }
     } catch (error) {
       setRoomTypes([]);
-      setRoomTypesError(error.message || "Failed to load room types");
+      setRoomTypesError(error.msg || "Failed to load room types");
     } finally {
       setRoomTypesLoading(false);
     }
@@ -297,7 +297,7 @@ export default function BookRoom() {
         hourlyRate: 0,
         totalAmount: 0
       });
-      setErrors((prev) => ({ ...prev, roomNo: error.message || "Failed to load rooms" }));
+      setErrors((prev) => ({ ...prev, roomNo: error.msg || "Failed to load rooms" }));
     } finally {
       setRoomsLoading(false);
     }
@@ -530,7 +530,7 @@ export default function BookRoom() {
         }
         setStep(4);
       } catch (error) {
-        setSubmitError(error.message || "Unable to initialize payment");
+        setSubmitError(error.msg || "Unable to initialize payment");
       } finally {
         setSubmitLoading(false);
       }
@@ -576,7 +576,7 @@ export default function BookRoom() {
       setBookingRef(data?.bookingRef || genRef());
       setSubmitted(true);
     } catch (error) {
-      setSubmitError(error.message || "Unable to confirm booking");
+      setSubmitError(error.msg || "Unable to confirm booking");
     } finally {
       setSubmitLoading(false);
     }

@@ -33,7 +33,7 @@ export const addBlog = async (req, res) => {
             data: blog
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getBlogs = async (req, res) => {
@@ -62,7 +62,7 @@ export const getBlogs = async (req, res) => {
             data: formatted
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getBlogById = async (req, res) => {
@@ -88,7 +88,7 @@ export const getBlogById = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const toggleLike = async (req, res) => {
@@ -119,7 +119,7 @@ export const toggleLike = async (req, res) => {
             likesCount: blog.likes.length
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateBlog = async (req, res) => {
@@ -156,7 +156,7 @@ export const updateBlog = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const deleteBlog = async (req, res) => {
@@ -180,6 +180,6 @@ export const deleteBlog = async (req, res) => {
             data: blog
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

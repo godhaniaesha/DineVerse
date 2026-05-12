@@ -1,5 +1,6 @@
 // src/admin/pages/AdminBlogs.jsx
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import blogService from "../../services/blogService";
 import Pagination from "../components/Pagination";
@@ -130,7 +131,7 @@ export default function AdminBlogs() {
   const save = async () => {
     // basic validations
     if (!form.title.trim() || !form.short_des.trim() || !form.des.trim()) {
-      alert(
+      toast.error(
         "Please fill all required fields (title, short description, description)."
       );
       return;
@@ -138,14 +139,14 @@ export default function AdminBlogs() {
 
     // For add: image must be selected
     if (modal.mode === "add" && !form.coverImg.file) {
-      alert("Please select a cover image.");
+      toast.error("Please select a cover image.");
       return;
     }
 
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        toast.error("Please login to perform this action");
         return;
       }
 
@@ -165,6 +166,7 @@ export default function AdminBlogs() {
         const newBlogRes = await blogService.createBlog(formData, authToken);
         const newBlog = newBlogRes.data || newBlogRes;
         setBlogs((prev) => [...prev, newBlog]);
+        toast.success("Blog post created successfully!");
       }
 
       if (modal.mode === "edit") {
@@ -177,14 +179,15 @@ export default function AdminBlogs() {
         setBlogs((prev) =>
           prev.map((b) => (b._id === modal.blog._id ? updated : b))
         );
+        toast.success("Blog post updated successfully!");
       }
 
       close();
     } catch (error) {
       console.error("Error saving blog:", error);
-      alert(
+      toast.error(
         "Error saving blog: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.msg || error.msg)
       );
     }
   };
@@ -193,18 +196,19 @@ export default function AdminBlogs() {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        toast.error("Please login to perform this action");
         return;
       }
 
       await blogService.deleteBlog(modal.blog._id, authToken);
       setBlogs((prev) => prev.filter((b) => b._id !== modal.blog._id));
+      toast.success("Blog post deleted successfully!");
       close();
     } catch (error) {
       console.error("Error deleting blog:", error);
-      alert(
+      toast.error(
         "Error deleting blog: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.msg || error.msg)
       );
     }
   };

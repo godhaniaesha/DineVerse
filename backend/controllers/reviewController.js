@@ -39,7 +39,7 @@ export const addReview = async (req, res) => {
         await review.save();
         res.status(201).json({ success: true, msg: "Review added successfully", data: review });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -55,7 +55,7 @@ export const getReviews = async (req, res) => {
             data: reviews
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -75,7 +75,7 @@ export const deleteReview = async (req, res) => {
         await Review.findByIdAndDelete(id);
         res.status(200).json({ success: true, msg: "Review deleted successfully" });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -93,7 +93,7 @@ export const getAreaReviews = async (req, res) => {
             data: reviews
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -119,6 +119,6 @@ export const getUserReviews = async (req, res) => {
             data: reviews
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

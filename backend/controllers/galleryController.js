@@ -27,7 +27,7 @@ export const addImage = async (req, res) => {
             data: image
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getGallery = async (req, res) => {
@@ -40,7 +40,7 @@ export const getGallery = async (req, res) => {
             data: images
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateImage = async (req, res) => {
@@ -72,7 +72,7 @@ export const updateImage = async (req, res) => {
             data: updated
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const toggleVisibility = async (req, res) => {
@@ -95,7 +95,7 @@ export const toggleVisibility = async (req, res) => {
             data: image
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const deleteImage = async (req, res) => {
@@ -119,6 +119,6 @@ export const deleteImage = async (req, res) => {
             data: image
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

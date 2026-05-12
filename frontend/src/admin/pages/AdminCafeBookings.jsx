@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useReservations } from "../../contexts/ReservationContext";
 import { useAuth } from "../../contexts/AuthContext";
@@ -137,9 +138,10 @@ export default function AdminCafeBookings({
             row.id === modal.row.id ? { ...row, ...payload, status: form.status } : row,
           ),
         );
+        toast.success("Booking status updated successfully!");
         close();
       } else {
-        alert(result?.error || "Failed to update booking status");
+        toast.error(result?.error || "Failed to update booking status");
       }
       setSaving(false);
       return;
@@ -150,6 +152,7 @@ export default function AdminCafeBookings({
 
   const remove = () => {
     setRows((prev) => prev.filter((row) => row.id !== modal.row.id));
+    toast.success("Booking record removed locally.");
     close();
   };
 

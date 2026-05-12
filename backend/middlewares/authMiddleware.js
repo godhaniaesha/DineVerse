@@ -33,7 +33,7 @@ export const UserAuth = async (req, res, next) => {
             return ThrowError(res, 401, "Invalid token.");
         }
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const authorize = (roles = []) => {
@@ -53,7 +53,7 @@ export const authorize = (roles = []) => {
 
             next();
         } catch (error) {
-            return ThrowError(res, 500, error.message);
+            return ThrowError(res, 500, error.msg);
         }
     };
 };
@@ -72,6 +72,6 @@ export const isStaff = async (req, res, next) => {
         }
         next();
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

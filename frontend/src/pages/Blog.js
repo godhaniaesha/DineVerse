@@ -143,7 +143,7 @@ function Newsletter() {
             setSent(true);
             setEmail("");
         } catch (err) {
-            alert(err.message); // you can replace with toast later
+            alert(err.msg); // you can replace with toast later
         }
     };
 

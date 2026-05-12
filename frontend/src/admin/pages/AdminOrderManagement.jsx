@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
 import Pagination from "../components/Pagination";
@@ -74,9 +75,10 @@ export default function AdminOrderManagement() {
     console.log(result, "res");
 
     if (result.success) {
+      toast.success("Order status updated successfully!");
       setEditingId(null);
     } else {
-      alert(`Failed to update status: ${result.error}`);
+      toast.error(`Failed to update status: ${result.error}`);
     }
   };
 

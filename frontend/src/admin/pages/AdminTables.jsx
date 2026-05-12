@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { toast } from "react-toastify";
 import { useTable } from "../../contexts/TableContext";
 import DeleteIconButton from "../components/DeleteIconButton";
 import Pagination from "../components/Pagination";
@@ -116,9 +117,10 @@ export default function AdminTables() {
     }
 
     if (result?.success) {
+      toast.success(modal.mode === "add" ? "Table added successfully!" : "Table updated successfully!");
       close();
     } else {
-      alert(result?.error || "Failed to save table");
+      toast.error(result?.error || "Failed to save table");
     }
   };
 
@@ -126,9 +128,10 @@ export default function AdminTables() {
   const remove = async () => {
     const result = await deleteTable(modal.row.id);
     if (result?.success) {
+      toast.success("Table deleted successfully!");
       close();
     } else {
-      alert(result?.error || "Failed to delete table");
+      toast.error(result?.error || "Failed to delete table");
     }
   };
 
@@ -253,9 +256,14 @@ export default function AdminTables() {
             <input
               className="rooms__form_input"
               value={form.tableNo}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, tableNo: e.target.value }))
-              }
+            onChange={(e) => {
+  const value = e.target.value;
+
+  // Only numbers allow
+  if (/^\d*$/.test(value)) {
+    setForm((f) => ({ ...f, tableNo: value }));
+  }
+}}
             />
           </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useStaff } from "../../contexts/StaffContext";
 import { useAuth } from "../../contexts/AuthContext";
@@ -6,7 +7,7 @@ import Pagination from "../components/Pagination";
 import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 /* ── CUISINE CHECKBOX STYLES ───────────────────────────────────────────── */
 const cuisineCheckboxStyles = `
@@ -102,22 +103,36 @@ const cuisineCheckboxStyles = `
 `;
 
 // Inject styles
-if (!document.getElementById('admin-staff-cuisine-checkbox-styles')) {
-  const style = document.createElement('style');
-  style.id = 'admin-staff-cuisine-checkbox-styles';
+if (!document.getElementById("admin-staff-cuisine-checkbox-styles")) {
+  const style = document.createElement("style");
+  style.id = "admin-staff-cuisine-checkbox-styles";
   style.textContent = cuisineCheckboxStyles;
   document.head.appendChild(style);
 }
 
 const IcEye = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.7"
+  >
     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
     <circle cx="12" cy="12" r="3" />
   </svg>
 );
 
 const IcEyeOff = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.7"
+  >
     <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a21.77 21.77 0 0 1 5.06-6.94" />
     <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.77 21.77 0 0 1-2.16 3.19" />
     <line x1="1" y1="1" x2="23" y2="23" />
@@ -125,7 +140,14 @@ const IcEyeOff = () => (
 );
 
 const IcEdit = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.7"
+  >
     <path d="M12 20h9" />
     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
   </svg>
@@ -133,29 +155,43 @@ const IcEdit = () => (
 
 const EMPTY = {
   full_name: "",
-  role: "Manager",
+  role: "",
   department: "",
   cuisineSpecialization: [],
   phone: "",
   email: "",
   status: "Active",
   password: "",
-  confirmPassword: ""
+  confirmPassword: "",
 };
 
-const DEPTS = ["Kitchen", "Cafe", "Restaurant", "Bar", "Reception", "Housekeeping"];
+const DEPTS = [
+  "Kitchen",
+  "Cafe",
+  "Restaurant",
+  "Bar",
+  "Reception",
+  "Housekeeping",
+];
 const ROLES = [
   "Manager",
   "Housekeeping",
   "Cafe Waiter",
   "Res Waiter",
   "Bar Waiter",
-  "Chef"
+  "Chef",
 ];
 const STATUSES = ["Active", "Inactive"];
 
 export default function AdminStaffManagement() {
-  const { staff, loading, getStaff, addStaff, updateStaffProfile, deleteStaff } = useStaff();
+  const {
+    staff,
+    loading,
+    getStaff,
+    addStaff,
+    updateStaffProfile,
+    deleteStaff,
+  } = useStaff();
   const { user } = useAuth();
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
@@ -181,21 +217,21 @@ export default function AdminStaffManagement() {
     try {
       setCuisinesLoading(true);
       const response = await fetch(`${API_BASE_URL}/food/getCuisines`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         setCuisines(data.data);
       } else {
-        console.error('Failed to fetch cuisines:', data.msg);
+        console.error("Failed to fetch cuisines:", data.msg || data.message);
         setCuisines([]);
       }
     } catch (err) {
-      console.error('Error fetching cuisines:', err);
+      console.error("Error fetching cuisines:", err);
       setCuisines([]);
     } finally {
       setCuisinesLoading(false);
@@ -204,13 +240,21 @@ export default function AdminStaffManagement() {
 
   const handleSave = async () => {
     if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      alert("Please fill in all required fields!");
+      toast.error("Please fill in all required fields!");
+      return;
+    }
+    if (!form.role) {
+      toast.error("Please select role!");
+      return;
+    }
+    if (!form.department) {
+      toast.error("Department is required!");
       return;
     }
 
     if (modal.mode === "add") {
       if (!form.password || form.password !== form.confirmPassword) {
-        alert("Passwords do not match!");
+        toast.error("Passwords do not match!");
         return;
       }
 
@@ -223,19 +267,23 @@ export default function AdminStaffManagement() {
       formData.append("department", form.department);
       formData.append("status", form.status);
       if (form.cuisineSpecialization && form.cuisineSpecialization.length > 0) {
-        formData.append("cuisineSpecialization", JSON.stringify(form.cuisineSpecialization));
+        formData.append(
+          "cuisineSpecialization",
+          JSON.stringify(form.cuisineSpecialization),
+        );
       }
 
       const result = await addStaff(formData);
       if (result.success) {
-        alert("Staff added successfully!");
+        toast.success("Staff added successfully!");
         close();
       } else {
-        alert(result.error || "Failed to add staff");
+        console.log(result, "difgjvdfi");
+        toast.error(result.error || "Failed to add staff");
       }
     } else if (modal.mode === "edit") {
       if (form.password && form.password !== form.confirmPassword) {
-        alert("Passwords do not match!");
+        toast.error("Passwords do not match!");
         return;
       }
 
@@ -247,7 +295,10 @@ export default function AdminStaffManagement() {
       formData.append("department", form.department);
       formData.append("status", form.status);
       if (form.cuisineSpecialization && form.cuisineSpecialization.length > 0) {
-        formData.append("cuisineSpecialization", JSON.stringify(form.cuisineSpecialization));
+        formData.append(
+          "cuisineSpecialization",
+          JSON.stringify(form.cuisineSpecialization),
+        );
       }
       if (form.password) {
         formData.append("password", form.password);
@@ -255,10 +306,10 @@ export default function AdminStaffManagement() {
 
       const result = await updateStaffProfile(modal.row._id, formData);
       if (result.success) {
-        alert("Staff updated successfully!");
+        toast.success("Staff updated successfully!");
         close();
       } else {
-        alert(result.error || "Failed to update staff");
+        toast.error(result.error || "Failed to update staff");
       }
     }
   };
@@ -266,13 +317,14 @@ export default function AdminStaffManagement() {
   const handleDelete = async () => {
     const result = await deleteStaff(modal.row._id);
     if (result.success) {
+      toast.success("Staff deleted successfully!");
       close();
     } else {
-      alert(result.error || "Failed to delete staff");
+      toast.error(result.error || "Failed to delete staff");
     }
   };
 
-  const staffWithoutSuperAdmin = staff.filter(s => s.role !== "Super Admin");
+  const staffWithoutSuperAdmin = staff.filter((s) => s.role !== "Super Admin");
 
   /* Pagination */
   const paginatedStaff = useMemo(() => {
@@ -288,12 +340,17 @@ export default function AdminStaffManagement() {
       <div className="rooms__header">
         <div>
           <h2 className="ad_h2">Staff Management</h2>
-          <p className="ad_p">Manage staff details, department and role allocation.</p>
+          <p className="ad_p">
+            Manage staff details, department and role allocation.
+          </p>
         </div>
-        <button className="rooms__add_btn" onClick={() => {
-          setForm(EMPTY);
-          setModal({ mode: "add" });
-        }}>
+        <button
+          className="rooms__add_btn"
+          onClick={() => {
+            setForm(EMPTY);
+            setModal({ mode: "add" });
+          }}
+        >
           Add Staff
         </button>
       </div>
@@ -316,16 +373,18 @@ export default function AdminStaffManagement() {
             {loading ? (
               <tr>
                 <td colSpan={8} style={{ padding: "40px" }}>
-                  <FoodLoadingAnimation 
-                    type="chef" 
-                    size="medium" 
-                    text="Loading staff..." 
+                  <FoodLoadingAnimation
+                    type="chef"
+                    size="medium"
+                    text="Loading staff..."
                   />
                 </td>
               </tr>
             ) : staffWithoutSuperAdmin.length === 0 ? (
               <tr>
-                <td colSpan={8} className="rooms__empty">No staff found</td>
+                <td colSpan={8} className="rooms__empty">
+                  No staff found
+                </td>
               </tr>
             ) : (
               paginatedStaff.map((r) => (
@@ -336,21 +395,29 @@ export default function AdminStaffManagement() {
                   <td>{r.cuisineSpecialization?.join(", ") || "-"}</td>
                   <td>{r.phone}</td>
                   <td>{r.email}</td>
-                  <td><span className="ad_chip">{r.status}</span></td>
+                  <td>
+                    <span className="ad_chip">{r.status}</span>
+                  </td>
                   <td>
                     <div className="d-flex" style={{ gap: "6px" }}>
-                      <button className="rooms__icon_btn" onClick={() => {
-                        setForm({
-                          ...r,
-                          cuisineSpecialization: r.cuisineSpecialization || [],
-                          password: "",
-                          confirmPassword: ""
-                        });
-                        setModal({ mode: "edit", row: r });
-                      }}>
+                      <button
+                        className="rooms__icon_btn"
+                        onClick={() => {
+                          setForm({
+                            ...r,
+                            cuisineSpecialization:
+                              r.cuisineSpecialization || [],
+                            password: "",
+                            confirmPassword: "",
+                          });
+                          setModal({ mode: "edit", row: r });
+                        }}
+                      >
                         <IcEdit />
                       </button>
-                      <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
+                      <DeleteIconButton
+                        onClick={() => setModal({ mode: "delete", row: r })}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -377,7 +444,9 @@ export default function AdminStaffManagement() {
               <span className="rooms__modal_title">
                 {modal.mode === "add" ? "Add Staff" : "Edit Staff"}
               </span>
-              <button className="rooms__modal_close" onClick={close}>×</button>
+              <button className="rooms__modal_close" onClick={close}>
+                ×
+              </button>
             </div>
             <div className="rooms__modal_body">
               <div className="rooms__form_row">
@@ -385,7 +454,9 @@ export default function AdminStaffManagement() {
                 <input
                   className="rooms__form_input"
                   value={form.full_name}
-                  onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, full_name: e.target.value }))
+                  }
                 />
               </div>
               <div className="rooms__form_row">
@@ -394,7 +465,9 @@ export default function AdminStaffManagement() {
                   type="email"
                   className="rooms__form_input"
                   value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, email: e.target.value }))
+                  }
                 />
               </div>
               <div className="rooms__form_grid2">
@@ -404,7 +477,17 @@ export default function AdminStaffManagement() {
                     className="rooms__form_input"
                     value={form.phone}
                     maxLength={10}
-                    onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      // Only numbers allow
+                      if (/^\d*$/.test(value)) {
+                        setForm((f) => ({
+                          ...f,
+                          phone: value,
+                        }));
+                      }
+                    }}
                   />
                 </div>
                 <div>
@@ -412,10 +495,16 @@ export default function AdminStaffManagement() {
                   <select
                     className="rooms__form_select"
                     value={form.role}
-                    onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, role: e.target.value }))
+                    }
                   >
+                    <option value="">Select Role</option>
+
                     {ROLES.map((v) => (
-                      <option key={v} value={v}>{v}</option>
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -426,59 +515,84 @@ export default function AdminStaffManagement() {
                   <select
                     className="rooms__form_select"
                     value={form.department}
-                    onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, department: e.target.value }))
+                    }
                   >
+                    <option value="">Select Department</option>
+
                     {DEPTS.map((v) => (
-                      <option key={v} value={v}>{v}</option>
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
                     ))}
                   </select>
                 </div>
                 {form.role === "Chef" && (
                   <div>
-                    <label className="rooms__form_label">Cuisine Specialization</label>
-                    <div className="rooms__cuisine_checkboxes bg-transparent" >
+                    <label className="rooms__form_label">
+                      Cuisine Specialization
+                    </label>
+                    <div className="rooms__cuisine_checkboxes bg-transparent">
                       {cuisinesLoading ? (
                         <div style={{ padding: "20px" }}>
-                          <FoodLoadingAnimation 
-                            type="ingredients" 
-                            size="small" 
-                            text="Loading cuisines..." 
+                          <FoodLoadingAnimation
+                            type="ingredients"
+                            size="small"
+                            text="Loading cuisines..."
                           />
                         </div>
                       ) : cuisines.length === 0 ? (
-                        <div className="rooms__cuisine_empty">No cuisines available</div>
+                        <div className="rooms__cuisine_empty">
+                          No cuisines available
+                        </div>
                       ) : (
                         <div className="rooms__cuisine_grid bg-transparent">
                           {cuisines.map((cuisine) => (
-                            <label key={cuisine._id} className="rooms__cuisine_checkbox_label">
+                            <label
+                              key={cuisine._id}
+                              className="rooms__cuisine_checkbox_label"
+                            >
                               <input
                                 type="checkbox"
                                 className="rooms__cuisine_checkbox"
                                 value={cuisine.name}
-                                checked={form.cuisineSpecialization.includes(cuisine.name)}
+                                checked={form.cuisineSpecialization.includes(
+                                  cuisine.name,
+                                )}
                                 onChange={(e) => {
                                   const isChecked = e.target.checked;
                                   if (isChecked) {
-                                    setForm((f) => ({ 
-                                      ...f, 
-                                      cuisineSpecialization: [...f.cuisineSpecialization, cuisine.name] 
+                                    setForm((f) => ({
+                                      ...f,
+                                      cuisineSpecialization: [
+                                        ...f.cuisineSpecialization,
+                                        cuisine.name,
+                                      ],
                                     }));
                                   } else {
-                                    setForm((f) => ({ 
-                                      ...f, 
-                                      cuisineSpecialization: f.cuisineSpecialization.filter(c => c !== cuisine.name) 
+                                    setForm((f) => ({
+                                      ...f,
+                                      cuisineSpecialization:
+                                        f.cuisineSpecialization.filter(
+                                          (c) => c !== cuisine.name,
+                                        ),
                                     }));
                                   }
                                 }}
                               />
-                              <span className="rooms__cuisine_checkbox_text">{cuisine.name}</span>
+                              <span className="rooms__cuisine_checkbox_text">
+                                {cuisine.name}
+                              </span>
                             </label>
                           ))}
                         </div>
                       )}
                       {form.cuisineSpecialization.length > 0 && (
                         <div className="rooms__cuisine_selected">
-                          <small>Selected: {form.cuisineSpecialization.join(", ")}</small>
+                          <small>
+                            Selected: {form.cuisineSpecialization.join(", ")}
+                          </small>
                         </div>
                       )}
                     </div>
@@ -495,7 +609,9 @@ export default function AdminStaffManagement() {
                       type={showPass ? "text" : "password"}
                       className="rooms__form_input"
                       value={form.password}
-                      onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, password: e.target.value }))
+                      }
                       style={{ paddingRight: "40px" }}
                     />
                     <button
@@ -512,7 +628,7 @@ export default function AdminStaffManagement() {
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                        padding: "0"
+                        padding: "0",
                       }}
                     >
                       {showPass ? <IcEyeOff /> : <IcEye />}
@@ -526,7 +642,12 @@ export default function AdminStaffManagement() {
                       type={showConfirmPass ? "text" : "password"}
                       className="rooms__form_input"
                       value={form.confirmPassword}
-                      onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          confirmPassword: e.target.value,
+                        }))
+                      }
                       style={{ paddingRight: "40px" }}
                     />
                     <button
@@ -543,7 +664,7 @@ export default function AdminStaffManagement() {
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                        padding: "0"
+                        padding: "0",
                       }}
                     >
                       {showConfirmPass ? <IcEyeOff /> : <IcEye />}
@@ -556,21 +677,36 @@ export default function AdminStaffManagement() {
                 <select
                   className="rooms__form_select"
                   value={form.status}
-                  onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, status: e.target.value }))
+                  }
                 >
                   {STATUSES.map((status) => (
-                    <option key={status} value={status}>{status}</option>
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
                   ))}
                 </select>
               </div>
-              {form.password && form.confirmPassword && form.password !== form.confirmPassword && (
-                <div style={{ color: "#ff4d4d", fontSize: "12px", marginTop: "-10px", marginBottom: "10px" }}>
-                  Passwords do not match
-                </div>
-              )}
+              {form.password &&
+                form.confirmPassword &&
+                form.password !== form.confirmPassword && (
+                  <div
+                    style={{
+                      color: "#ff4d4d",
+                      fontSize: "12px",
+                      marginTop: "-10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Passwords do not match
+                  </div>
+                )}
             </div>
             <div className="rooms__form_actions">
-              <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
+              <button className="rooms__btn rooms__btn--ghost" onClick={close}>
+                Cancel
+              </button>
               <button
                 className="rooms__btn rooms__btn--primary"
                 onClick={handleSave}
@@ -578,7 +714,11 @@ export default function AdminStaffManagement() {
                   !form.full_name ||
                   !form.email ||
                   !form.phone ||
-                  (modal.mode === "add" && (!form.password || form.password !== form.confirmPassword)) ||
+                  !form.role ||
+                  !form.department ||
+                  (modal.mode === "add" &&
+                    (!form.password ||
+                      form.password !== form.confirmPassword)) ||
                   (form.password && form.password !== form.confirmPassword)
                 }
               >
@@ -596,12 +736,21 @@ export default function AdminStaffManagement() {
           <div className="rooms__modal_box">
             <div className="rooms__modal_head">
               <span className="rooms__modal_title">Delete Staff</span>
-              <button className="rooms__modal_close" onClick={close}>×</button>
+              <button className="rooms__modal_close" onClick={close}>
+                ×
+              </button>
             </div>
             <p className="rooms__delete_msg">Delete {modal.row.full_name}?</p>
             <div className="rooms__form_actions">
-              <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
-              <button className="rooms__btn rooms__btn--danger" onClick={handleDelete}>Delete</button>
+              <button className="rooms__btn rooms__btn--ghost" onClick={close}>
+                Cancel
+              </button>
+              <button
+                className="rooms__btn rooms__btn--danger"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </>

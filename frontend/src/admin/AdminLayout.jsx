@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "../styleadmin/AdminLayout.css";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
@@ -627,13 +629,32 @@ export default function AdminLayout() {
                 Are you sure you want to log out of the admin panel?
               </p>
             </div>
-            <div className="rooms__form_actions">
-              <button className="rooms__btn rooms__btn--ghost" onClick={() => setShowLogoutModal(false)}>Cancel</button>
-              <button className="rooms__btn rooms__btn--primary" onClick={handleLogout}>Logout</button>
+            <div className="rooms__modal_foot" style={{ justifyContent: "center", gap: "12px", paddingBottom: "24px" }}>
+              <button className="rooms__btn" onClick={() => setShowLogoutModal(false)}>Cancel</button>
+              <button className="rooms__btn rooms__btn--primary" onClick={() => {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("authUser");
+                localStorage.removeItem("adminRole");
+                localStorage.removeItem("adminName");
+                navigate("/auth", { replace: true });
+              }}>Logout</button>
             </div>
           </div>
         </>
       )}
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }

@@ -146,7 +146,7 @@ export const getAnalytics = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 

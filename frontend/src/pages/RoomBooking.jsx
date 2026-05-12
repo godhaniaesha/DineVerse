@@ -310,7 +310,7 @@ export default function RoomBooking() {
         },
       });
     } catch (err) {
-      setAvailabilityError(err?.message || "Unable to check availability.");
+      setAvailabilityError(err?.msg || "Unable to check availability.");
     } finally {
       setAvailabilityLoading(false);
     }
@@ -331,7 +331,7 @@ export default function RoomBooking() {
         setError(null);
       } catch (err) {
         console.error("Error fetching room types:", err);
-        setError(err.message || "Unable to load rooms.");
+        setError(err?.msg || "Unable to load rooms.");
         setRooms([]);
       } finally {
         setLoading(false);

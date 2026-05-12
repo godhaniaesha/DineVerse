@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { FiEdit2 } from "react-icons/fi";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useRooms } from "../../contexts/RoomContext";
@@ -104,24 +105,21 @@ export default function AdminRoomTypes() {
             result = await updateRoomType(modal.roomType._id, formData);
         }
 
-        if (result.success) {
-            alert(modal.mode === "add" ? "Room type added successfully!" : "Room type updated successfully!");
+        if (result?.success) {
+            toast.success(modal.mode === "add" ? "Room type added successfully!" : "Room type updated successfully!");
             close();
         } else {
-            alert(result.error || "Failed to save room type");
+            toast.error(result?.error || "Failed to save room type");
         }
     };
 
     const remove = async () => {
-        console.log("AdminRoomTypes - remove - calling deleteRoomType with id:", modal.roomType._id);
         const result = await deleteRoomType(modal.roomType._id);
-        console.log("AdminRoomTypes - remove - result:", result);
-        
-        if (result.success) {
-            alert("Room type deleted successfully!");
+        if (result?.success) {
+            toast.success("Room type deleted successfully!");
             close();
         } else {
-            alert(result.error || "Failed to delete room type");
+            toast.error(result?.error || "Failed to delete room type");
         }
     };
 

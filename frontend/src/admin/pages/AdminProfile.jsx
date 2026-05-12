@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 
 const IcEdit = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
@@ -46,10 +47,10 @@ export default function AdminProfile() {
 
     const result = await updateProfile(user._id, formData);
     if (result.success) {
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
       setEditMode(false);
     } else {
-      alert(result.error || "Failed to update profile");
+      toast.error(result.error || "Failed to update profile");
     }
   };
 
@@ -65,16 +66,16 @@ export default function AdminProfile() {
 
   const handlePasswordUpdate = async () => {
     if (passwordForm.new !== passwordForm.confirm) {
-      alert("New passwords do not match!");
+      toast.error("New passwords do not match!");
       return;
     }
 
     const result = await changePassword(passwordForm.current, passwordForm.new);
     if (result.success) {
-      alert("Password updated successfully!");
+      toast.success("Password updated successfully!");
       setPasswordForm({ current: "", new: "", confirm: "" });
     } else {
-      alert(result.error || "Failed to update password");
+      toast.error(result.error || "Failed to update password");
     }
   };
 

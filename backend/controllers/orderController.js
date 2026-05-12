@@ -191,7 +191,7 @@ export const createOrder = async (req, res) => {
 
         res.status(201).json({ success: true, msg: "Items added to kitchen queue", data: order });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -255,7 +255,7 @@ export const createBillingPaymentIntent = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -307,7 +307,7 @@ export const confirmBillingAndCheckout = async (req, res) => {
             data: order
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -320,7 +320,7 @@ export const getKitchenQueue = async (req, res) => {
             .sort({ createdAt: 1 });
         res.status(200).json({ success: true, data: orders });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -339,7 +339,7 @@ export const acceptDish = async (req, res) => {
         if (!order) return sendBadRequestResponse(res, "Dish already taken or not found");
         res.status(200).json({ success: true, data: order });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -379,7 +379,7 @@ export const markDishReady = async (req, res) => {
 
         res.status(200).json({ success: true, msg: "Status updated successfully", data: order });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -420,7 +420,7 @@ export const updateItemStatus = async (req, res) => {
             data: order
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -444,7 +444,7 @@ export const getAllOrdersForAdmin = async (req, res) => {
 
         res.status(200).json({ success: true, count: filteredOrders.length, data: filteredOrders });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -543,7 +543,7 @@ export const getBillingOrders = async (req, res) => {
             data: tableWiseData
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -587,7 +587,7 @@ export const getDashboardStats = async (req, res) => {
 
         res.status(200).json({ success: true, msg: "Stats fetched successfully", data: dashboardData });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -606,7 +606,7 @@ export const getChefQueue = async (req, res) => {
             data: orders
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -622,7 +622,7 @@ export const getWaiterActiveOrders = async (req, res) => {
 
         res.status(200).json({ success: true, count: orders.length, data: orders });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -647,6 +647,6 @@ export const getCompletedPayments = async (req, res) => {
 
         res.status(200).json({ success: true, count: filteredOrders.length, data: filteredOrders });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

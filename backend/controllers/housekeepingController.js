@@ -69,7 +69,7 @@ export const getHousekeepingStaff = async (req, res) => {
             data: staff
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -108,7 +108,7 @@ export const assignHousekeeper = async (req, res) => {
             data: room
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -158,7 +158,7 @@ export const updateCleanStatus = async (req, res) => {
             data: { currentStatus: oldStatus, newStatus: cleanStatus, roomDetails: updatedRoom }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -191,7 +191,7 @@ export const approveRoomCleaning = async (req, res) => {
             data: room
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -244,7 +244,7 @@ export const getHousekeepingTasks = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -276,6 +276,6 @@ export const getHousekeepingStats = async (req, res) => {
             data: { roomsToClean, inProgress, cleanedToday }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

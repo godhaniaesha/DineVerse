@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
 import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
@@ -86,15 +87,16 @@ export default function AdminKDS() {
       
       if (result.success) {
         console.log(`✅ Successfully updated item status to ${newStatus}`);
+        toast.success(`Item status updated to ${newStatus}`);
         // Refresh the orders to show updated status
         await fetchChefQueue();
       } else {
         console.error('❌ Failed to update item status:', result.msg);
-        alert(`Failed to update status: ${result.msg}`);
+        toast.error(`Failed to update status: ${result.msg}`);
       }
     } catch (error) {
       console.error('❌ Error updating item status:', error);
-      alert('Error updating item status');
+      toast.error('Error updating item status');
     }
   };
 

@@ -71,7 +71,7 @@ export const getUserBookings = async (req, res) => {
             data: formattedBookings
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -140,6 +140,6 @@ export const getUserBillingHistory = async (req, res) => {
             data: combinedHistory
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

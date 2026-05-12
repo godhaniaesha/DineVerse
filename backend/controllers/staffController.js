@@ -45,7 +45,7 @@ export const addStaff = async (req, res) => {
             return ThrowError(res, 400, 'Invalid user data');
         }
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -55,7 +55,7 @@ export const getStaff = async (req, res) => {
 
         res.json({ success: true, msg: "Staff fetched successfully", data: staff });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -69,7 +69,7 @@ export const getAdmin = async (req, res) => {
 
         res.json({ success: true, msg: "Admin fetched successfully", data: admin });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -102,7 +102,7 @@ export const updateStaffProfile = async (req, res) => {
                 const uploadResult = await uploadFile(req.file);
                 user.img = uploadResult.url;
             } catch (uploadErr) {
-                return ThrowError(res, 500, uploadErr.message);
+                return ThrowError(res, 500, uploadErr.msg);
             }
         }
 
@@ -134,7 +134,7 @@ export const updateStaffProfile = async (req, res) => {
         res.json({ success: true, msg: "Staff profile updated successfully", data: userResponse });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -158,6 +158,6 @@ export const deleteStaff = async (req, res) => {
         await user.deleteOne();
         res.json({ success: true, msg: 'Staff removed successfully' });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

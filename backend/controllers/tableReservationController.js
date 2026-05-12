@@ -63,7 +63,7 @@ export const getAvailableTablesByArea = async (req, res) => {
             data: tablesWithMatchInfo
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -106,7 +106,7 @@ export const createTablePaymentIntent = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -174,7 +174,7 @@ export const confirmTableBooking = async (req, res) => {
 
         return res.status(201).json({ success: true, msg: "Table Reserved Successfully", data: populatedBooking });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -210,7 +210,7 @@ export const updateTableReservationStatus = async (req, res) => {
             data: reservation
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -236,6 +236,6 @@ export const getTableReservationsByDate = async (req, res) => {
             data: reservations
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

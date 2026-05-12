@@ -63,7 +63,7 @@ export const addRoomType = async (req, res) => {
         });
     } catch (error) {
         console.error("Add room type error - full stack:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getRoomTypes = async (req, res) => {
@@ -76,7 +76,7 @@ export const getRoomTypes = async (req, res) => {
         });
     } catch (error) {
         console.error("Get room types error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateRoomType = async (req, res) => {
@@ -139,7 +139,7 @@ export const updateRoomType = async (req, res) => {
         });
     } catch (error) {
         console.error("Update room type error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const deleteRoomType = async (req, res) => {
@@ -175,7 +175,7 @@ export const deleteRoomType = async (req, res) => {
         });
     } catch (error) {
         console.error("Delete room type error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const addRoom = async (req, res) => {
@@ -212,7 +212,7 @@ export const addRoom = async (req, res) => {
         });
     } catch (error) {
         console.error("Add room error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getRooms = async (req, res) => {
@@ -226,7 +226,7 @@ export const getRooms = async (req, res) => {
         });
     } catch (error) {
         console.error("Get rooms error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -267,7 +267,7 @@ export const searchRooms = async (req, res) => {
         });
     } catch (error) {
         console.error("Search rooms error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -291,7 +291,7 @@ export const getRoomById = async (req, res) => {
         });
     } catch (error) {
         console.error("Get room by ID error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateRoom = async (req, res) => {
@@ -338,7 +338,7 @@ export const updateRoom = async (req, res) => {
 
     } catch (error) {
         console.error("Update room error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const deleteRoom = async (req, res) => {
@@ -362,6 +362,6 @@ export const deleteRoom = async (req, res) => {
         });
     } catch (error) {
         console.error("Delete room error:", error);
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

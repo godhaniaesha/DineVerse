@@ -45,7 +45,7 @@ export const addCuisine = async (req, res) => {
             data: cuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getCuisines = async (req, res) => {
@@ -62,7 +62,7 @@ export const getCuisines = async (req, res) => {
             data: cuisines
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -96,7 +96,7 @@ export const searchCuisines = async (req, res) => {
             data: cuisines
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getCuisineById = async (req, res) => {
@@ -117,7 +117,7 @@ export const getCuisineById = async (req, res) => {
             data: cuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateCuisine = async (req, res) => {
@@ -169,7 +169,7 @@ export const updateCuisine = async (req, res) => {
             data: updatedCuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const deleteCuisine = async (req, res) => {
@@ -196,6 +196,6 @@ export const deleteCuisine = async (req, res) => {
             data: cuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

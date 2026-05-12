@@ -34,7 +34,7 @@ export const addTable = async (req, res) => {
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -49,7 +49,7 @@ export const getTables = async (req, res) => {
             data: tables
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -72,7 +72,7 @@ export const getTableById = async (req, res) => {
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -126,7 +126,7 @@ export const updateTable = async (req, res) => {
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -151,7 +151,7 @@ export const deleteTable = async (req, res) => {
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -178,7 +178,7 @@ export const getTablesByArea = async (req, res) => {
             data: tables
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -204,7 +204,7 @@ export const getTablesByStatus = async (req, res) => {
             data: tables
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -243,7 +243,7 @@ export const getTableStats = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -277,6 +277,6 @@ export const updateTableStatus = async (req, res) => {
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

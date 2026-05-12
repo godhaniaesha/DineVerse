@@ -31,7 +31,7 @@ export const RoomProvider = ({ children }) => {
         setRoomTypes(data.data);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to fetch room types" };
+        return { success: false, error: data.msg || data.message || "Failed to fetch room types" };
       }
     } catch (error) {
       console.error("Get room types error:", error);
@@ -84,7 +84,7 @@ export const RoomProvider = ({ children }) => {
         setRoomTypes(prev => prev.map(rt => rt._id === id ? data.data : rt));
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to update room type" };
+        return { success: false, error: data.msg || data.message || "Failed to update room type" };
       }
     } catch (error) {
       console.error("Update room type error:", error);
@@ -136,7 +136,7 @@ export const RoomProvider = ({ children }) => {
         setRooms(data.data);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to fetch rooms" };
+        return { success: false, error: data.msg || data.message || "Failed to fetch rooms" };
       }
     } catch (error) {
       console.error("Get rooms error:", error);
@@ -162,7 +162,7 @@ export const RoomProvider = ({ children }) => {
         setRooms(prev => [...prev, data.data]);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to add room" };
+        return { success: false, error: data.msg || data.message || "Failed to add room" };
       }
     } catch (error) {
       console.error("Add room error:", error);
@@ -188,7 +188,7 @@ export const RoomProvider = ({ children }) => {
         setRooms(prev => prev.map(r => r._id === id ? data.data : r));
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to update room" };
+        return { success: false, error: data.msg || data.message || "Failed to update room" };
       }
     } catch (error) {
       console.error("Update room error:", error);
@@ -212,7 +212,7 @@ export const RoomProvider = ({ children }) => {
         setRooms(prev => prev.filter(r => r._id !== id));
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to delete room" };
+        return { success: false, error: data.msg || data.message || "Failed to delete room" };
       }
     } catch (error) {
       console.error("Delete room error:", error);
@@ -241,7 +241,7 @@ export const RoomProvider = ({ children }) => {
         setRooms(data.data);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.message || "Failed to search rooms" };
+        return { success: false, error: data.msg || data.message || "Failed to search rooms" };
       }
     } catch (error) {
       console.error("Search rooms error:", error);

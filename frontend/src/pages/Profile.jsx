@@ -100,7 +100,7 @@ export default function Profile() {
         setBookings(data?.data || []);
       } catch (error) {
         setBookings([]);
-        setBookingsError(error.message || "Failed to load bookings");
+        setBookingsError(error.msg || "Failed to load bookings");
       } finally {
         setBookingsLoading(false);
       }

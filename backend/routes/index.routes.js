@@ -6,6 +6,23 @@ import { addRoomType, getRoomTypes, updateRoomType, deleteRoomType, addRoom, get
 import { getReservations, updateReservationStatus, createPaymentIntent, confirmBooking, getReservationById, getAvailableRoomTypes, getRoomsByType, validateGuestDetails, getGuests, searchReservations, searchGuests, getAdminReservations } from '../controllers/reservationController.js';
 import { addTable, getTables, getTableById, updateTable, deleteTable, getTablesByArea } from '../controllers/tableController.js';
 import { UserAuth, superAdminAuth, managerAuth, adminManagerAuth, waiterAuth, chefAuth, housekeepingAuth, isStaff } from '../middlewares/authMiddleware.js';
+import { validate } from '../middlewares/validationMiddleware.js';
+import { 
+    registerValidation, 
+    loginValidation, 
+    staffValidation, 
+    dishValidation, 
+    categoryValidation, 
+    cuisineValidation,
+    reservationValidation,
+    inquiryValidation,
+    reviewValidation,
+    roomTypeValidation,
+    roomValidation,
+    tableValidation,
+    blogValidation,
+    updateValidation 
+} from '../utils/validationRules.js';
 import { upload, listBucketObjects, deleteManyFromS3 } from '../utils/uploadFile.utils.js';
 import { addCuisine, getCuisines, getCuisineById, updateCuisine, deleteCuisine, searchCuisines } from '../controllers/cuisineController.js';
 import { addImage, deleteImage, getGallery, toggleVisibility, updateImage } from '../controllers/galleryController.js';
@@ -25,8 +42,8 @@ const router = express.Router();
 process.on('unhandledRejection', (err) => {
     console.log('UNHANDLED REJECTION:', err.stack);
 });
-router.post('/auth/register', register);
-router.post('/auth/login', login);
+router.post('/auth/register', registerValidation, validate, register);
+router.post('/auth/login', loginValidation, validate, login);
 router.put('/auth/changePassword', UserAuth, changePassword);
 router.post('/auth/forgotPassword', forgotPassword);
 router.post('/auth/verifyOTP', verifyOTP);
@@ -38,29 +55,29 @@ router.get('/user/billing', UserAuth, getUserBillingHistory);
 
 
 
-router.post('/addStaff', UserAuth, adminManagerAuth, upload.none(), addStaff);
+router.post('/addStaff', UserAuth, adminManagerAuth, upload.none(), staffValidation, validate, addStaff);
 router.get('/getStaff', UserAuth, adminManagerAuth, getStaff);
 router.get('/getAdmin', UserAuth, superAdminAuth, getAdmin);
-router.put('/updateStaffProfile/:id', UserAuth, upload.single("img"), updateStaffProfile);
-router.delete('/deleteStaff/:id', UserAuth, superAdminAuth, deleteStaff);
+router.put('/updateStaffProfile/:id', UserAuth, upload.single("img"), updateValidation(staffValidation), validate, updateStaffProfile);
+router.delete('/deleteStaff/:id', UserAuth, adminManagerAuth, deleteStaff);
 
 
-router.post('/rooms/types', UserAuth, adminManagerAuth, upload.single('image_url'), addRoomType);
+router.post('/rooms/types', UserAuth, adminManagerAuth, upload.single('image_url'), roomTypeValidation, validate, addRoomType);
 router.get('/rooms/types', getRoomTypes);
 router.get('/public/rooms/types', getRoomTypes);
-router.put('/rooms/types/:id', UserAuth, adminManagerAuth, upload.single('image_url'), updateRoomType);
+router.put('/rooms/types/:id', UserAuth, adminManagerAuth, upload.single('image_url'), updateValidation(roomTypeValidation), validate, updateRoomType);
 router.delete('/rooms/types/:id', UserAuth, adminManagerAuth, deleteRoomType);
 
 
-router.post('/addRoom', UserAuth, adminManagerAuth, addRoom);
+router.post('/addRoom', UserAuth, adminManagerAuth, roomValidation, validate, addRoom);
 router.get('/getRooms', UserAuth, getRooms);
 router.get('/rooms/search', UserAuth, adminManagerAuth, searchRooms);
 router.get('/getRoomById/:id', UserAuth, getRoomById);
-router.put('/updateRoom/:id', UserAuth, adminManagerAuth, updateRoom);
+router.put('/updateRoom/:id', UserAuth, adminManagerAuth, updateValidation(roomValidation), validate, updateRoom);
 router.delete('/deleteRoom/:id', UserAuth, adminManagerAuth, deleteRoom);
 
 
-router.post('/reservations/validateGuestDetails', validateGuestDetails);
+router.post('/reservations/validateGuestDetails', reservationValidation, validate, validateGuestDetails);
 router.post('/reservations/getAvailableRoomTypes', getAvailableRoomTypes);
 router.post('/reservations/getRoomsByType', getRoomsByType);
 router.post('/reservations/createPaymentIntent', UserAuth, createPaymentIntent);
@@ -87,10 +104,10 @@ router.post('/table/confirmTableBooking', confirmTableBooking);
 router.patch('/table/updateTableReservationStatus/:id', UserAuth, waiterAuth, updateTableReservationStatus);
 
 // ========== TABLE MANAGEMENT ROUTES (Admin Only) ==========
-router.post('/table/add', UserAuth, adminManagerAuth, addTable);
+router.post('/table/add', UserAuth, adminManagerAuth, tableValidation, validate, addTable);
 router.get('/table/getAll', UserAuth, adminManagerAuth, getTables);
 router.get('/table/getById/:id', UserAuth, adminManagerAuth, getTableById);
-router.put('/table/update/:id', UserAuth, adminManagerAuth, updateTable);
+router.put('/table/update/:id', UserAuth, adminManagerAuth, updateValidation(tableValidation), validate, updateTable);
 router.delete('/table/delete/:id', UserAuth, adminManagerAuth, deleteTable);
 
 // ========== PUBLIC TABLE ENDPOINTS ==========
@@ -112,29 +129,29 @@ router.get('/housekeeping/getTasks', UserAuth, isStaff, getHousekeepingTasks);
 router.get('/housekeeping/stats', UserAuth, isStaff, getHousekeepingStats);
 
 
-router.post('/food/addCuisine', UserAuth, adminManagerAuth, upload.single('img'), addCuisine);
+router.post('/food/addCuisine', UserAuth, adminManagerAuth, upload.single('img'), cuisineValidation, validate, addCuisine);
 router.get('/food/getCuisines', getCuisines);
 router.get('/food/cuisines/search', searchCuisines);
 router.get('/food/getCuisineById/:id', getCuisineById);
-router.put('/food/updateCuisine/:id', UserAuth, adminManagerAuth, upload.single('img'), updateCuisine);
+router.put('/food/updateCuisine/:id', UserAuth, adminManagerAuth, upload.single('img'), updateValidation(cuisineValidation), validate, updateCuisine);
 router.delete('/food/deleteCuisine/:id', UserAuth, adminManagerAuth, deleteCuisine);
 
 
-router.post('/food/addCategory', UserAuth, adminManagerAuth, upload.single('img'), addCategory);
+router.post('/food/addCategory', UserAuth, adminManagerAuth, upload.single('img'), categoryValidation, validate, addCategory);
 router.get('/food/getCategories', getCategories);
 router.get('/food/categories/search', searchCategories);
 router.get('/food/getCategoryById/:id', getCategoryById);
 router.get('/food/getCategoriesByArea', getCategoriesByArea);
-router.put('/food/updateCategory/:id', UserAuth, adminManagerAuth, upload.single('img'), updateCategory);
+router.put('/food/updateCategory/:id', UserAuth, adminManagerAuth, upload.single('img'), updateValidation(categoryValidation), validate, updateCategory);
 router.delete('/food/deleteCategory/:id', UserAuth, adminManagerAuth, deleteCategory);
 
 
-router.post('/food/addDish', UserAuth, adminManagerAuth, upload.single('img'), addDish);
+router.post('/food/addDish', UserAuth, adminManagerAuth, upload.single('img'), dishValidation, validate, addDish);
 router.get('/food/getDishes', getDishes);
 router.get('/food/dishes/search', searchDishes);
 router.get('/food/getDishesByArea', getDishesByArea);
 router.get('/food/getDishById/:id', getDishById);
-router.put('/food/updateDish/:id', UserAuth, adminManagerAuth, upload.single('img'), updateDish);
+router.put('/food/updateDish/:id', UserAuth, adminManagerAuth, upload.single('img'), updateValidation(dishValidation), validate, updateDish);
 router.delete('/food/deleteDish/:id', UserAuth, adminManagerAuth, deleteDish);
 
 
@@ -145,24 +162,24 @@ router.patch("/toggleVisibility/:id", UserAuth, adminManagerAuth, toggleVisibili
 router.delete("/deleteImage/:id", UserAuth, adminManagerAuth, deleteImage);
 
 
-router.post("/addBlog", UserAuth, adminManagerAuth, upload.fields([{ name: "coverImg" }]), addBlog);
+router.post("/addBlog", UserAuth, adminManagerAuth, upload.fields([{ name: "coverImg" }]), blogValidation, validate, addBlog);
 router.get("/getBlogs", getBlogs);
 router.get("/getBlogById/:id", getBlogById);
-router.put("/updateBlog/:id", UserAuth, adminManagerAuth, upload.fields([{ name: "coverImg" }]), updateBlog);
+router.put("/updateBlog/:id", UserAuth, adminManagerAuth, upload.fields([{ name: "coverImg" }]), updateValidation(blogValidation), validate, updateBlog);
 router.patch("/toggleLike/:id", UserAuth, toggleLike);
 router.delete("/deleteBlog/:id", UserAuth, adminManagerAuth, deleteBlog);
 
 
 // Legacy routes (deprecated but kept for backward compatibility)
-router.post('/addTable', UserAuth, adminManagerAuth, addTable);
+router.post('/addTable', UserAuth, adminManagerAuth, tableValidation, validate, addTable);
 router.get('/getTables', UserAuth, adminManagerAuth, getTables);
 router.get('/getTablesByArea', getTablesByArea);
 router.get('/getTableById/:id', UserAuth, adminManagerAuth, getTableById);
-router.put('/updateTable/:id', UserAuth, adminManagerAuth, updateTable);
+router.put('/updateTable/:id', UserAuth, adminManagerAuth, updateValidation(tableValidation), validate, updateTable);
 router.delete('/deleteTable/:id', UserAuth, adminManagerAuth, deleteTable);
 
 
-router.post('/addInquiry', addInquiry);
+router.post('/addInquiry', inquiryValidation, validate, addInquiry);
 router.get('/getInquiries', UserAuth, adminManagerAuth, getInquiries);
 router.get('/getInquiryById/:id', UserAuth, adminManagerAuth, getInquiryById);
 router.patch('/updateInquiryStatus/:id', UserAuth, adminManagerAuth, updateInquiryStatus);
@@ -185,7 +202,7 @@ router.get('/orders/waiter-active-orders', UserAuth, waiterAuth, getWaiterActive
 router.get('/orders/sales-history', UserAuth, adminManagerAuth, getCompletedPayments);
 
 
-router.post('/reviews/add', UserAuth, addReview);
+router.post('/reviews/add', UserAuth, reviewValidation, validate, addReview);
 router.get('/reviews/get-all', getReviews);
 router.delete('/reviews/delete/:id', UserAuth, adminManagerAuth, deleteReview);
 router.get('/reviews/area/:area', getAreaReviews);
@@ -209,7 +226,7 @@ router.get("/s3/list", async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, msg: "Error while getting images from S3", error: error.message });
+        res.status(500).json({ success: false, msg: "Error while getting images from S3", error: error.msg });
     }
 });
 
@@ -232,7 +249,7 @@ router.delete("/s3/delete-many", async (req, res) => {
             data: { deleted: keys.length, keys }
         });
     } catch (error) {
-        res.status(500).json({ success: false, msg: "Delete many error", error: error.message });
+        res.status(500).json({ success: false, msg: "Delete many error", error: error.msg });
     }
 });
 

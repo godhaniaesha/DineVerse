@@ -27,7 +27,7 @@ export const register = async (req, res) => {
             const token = generateToken(user._id);
             res.status(201).json({
                 success: true,
-                message: "User registered successfully",
+                msg: "User registered successfully",
                 data: {
                     _id: user._id,
                     full_name: user.full_name,
@@ -40,7 +40,7 @@ export const register = async (req, res) => {
             return ThrowError(res, 400, "Invalid user data");
         }
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const login = async (req, res) => {
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
             const token = generateToken(user._id);
             res.json({
                 success: true,
-                message: "Logged in successfully",
+                msg: "Logged in successfully",
                 data: {
                     _id: user._id,
                     full_name: user.full_name,
@@ -75,7 +75,7 @@ export const login = async (req, res) => {
             return ThrowError(res, 401, "Invalid email or password");
         }
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -109,7 +109,7 @@ export const changePassword = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -163,7 +163,7 @@ export const forgotPassword = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const verifyOTP = async (req, res) => {
@@ -201,7 +201,7 @@ export const verifyOTP = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -232,6 +232,6 @@ export const resetPassword = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

@@ -43,7 +43,7 @@ export const addCategory = async (req, res) => {
             data: category
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -56,7 +56,7 @@ export const getCategories = async (req, res) => {
             data: categories
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -89,7 +89,7 @@ export const searchCategories = async (req, res) => {
             data: categories
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -112,7 +112,7 @@ export const getCategoryById = async (req, res) => {
             data: category
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -157,7 +157,7 @@ export const updateCategory = async (req, res) => {
             data: updatedCategory
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -188,7 +188,7 @@ export const deleteCategory = async (req, res) => {
             data: category
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -319,7 +319,7 @@ export const addDish = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -337,7 +337,7 @@ export const getDishes = async (req, res) => {
             data: dishes
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -381,7 +381,7 @@ export const searchDishes = async (req, res) => {
             data: dishes
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -401,7 +401,7 @@ export const getDishById = async (req, res) => {
 
         res.status(200).json({ success: true, msg: "Dish fetched successfully", data: dish });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -430,7 +430,7 @@ export const getDishesByArea = async (req, res) => {
             data: dishes
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -559,7 +559,7 @@ export const updateDish = async (req, res) => {
         return res.status(200).json({ success: true, msg: "Dish updated successfully", data: updatedDish });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -578,7 +578,7 @@ export const deleteDish = async (req, res) => {
         await dish.deleteOne();
         res.status(200).json({ success: true, msg: "Dish deleted successfully", data: dish });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 
@@ -609,6 +609,6 @@ export const getCategoriesByArea = async (req, res) => {
             data: categories
         });
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

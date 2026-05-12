@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { toast } from "react-toastify";
 import { MdOutlineClose, MdPayment, MdCheckCircle } from "react-icons/md";
 import { useOrder } from "../../contexts/OrderContext";
 import { FaCreditCard, FaPaypal } from "react-icons/fa6";
@@ -126,7 +127,7 @@ export default function AdminBilling() {
       }
     } catch (error) {
       console.error("Payment intent error:", error);
-      alert("Failed to create payment intent. Please try again.");
+      toast.error("Failed to create payment intent. Please try again.");
     } finally {
       setProcessingPayment(false);
     }
@@ -196,7 +197,7 @@ export default function AdminBilling() {
     // ❌ Stop
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      alert(`Validation Error: ${Object.values(newErrors).join(", ")}`);
+      toast.error(`Validation Error: ${Object.values(newErrors).join(", ")}`);
       return;
     }
 
@@ -214,6 +215,7 @@ export default function AdminBilling() {
       }
 
       setPaymentSuccess(true);
+      toast.success("Payment processed successfully!");
 
       setTimeout(() => {
         setPaymentSuccess(false);
@@ -225,7 +227,7 @@ export default function AdminBilling() {
 
     } catch (error) {
       console.error(error);
-      alert("Payment failed");
+      toast.error("Payment failed");
     } finally {
       setProcessingPayment(false);
     }

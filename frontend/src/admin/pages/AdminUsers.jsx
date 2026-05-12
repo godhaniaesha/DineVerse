@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useStaff } from "../../contexts/StaffContext";
 
@@ -62,13 +63,13 @@ export default function AdminUsers() {
 
   const handleSave = async () => {
     if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      alert("Please fill in all required fields (Name, Email, Phone).");
+      toast.error("Please fill in all required fields (Name, Email, Phone).");
       return;
     }
 
     if (modal.mode === "add") {
       if (!form.password || form.password !== form.confirmPassword) {
-        alert("Passwords do not match or are empty.");
+        toast.error("Passwords do not match or are empty.");
         return;
       }
 
@@ -82,13 +83,14 @@ export default function AdminUsers() {
 
       const result = await addStaff(formData);
       if (result.success) {
+        toast.success("Super Admin added successfully!");
         close();
       } else {
-        alert(result.error || "Failed to add Super Admin");
+        toast.error(result.error || "Failed to add Super Admin");
       }
     } else if (modal.mode === "edit") {
       if (form.password && form.password !== form.confirmPassword) {
-        alert("Passwords do not match.");
+        toast.error("Passwords do not match.");
         return;
       }
 
@@ -98,16 +100,17 @@ export default function AdminUsers() {
       formData.append("phone", form.phone);
       formData.append("role", form.role);
       formData.append("status", form.status);
+
       if (form.password) {
         formData.append("password", form.password);
       }
 
       const result = await updateStaffProfile(modal.row._id, formData);
       if (result.success) {
-        alert("Super Admin updated successfully!");
+        toast.success("Super Admin updated successfully!");
         close();
       } else {
-        alert(result.error || "Failed to update Super Admin");
+        toast.error(result.error || "Failed to update Super Admin");
       }
     }
   };
@@ -115,10 +118,10 @@ export default function AdminUsers() {
   const handleDelete = async () => {
     const result = await deleteStaff(modal.row._id);
     if (result.success) {
-      alert("Super Admin deleted successfully!");
+      toast.success("Super Admin deleted successfully!");
       close();
     } else {
-      alert(result.error || "Failed to delete Super Admin");
+      toast.error(result.error || "Failed to delete Super Admin");
     }
   };
 

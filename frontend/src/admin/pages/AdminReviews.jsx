@@ -1,5 +1,6 @@
 // src/admin/pages/AdminReviews.jsx
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import reviewService from "../../services/reviewService";
 import Pagination from "../components/Pagination";
@@ -77,17 +78,18 @@ export default function AdminReviews() {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        toast.error("Please login to perform this action");
         return;
       }
       await reviewService.deleteReview(modal.row._id, authToken);
       setRows((p) => p.filter((r) => r._id !== modal.row._id));
+      toast.success("Review deleted successfully!");
       close();
     } catch (error) {
       console.error("Error deleting review:", error);
-      alert(
+      toast.error(
         "Error deleting review: " +
-        (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.msg)
       );
     }
   };

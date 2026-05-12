@@ -30,7 +30,7 @@ export const addInquiry = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getInquiries = async (req, res) => {
@@ -53,7 +53,7 @@ export const getInquiries = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const getInquiryById = async (req, res) => {
@@ -83,7 +83,7 @@ export const getInquiryById = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const updateInquiryStatus = async (req, res) => {
@@ -110,7 +110,7 @@ export const updateInquiryStatus = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };
 export const deleteInquiry = async (req, res) => {
@@ -133,6 +133,6 @@ export const deleteInquiry = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.message);
+        return ThrowError(res, 500, error.msg);
     }
 };

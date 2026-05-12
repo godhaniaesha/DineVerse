@@ -30,10 +30,10 @@ export const TableReservationProvider = ({ children }) => {
           return { success: true, data: data.data };
         }
         if (res.status === 401 || res.status === 403 || res.status === 404) {
-          lastError = data.msg || `Request failed: ${endpoint}`;
+          lastError = data.msg || data.message || `Request failed: ${endpoint}`;
           continue;
         }
-        return { success: false, error: data.msg || `Request failed with status ${res.status}` };
+        return { success: false, error: data.msg || data.message || `Request failed with status ${res.status}` };
       } catch (_) {
         lastError = "Network error";
       }
@@ -146,7 +146,7 @@ export const TableReservationProvider = ({ children }) => {
         setReservations((prev) => prev.map((r) => (r._id === id ? { ...r, status, waiter: waiter || r.waiter } : r)));
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || "Failed to update status" };
+      return { success: false, error: data.msg || data.message || "Failed to update status" };
     } catch (_) {
       return { success: false, error: "Network error" };
     } finally {
