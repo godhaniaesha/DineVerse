@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useTable } from "../../contexts/TableContext";
 import DeleteIconButton from "../components/DeleteIconButton";
 import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const EMPTY_FORM = {
   tableNo: "",
@@ -194,8 +195,12 @@ export default function AdminTables() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  Loading...
+                <td colSpan="5" style={{ padding: "40px" }}>
+                  <FoodLoadingAnimation 
+                    type="plates" 
+                    size="medium" 
+                    text="Loading tables..." 
+                  />
                 </td>
               </tr>
             ) : (

@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useReservations } from "../../contexts/ReservationContext";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const STATUSES = ["All", "Pending", "Confirmed", "Checked In", "Cancelled"];
 const EMPTY_FORM = {
@@ -166,7 +167,17 @@ export default function AdminReservations() {
             </tr>
           </thead>
           <tbody>
-            {latestTenReservations.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={8} style={{ padding: "40px" }}>
+                  <FoodLoadingAnimation 
+                    type="utensils" 
+                    size="medium" 
+                    text="Loading reservations..." 
+                  />
+                </td>
+              </tr>
+            ) : latestTenReservations.length === 0 ? (
               <tr>
                 <td colSpan={8} className="ad_table__empty">
                   No reservations found.

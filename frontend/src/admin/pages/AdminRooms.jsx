@@ -3,6 +3,7 @@ import "../../styleadmin/AdminRooms.css";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useRooms } from "../../contexts/RoomContext";
 import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const STATUS_LABELS = { "Available": "Available", "Occupied": "Occupied", "Reserved": "Reserved", "Maintenance": "Maintenance" };
 const STATUS_CYCLE = ["Available", "Occupied", "Reserved", "Maintenance"];
@@ -340,7 +341,13 @@ export default function AdminRooms() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={8} className="rooms__empty">Loading rooms...</td>
+                                    <td colSpan={8} style={{ padding: "40px" }}>
+                                        <FoodLoadingAnimation 
+                                            type="plates" 
+                                            size="medium" 
+                                            text="Loading rooms..." 
+                                        />
+                                    </td>
                                 </tr>
                             ) : filtered.length === 0 ? (
                                 <tr>

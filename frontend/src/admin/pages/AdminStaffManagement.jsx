@@ -3,6 +3,7 @@ import DeleteIconButton from "../components/DeleteIconButton";
 import { useStaff } from "../../contexts/StaffContext";
 import { useAuth } from "../../contexts/AuthContext";
 import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -314,7 +315,13 @@ export default function AdminStaffManagement() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="rooms__empty">Loading staff...</td>
+                <td colSpan={8} style={{ padding: "40px" }}>
+                  <FoodLoadingAnimation 
+                    type="chef" 
+                    size="medium" 
+                    text="Loading staff..." 
+                  />
+                </td>
               </tr>
             ) : staffWithoutSuperAdmin.length === 0 ? (
               <tr>
@@ -431,7 +438,13 @@ export default function AdminStaffManagement() {
                     <label className="rooms__form_label">Cuisine Specialization</label>
                     <div className="rooms__cuisine_checkboxes bg-transparent" >
                       {cuisinesLoading ? (
-                        <div className="rooms__cuisine_loading">Loading cuisines...</div>
+                        <div style={{ padding: "20px" }}>
+                          <FoodLoadingAnimation 
+                            type="ingredients" 
+                            size="small" 
+                            text="Loading cuisines..." 
+                          />
+                        </div>
                       ) : cuisines.length === 0 ? (
                         <div className="rooms__cuisine_empty">No cuisines available</div>
                       ) : (

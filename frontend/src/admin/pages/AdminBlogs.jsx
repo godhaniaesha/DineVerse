@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import blogService from "../../services/blogService";
+import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const EMPTY_FORM = {
   title: "",
@@ -237,8 +239,13 @@ export default function AdminBlogs() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          Loading blogs...
+        <div className="ad_page">
+          <FoodLoadingAnimation
+            type="plates"
+            size="large"
+            text="Loading blogs..."
+            fullScreen={false}
+          />
         </div>
       ) : (
         <>
@@ -318,63 +325,13 @@ export default function AdminBlogs() {
             </table>
           </div>
 
-          {/* Pagination controls */}
-          {totalItems > pageSize && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: "16px",
-              }}
-            >
-              <span style={{ fontSize: "12px", color: "#b5b5b5" }}>
-                Showing {startIndex + 1}–
-                {Math.min(endIndex, totalItems)} of {totalItems}
-              </span>
-
-              <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                <button
-                  className="rooms__btn rooms__btn--ghost"
-                  style={{ padding: "4px 10px", fontSize: "12px" }}
-                  disabled={currentPage === 1}
-                  onClick={() => goToPage(currentPage - 1)}
-                >
-                  Previous
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={
-                        page === currentPage
-                          ? "rooms__btn rooms__btn--primary"
-                          : "rooms__btn rooms__btn--ghost"
-                      }
-                      style={{
-                        padding: "4px 10px",
-                        fontSize: "12px",
-                        minWidth: "32px",
-                      }}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-
-                <button
-                  className="rooms__btn rooms__btn--ghost"
-                  style={{ padding: "4px 10px", fontSize: "12px" }}
-                  disabled={currentPage === totalPages}
-                  onClick={() => goToPage(currentPage + 1)}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={pageSize}
+            totalItems={totalItems}
+          />
         </>
       )}
 
