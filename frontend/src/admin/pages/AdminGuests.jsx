@@ -55,7 +55,7 @@ export default function AdminGuests() {
     <div className="ad_page">
       <div className="rooms__header">
         <div><h2 className="ad_h2">Guests</h2><p className="ad_p">Track frequent guests and manage VIP preferences.</p></div>
-        <button className="rooms__add_btn" onClick={openAdd}>Add Guest</button>
+        {/* <button className="rooms__add_btn" onClick={openAdd}>Add Guest</button> */}
       </div>
 
 
