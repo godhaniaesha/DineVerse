@@ -63,15 +63,17 @@ export default function AdminCategoryManagement() {
   };
 
   const save = async () => {
-    if (!form.name.trim()) return toast.error("Name is required");
-    // if (!form.cuisineId) return toast.error("Cuisine is required");
-    if (form.area.length === 0) return toast.error("At least one area is required");
+    const { name, area } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    if (!name.trim()) return toast.error("Category name is required");
+    if (name.length < 2 || name.length > 50) return toast.error("Category name must be between 2 and 50 characters");
+    if (area.length === 0) return toast.error("At least one area is required");
 
     const formData = new FormData();
-    formData.append("name", form.name);
-    // formData.append("cuisineId", form.cuisineId);
+    formData.append("name", name);
     formData.append("status", form.status);
-    formData.append("area", JSON.stringify(form.area));
+    formData.append("area", JSON.stringify(area));
 
     if (form.img instanceof File) {
       formData.append("img", form.img);

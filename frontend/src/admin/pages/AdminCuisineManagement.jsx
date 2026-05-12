@@ -44,13 +44,18 @@ export default function AdminCuisineManagement() {
   };
 
   const save = async () => {
-    if (!form.name.trim() || !form.description.trim()) return toast.error("Name and Description are required");
-    
+    const { name, description, area, status } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    if (!name.trim()) return toast.error("Cuisine name is required");
+    if (name.length < 2 || name.length > 50) return toast.error("Cuisine name must be between 2 and 50 characters");
+    if (!description.trim()) return toast.error("Description is required");
+
     const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("description", form.description);
-    formData.append("area", form.area);
-    formData.append("status", form.status);
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("area", area);
+    formData.append("status", status);
     
     if (form.img instanceof File) {
       formData.append("img", form.img);

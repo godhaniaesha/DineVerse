@@ -7,7 +7,7 @@ import Pagination from "../components/Pagination";
 import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 /* ── CUISINE CHECKBOX STYLES ───────────────────────────────────────────── */
 const cuisineCheckboxStyles = `
@@ -239,25 +239,44 @@ export default function AdminStaffManagement() {
   };
 
   const handleSave = async () => {
-    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      toast.error("Please fill in all required fields!");
-      return;
-    }
-    if (!form.role) {
-      toast.error("Please select role!");
-      return;
-    }
-    if (!form.department) {
-      toast.error("Department is required!");
-      return;
+    const { full_name, email, phone, role, department, password, confirmPassword } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    
+    // Full Name Validation
+    if (!full_name.trim()) return toast.error("Full name is required");
+    if (full_name.length < 2 || full_name.length > 50) return toast.error("Full name must be between 2 and 50 characters");
+    if (!/^[A-Za-z\s]+$/.test(full_name)) return toast.error("Full name must contain only letters");
+
+    // Email Validation
+    if (!email.trim()) return toast.error("Email is required");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return toast.error("Please provide a valid email address");
+
+    // Phone Validation
+    if (!phone.trim()) return toast.error("Phone number is required");
+    if (!/^\d+$/.test(phone)) return toast.error("Phone number must contain only digits");
+    if (phone.length < 10 || phone.length > 15) return toast.error("Phone number must be between 10 and 15 digits");
+
+    // Role Validation
+    if (!role) return toast.error("Role is required");
+    const validRoles = ['Manager', 'Housekeeping', 'Cafe Waiter', 'Res Waiter', 'Bar Waiter', 'Chef'];
+    if (!validRoles.includes(role)) return toast.error("Invalid staff role selected");
+
+    // Department Validation
+    if (!department) return toast.error("Department is required");
+
+    // Password Validation
+    if (modal.mode === "add") {
+      if (!password) return toast.error("Password is required");
+      if (password.length < 6) return toast.error("Password must be at least 6 characters long");
+      if (password !== confirmPassword) return toast.error("Passwords do not match!");
+    } else if (modal.mode === "edit" && password) {
+      if (password.length < 6) return toast.error("Password must be at least 6 characters long");
+      if (password !== confirmPassword) return toast.error("Passwords do not match!");
     }
 
     if (modal.mode === "add") {
-      if (!form.password || form.password !== form.confirmPassword) {
-        toast.error("Passwords do not match!");
-        return;
-      }
-
       const formData = new FormData();
       formData.append("full_name", form.full_name);
       formData.append("email", form.email);
@@ -278,15 +297,9 @@ export default function AdminStaffManagement() {
         toast.success("Staff added successfully!");
         close();
       } else {
-        console.log(result, "difgjvdfi");
         toast.error(result.error || "Failed to add staff");
       }
     } else if (modal.mode === "edit") {
-      if (form.password && form.password !== form.confirmPassword) {
-        toast.error("Passwords do not match!");
-        return;
-      }
-
       const formData = new FormData();
       formData.append("full_name", form.full_name);
       formData.append("email", form.email);

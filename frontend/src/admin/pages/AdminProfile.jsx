@@ -37,10 +37,25 @@ export default function AdminProfile() {
   const [profileImage, setProfileImage] = useState(null);
 
   const handleSave = async () => {
+    const { full_name, email, phone } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    if (!full_name.trim()) return toast.error("Full name is required");
+    if (full_name.length < 2 || full_name.length > 50) return toast.error("Full name must be between 2 and 50 characters");
+    if (!/^[A-Za-z\s]+$/.test(full_name)) return toast.error("Full name must contain only letters");
+
+    if (!email.trim()) return toast.error("Email is required");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return toast.error("Please provide a valid email address");
+
+    if (!phone.trim()) return toast.error("Phone number is required");
+    if (!/^\d+$/.test(phone)) return toast.error("Phone number must contain only digits");
+    if (phone.length < 10 || phone.length > 15) return toast.error("Phone number must be between 10 and 15 digits");
+
     const formData = new FormData();
-    formData.append("full_name", form.full_name);
-    formData.append("email", form.email);
-    formData.append("phone", form.phone);
+    formData.append("full_name", full_name);
+    formData.append("email", email);
+    formData.append("phone", phone);
     if (profileImage) {
       formData.append("img", profileImage);
     }
@@ -65,12 +80,17 @@ export default function AdminProfile() {
   };
 
   const handlePasswordUpdate = async () => {
-    if (passwordForm.new !== passwordForm.confirm) {
+    const { current, new: newPass, confirm } = passwordForm;
+
+    if (!current) return toast.error("Current password is required");
+    if (!newPass) return toast.error("New password is required");
+    if (newPass.length < 6) return toast.error("New password must be at least 6 characters long");
+    if (newPass !== confirm) {
       toast.error("New passwords do not match!");
       return;
     }
 
-    const result = await changePassword(passwordForm.current, passwordForm.new);
+    const result = await changePassword(current, newPass);
     if (result.success) {
       toast.success("Password updated successfully!");
       setPasswordForm({ current: "", new: "", confirm: "" });

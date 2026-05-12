@@ -315,6 +315,15 @@ export default function AdminRooms() {
   const closeModal = () => setModal(null);
 
   const handleSave = async (form) => {
+    const { roomNumber, roomType, status } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    if (!roomNumber.trim()) return toast.error("Room number is required");
+    if (!roomType) return toast.error("Room type is required");
+    
+    const validStatuses = ['Available', 'Booked', 'Cleaning', 'Maintenance', 'Occupied', 'Reserved'];
+    if (status && !validStatuses.includes(status)) return toast.error("Invalid room status selected");
+
     const payload = {
       ...form,
       floor: String(form.floor),

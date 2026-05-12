@@ -81,11 +81,22 @@ export default function AdminTables() {
 
   // ✅ SAVE (ADD + EDIT)
   const save = async () => {
-    if (!form.tableNo.trim() || !form.area.trim() || !form.capacity) return;
+    const { tableNo, area, capacity, status } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    if (!tableNo.trim()) return toast.error("Table number is required");
+    
+    if (!area) return toast.error("Area is required");
+    const validAreas = ['Restaurant', 'Cafe', 'Bar'];
+    if (!validAreas.includes(area)) return toast.error("Invalid area selected");
+
+    if (!capacity || isNaN(capacity) || Number(capacity) < 1) {
+      return toast.error("Capacity must be an integer and at least 1");
+    }
 
     // Auto-prefix table number
-    const prefix = AREA_PREFIXES[form.area] || "";
-    let finalTableNo = form.tableNo.trim();
+    const prefix = AREA_PREFIXES[area] || "";
+    let finalTableNo = tableNo.trim();
     
     // If user entered only number, add prefix
     if (/^\d+$/.test(finalTableNo)) {
@@ -102,9 +113,9 @@ export default function AdminTables() {
 
     const payload = {
       tableNo: finalTableNo,
-      area: form.area,
-      capacity: Number(form.capacity),
-      status: form.status,
+      area: area,
+      capacity: Number(capacity),
+      status: status,
     };
 
     let result;

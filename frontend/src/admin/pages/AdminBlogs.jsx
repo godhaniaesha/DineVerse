@@ -129,16 +129,15 @@ export default function AdminBlogs() {
   };
 
   const save = async () => {
-    // basic validations
-    if (!form.title.trim() || !form.short_des.trim() || !form.des.trim()) {
-      toast.error(
-        "Please fill all required fields (title, short description, description)."
-      );
-      return;
-    }
+    const { title, short_des, des, area, status, coverImg } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    if (!title.trim()) return toast.error("Title is required");
+    if (!des.trim()) return toast.error("Content is required");
+    if (!short_des.trim()) return toast.error("Short description is required");
 
     // For add: image must be selected
-    if (modal.mode === "add" && !form.coverImg.file) {
+    if (modal.mode === "add" && !coverImg.file) {
       toast.error("Please select a cover image.");
       return;
     }
@@ -151,15 +150,15 @@ export default function AdminBlogs() {
       }
 
       const formData = new FormData();
-      formData.append("title", form.title);
-      formData.append("short_des", form.short_des);
-      formData.append("des", form.des);
-      formData.append("area", form.area);
-      formData.append("status", form.status);
+      formData.append("title", title);
+      formData.append("short_des", short_des);
+      formData.append("des", des);
+      formData.append("area", area);
+      formData.append("status", status);
 
       // Only append image if new file selected
-      if (form.coverImg.file) {
-        formData.append("coverImg", form.coverImg.file);
+      if (coverImg.file) {
+        formData.append("coverImg", coverImg.file);
       }
 
       if (modal.mode === "add") {

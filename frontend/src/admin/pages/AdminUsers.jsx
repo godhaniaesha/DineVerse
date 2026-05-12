@@ -62,10 +62,24 @@ export default function AdminUsers() {
   }, [getStaff]);
 
   const handleSave = async () => {
-    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      toast.error("Please fill in all required fields (Name, Email, Phone).");
-      return;
-    }
+    const { full_name, email, phone } = form;
+
+    // --- Frontend Validations matching backend/utils/validationRules.js ---
+    
+    // Full Name Validation
+    if (!full_name.trim()) return toast.error("Full name is required");
+    if (full_name.length < 2 || full_name.length > 50) return toast.error("Full name must be between 2 and 50 characters");
+    if (!/^[A-Za-z\s]+$/.test(full_name)) return toast.error("Full name must contain only letters");
+
+    // Email Validation
+    if (!email.trim()) return toast.error("Email is required");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return toast.error("Please provide a valid email address");
+
+    // Phone Validation
+    if (!phone.trim()) return toast.error("Phone number is required");
+    if (!/^\d+$/.test(phone)) return toast.error("Phone number must contain only digits");
+    if (phone.length < 10 || phone.length > 15) return toast.error("Phone number must be between 10 and 15 digits");
 
     if (modal.mode === "add") {
       if (!form.password || form.password !== form.confirmPassword) {

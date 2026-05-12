@@ -84,24 +84,32 @@ export default function AdminDishManagement() {
     };
 
     const save = async () => {
-        if (!form.name.trim()) return toast.error("Name is required");
-        if (!form.price || Number(form.price) <= 0) return toast.error("Valid price is required");
-        if (!form.cat_id) return toast.error("Category is required");
+        const { name, price, cat_id, area, short_des, des, cuisineId, mealType, prepTime, ingredients, note, status, chef } = form;
+
+        // --- Frontend Validations matching backend/utils/validationRules.js ---
+        if (!name.trim()) return toast.error("Dish name is required");
+        if (name.length < 2 || name.length > 100) return toast.error("Dish name must be between 2 and 100 characters");
+        
+        if (!price || isNaN(price) || Number(price) <= 0) return toast.error("Price must be a number greater than 0");
+        
+        if (!cat_id) return toast.error("Category is required");
+        
+        if (!area || area.length === 0) return toast.error("At least one area is required");
 
         const formData = new FormData();
-        formData.append("name", form.name);
-        formData.append("cat_id", form.cat_id);
-        formData.append("short_des", form.short_des);
-        formData.append("des", form.des);
-        formData.append("cuisineId", form.cuisineId);
-        formData.append("mealType", form.mealType);
-        formData.append("price", form.price);
-        formData.append("prepTime", form.prepTime);
-        formData.append("ingredients", form.ingredients);
-        formData.append("note", form.note);
-        formData.append("status", form.status);
-        formData.append("area", JSON.stringify(form.area));
-        formData.append("chef", JSON.stringify(form.chef));
+        formData.append("name", name);
+        formData.append("cat_id", cat_id);
+        formData.append("short_des", short_des);
+        formData.append("des", des);
+        formData.append("cuisineId", cuisineId);
+        formData.append("mealType", mealType);
+        formData.append("price", price);
+        formData.append("prepTime", prepTime);
+        formData.append("ingredients", ingredients);
+        formData.append("note", note);
+        formData.append("status", status);
+        formData.append("area", JSON.stringify(area));
+        formData.append("chef", JSON.stringify(chef));
 
         if (form.img instanceof File) {
             formData.append("img", form.img);

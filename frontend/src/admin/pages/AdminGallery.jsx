@@ -39,17 +39,23 @@ export default function AdminGallery() {
   };
 
   const handleSave = async () => {
-    if (!form.title.trim()) return toast.error("Title is required");
+    const { title, category, visibility, img } = form;
+
+    // --- Frontend Validations ---
+    if (!title.trim()) return toast.error("Title is required");
+    if (title.length < 2) return toast.error("Title must be at least 2 characters long");
     
-    const formData = new FormData();
-    formData.append("title", form.title);
-    formData.append("category", form.category);
-    formData.append("visibility", form.visibility);
-    
-    if (form.img instanceof File) {
-      formData.append("img", form.img);
-    } else if (modal.mode === "add") {
+    if (modal.mode === "add" && !img) {
       return toast.error("Image is required");
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("category", category);
+    formData.append("visibility", visibility);
+    
+    if (img instanceof File) {
+      formData.append("img", img);
     }
 
     let res;
