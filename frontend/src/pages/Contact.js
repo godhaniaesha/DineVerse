@@ -17,7 +17,7 @@ const VENUES_INFO = [
     hours: [
       { day: "Mon – Thu", time: "12:00 – 23:00" },
       { day: "Fri – Sat", time: "12:00 – 00:00" },
-      { day: "Sunday",    time: "11:00 – 22:00" },
+      { day: "Sunday", time: "11:00 – 22:00" },
     ],
   },
   {
@@ -27,7 +27,7 @@ const VENUES_INFO = [
     hours: [
       { day: "Mon – Thu", time: "17:00 – 01:00" },
       { day: "Fri – Sat", time: "17:00 – 02:00" },
-      { day: "Sunday",    time: "16:00 – 00:00" },
+      { day: "Sunday", time: "16:00 – 00:00" },
     ],
   },
   {
@@ -121,11 +121,11 @@ function ContactForm() {
       console.log('Form validation failed:', errors);
       return;
     }
-    
+
     try {
       setStatus("loading");
       console.log('Setting status to loading');
-      
+
       const inquiryData = {
         full_name: form.name.trim(),
         email: form.email.trim(),
@@ -133,12 +133,12 @@ function ContactForm() {
         reason: form.reason,
         message: form.message.trim()
       };
-      
+
       console.log('Sending inquiry data:', inquiryData);
-      
+
       const response = await inquiryService.submitInquiry(inquiryData);
       console.log('API Response:', response);
-      
+
       if (response.success) {
         console.log('Submission successful');
         setStatus("success");
@@ -160,7 +160,7 @@ function ContactForm() {
         <FiCheckCircle className="x_success_icon" />
         <h3 className="x_success_title">Message Received</h3>
         <p className="x_success_sub">Thank you for reaching out. We'll get back to you within 24 hours.</p>
-        <button className="x_btn x_btn--ghost" onClick={() => { setStatus("idle"); setForm({ name:"",email:"",phone:"",reason:"",message:"" }); setTouched({}); }}>
+        <button className="x_btn x_btn--ghost" onClick={() => { setStatus("idle"); setForm({ name: "", email: "", phone: "", reason: "", message: "" }); setTouched({}); }}>
           Send Another
         </button>
       </div>
@@ -384,8 +384,8 @@ export default function Contact() {
                 <div className="x_socials">
                   {[
                     { icon: <FiInstagram />, label: "@dineversesurat", href: "#" },
-                    { icon: <FiFacebook />,  label: "DineVerse Surat",  href: "#" },
-                    { icon: <FiTwitter />,   label: "@dineversesurat",  href: "#" },
+                    { icon: <FiFacebook />, label: "DineVerse Surat", href: "#" },
+                    { icon: <FiTwitter />, label: "@dineversesurat", href: "#" },
                     { icon: <TbBrandWhatsapp />, label: "WhatsApp", href: "#" },
                   ].map((s) => (
                     <a key={s.label} href={s.href} className="x_social_pill" target="_blank" rel="noreferrer">
@@ -464,11 +464,11 @@ const STYLES = `
   --d-shadow-md:   0 8px 32px  rgba(0,0,0,0.55);
   --d-shadow-lg:   0 20px 60px rgba(0,0,0,0.70);
   --d-glow-gold:   0 0 40px rgba(200,150,90,0.12);
-  --d-r-xs:   4px;
-  --d-r-sm:   8px;
-  --d-r-md:   14px;
-  --d-r-lg:   22px;
-  --d-r-xl:   32px;
+  --d-r-xs: 4px;
+  --d-r-sm: 6px;
+  --d-r-md: 10px;
+  --d-r-lg: 18px;
+  --d-r-xl: 28px;
   --d-r-pill: 999px;
   --d-font-serif: 'Cormorant Garamond','Georgia',serif;
   --d-font-sans:  'DM Sans',system-ui,sans-serif;

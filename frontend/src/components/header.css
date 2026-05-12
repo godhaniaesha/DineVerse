@@ -51,10 +51,10 @@
 
   /* ─ Radius */
   --d-r-xs: 4px;
-  --d-r-sm: 8px;
-  --d-r-md: 14px;
-  --d-r-lg: 22px;
-  --d-r-xl: 32px;
+  --d-r-sm: 6px;
+  --d-r-md: 10px;
+  --d-r-lg: 18px;
+  --d-r-xl: 28px;
   --d-r-pill: 999px;
 
   /* ─ Fonts */

@@ -38,7 +38,7 @@ const canEdit = (adminRole) => MANAGER_ROLES.has(adminRole);
 export default function AdminDishManagement() {
     const { mappedDishes: rows, categories, cuisines, chefs, loading, addDish, updateDish, deleteDish } = useMenu();
     console.log("cuisines", cuisines)
-    
+
     const adminRole = localStorage.getItem("adminRole") || "Super Admin";
     const adminName = localStorage.getItem("adminName") || "";
     const isChefRole = CHEF_ROLES.has(adminRole);
@@ -156,10 +156,10 @@ export default function AdminDishManagement() {
 
     if (loading) return (
         <div className="ad_page">
-            <FoodLoadingAnimation 
-                type="ingredients" 
-                size="large" 
-                text="Loading dishes..." 
+            <FoodLoadingAnimation
+                type="ingredients"
+                size="large"
+                text="Loading dishes..."
                 fullScreen={false}
             />
         </div>
@@ -200,6 +200,7 @@ export default function AdminDishManagement() {
                 <table className="ad_table">
                     <thead>
                         <tr>
+                            <th>Image</th>
                             <th>Name</th>
                             <th>Category</th>
                             <th>Cuisine</th>
@@ -215,6 +216,14 @@ export default function AdminDishManagement() {
                         {paginatedData.map((r) => (
                             console.log("r", r),
                             <tr key={r.id}>
+                                <td>
+                                    {r.img ? (
+                                        <img src={r.img} alt={r.name} className="ad_gallery_img" style={{ width: 60, height: 40, marginBottom: 0, objectFit: 'cover' }} />
+                                    ) : (
+                                        <div style={{ width: 60, height: 40, background: '#333', color: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>No Img</div>
+                                    )}
+                                </td>
+                                {/* <td><img src={r.img} alt={r.name} style={{ width: 60, height: 40, objectFit: "cover", b}}  /></td> */}
                                 <td>{r.name}</td>
                                 <td>{r.categoryName}</td>
                                 <td>{r.cuisineName}</td>

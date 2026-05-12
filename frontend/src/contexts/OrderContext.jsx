@@ -295,6 +295,38 @@ export const OrderProvider = ({ children }) => {
     }
   }, [authHeaders]);
 
+  const fetchGuests = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        `${API_BASE_URL}/reservations/guests`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        return data.data;
+      } else {
+        setError(data.msg || "Failed to fetch guests");
+        return [];
+      }
+    } catch (err) {
+      console.error("Fetch guests error:", err);
+      setError(err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [authHeaders]);
   return (
     <OrderContext.Provider value={{
       orders,
@@ -311,7 +343,8 @@ export const OrderProvider = ({ children }) => {
       updateOrderStatus,
       deleteOrder,
       getOrdersByTable,
-      getCompletedPayments
+      getCompletedPayments,
+      fetchGuests
     }}>
       {children}
     </OrderContext.Provider>

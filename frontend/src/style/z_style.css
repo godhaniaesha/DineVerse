@@ -46,10 +46,10 @@
 
   /* ─ Radius */
   --d-r-xs: 4px;
-  --d-r-sm: 8px;
-  --d-r-md: 14px;
-  --d-r-lg: 22px;
-  --d-r-xl: 32px;
+  --d-r-sm: 6px;
+  --d-r-md: 10px;
+  --d-r-lg: 18px;
+  --d-r-xl: 28px;
   --d-r-pill: 999px;
 
   /* ─ Fonts */
@@ -190,6 +190,7 @@
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -201,6 +202,7 @@
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -212,6 +214,7 @@
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -224,11 +227,25 @@
   transition: all 0.8s var(--d-ease);
 }
 
-.reveal-up { transform: translateY(50px); }
-.reveal-down { transform: translateY(-50px); }
-.reveal-left { transform: translateX(-50px); }
-.reveal-right { transform: translateX(50px); }
-.reveal-scale { transform: scale(0.95); }
+.reveal-up {
+  transform: translateY(50px);
+}
+
+.reveal-down {
+  transform: translateY(-50px);
+}
+
+.reveal-left {
+  transform: translateX(-50px);
+}
+
+.reveal-right {
+  transform: translateX(50px);
+}
+
+.reveal-scale {
+  transform: scale(0.95);
+}
 
 .reveal.active {
   opacity: 1;
@@ -246,11 +263,25 @@
   animation: fadeIn 1s var(--d-ease) forwards;
 }
 
-.delay-1 { animation-delay: 0.2s; }
-.delay-2 { animation-delay: 0.4s; }
-.delay-3 { animation-delay: 0.6s; }
-.delay-4 { animation-delay: 0.8s; }
-.delay-5 { animation-delay: 1s; }
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.delay-2 {
+  animation-delay: 0.4s;
+}
+
+.delay-3 {
+  animation-delay: 0.6s;
+}
+
+.delay-4 {
+  animation-delay: 0.8s;
+}
+
+.delay-5 {
+  animation-delay: 1s;
+}
 
 /* Floating Scroll Indicator */
 .z_bar_hero_scroll {
@@ -4322,7 +4353,8 @@ body {
 
 .z_bar_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(48px, 9vw, 70px);;
+  font-size: clamp(48px, 9vw, 70px);
+  ;
   line-height: 1.1;
   margin-bottom: 2rem;
 }
@@ -4460,7 +4492,8 @@ body {
 
 .z_bar_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(48px, 9vw, 70px);;
+  font-size: clamp(48px, 9vw, 70px);
+  ;
   line-height: 1.1;
   margin-bottom: 2rem;
 }

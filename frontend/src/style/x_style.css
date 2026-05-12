@@ -36,10 +36,10 @@ body {
   --d-shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.70);
   --d-glow-gold: 0 0 40px rgba(200, 150, 90, 0.12);
   --d-r-xs: 4px;
-  --d-r-sm: 8px;
-  --d-r-md: 14px;
-  --d-r-lg: 22px;
-  --d-r-xl: 32px;
+  --d-r-sm: 6px;
+  --d-r-md: 10px;
+  --d-r-lg: 18px;
+  --d-r-xl: 28px;
   --d-r-pill: 999px;
   --d-font-serif: 'Cormorant Garamond', 'Georgia', serif;
   --d-font-sans: 'DM Sans', system-ui, sans-serif;
@@ -1551,7 +1551,8 @@ body {
 
 .x_bh_title {
   font-family: var(--d-font-serif);
-  font-size: clamp(48px, 9vw, 70px);;
+  font-size: clamp(48px, 9vw, 70px);
+  ;
   font-weight: 300;
   line-height: 1.0;
   letter-spacing: -0.02em;
@@ -2567,8 +2568,9 @@ body {
   .x_trending_card {
     max-width: 305px;
   }
+
   .x_blog_hero {
-        padding: 80px 24px 60px;
+    padding: 80px 24px 60px;
   }
 }
 
@@ -2588,8 +2590,9 @@ body {
   .x_feat_content {
     padding: 20px;
   }
+
   .x_blog_hero {
-        padding: 50px 24px 20px;
+    padding: 50px 24px 20px;
   }
 }
 
@@ -2603,7 +2606,8 @@ body {
     overflow-x: auto;
     width: 92vw;
   }
-  .x_section_head{
+
+  .x_section_head {
     flex-direction: column;
   }
 }

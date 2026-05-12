@@ -1,11 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useOrder } from "../../contexts/OrderContext";
+import { FaUserCircle } from "react-icons/fa";
 
-const INITIAL_GUESTS = [
-  { id: 1, name: "Aarav Sharma", phone: "+91 98765 43210", email: "aarav@example.com", image: "https://i.pravatar.cc/80?img=11", visits: 7 },
-  { id: 2, name: "Mia Wilson", phone: "+1 415 555 0109", email: "mia@example.com", image: "https://i.pravatar.cc/80?img=5", visits: 3 },
-  { id: 3, name: "Noah Johnson", phone: "+1 212 555 0151", email: "noah@example.com", image: "https://i.pravatar.cc/80?img=16", visits: 5 },
-  { id: 4, name: "Riya Patel", phone: "+91 99887 65432", email: "riya@example.com", image: "https://i.pravatar.cc/80?img=23", visits: 2 },
-];
+
 const EMPTY_FORM = {
   name: "",
   phone: "",
@@ -16,10 +13,11 @@ const EMPTY_FORM = {
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 
 export default function AdminGuests() {
-  const [guests, setGuests] = useState(INITIAL_GUESTS);
+  const [guests, setGuests] = useState([]);
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
+  const { fetchGuests } = useOrder();
 
   const visibleGuests = useMemo(() => {
     const keyword = query.toLowerCase();
@@ -40,7 +38,18 @@ export default function AdminGuests() {
     if (modal.mode === "edit") setGuests((prev) => prev.map((guest) => (guest.id === modal.guest.id ? { ...guest, ...payload } : guest)));
     close();
   };
+  useEffect(() => {
+    const loadGuests = async () => {
+      const data = await fetchGuests();
 
+      if (data) {
+        setGuests(data);
+        console.log("Guests:", data);
+      }
+    };
+
+    loadGuests();
+  }, [fetchGuests]);
 
   return (
     <div className="ad_page">
@@ -75,7 +84,34 @@ export default function AdminGuests() {
             {visibleGuests.map((guest) => (
               <tr key={guest.id}>
                 <td>{guest.name}</td>
-                <td><img src={guest.image} alt={guest.name} className="ad_gallery_img" style={{ width: 42, height: 42, marginBottom: 0, borderRadius: "50%" }} /></td>
+                <td>
+                  {guest.image ? (
+                    <img
+                      src={guest.image}
+                      alt={guest.name}
+                      className="ad_gallery_img"
+                      style={{
+                        width: 42,
+                        height: 42,
+                        marginBottom: 0,
+                        borderRadius: "50%",
+                        objectFit: "cover"
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "block";
+                      }}
+                    />
+                  ) : null}
+
+                  <FaUserCircle
+                    size={32}
+                    color="#999"
+                    style={{
+                      display: guest.image ? "none" : "block"
+                    }}
+                  />
+                </td>
                 <td>{guest.phone}</td>
                 <td>{guest.email}</td>
                 <td>{guest.visits}</td>
@@ -85,14 +121,6 @@ export default function AdminGuests() {
         </table>
       </div>
 
-      {/* <section className="ad_card" style={{ marginTop: 16 }}>
-        <h3 className="ad_card__title">Guest Engagement Suggestions</h3>
-        <ul className="ad_list">
-          <li className="ad_list__item">Offer loyalty coupons to guests with 3+ visits.</li>
-          <li className="ad_list__item">Send personalized festive menus to VIP guests.</li>
-          <li className="ad_list__item">Track birthdays and anniversaries for targeted offers.</li>
-        </ul>
-      </section> */}
       {(modal?.mode === "add" || modal?.mode === "edit") && (
         <>
           <div className="rooms__modal_overlay" onClick={close} />

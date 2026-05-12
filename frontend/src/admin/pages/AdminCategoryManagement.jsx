@@ -179,7 +179,7 @@ export default function AdminCategoryManagement() {
                   {r.img ? (
                     <img src={r.img} alt={r.name} className="ad_gallery_img" style={{ width: 60, height: 40, marginBottom: 0, objectFit: 'cover' }} />
                   ) : (
-                    <div style={{ width: 60, height: 40, background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>No Img</div>
+                    <div style={{ width: 60, height: 40, background: '#333', color: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>No Img</div>
                   )}
                 </td>
                 <td>{r.name}</td>

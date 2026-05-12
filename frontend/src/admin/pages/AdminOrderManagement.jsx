@@ -35,7 +35,7 @@ export default function AdminOrderManagement() {
   const [search, setSearch] = useState("");
   const [areaFilter, setAreaFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 4;
 
   const AREAS = ["Restaurant", "Cafe", "Bar"];
 
