@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import "../../styleadmin/AdminRooms.css";
 import DeleteIconButton from "../components/DeleteIconButton";
+import FormField from "../components/FormField";
 import { useRooms } from "../../contexts/RoomContext";
+import { useFormValidation } from "../hooks/useFormValidation";
+import { getValidationRules } from "../utils/validationRules";
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 const STATUS_LABELS = { "Available": "Available", "Occupied": "Occupied", "Reserved": "Reserved", "Maintenance": "Maintenance" };
 const STATUS_CYCLE = ["Available", "Occupied", "Reserved", "Maintenance"];
@@ -13,6 +17,50 @@ const EMPTY_FORM = {
     capacity_adults: "1",
     capacity_childs: "0",
     status: "Available"
+};
+
+const ROOM_VALIDATION_RULES = {
+    roomNumber: {
+        required: true,
+        requiredMessage: 'Room number is required.',
+        maxLength: 10
+    },
+    roomType: {
+        required: true,
+        requiredMessage: 'Please select a room type.'
+    },
+    capacity_adults: {
+        required: true,
+        requiredMessage: 'Adult capacity is required.',
+        validate: (value) => {
+            const num = parseInt(value);
+            if (isNaN(num) || num < 1) {
+                return 'Adult capacity must be at least 1.';
+            }
+            if (num > 10) {
+                return 'Adult capacity cannot exceed 10.';
+            }
+            return '';
+        }
+    },
+    capacity_childs: {
+        required: true,
+        requiredMessage: 'Child capacity is required.',
+        validate: (value) => {
+            const num = parseInt(value);
+            if (isNaN(num) || num < 0) {
+                return 'Child capacity cannot be negative.';
+            }
+            if (num > 10) {
+                return 'Child capacity cannot exceed 10.';
+            }
+            return '';
+        }
+    },
+    status: {
+        required: true,
+        requiredMessage: 'Please select a status.'
+    }
 };
 
 /* ─── ICONS ─────────────────────────────────────────── */
@@ -82,8 +130,8 @@ function Modal({ title, onClose, children }) {
 /* ─── ROOM FORM ─────────────────────────────────────── */
 
 function RoomForm({ initial, onSave, onCancel, roomTypes }) {
-    const [form, setForm] = useState(initial);
-    const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+    const { form, errors, setForm, validateForm } = useFormValidation(initial, ROOM_VALIDATION_RULES);
+    const set = (k, v) => setForm(k, v);
 
     return (
         <div>
@@ -98,54 +146,65 @@ function RoomForm({ initial, onSave, onCancel, roomTypes }) {
                 </div>
             </div>
 
-            <div className="rooms__form_row">
-                <label className="rooms__form_label">Room type</label>
-                <select
-                    className="rooms__form_select"
+            <div className="rooms__form_grid2">
+                <FormField
+                    label="Room Type"
+                    type="select"
+                    name="roomType"
                     value={form.roomType}
                     onChange={e => set("roomType", e.target.value)}
-                >
-                    <option value="">Select Room Type</option>
+                    options={[{ value: "", label: "Select type" }, ...roomTypes.map(rt => ({ value: rt._id, label: rt.display_name || rt.name }))]}
 
-                    {roomTypes.length === 0 ? (
-                        <option disabled>No room types available</option>
-                    ) : (
-                        roomTypes
-                            .filter(rt => rt.status?.toLowerCase() === "available")
-                            .map((rt) => {
-                                const label = rt.display_name || rt.name || "Unnamed Room Type";
-                                return (
-                                    <option key={rt._id} value={rt._id}>
-                                        {label} (₹{(rt.price_per_night || 0).toLocaleString("en-IN")}/night)
-                                    </option>
-                                );
-                            })
-                    )}
-                </select>
+                    error={errors.roomType}
+                    required
+                />
+                <FormField
+                    label="Adults"
+                    type="number"
+                    name="capacity_adults"
+                    value={form.capacity_adults}
+                    onChange={e => set("capacity_adults", e.target.value)}
+                    min="1"
+                    max="10"
+                    error={errors.capacity_adults}
+                    required
+                />
             </div>
 
-            <label className="rooms__form_label">Capacity (guests)</label>
             <div className="rooms__form_grid2">
-                <div>
-                    <label className="rooms__form_label">Adults</label>
-                    <input className="rooms__form_input" type="number" min="1" max="10" value={form.capacity_adults} onChange={e => set("capacity_adults", e.target.value)} />
-                </div>
-                <div>
-                    <label className="rooms__form_label">Childs</label>
-                    <input className="rooms__form_input" type="number" min="0" max="10" value={form.capacity_childs} onChange={e => set("capacity_childs", e.target.value)} />
-                </div>
+                <FormField
+                    label="Children"
+                    type="number"
+                    name="capacity_childs"
+                    value={form.capacity_childs}
+                    onChange={e => set("capacity_childs", e.target.value)}
+                    min="0"
+                    max="10"
+                    error={errors.capacity_childs}
+                    required
+                />
             </div>
 
             <div className="rooms__form_row">
-                <label className="rooms__form_label">Status</label>
-                <select className="rooms__form_select" value={form.status} onChange={e => set("status", e.target.value)}>
-                    {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
-                </select>
+                <FormField
+                    label="Status"
+                    type="select"
+                    name="status"
+                    value={form.status}
+                    onChange={e => set("status", e.target.value)}
+                    options={Object.keys(STATUS_LABELS).map(s => ({ value: s, label: STATUS_LABELS[s] }))}
+                    error={errors.status}
+                    required
+                />
             </div>
 
             <div className="rooms__form_actions">
                 <button className="rooms__btn rooms__btn--ghost" onClick={onCancel}>Cancel</button>
-                <button className="rooms__btn rooms__btn--primary" onClick={() => onSave(form)}>Save room</button>
+                <button className="rooms__btn rooms__btn--primary" onClick={() => {
+                    if (validateForm()) {
+                        onSave(form);
+                    }
+                }}>Save room</button>
             </div>
         </div>
     );
@@ -216,20 +275,20 @@ export default function AdminRooms() {
         }
 
         if (result.success) {
-            alert(modal.mode === "add" ? "Room added successfully!" : "Room updated successfully!");
+            showSuccessToast(modal.mode === "add" ? "Room added successfully!" : "Room updated successfully!", "Success");
             closeModal();
         } else {
-            alert(result.error || "Failed to save room");
+            showErrorToast(result.error || "Failed to save room", "Save Failed");
         }
     };
 
     const handleDelete = async () => {
         const result = await deleteRoom(modal.room._id);
         if (result.success) {
-            alert("Room deleted successfully!");
+            showSuccessToast("Room deleted successfully!", "Success");
             closeModal();
         } else {
-            alert(result.error || "Failed to delete room");
+            showErrorToast(result.error || "Failed to delete room", "Delete Failed");
         }
     };
 

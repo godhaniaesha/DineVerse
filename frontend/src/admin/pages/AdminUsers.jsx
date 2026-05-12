@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
+import FormField from "../components/FormField";
 import { useStaff } from "../../contexts/StaffContext";
+import { showSuccessToast, showErrorToast, showValidationErrorToast } from "../utils/toast";
 
 const IcEdit = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
@@ -41,6 +43,7 @@ export default function AdminUsers() {
   const { staff, loading, getStaff, addStaff, updateStaffProfile, deleteStaff } = useStaff();
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
+  const [errors, setErrors] = useState({});
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -51,8 +54,52 @@ export default function AdminUsers() {
   const close = () => {
     setModal(null);
     setForm(EMPTY);
+    setErrors({});
     setShowPass(false);
     setShowConfirmPass(false);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!form.full_name.trim()) {
+      newErrors.full_name = "Full Name is required. Please enter your full name.";
+    }
+    
+    if (!form.email.trim()) {
+      newErrors.email = "Email address is required. Please enter a valid email.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+    
+    if (!form.phone.trim()) {
+      newErrors.phone = "Phone number is required. Please enter a valid phone number.";
+    } else if (!/^[+]?[\d\s\-\(\)]+$/.test(form.phone)) {
+      newErrors.phone = "Please enter a valid phone number.";
+    }
+    
+    if (modal.mode === "add") {
+      if (!form.password) {
+        newErrors.password = "Password is required. Please enter a secure password.";
+      } else if (form.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters long.";
+      }
+      
+      if (form.password !== form.confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match. Please ensure both passwords are identical.";
+      }
+    } else if (modal.mode === "edit" && form.password) {
+      if (form.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters long.";
+      }
+      
+      if (form.password !== form.confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match. Please ensure both passwords are identical.";
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   useEffect(() => {
@@ -61,17 +108,11 @@ export default function AdminUsers() {
   }, [getStaff]);
 
   const handleSave = async () => {
-    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      alert("Please fill in all required fields (Name, Email, Phone).");
+    if (!validateForm()) {
       return;
     }
 
     if (modal.mode === "add") {
-      if (!form.password || form.password !== form.confirmPassword) {
-        alert("Passwords do not match or are empty.");
-        return;
-      }
-
       const formData = new FormData();
       formData.append("full_name", form.full_name);
       formData.append("email", form.email);
@@ -82,15 +123,12 @@ export default function AdminUsers() {
 
       const result = await addStaff(formData);
       if (result.success) {
+        showSuccessToast("Super Admin added successfully!", "Success");
         close();
       } else {
-        alert(result.error || "Failed to add Super Admin");
+        showErrorToast(result.error || "Failed to add Super Admin", "Add Failed");
       }
     } else if (modal.mode === "edit") {
-      if (form.password && form.password !== form.confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
 
       const formData = new FormData();
       formData.append("full_name", form.full_name);
@@ -104,10 +142,10 @@ export default function AdminUsers() {
 
       const result = await updateStaffProfile(modal.row._id, formData);
       if (result.success) {
-        alert("Super Admin updated successfully!");
+        showSuccessToast("Super Admin updated successfully!", "Success");
         close();
       } else {
-        alert(result.error || "Failed to update Super Admin");
+        showErrorToast(result.error || "Failed to update Super Admin", "Update Failed");
       }
     }
   };
@@ -115,10 +153,10 @@ export default function AdminUsers() {
   const handleDelete = async () => {
     const result = await deleteStaff(modal.row._id);
     if (result.success) {
-      alert("Super Admin deleted successfully!");
+      showSuccessToast("Super Admin deleted successfully!", "Success");
       close();
     } else {
-      alert(result.error || "Failed to delete Super Admin");
+      showErrorToast(result.error || "Failed to delete Super Admin", "Delete Failed");
     }
   };
 
@@ -259,51 +297,48 @@ export default function AdminUsers() {
 
             <div className="rooms__modal_body">
               <div className="rooms__form_grid2">
-                <div className="rooms__form_row">
-                  <label className="rooms__form_label">Name</label>
-                  <input
-                    type="text"
-                    className="rooms__form_input"
-                    placeholder="Enter full name"
-                    value={form.full_name}
-                    onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-                  />
-                </div>
-                <div className="rooms__form_row">
-                  <label className="rooms__form_label">Email</label>
-                  <input
-                    type="email"
-                    className="rooms__form_input"
-                    placeholder="example@lumiere.com"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  />
-                </div>
+                <FormField
+                  label="Full Name"
+                  type="text"
+                  name="full_name"
+                  value={form.full_name}
+                  onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                  placeholder="Enter full name"
+                  error={errors.full_name}
+                  required
+                />
+                <FormField
+                  label="Email Address"
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="example@lumiere.com"
+                  error={errors.email}
+                  required
+                />
               </div>
 
               <div className="rooms__form_grid2">
-                <div className="rooms__form_row">
-                  <label className="rooms__form_label">Phone Number</label>
-                  <input
-                    type="tel"
-                    className="rooms__form_input"
-                    placeholder="Enter phone number"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  />
-                </div>
-                <div className="rooms__form_row">
-                  <label className="rooms__form_label">Role</label>
-                  <select
-                    className="rooms__form_select"
-                    value={form.role}
-                    onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  >
-                    {ROLES.map((role) => (
-                      <option key={role} value={role}>{role}</option>
-                    ))}
-                  </select>
-                </div>
+                <FormField
+                  label="Phone Number"
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="Enter phone number"
+                  error={errors.phone}
+                  required
+                />
+                <FormField
+                  label="Role"
+                  type="select"
+                  name="role"
+                  value={form.role}
+                  onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  options={ROLES}
+                  error={errors.role}
+                />
               </div>
 
               <div className="rooms__form_grid2">
@@ -314,7 +349,7 @@ export default function AdminUsers() {
                   <div style={{ position: "relative" }}>
                     <input
                       type={showPass ? "text" : "password"}
-                      className="rooms__form_input"
+                      className={`rooms__form_input ${errors.password ? 'form-field__input--error' : ''}`}
                       placeholder="••••••••"
                       value={form.password}
                       onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -340,13 +375,23 @@ export default function AdminUsers() {
                       {showPass ? <IcEyeOff /> : <IcEye />}
                     </button>
                   </div>
+                  {errors.password && (
+                    <div className="form-field__error">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      {errors.password}
+                    </div>
+                  )}
                 </div>
                 <div className="rooms__form_row">
                   <label className="rooms__form_label">Confirm Password</label>
                   <div style={{ position: "relative" }}>
                     <input
                       type={showConfirmPass ? "text" : "password"}
-                      className="rooms__form_input"
+                      className={`rooms__form_input ${errors.confirmPassword ? 'form-field__input--error' : ''}`}
                       placeholder="••••••••"
                       value={form.confirmPassword}
                       onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
@@ -372,27 +417,30 @@ export default function AdminUsers() {
                       {showConfirmPass ? <IcEyeOff /> : <IcEye />}
                     </button>
                   </div>
+                  {errors.confirmPassword && (
+                    <div className="form-field__error">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      {errors.confirmPassword}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="rooms__form_row">
-                <label className="rooms__form_label">Status</label>
-                <select
-                  className="rooms__form_select"
+                <FormField
+                  label="Status"
+                  type="select"
+                  name="status"
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
-                >
-                  {STATUSES.map((status) => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
+                  options={STATUSES}
+                  error={errors.status}
+                />
               </div>
-
-              {form.password && form.confirmPassword && form.password !== form.confirmPassword && (
-                <div style={{ color: "#ff4d4d", fontSize: "12px", marginTop: "-10px", marginBottom: "10px" }}>
-                  Passwords do not match
-                </div>
-              )}
             </div>
 
             <div className="rooms__form_actions">

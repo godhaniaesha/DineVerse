@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useRooms } from "../../contexts/RoomContext";
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 const EMPTY_FORM = { name: "", display_name: "", description: "", price_per_night: "", features: [] };
 const COMMON_FEATURES = ["King Bed", "Wi-Fi", "Mini Bar", "Balcony", "Sea View", "AC", "TV", "Breakfast", "Room Service", "Parking", "Double Bed"];
@@ -105,10 +106,10 @@ export default function AdminRoomTypes() {
         }
 
         if (result.success) {
-            alert(modal.mode === "add" ? "Room type added successfully!" : "Room type updated successfully!");
+            showSuccessToast(modal.mode === "add" ? "Room type added successfully!" : "Room type updated successfully!", "Success");
             close();
         } else {
-            alert(result.error || "Failed to save room type");
+            showErrorToast(result.error || "Failed to save room type", "Save Failed");
         }
     };
 
@@ -118,10 +119,10 @@ export default function AdminRoomTypes() {
         console.log("AdminRoomTypes - remove - result:", result);
         
         if (result.success) {
-            alert("Room type deleted successfully!");
+            showSuccessToast("Room type deleted successfully!", "Success");
             close();
         } else {
-            alert(result.error || "Failed to delete room type");
+            showErrorToast(result.error || "Failed to delete room type", "Delete Failed");
         }
     };
 

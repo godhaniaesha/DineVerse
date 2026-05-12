@@ -3,6 +3,7 @@ import { MdOutlineClose, MdPayment, MdCheckCircle } from "react-icons/md";
 import { useOrder } from "../../contexts/OrderContext";
 import { FaCreditCard, FaPaypal } from "react-icons/fa6";
 import { AiFillBank } from "react-icons/ai";
+import { showSuccessToast, showErrorToast, showValidationError } from "../utils/toast";
 
 function Modal({ title, onClose, children }) {
   return (
@@ -126,7 +127,7 @@ export default function AdminBilling() {
       }
     } catch (error) {
       console.error("Payment intent error:", error);
-      alert("Failed to create payment intent. Please try again.");
+      showErrorToast("Failed to create payment intent. Please try again.", "Payment Failed");
     } finally {
       setProcessingPayment(false);
     }
@@ -196,7 +197,7 @@ export default function AdminBilling() {
     // ❌ Stop
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      alert(`Validation Error: ${Object.values(newErrors).join(", ")}`);
+      showValidationError(`Validation Error: ${Object.values(newErrors).join(", ")}`);
       return;
     }
 
@@ -225,7 +226,7 @@ export default function AdminBilling() {
 
     } catch (error) {
       console.error(error);
-      alert("Payment failed");
+      showErrorToast("Payment failed. Please check your payment details and try again.", "Payment Failed");
     } finally {
       setProcessingPayment(false);
     }

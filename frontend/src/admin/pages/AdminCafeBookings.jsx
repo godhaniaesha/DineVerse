@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useReservations } from "../../contexts/ReservationContext";
 import { useAuth } from "../../contexts/AuthContext";
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 const EMPTY = {
   reservation: "",
@@ -139,7 +140,7 @@ export default function AdminCafeBookings({
         );
         close();
       } else {
-        alert(result?.error || "Failed to update booking status");
+        showErrorToast(result?.error || "Failed to update booking status", "Status Update Failed");
       }
       setSaving(false);
       return;

@@ -42,7 +42,7 @@ router.post('/addStaff', UserAuth, adminManagerAuth, upload.none(), addStaff);
 router.get('/getStaff', UserAuth, adminManagerAuth, getStaff);
 router.get('/getAdmin', UserAuth, superAdminAuth, getAdmin);
 router.put('/updateStaffProfile/:id', UserAuth, upload.single("img"), updateStaffProfile);
-router.delete('/deleteStaff/:id', UserAuth, superAdminAuth, deleteStaff);
+router.delete('/deleteStaff/:id', UserAuth, adminManagerAuth, deleteStaff);
 
 
 router.post('/rooms/types', UserAuth, adminManagerAuth, upload.single('image_url'), addRoomType);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
 const KITCHEN_FLOW = ["Pending", "Accepted by Chef", "Preparing", "Ready", "Served / Delivered"];
@@ -89,11 +90,11 @@ export default function AdminKDS() {
         await fetchChefQueue();
       } else {
         console.error('❌ Failed to update item status:', result.msg);
-        alert(`Failed to update status: ${result.msg}`);
+        showErrorToast(`Failed to update status: ${result.msg}`, "Status Update Failed");
       }
     } catch (error) {
       console.error('❌ Error updating item status:', error);
-      alert('Error updating item status');
+      showErrorToast('Error updating item status', 'Update Failed');
     }
   };
 

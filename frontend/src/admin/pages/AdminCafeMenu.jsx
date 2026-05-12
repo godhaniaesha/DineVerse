@@ -4,6 +4,7 @@ import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useOrder } from "../../contexts/OrderContext";
 import { useMenu } from "../../contexts/MenuContext";
 import emptyCart from "../../img/no.png";
+import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/toast";
 
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
@@ -230,12 +231,12 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
 
   const placeOrder = async () => {
     if (!orderDraft.items.length) {
-      alert("Please add items to the order first");
+      showWarningToast("Please add items to the order first", "Order Required");
       return;
     }
 
     if (!orderDraft.target) {
-      alert("Please select a table first");
+      showWarningToast("Please select a table first", "Table Required");
       return;
     }
 
@@ -274,9 +275,9 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
         target: orderDraft.target,
       });
       setOrderDraft({ customerName: "", target: "", note: "", items: [] });
-      alert("Order sent to kitchen successfully!");
+      showSuccessToast("Order sent to kitchen successfully!", "Order Placed");
     } else {
-      alert(`Failed to send order: ${result.error}`);
+      showErrorToast(`Failed to send order: ${result.error}`, "Order Failed");
     }
   };
 

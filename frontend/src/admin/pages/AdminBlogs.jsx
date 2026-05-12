@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import blogService from "../../services/blogService";
+import { showSuccessToast, showErrorToast, showWarningToast, showValidationError } from "../utils/toast";
 
 const EMPTY_FORM = {
   title: "",
@@ -128,22 +129,20 @@ export default function AdminBlogs() {
   const save = async () => {
     // basic validations
     if (!form.title.trim() || !form.short_des.trim() || !form.des.trim()) {
-      alert(
-        "Please fill all required fields (title, short description, description)."
-      );
+      showValidationError("Please fill all required fields (title, short description, description).");
       return;
     }
 
     // For add: image must be selected
     if (modal.mode === "add" && !form.coverImg.file) {
-      alert("Please select a cover image.");
+      showValidationError("Please select a cover image.");
       return;
     }
 
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        showWarningToast("Please login to perform this action");
         return;
       }
 
@@ -177,12 +176,14 @@ export default function AdminBlogs() {
         );
       }
 
+      showSuccessToast("Blog saved successfully!", "Success");
       close();
     } catch (error) {
       console.error("Error saving blog:", error);
-      alert(
+      showErrorToast(
         "Error saving blog: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message),
+        "Save Failed"
       );
     }
   };
@@ -191,18 +192,20 @@ export default function AdminBlogs() {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        showWarningToast("Please login to perform this action");
         return;
       }
 
       await blogService.deleteBlog(modal.blog._id, authToken);
       setBlogs((prev) => prev.filter((b) => b._id !== modal.blog._id));
+      showSuccessToast("Blog deleted successfully!", "Success");
       close();
     } catch (error) {
       console.error("Error deleting blog:", error);
-      alert(
+      showErrorToast(
         "Error deleting blog: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message),
+        "Delete Failed"
       );
     }
   };

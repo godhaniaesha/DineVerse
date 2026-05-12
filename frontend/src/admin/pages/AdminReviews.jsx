@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import reviewService from "../../services/reviewService";
+import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/toast";
 
 const EMPTY = {
   // client-side fields (Add form ma jo future ma use karva hoy)
@@ -75,17 +76,19 @@ export default function AdminReviews() {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        showWarningToast("Please login to perform this action", "Authentication Required");
         return;
       }
       await reviewService.deleteReview(modal.row._id, authToken);
-      setRows((p) => p.filter((r) => r._id !== modal.row._id));
+      setRows((p) => p.filter((x) => x._id !== modal.row._id));
+      showSuccessToast("Review deleted successfully", "Success");
       close();
     } catch (error) {
       console.error("Error deleting review:", error);
-      alert(
+      showErrorToast(
         "Error deleting review: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message),
+        "Delete Failed"
       );
     }
   };

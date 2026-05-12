@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import inquiryService from "../../services/inquiryService";
+import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/toast";
 
 const IcEdit = () => (
   <svg
@@ -64,7 +65,7 @@ export default function AdminInquiries() {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        showWarningToast("Please login to perform this action", "Authentication Required");
         return;
       }
 
@@ -82,9 +83,10 @@ export default function AdminInquiries() {
       );
     } catch (error) {
       console.error("Error toggling inquiry status:", error);
-      alert(
+      showErrorToast(
         "Error updating status: " +
-        (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message),
+        "Status Update Failed"
       );
     }
   };
@@ -93,17 +95,19 @@ export default function AdminInquiries() {
     try {
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to perform this action");
+        showWarningToast("Please login to perform this action", "Authentication Required");
         return;
       }
       await inquiryService.deleteInquiry(modal.inquiry._id, authToken);
       setRows((p) => p.filter((x) => x._id !== modal.inquiry._id));
+      showSuccessToast("Inquiry deleted successfully", "Success");
       close();
     } catch (error) {
       console.error("Error deleting inquiry:", error);
-      alert(
+      showErrorToast(
         "Error deleting inquiry: " +
-        (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message),
+        "Delete Failed"
       );
     }
   };
@@ -113,7 +117,7 @@ export default function AdminInquiries() {
       setLoading(true);
       const authToken = localStorage.getItem("authToken");
       if (!authToken) {
-        alert("Please login to view inquiries");
+        showWarningToast("Please login to view inquiries", "Authentication Required");
         setRows([]);
         return;
       }

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
 import Pagination from "../components/Pagination";
+import { showErrorToast } from "../utils/toast";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
@@ -75,7 +76,7 @@ export default function AdminOrderManagement() {
     if (result.success) {
       setEditingId(null);
     } else {
-      alert(`Failed to update status: ${result.error}`);
+      showErrorToast(`Failed to update status: ${result.error}`, "Status Update Failed");
     }
   };
 

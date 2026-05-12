@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useStaff } from "../../contexts/StaffContext";
 import { useAuth } from "../../contexts/AuthContext";
+import { showSuccessToast, showErrorToast, showValidationError } from "../utils/toast";
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -200,13 +201,13 @@ export default function AdminStaffManagement() {
 
   const handleSave = async () => {
     if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      alert("Please fill in all required fields!");
+      showValidationError("Please fill in all required fields!");
       return;
     }
 
     if (modal.mode === "add") {
       if (!form.password || form.password !== form.confirmPassword) {
-        alert("Passwords do not match!");
+        showValidationError("Passwords do not match!");
         return;
       }
 
@@ -224,14 +225,14 @@ export default function AdminStaffManagement() {
 
       const result = await addStaff(formData);
       if (result.success) {
-        alert("Staff added successfully!");
+        showSuccessToast("Staff added successfully!", "Success");
         close();
       } else {
-        alert(result.error || "Failed to add staff");
+        showErrorToast(result.error || "Failed to add staff", "Add Failed");
       }
     } else if (modal.mode === "edit") {
       if (form.password && form.password !== form.confirmPassword) {
-        alert("Passwords do not match!");
+        showValidationError("Passwords do not match!");
         return;
       }
 
@@ -251,10 +252,10 @@ export default function AdminStaffManagement() {
 
       const result = await updateStaffProfile(modal.row._id, formData);
       if (result.success) {
-        alert("Staff updated successfully!");
+        showSuccessToast("Staff updated successfully!", "Success");
         close();
       } else {
-        alert(result.error || "Failed to update staff");
+        showErrorToast(result.error || "Failed to update staff", "Update Failed");
       }
     }
   };
@@ -264,7 +265,7 @@ export default function AdminStaffManagement() {
     if (result.success) {
       close();
     } else {
-      alert(result.error || "Failed to delete staff");
+      showErrorToast(result.error || "Failed to delete staff", "Delete Failed");
     }
   };
 

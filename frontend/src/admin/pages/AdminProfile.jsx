@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import FormField from "../components/FormField";
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 const IcEdit = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 const IcSave = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17,21 17,13 7,13 7,21" /><polyline points="7,3 7,8 15,8" /></svg>;
@@ -29,10 +31,12 @@ export default function AdminProfile() {
     phone: user?.phone || "",
   });
   const [passwordForm, setPasswordForm] = useState({
-    current: "",
-    new: "",
-    confirm: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
+  const [errors, setErrors] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
 
   const handleSave = async () => {
@@ -46,10 +50,10 @@ export default function AdminProfile() {
 
     const result = await updateProfile(user._id, formData);
     if (result.success) {
-      alert("Profile updated successfully!");
+      showSuccessToast("Profile updated successfully!", "Success");
       setEditMode(false);
     } else {
-      alert(result.error || "Failed to update profile");
+      showErrorToast(result.error || "Failed to update profile", "Update Failed");
     }
   };
 
@@ -65,16 +69,16 @@ export default function AdminProfile() {
 
   const handlePasswordUpdate = async () => {
     if (passwordForm.new !== passwordForm.confirm) {
-      alert("New passwords do not match!");
+      showErrorToast("New passwords do not match!", "Validation Error");
       return;
     }
 
     const result = await changePassword(passwordForm.current, passwordForm.new);
     if (result.success) {
-      alert("Password updated successfully!");
+      showSuccessToast("Password updated successfully!", "Success");
       setPasswordForm({ current: "", new: "", confirm: "" });
     } else {
-      alert(result.error || "Failed to update password");
+      showErrorToast(result.error || "Failed to update password", "Password Update Failed");
     }
   };
 

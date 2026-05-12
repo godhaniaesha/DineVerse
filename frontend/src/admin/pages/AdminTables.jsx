@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTable } from "../../contexts/TableContext";
 import DeleteIconButton from "../components/DeleteIconButton";
+import { showSuccessToast, showErrorToast } from "../utils/toast";
 
 const EMPTY_FORM = {
   tableNo: "",
@@ -112,9 +113,10 @@ export default function AdminTables() {
     }
 
     if (result?.success) {
+      showSuccessToast(`Table ${modal.mode === "add" ? "added" : "updated"} successfully!`, "Success");
       close();
     } else {
-      alert(result?.error || "Failed to save table");
+      showErrorToast(result?.error || "Failed to save table", "Save Failed");
     }
   };
 
@@ -122,9 +124,10 @@ export default function AdminTables() {
   const remove = async () => {
     const result = await deleteTable(modal.row.id);
     if (result?.success) {
+      showSuccessToast("Table deleted successfully!", "Success");
       close();
     } else {
-      alert(result?.error || "Failed to delete table");
+      showErrorToast(result?.error || "Failed to delete table", "Delete Failed");
     }
   };
 

@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../styleadmin/AdminLayout.css";
+import "../styleadmin/Toast.css";
+import "../styleadmin/FormField.css";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { useAuth } from "../contexts/AuthContext";
+import ToastContainer from "./components/ToastContainer";
 
 /* ─── ICONS (inline SVG to remove icon-lib dependency) ─────────── */
 
@@ -634,6 +637,9 @@ export default function AdminLayout() {
           </div>
         </>
       )}
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }
