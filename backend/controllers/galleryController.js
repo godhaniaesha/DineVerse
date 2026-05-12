@@ -23,11 +23,11 @@ export const addImage = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Image added successfully",
+            message: "Image added successfully",
             data: image
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getGallery = async (req, res) => {
@@ -36,11 +36,11 @@ export const getGallery = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Gallery fetched successfully",
+            message: "Gallery fetched successfully",
             data: images
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateImage = async (req, res) => {
@@ -68,11 +68,11 @@ export const updateImage = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Image updated successfully",
+            message: "Image updated successfully",
             data: updated
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const toggleVisibility = async (req, res) => {
@@ -91,11 +91,11 @@ export const toggleVisibility = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: `Image is now ${image.visibility}`,
+            message: `Image is now ${image.visibility}`,
             data: image
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteImage = async (req, res) => {
@@ -115,10 +115,10 @@ export const deleteImage = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Image deleted successfully",
+            message: "Image deleted successfully",
             data: image
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

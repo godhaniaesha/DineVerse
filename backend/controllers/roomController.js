@@ -58,12 +58,12 @@ export const addRoomType = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            msg: "Room type added successfully",
+            message: "Room type added successfully",
             data: roomType
         });
     } catch (error) {
         console.error("Add room type error - full stack:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getRoomTypes = async (req, res) => {
@@ -71,12 +71,12 @@ export const getRoomTypes = async (req, res) => {
         const roomTypes = await RoomType.find({});
         res.status(200).json({
             success: true,
-            msg: "Room types fetched successfully",
+            message: "Room types fetched successfully",
             data: roomTypes
         });
     } catch (error) {
         console.error("Get room types error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateRoomType = async (req, res) => {
@@ -134,12 +134,12 @@ export const updateRoomType = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Room type updated successfully",
+            message: "Room type updated successfully",
             data: updatedRoomType
         });
     } catch (error) {
         console.error("Update room type error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteRoomType = async (req, res) => {
@@ -170,12 +170,12 @@ export const deleteRoomType = async (req, res) => {
         await roomType.deleteOne();
         res.status(200).json({
             success: true,
-            msg: "Room type deleted successfully",
+            message: "Room type deleted successfully",
             data: roomType
         });
     } catch (error) {
         console.error("Delete room type error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const addRoom = async (req, res) => {
@@ -207,12 +207,12 @@ export const addRoom = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            msg: "Room added successfully",
+            message: "Room added successfully",
             data: room
         });
     } catch (error) {
         console.error("Add room error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getRooms = async (req, res) => {
@@ -221,12 +221,12 @@ export const getRooms = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Rooms fetched successfully",
+            message: "Rooms fetched successfully",
             data: rooms
         });
     } catch (error) {
         console.error("Get rooms error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -262,12 +262,12 @@ export const searchRooms = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Rooms searched successfully",
+            message: "Rooms searched successfully",
             data: rooms
         });
     } catch (error) {
         console.error("Search rooms error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -286,12 +286,12 @@ export const getRoomById = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Rooms fetched successfully",
+            message: "Rooms fetched successfully",
             data: room
         });
     } catch (error) {
         console.error("Get room by ID error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateRoom = async (req, res) => {
@@ -332,13 +332,13 @@ export const updateRoom = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Room updated successfully",
+            message: "Room updated successfully",
             data: room
         });
 
     } catch (error) {
         console.error("Update room error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteRoom = async (req, res) => {
@@ -357,11 +357,11 @@ export const deleteRoom = async (req, res) => {
         await room.deleteOne();
         res.status(200).json({
             success: true,
-            msg: "Room deleted successfully",
+            message: "Room deleted successfully",
             data: room
         });
     } catch (error) {
         console.error("Delete room error:", error);
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

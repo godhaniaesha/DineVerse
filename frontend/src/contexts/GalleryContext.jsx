@@ -29,7 +29,7 @@ export const GalleryProvider = ({ children }) => {
         setImages(data.data);
         setError(null);
       } else {
-        setError(data.msg || data.message || "Failed to fetch gallery");
+        setError(data.message || data.message || "Failed to fetch gallery");
       }
     } catch (err) {
       console.error("Fetch gallery error:", err);
@@ -53,9 +53,9 @@ export const GalleryProvider = ({ children }) => {
         await fetchGallery();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -73,9 +73,9 @@ export const GalleryProvider = ({ children }) => {
         await fetchGallery();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -92,9 +92,9 @@ export const GalleryProvider = ({ children }) => {
         await fetchGallery();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -111,9 +111,9 @@ export const GalleryProvider = ({ children }) => {
         await fetchGallery();
         return { success: true };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 

@@ -426,7 +426,7 @@ export default function AdminUsers() {
               <span className="rooms__modal_title">Delete Super Admin</span>
               <button className="rooms__modal_close" onClick={close}>×</button>
             </div>
-            <p className="rooms__delete_msg">Delete {modal.row.full_name}?</p>
+            <p className="rooms__delete_message">Delete {modal.row.full_name}?</p>
             <div className="rooms__form_actions">
               <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
               <button className="rooms__btn rooms__btn--danger" onClick={handleDelete}>Delete</button>

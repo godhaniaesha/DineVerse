@@ -249,7 +249,7 @@ export default function AdminGallery() {
           <div className="rooms__modal_overlay" onClick={() => setModal(null)} />
           <div className="rooms__modal_box">
             <div className="rooms__modal_head"><span className="rooms__modal_title">Delete Image</span><button className="rooms__modal_close" onClick={() => setModal(null)}>x</button></div>
-            <p className="rooms__delete_msg">Delete {modal.image.title} image?</p>
+            <p className="rooms__delete_message">Delete {modal.image.title} image?</p>
             <div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={() => setModal(null)}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={() => handleDelete(modal.image._id)}>Delete</button></div>
           </div>
         </>

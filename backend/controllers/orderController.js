@@ -189,9 +189,9 @@ export const createOrder = async (req, res) => {
             await Table.findByIdAndUpdate(tableId, { status: "Occupied" });
         }
 
-        res.status(201).json({ success: true, msg: "Items added to kitchen queue", data: order });
+        res.status(201).json({ success: true, message: "Items added to kitchen queue", data: order });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -255,7 +255,7 @@ export const createBillingPaymentIntent = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -303,11 +303,11 @@ export const confirmBillingAndCheckout = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Checkout successful",
+            message: "Checkout successful",
             data: order
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -320,7 +320,7 @@ export const getKitchenQueue = async (req, res) => {
             .sort({ createdAt: 1 });
         res.status(200).json({ success: true, data: orders });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -339,7 +339,7 @@ export const acceptDish = async (req, res) => {
         if (!order) return sendBadRequestResponse(res, "Dish already taken or not found");
         res.status(200).json({ success: true, data: order });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -373,13 +373,13 @@ export const markDishReady = async (req, res) => {
         if (!order) {
             return res.status(404).json({
                 success: false,
-                msg: "Dish not found, status changed, or you are not the assigned chef"
+                message: "Dish not found, status changed, or you are not the assigned chef"
             });
         }
 
-        res.status(200).json({ success: true, msg: "Status updated successfully", data: order });
+        res.status(200).json({ success: true, message: "Status updated successfully", data: order });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -416,11 +416,11 @@ export const updateItemStatus = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: `Item status updated to ${status}`,
+            message: `Item status updated to ${status}`,
             data: order
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -444,7 +444,7 @@ export const getAllOrdersForAdmin = async (req, res) => {
 
         res.status(200).json({ success: true, count: filteredOrders.length, data: filteredOrders });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -543,7 +543,7 @@ export const getBillingOrders = async (req, res) => {
             data: tableWiseData
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -585,9 +585,9 @@ export const getDashboardStats = async (req, res) => {
             averagePrice: 0
         };
 
-        res.status(200).json({ success: true, msg: "Stats fetched successfully", data: dashboardData });
+        res.status(200).json({ success: true, message: "Stats fetched successfully", data: dashboardData });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -606,7 +606,7 @@ export const getChefQueue = async (req, res) => {
             data: orders
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -622,7 +622,7 @@ export const getWaiterActiveOrders = async (req, res) => {
 
         res.status(200).json({ success: true, count: orders.length, data: orders });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -647,6 +647,6 @@ export const getCompletedPayments = async (req, res) => {
 
         res.status(200).json({ success: true, count: filteredOrders.length, data: filteredOrders });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

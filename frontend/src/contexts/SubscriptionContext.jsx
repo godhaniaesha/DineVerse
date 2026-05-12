@@ -26,12 +26,12 @@ export const SubscriptionProvider = ({ children }) => {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.msg || data.message || "Something went wrong");
+                throw new Error(data.message || data.message || "Something went wrong");
             }
 
             return data;
         } catch (err) {
-            setError(err.msg);
+            setError(err.message);
             throw err;
         } finally {
             setLoading(false);
@@ -55,13 +55,13 @@ export const SubscriptionProvider = ({ children }) => {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.msg || data.message || "Failed to fetch subscriptions");
+                throw new Error(data.message || data.message || "Failed to fetch subscriptions");
             }
 
             setSubscriptions(data.data);
             return data;
         } catch (err) {
-            setError(err.msg);
+            setError(err.message);
             throw err;
         } finally {
             setLoading(false);
@@ -84,7 +84,7 @@ export const SubscriptionProvider = ({ children }) => {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.msg || data.message || "Delete failed");
+                throw new Error(data.message || data.message || "Delete failed");
             }
 
             // update UI
@@ -94,7 +94,7 @@ export const SubscriptionProvider = ({ children }) => {
 
             return data;
         } catch (err) {
-            setError(err.msg);
+            setError(err.message);
             throw err;
         } finally {
             setLoading(false);

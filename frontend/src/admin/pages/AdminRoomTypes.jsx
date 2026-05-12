@@ -259,7 +259,7 @@ export default function AdminRoomTypes() {
             )}
 
             {/* Delete Modal */}
-            {modal?.mode === "delete" && <Modal title="Delete Room Type" onClose={close}><p className="rooms__delete_msg">Delete "{modal.roomType.name}" room type?</p><div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={remove}>Delete</button></div></Modal>}
+            {modal?.mode === "delete" && <Modal title="Delete Room Type" onClose={close}><p className="rooms__delete_message">Delete "{modal.roomType.name}" room type?</p><div className="rooms__form_actions"><button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button><button className="rooms__btn rooms__btn--danger" onClick={remove}>Delete</button></div></Modal>}
         </div>
     );
 }

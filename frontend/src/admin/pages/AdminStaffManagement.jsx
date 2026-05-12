@@ -227,7 +227,7 @@ export default function AdminStaffManagement() {
       if (data.success && data.data) {
         setCuisines(data.data);
       } else {
-        console.error("Failed to fetch cuisines:", data.msg || data.message);
+        console.error("Failed to fetch cuisines:", data.message || data.message);
         setCuisines([]);
       }
     } catch (err) {
@@ -740,7 +740,7 @@ export default function AdminStaffManagement() {
                 ×
               </button>
             </div>
-            <p className="rooms__delete_msg">Delete {modal.row.full_name}?</p>
+            <p className="rooms__delete_message">Delete {modal.row.full_name}?</p>
             <div className="rooms__form_actions">
               <button className="rooms__btn rooms__btn--ghost" onClick={close}>
                 Cancel

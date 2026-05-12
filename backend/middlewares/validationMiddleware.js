@@ -8,8 +8,8 @@ export const validate = (req, res, next) => {
     }
     
     const extractedErrors = [];
-    errors.array().map(err => extractedErrors.push({ [err.path]: err.msg }));
+    errors.array().map(err => extractedErrors.push({ [err.path]: err.message }));
 
     // Return the first error message for simplicity or all errors
-    return ThrowError(res, 400, errors.array()[0].msg, extractedErrors);
+    return ThrowError(res, 400, errors.array()[0].message, extractedErrors);
 };

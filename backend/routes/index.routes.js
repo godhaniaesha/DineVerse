@@ -219,37 +219,37 @@ router.get("/s3/list", async (req, res) => {
         const images = await listBucketObjects();
         res.json({
             success: true,
-            msg: "Get all images successfully",
+            message: "Get all images successfully",
             data: {
                 total: images.length,
                 images: images.map(e => e.url)
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false, msg: "Error while getting images from S3", error: error.msg });
+        res.status(500).json({ success: false, message: "Error while getting images from S3", error: error.message });
     }
 });
 
 router.delete("/s3/delete-many", async (req, res) => {
     try {
         const { images } = req.body;
-        if (!Array.isArray(images) || !images.length) return res.status(400).json({ success: false, msg: "URLs array required" });
+        if (!Array.isArray(images) || !images.length) return res.status(400).json({ success: false, message: "URLs array required" });
 
         const keys = images.map(url => {
             const key = String(url).split(".amazonaws.com/")[1];
             return key;
         }).filter(Boolean);
 
-        if (!keys.length) return res.status(400).json({ success: false, msg: "Invalid S3 URLs" });
+        if (!keys.length) return res.status(400).json({ success: false, message: "Invalid S3 URLs" });
 
         await deleteManyFromS3(keys);
         res.json({
             success: true,
-            msg: "Deleted multiple files",
+            message: "Deleted multiple files",
             data: { deleted: keys.length, keys }
         });
     } catch (error) {
-        res.status(500).json({ success: false, msg: "Delete many error", error: error.msg });
+        res.status(500).json({ success: false, message: "Delete many error", error: error.message });
     }
 });
 

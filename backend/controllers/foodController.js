@@ -39,11 +39,11 @@ export const addCategory = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            msg: "Category added successfully",
+            message: "Category added successfully",
             data: category
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -52,11 +52,11 @@ export const getCategories = async (req, res) => {
         const categories = await Category.find({});
         res.status(200).json({
             success: true,
-            msg: "Categories fetched successfully",
+            message: "Categories fetched successfully",
             data: categories
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -85,11 +85,11 @@ export const searchCategories = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Categories searched successfully",
+            message: "Categories searched successfully",
             data: categories
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -108,11 +108,11 @@ export const getCategoryById = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Category fetched successfully",
+            message: "Category fetched successfully",
             data: category
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -153,11 +153,11 @@ export const updateCategory = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Category updated successfully",
+            message: "Category updated successfully",
             data: updatedCategory
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -184,11 +184,11 @@ export const deleteCategory = async (req, res) => {
         await category.deleteOne();
         res.status(200).json({
             success: true,
-            msg: "Category deleted successfully",
+            message: "Category deleted successfully",
             data: category
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -314,12 +314,12 @@ export const addDish = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Dish added successfully",
+            message: "Dish added successfully",
             data: dish
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -333,11 +333,11 @@ export const getDishes = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Dishes fetched successfully",
+            message: "Dishes fetched successfully",
             data: dishes
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -377,11 +377,11 @@ export const searchDishes = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Dishes searched successfully",
+            message: "Dishes searched successfully",
             data: dishes
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -399,9 +399,9 @@ export const getDishById = async (req, res) => {
 
         if (!dish) return ThrowError(res, 404, "Dish not found");
 
-        res.status(200).json({ success: true, msg: "Dish fetched successfully", data: dish });
+        res.status(200).json({ success: true, message: "Dish fetched successfully", data: dish });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -426,11 +426,11 @@ export const getDishesByArea = async (req, res) => {
         res.status(200).json({
             success: true,
             count: dishes.length,
-            msg: area ? `${area} dishes fetched successfully` : "All dishes fetched successfully",
+            message: area ? `${area} dishes fetched successfully` : "All dishes fetched successfully",
             data: dishes
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -556,10 +556,10 @@ export const updateDish = async (req, res) => {
         }
 
         const updatedDish = await dish.save();
-        return res.status(200).json({ success: true, msg: "Dish updated successfully", data: updatedDish });
+        return res.status(200).json({ success: true, message: "Dish updated successfully", data: updatedDish });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -576,9 +576,9 @@ export const deleteDish = async (req, res) => {
         if (dish.img) await deleteFileFromS3(dish.img);
 
         await dish.deleteOne();
-        res.status(200).json({ success: true, msg: "Dish deleted successfully", data: dish });
+        res.status(200).json({ success: true, message: "Dish deleted successfully", data: dish });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -597,7 +597,7 @@ export const getCategoriesByArea = async (req, res) => {
         if (categories.length === 0) {
             return res.status(200).json({
                 success: true,
-                msg: area ? `No categories found for ${area}` : "No categories found",
+                message: area ? `No categories found for ${area}` : "No categories found",
                 data: []
             });
         }
@@ -605,10 +605,10 @@ export const getCategoriesByArea = async (req, res) => {
         res.status(200).json({
             success: true,
             count: categories.length,
-            msg: area ? `${area} categories fetched successfully` : "All categories fetched successfully",
+            message: area ? `${area} categories fetched successfully` : "All categories fetched successfully",
             data: categories
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

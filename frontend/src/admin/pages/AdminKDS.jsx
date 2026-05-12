@@ -91,8 +91,8 @@ export default function AdminKDS() {
         // Refresh the orders to show updated status
         await fetchChefQueue();
       } else {
-        console.error('❌ Failed to update item status:', result.msg);
-        toast.error(`Failed to update status: ${result.msg}`);
+        console.error('❌ Failed to update item status:', result.message);
+        toast.error(`Failed to update status: ${result.message}`);
       }
     } catch (error) {
       console.error('❌ Error updating item status:', error);

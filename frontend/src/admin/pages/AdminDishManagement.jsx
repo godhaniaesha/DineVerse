@@ -438,7 +438,7 @@ export default function AdminDishManagement() {
                             <span className="rooms__modal_title">Delete Dish</span>
                             <button className="rooms__modal_close" onClick={close}>x</button>
                         </div>
-                        <p className="rooms__delete_msg">Delete {modal.row.name}?</p>
+                        <p className="rooms__delete_message">Delete {modal.row.name}?</p>
                         <div className="rooms__form_actions">
                             <button className="rooms__btn rooms__btn--ghost" onClick={close}>Cancel</button>
                             <button className="rooms__btn rooms__btn--danger" onClick={async () => {

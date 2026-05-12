@@ -31,7 +31,7 @@ export const uploadFile = async (file) => {
         contentType = "image/jpeg";
       }
     } catch (err) {
-      console.error("Sharp error:", err.msg);
+      console.error("Sharp error:", err.message);
     }
   }
   const cleanFileName = file.originalname.replace(/\s+/g, '_');
@@ -90,7 +90,7 @@ export const deleteFileFromS3 = async (fileUrl) => {
       })
     );
   } catch (err) {
-    console.error("❌ Error deleting from S3:", err.msg);
+    console.error("❌ Error deleting from S3:", err.message);
   }
 };
 
@@ -108,7 +108,7 @@ export const deleteManyFromS3 = async (keys = []) => {
     const result = await s3.send(new DeleteObjectsCommand(params));
     return result;
   } catch (error) {
-    console.error("❌ S3 deleteMany Error:", error.msg);
+    console.error("❌ S3 deleteMany Error:", error.message);
     throw error;
   }
 };
@@ -136,7 +136,7 @@ export const listBucketObjects = async () => {
 
     return files;
   } catch (error) {
-    console.error("❌ S3 listBucketObjects Error:", error.msg);
+    console.error("❌ S3 listBucketObjects Error:", error.message);
     throw error;
   }
 };

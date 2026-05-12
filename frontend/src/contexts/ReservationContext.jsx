@@ -86,7 +86,7 @@ export const ReservationProvider = ({ children }) => {
       }
 
       setReservations([]);
-      const message = data.msg || data.message || "No reservations found";
+      const message = data.message || data.message || "No reservations found";
       if (!data.success) setError(message);
       return { success: false, error: message };
     } catch (err) {
@@ -119,10 +119,10 @@ export const ReservationProvider = ({ children }) => {
           return { success: true, data: data.data };
         }
 
-        setError(data.msg || data.message || "Failed to create payment intent");
+        setError(data.message || data.message || "Failed to create payment intent");
         return {
           success: false,
-          error: data.msg || data.message || "Failed to create payment intent",
+          error: data.message || data.message || "Failed to create payment intent",
         };
       } catch (err) {
         console.error("Payment intent creation error:", err);
@@ -157,10 +157,10 @@ export const ReservationProvider = ({ children }) => {
           return { success: true, data: data.data };
         }
 
-        setError(data.msg || data.message || "Failed to confirm booking");
+        setError(data.message || data.message || "Failed to confirm booking");
         return {
           success: false,
-          error: data.msg || data.message || "Failed to confirm booking",
+          error: data.message || data.message || "Failed to confirm booking",
         };
       } catch (err) {
         console.error("Booking confirmation error:", err);
@@ -203,10 +203,10 @@ export const ReservationProvider = ({ children }) => {
           return { success: true, data: data.data };
         }
 
-        setError(data.msg || data.message || "Failed to update reservation status");
+        setError(data.message || data.message || "Failed to update reservation status");
         return {
           success: false,
-          error: data.msg || data.message || "Failed to update reservation status",
+          error: data.message || data.message || "Failed to update reservation status",
         };
       } catch (err) {
         console.error("Reservation status update error:", err);

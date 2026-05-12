@@ -350,7 +350,7 @@ export default function AdminCafeBookings({
                 x
               </button>
             </div>
-            <p className="rooms__delete_msg">
+            <p className="rooms__delete_message">
               Delete {modal.row.reservation || modal.row.id}?
             </p>
             <div className="rooms__form_actions">

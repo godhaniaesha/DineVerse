@@ -141,12 +141,12 @@ export const getAnalytics = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Analytics data fetched successfully",
+            message: "Analytics data fetched successfully",
             data: analyticsData
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 

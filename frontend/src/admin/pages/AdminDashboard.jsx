@@ -65,17 +65,17 @@ export default function AdminDashboard() {
             : [],
         });
       } else {
-        setError(response.msg || "Failed to load dashboard data");
+        setError(response.message || "Failed to load dashboard data");
       }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
 
-      if (error.msg === "Authentication failed. Please login again.") {
+      if (error.message === "Authentication failed. Please login again.") {
         setError(
           "Authentication failed. Please login again to access the dashboard.",
         );
       } else if (
-        error.msg === "No authentication token found. Please login again."
+        error.message === "No authentication token found. Please login again."
       ) {
         setError("Please login to access the dashboard.");
       } else {

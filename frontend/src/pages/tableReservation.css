@@ -404,7 +404,7 @@
   letter-spacing: 0.02em !important;
 }
 
-.d_resv_success__msg {
+.d_resv_success__message {
   font-size: 13px !important;
   font-weight: 300 !important;
   color: var(--d-text-3) !important;

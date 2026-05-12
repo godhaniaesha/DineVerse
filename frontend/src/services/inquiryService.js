@@ -37,7 +37,7 @@ const inquiryService = {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data; // expect {success, msg, data: [...]}
+      return response.data; // expect {success, message, data: [...]}
     } catch (error) {
       console.error("Error fetching inquiries:", error);
       throw error;
@@ -74,7 +74,7 @@ const inquiryService = {
           },
         }
       );
-      return response.data; // expect {success, msg, data: {...}}
+      return response.data; // expect {success, message, data: {...}}
     } catch (error) {
       console.error("Error updating inquiry status:", error);
       throw error;

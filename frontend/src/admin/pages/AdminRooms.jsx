@@ -608,7 +608,7 @@ export default function AdminRooms() {
       {/* DELETE MODAL */}
       {modal?.mode === "delete" && (
         <Modal title="Remove room" onClose={closeModal}>
-          <p className="rooms__delete_msg">
+          <p className="rooms__delete_message">
             Are you sure you want to remove{" "}
             <strong>Room #{modal.room.roomNumber}</strong> (
             {modal.room.roomType?.display_name || modal.room.roomType?.name})?

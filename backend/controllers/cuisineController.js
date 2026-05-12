@@ -41,11 +41,11 @@ export const addCuisine = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            msg: "Cuisine added successfully",
+            message: "Cuisine added successfully",
             data: cuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getCuisines = async (req, res) => {
@@ -58,11 +58,11 @@ export const getCuisines = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Cuisines fetched successfully",
+            message: "Cuisines fetched successfully",
             data: cuisines
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -92,11 +92,11 @@ export const searchCuisines = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Cuisines searched successfully",
+            message: "Cuisines searched successfully",
             data: cuisines
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getCuisineById = async (req, res) => {
@@ -113,11 +113,11 @@ export const getCuisineById = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Cuisine fetched successfully",
+            message: "Cuisine fetched successfully",
             data: cuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateCuisine = async (req, res) => {
@@ -165,11 +165,11 @@ export const updateCuisine = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Cuisine updated successfully",
+            message: "Cuisine updated successfully",
             data: updatedCuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteCuisine = async (req, res) => {
@@ -192,10 +192,10 @@ export const deleteCuisine = async (req, res) => {
         await cuisine.deleteOne();
         res.status(200).json({
             success: true,
-            msg: "Cuisine deleted successfully",
+            message: "Cuisine deleted successfully",
             data: cuisine
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

@@ -35,7 +35,7 @@ export default function AdminHousekeepingPanel() {
         setTasks(Array.isArray(response.data.tasks) ? response.data.tasks : []);
         setStats(response.data.stats || { roomsToClean: 0, inProgress: 0, cleanedToday: 0 });
       } else {
-        setError(response.msg || 'Failed to load housekeeping data');
+        setError(response.message || 'Failed to load housekeeping data');
       }
     } catch (error) {
       console.error('Error fetching housekeeping data:', error);
@@ -57,7 +57,7 @@ export default function AdminHousekeepingPanel() {
         await fetchHousekeepingData();
         close();
       } else {
-        setError(response.msg || 'Failed to update clean status');
+        setError(response.message || 'Failed to update clean status');
       }
     } catch (error) {
       console.error('Error updating clean status:', error);

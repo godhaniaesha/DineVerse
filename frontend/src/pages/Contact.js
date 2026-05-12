@@ -191,7 +191,7 @@ function ContactForm() {
             placeholder="Arjun Mehta"
             onChange={handleChange} onBlur={handleBlur}
           />
-          {touched.name && errors.name && <span className="x_err_msg"><FiAlertCircle />{errors.name}</span>}
+          {touched.name && errors.name && <span className="x_err_message"><FiAlertCircle />{errors.name}</span>}
         </div>
         <div className="x_field">
           <label className="x_label">Email <span className="x_required">*</span></label>
@@ -201,7 +201,7 @@ function ContactForm() {
             placeholder="arjun@email.com"
             onChange={handleChange} onBlur={handleBlur}
           />
-          {touched.email && errors.email && <span className="x_err_msg"><FiAlertCircle />{errors.email}</span>}
+          {touched.email && errors.email && <span className="x_err_message"><FiAlertCircle />{errors.email}</span>}
         </div>
       </div>
 
@@ -225,7 +225,7 @@ function ContactForm() {
             <option value="">Select a reason…</option>
             {REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
-          {touched.reason && errors.reason && <span className="x_err_msg"><FiAlertCircle />{errors.reason}</span>}
+          {touched.reason && errors.reason && <span className="x_err_message"><FiAlertCircle />{errors.reason}</span>}
         </div>
       </div>
 
@@ -238,7 +238,7 @@ function ContactForm() {
           rows={5}
           onChange={handleChange} onBlur={handleBlur}
         />
-        {touched.message && errors.message && <span className="x_err_msg"><FiAlertCircle />{errors.message}</span>}
+        {touched.message && errors.message && <span className="x_err_message"><FiAlertCircle />{errors.message}</span>}
       </div>
 
       <button
@@ -692,7 +692,7 @@ const STYLES = `
 .x_input--err:focus{box-shadow:0 0 0 3px rgba(232,112,112,0.12);}
 .x_select{cursor:pointer;}
 .x_textarea{resize:vertical;min-height:120px;}
-.x_err_msg{
+.x_err_message{
   display:flex;align-items:center;gap:5px;
   font-size:11px;color:#e87070;
 }

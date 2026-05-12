@@ -476,7 +476,7 @@
   box-shadow: 0 0 0 3px var(--d-gold-subtle), var(--d-shadow-sm);
 }
 
-.z_error_msg {
+.z_error_message {
   font-size: 11px;
   color: #e57373;
   margin-top: 5px;

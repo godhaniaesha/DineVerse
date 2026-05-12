@@ -132,7 +132,7 @@ export default function TableReservation() {
               <div className="d_resv_success">
                 <div className="d_resv_success__icon"><PiCheckCircleBold /></div>
                 <h3 className="d_resv_success__title">Table Reserved!</h3>
-                <p className="d_resv_success__msg">
+                <p className="d_resv_success__message">
                   Thank you, <strong style={{ color: "var(--d-text-1)" }}>{form.guest_name}</strong>.
                   Your table for {form.guests} on {form.date} at {form.time} is confirmed.
                   We'll send a reminder to your phone.

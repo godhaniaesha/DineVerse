@@ -375,7 +375,7 @@ export default function BookTable() {
                 <div className={`h_success${submitted ? " h_show" : ""}`}>
                   <div className="h_success_ring"><span className="h_success_ico">✓</span></div>
                   <div className="h_success_ttl">Reservation Confirmed</div>
-                  <p className="h_success_msg">
+                  <p className="h_success_message">
                     Your table has been reserved. A confirmation will be sent to{" "}
                     <strong style={{ color: "var(--h-champ-lt)" }}>{email}</strong>.{" "}
                     We look forward to welcoming you.
@@ -431,7 +431,7 @@ export default function BookTable() {
                                       if (errors.firstName) setErrors(p => ({ ...p, firstName: null }));
                                     }}
                                   />
-                                  {errors.firstName && <div className="h_err_msg">{errors.firstName}</div>}
+                                  {errors.firstName && <div className="h_err_message">{errors.firstName}</div>}
                                 </div>
                                 <div className="h_field">
                                   <label className="h_label">Last Name</label>
@@ -446,7 +446,7 @@ export default function BookTable() {
                                       if (errors.lastName) setErrors(p => ({ ...p, lastName: null }));
                                     }}
                                   />
-                                  {errors.lastName && <div className="h_err_msg">{errors.lastName}</div>}
+                                  {errors.lastName && <div className="h_err_message">{errors.lastName}</div>}
                                 </div>
                                 <div className="h_field">
                                   <label className="h_label">Email Address</label>
@@ -460,7 +460,7 @@ export default function BookTable() {
                                       if (errors.email) setErrors(p => ({ ...p, email: null }));
                                     }}
                                   />
-                                  {errors.email && <div className="h_err_msg">{errors.email}</div>}
+                                  {errors.email && <div className="h_err_message">{errors.email}</div>}
                                 </div>
                                 <div className="h_field">
                                   <label className="h_label">Phone Number</label>
@@ -475,7 +475,7 @@ export default function BookTable() {
                                       if (errors.phone) setErrors(p => ({ ...p, phone: null }));
                                     }}
                                   />
-                                  {errors.phone && <div className="h_err_msg">{errors.phone}</div>}
+                                  {errors.phone && <div className="h_err_message">{errors.phone}</div>}
                                 </div>
                               </div>
                               <div className="h_field" style={{ marginTop: ".3rem" }}>
@@ -485,12 +485,12 @@ export default function BookTable() {
                             </div>
                             <div className="h_fsec">
                               <div className="h_sec_lbl">Select Date</div>
-                              {errors.date && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.date}</div>}
+                              {errors.date && <div className="h_err_message" style={{ marginBottom: ".6rem" }}>{errors.date}</div>}
                               <CalendarPicker selectedDate={date} onSelect={d => { setDate(d); setErrors(p => ({ ...p, date: null })); }} />
                             </div>
                             <div className="h_fsec">
                               <div className="h_sec_lbl">Select Time</div>
-                              {errors.time && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.time}</div>}
+                              {errors.time && <div className="h_err_message" style={{ marginBottom: ".6rem" }}>{errors.time}</div>}
                               <div className="h_times">
                                 {times.map(t => (
                                   <div key={t.label}
@@ -510,7 +510,7 @@ export default function BookTable() {
                       <div className="h_fbody">
                         <div className="h_fsec">
                           <div className="h_sec_lbl">Seating Area</div>
-                          {errors.area && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.area}</div>}
+                          {errors.area && <div className="h_err_message" style={{ marginBottom: ".6rem" }}>{errors.area}</div>}
                           <div className="h_areas">
                             {areas.map(a => (
                               <div key={a.id} className={`h_area${area === a.id ? " h_asel" : ""}`}
@@ -550,9 +550,9 @@ export default function BookTable() {
                                 </option>
                               ))}
                             </select>
-                            {errors.tableNo && <div className="h_err_msg">{errors.tableNo}</div>}
+                            {errors.tableNo && <div className="h_err_message">{errors.tableNo}</div>}
                             {selectedTable && !selectedTable.capacityMatch && (
-                              <div className="h_err_msg">Selected table capacity is lower than number of guests, but table is available.</div>
+                              <div className="h_err_message">Selected table capacity is lower than number of guests, but table is available.</div>
                             )}
                           </div>
                         </div>
@@ -582,7 +582,7 @@ export default function BookTable() {
                               onChange={e => { setAgree(e.target.checked); setErrors(p => ({ ...p, agree: null })); }} />
                             <span className="h_chk_lbl">I agree to the <a href="#">Reservation Policy</a> and understand cancellations must be made 24 hours in advance.</span>
                           </label>
-                          {errors.agree && <div className="h_err_msg">{errors.agree}</div>}
+                          {errors.agree && <div className="h_err_message">{errors.agree}</div>}
                         </div>
                       </div>
                     )}
@@ -619,7 +619,7 @@ export default function BookTable() {
                                   value={cardNo}
                                   onChange={e => setCardNo(formatCardNumber(e.target.value))}
                                 />
-                                {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
+                                {errors.cardNo && <div className="h_err_message">{errors.cardNo}</div>}
                               </div>
                               <div className="h_field">
                                 <label className="h_label">Cardholder Name</label>
@@ -630,7 +630,7 @@ export default function BookTable() {
                                   value={cardName}
                                   onChange={e => setCardName(e.target.value)}
                                 />
-                                {errors.cardName && <div className="h_err_msg">{errors.cardName}</div>}
+                                {errors.cardName && <div className="h_err_message">{errors.cardName}</div>}
                               </div>
                               <div className="h_field">
                                 <label className="h_label">Expiry Date</label>
@@ -641,7 +641,7 @@ export default function BookTable() {
                                   value={expiry}
                                   onChange={e => setExpiry(formatExpiry(e.target.value))}
                                 />
-                                {errors.expiry && <div className="h_err_msg">{errors.expiry}</div>}
+                                {errors.expiry && <div className="h_err_message">{errors.expiry}</div>}
                               </div>
                               <div className="h_field">
                                 <label className="h_label">CVV</label>
@@ -653,7 +653,7 @@ export default function BookTable() {
                                   value={cvv}
                                   onChange={e => setCvv(e.target.value.replace(/\D/g, ""))}
                                 />
-                                {errors.cvv && <div className="h_err_msg">{errors.cvv}</div>}
+                                {errors.cvv && <div className="h_err_message">{errors.cvv}</div>}
                               </div>
                             </div>
                           ) : (
@@ -666,7 +666,7 @@ export default function BookTable() {
                                 value={upiId}
                                 onChange={e => setUpiId(e.target.value)}
                               />
-                              {errors.upiId && <div className="h_err_msg">{errors.upiId}</div>}
+                              {errors.upiId && <div className="h_err_message">{errors.upiId}</div>}
                             </div>
                           )}
                         </div>

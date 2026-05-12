@@ -204,7 +204,7 @@ export default function BookRoom() {
 
         const data = await response.json();
         if (!response.ok || !data?.success) {
-          throw new Error(data?.msg || "Failed to load room types");
+          throw new Error(data?.message || "Failed to load room types");
         }
 
         mappedRoomTypes = (data?.data?.roomTypes || [])
@@ -224,7 +224,7 @@ export default function BookRoom() {
         const response = await fetch(`${API_BASE_URL}/rooms/types`);
         const data = await response.json();
         if (!response.ok || !data?.success) {
-          throw new Error(data?.msg || "Failed to load room types");
+          throw new Error(data?.message || "Failed to load room types");
         }
 
         mappedRoomTypes = (data?.data || []).map((rt, index) => ({
@@ -249,7 +249,7 @@ export default function BookRoom() {
       }
     } catch (error) {
       setRoomTypes([]);
-      setRoomTypesError(error.msg || "Failed to load room types");
+      setRoomTypesError(error.message || "Failed to load room types");
     } finally {
       setRoomTypesLoading(false);
     }
@@ -277,7 +277,7 @@ export default function BookRoom() {
 
       const data = await response.json();
       if (!response.ok || !data?.success) {
-        throw new Error(data?.msg || "Failed to load rooms");
+        throw new Error(data?.message || "Failed to load rooms");
       }
 
       setAvailableRooms(data?.data?.availableRooms || []);
@@ -297,7 +297,7 @@ export default function BookRoom() {
         hourlyRate: 0,
         totalAmount: 0
       });
-      setErrors((prev) => ({ ...prev, roomNo: error.msg || "Failed to load rooms" }));
+      setErrors((prev) => ({ ...prev, roomNo: error.message || "Failed to load rooms" }));
     } finally {
       setRoomsLoading(false);
     }
@@ -313,9 +313,9 @@ export default function BookRoom() {
 
         if (!data?.data?.isAvailable) {
           const roomTypeName = data?.data?.roomTypeName || selectedRoomTypeName || "Selected room type";
-          const msg = `${roomTypeName} has no available rooms right now.`;
-          setInitialAvailabilityError(msg);
-          setSubmitError(msg);
+          const message = `${roomTypeName} has no available rooms right now.`;
+          setInitialAvailabilityError(message);
+          setSubmitError(message);
         }
       } catch (_) {
         // Ignore network error and keep normal flow.
@@ -530,7 +530,7 @@ export default function BookRoom() {
         }
         setStep(4);
       } catch (error) {
-        setSubmitError(error.msg || "Unable to initialize payment");
+        setSubmitError(error.message || "Unable to initialize payment");
       } finally {
         setSubmitLoading(false);
       }
@@ -576,7 +576,7 @@ export default function BookRoom() {
       setBookingRef(data?.bookingRef || genRef());
       setSubmitted(true);
     } catch (error) {
-      setSubmitError(error.msg || "Unable to confirm booking");
+      setSubmitError(error.message || "Unable to confirm booking");
     } finally {
       setSubmitLoading(false);
     }
@@ -609,7 +609,7 @@ export default function BookRoom() {
 
             <div className="h_card" style={{ textAlign: "center", padding: "2.2rem 1.5rem" }}>
               <div className="h_card_title" style={{ marginBottom: ".8rem" }}>Room Reservation</div>
-              <div className="h_err_msg" style={{ marginBottom: "1.2rem" }}>{initialAvailabilityError}</div>
+              <div className="h_err_message" style={{ marginBottom: "1.2rem" }}>{initialAvailabilityError}</div>
               <p className="h_policy_p" style={{ marginBottom: "1.2rem" }}>
                 Please go back and select another room type.
               </p>
@@ -651,7 +651,7 @@ export default function BookRoom() {
                 <div className={`h_success${submitted ? " h_show" : ""}`}>
                   <div className="h_success_ring"><span className="h_success_ico">✓</span></div>
                   <div className="h_success_ttl">Booking Confirmed</div>
-                  <p className="h_success_msg">
+                  <p className="h_success_message">
                     Your luxury stay has been booked. A confirmation email will be sent to{" "}
                     <strong style={{ color: "var(--h-champ-lt)" }}>{email}</strong> shortly.{" "}
                     We look forward to your arrival.
@@ -662,7 +662,7 @@ export default function BookRoom() {
 
                 {!submitted && (
                   <form onSubmit={submit} noValidate>
-                    {submitError && <div className="h_err_msg" style={{ marginBottom: ".8rem" }}>{submitError}</div>}
+                    {submitError && <div className="h_err_message" style={{ marginBottom: ".8rem" }}>{submitError}</div>}
                     {step === 1 && (
                       <div className="h_fbody">
                         <div className="h_fsec">
@@ -681,7 +681,7 @@ export default function BookRoom() {
                                   if (errors.firstName) setErrors(p => ({ ...p, firstName: null }));
                                 }}
                               />
-                              {errors.firstName && <div className="h_err_msg">{errors.firstName}</div>}
+                              {errors.firstName && <div className="h_err_message">{errors.firstName}</div>}
                             </div>
                             <div className="h_field">
                               <label className="h_label">Last Name</label>
@@ -696,7 +696,7 @@ export default function BookRoom() {
                                   if (errors.lastName) setErrors(p => ({ ...p, lastName: null }));
                                 }}
                               />
-                              {errors.lastName && <div className="h_err_msg">{errors.lastName}</div>}
+                              {errors.lastName && <div className="h_err_message">{errors.lastName}</div>}
                             </div>
                             <div className="h_field">
                               <label className="h_label">Email Address</label>
@@ -710,7 +710,7 @@ export default function BookRoom() {
                                   if (errors.email) setErrors(p => ({ ...p, email: null }));
                                 }}
                               />
-                              {errors.email && <div className="h_err_msg">{errors.email}</div>}
+                              {errors.email && <div className="h_err_message">{errors.email}</div>}
                             </div>
                             <div className="h_field">
                               <label className="h_label">Phone Number</label>
@@ -725,7 +725,7 @@ export default function BookRoom() {
                                   if (errors.phone) setErrors(p => ({ ...p, phone: null }));
                                 }}
                               />
-                              {errors.phone && <div className="h_err_msg">{errors.phone}</div>}
+                              {errors.phone && <div className="h_err_message">{errors.phone}</div>}
                             </div>
                           </div>
                         </div>
@@ -736,7 +736,7 @@ export default function BookRoom() {
                             <div className="h_field">
                               <label className="h_label">Check-In Date</label>
                               <CalendarPicker selectedDate={checkIn} onSelect={d => { setCheckIn(d); if (checkOut && d >= checkOut) setCheckOut(null); }} />
-                              {errors.checkIn && <div className="h_err_msg">{errors.checkIn}</div>}
+                              {errors.checkIn && <div className="h_err_message">{errors.checkIn}</div>}
 
                               <div style={{ marginTop: "10px" }}>
                                 <label className="h_label">Check-In Time</label>
@@ -752,13 +752,13 @@ export default function BookRoom() {
                                     <FaConciergeBell size={14} />
                                   </span>
                                 </div>
-                                {errors.checkInTime && <div className="h_err_msg">{errors.checkInTime}</div>}
+                                {errors.checkInTime && <div className="h_err_message">{errors.checkInTime}</div>}
                               </div>
                             </div>
                             <div className="h_field">
                               <label className="h_label">Check-Out Date</label>
                               <CalendarPicker selectedDate={checkOut} onSelect={setCheckOut} minDate={checkIn || new Date()} />
-                              {errors.checkOut && <div className="h_err_msg">{errors.checkOut}</div>}
+                              {errors.checkOut && <div className="h_err_message">{errors.checkOut}</div>}
 
                               <div style={{ marginTop: "10px" }}>
                                 <label className="h_label">Check-Out Time</label>
@@ -774,7 +774,7 @@ export default function BookRoom() {
                                     <FaConciergeBell size={14} />
                                   </span>
                                 </div>
-                                {errors.checkOutTime && <div className="h_err_msg">{errors.checkOutTime}</div>}
+                                {errors.checkOutTime && <div className="h_err_message">{errors.checkOutTime}</div>}
                               </div>
                             </div>
                           </div>
@@ -795,8 +795,8 @@ export default function BookRoom() {
                         <div className="h_fsec">
                           <div className="h_sec_lbl">Select Accommodation</div>
                           {roomTypesLoading && <div className="h_panel_sub" style={{ marginBottom: ".6rem" }}>Loading available room types...</div>}
-                          {roomTypesError && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{roomTypesError}</div>}
-                          {errors.roomType && <div className="h_err_msg" style={{ marginBottom: ".6rem" }}>{errors.roomType}</div>}
+                          {roomTypesError && <div className="h_err_message" style={{ marginBottom: ".6rem" }}>{roomTypesError}</div>}
+                          {errors.roomType && <div className="h_err_message" style={{ marginBottom: ".6rem" }}>{errors.roomType}</div>}
                           <div className="h_areas">
                             {roomTypes.map(r => (
                               <div key={r.id} className={`h_area${roomType === r.id ? " h_asel" : ""}`}
@@ -844,7 +844,7 @@ export default function BookRoom() {
                                 <option key={room._id} value={room._id}>Room {room.roomNumber}</option>
                               ))}
                             </select>
-                            {errors.roomNo && <div className="h_err_msg">{errors.roomNo}</div>}
+                            {errors.roomNo && <div className="h_err_message">{errors.roomNo}</div>}
                           </div>
                         </div>
 
@@ -862,7 +862,7 @@ export default function BookRoom() {
                               onChange={e => { setAgree(e.target.checked); setErrors(p => ({ ...p, agree: null })); }} />
                             <span className="h_chk_lbl">I agree to the <a href="#">Stay Policy</a> and understand our cancellation terms.</span>
                           </label>
-                          {errors.agree && <div className="h_err_msg">{errors.agree}</div>}
+                          {errors.agree && <div className="h_err_message">{errors.agree}</div>}
                         </div>
                       </div>
                     )}
@@ -902,7 +902,7 @@ export default function BookRoom() {
                                     if (errors.cardNo) setErrors(p => ({ ...p, cardNo: null }));
                                   }}
                                 />
-                                {errors.cardNo && <div className="h_err_msg">{errors.cardNo}</div>}
+                                {errors.cardNo && <div className="h_err_message">{errors.cardNo}</div>}
                               </div>
                               <div className="h_field">
                                 <label className="h_label">Cardholder Name</label>
@@ -916,7 +916,7 @@ export default function BookRoom() {
                                     if (errors.cardName) setErrors(p => ({ ...p, cardName: null }));
                                   }}
                                 />
-                                {errors.cardName && <div className="h_err_msg">{errors.cardName}</div>}
+                                {errors.cardName && <div className="h_err_message">{errors.cardName}</div>}
                               </div>
                               <div className="h_field">
                                 <label className="h_label">Expiry Date</label>
@@ -930,7 +930,7 @@ export default function BookRoom() {
                                     if (errors.expiry) setErrors(p => ({ ...p, expiry: null }));
                                   }}
                                 />
-                                {errors.expiry && <div className="h_err_msg">{errors.expiry}</div>}
+                                {errors.expiry && <div className="h_err_message">{errors.expiry}</div>}
                               </div>
                               <div className="h_field">
                                 <label className="h_label">CVV</label>
@@ -945,7 +945,7 @@ export default function BookRoom() {
                                     if (errors.cvv) setErrors(p => ({ ...p, cvv: null }));
                                   }}
                                 />
-                                {errors.cvv && <div className="h_err_msg">{errors.cvv}</div>}
+                                {errors.cvv && <div className="h_err_message">{errors.cvv}</div>}
                               </div>
                             </div>
                           ) : (
@@ -961,7 +961,7 @@ export default function BookRoom() {
                                   if (errors.upiId) setErrors(p => ({ ...p, upiId: null }));
                                 }}
                               />
-                              {errors.upiId && <div className="h_err_msg">{errors.upiId}</div>}
+                              {errors.upiId && <div className="h_err_message">{errors.upiId}</div>}
                             </div>
                           )}
                         </div>

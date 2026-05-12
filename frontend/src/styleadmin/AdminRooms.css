@@ -812,14 +812,14 @@
 
 /* ─── DELETE CONFIRM ────────────────────────────────────────── */
 
-.rooms__delete_msg {
+.rooms__delete_message {
   font-size: 14px;
   color: var(--ad-text-2);
   line-height: 1.65;
   margin-bottom: 1.25rem;
 }
 
-.rooms__delete_msg strong {
+.rooms__delete_message strong {
   color: var(--ad-text-1);
   font-weight: 500;
 }

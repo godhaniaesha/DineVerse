@@ -88,7 +88,7 @@ export default function AdminInquiries() {
       console.error("Error toggling inquiry status:", error);
       toast.error(
         "Error updating status: " +
-        (error.response?.data?.msg || error.msg)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -108,7 +108,7 @@ export default function AdminInquiries() {
       console.error("Error deleting inquiry:", error);
       toast.error(
         "Error deleting inquiry: " +
-        (error.response?.data?.msg || error.msg)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -406,7 +406,7 @@ export default function AdminInquiries() {
       {modal?.mode === "delete" && (
         <Modal title="Delete Inquiry" onClose={close}>
           <div style={{ padding: "20px" }}>
-            <p className="rooms__delete_msg" style={{ marginBottom: "20px" }}>
+            <p className="rooms__delete_message" style={{ marginBottom: "20px" }}>
               Are you sure you want to delete the inquiry from{" "}
               <b>{modal.inquiry.full_name}</b>?
             </p>

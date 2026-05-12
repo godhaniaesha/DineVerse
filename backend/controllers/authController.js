@@ -27,7 +27,7 @@ export const register = async (req, res) => {
             const token = generateToken(user._id);
             res.status(201).json({
                 success: true,
-                msg: "User registered successfully",
+                message: "User registered successfully",
                 data: {
                     _id: user._id,
                     full_name: user.full_name,
@@ -40,7 +40,7 @@ export const register = async (req, res) => {
             return ThrowError(res, 400, "Invalid user data");
         }
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+        return ThrowError(res, 500, error.message);
     }
 };
 export const login = async (req, res) => {
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
             const token = generateToken(user._id);
             res.json({
                 success: true,
-                msg: "Logged in successfully",
+                message: "Logged in successfully",
                 data: {
                     _id: user._id,
                     full_name: user.full_name,
@@ -75,7 +75,7 @@ export const login = async (req, res) => {
             return ThrowError(res, 401, "Invalid email or password");
         }
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+        return ThrowError(res, 500, error.message);
     }
 };
 
@@ -103,13 +103,13 @@ export const changePassword = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'Password changed successfully',
+            message: 'Password changed successfully',
             token,
             data: user
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+        return ThrowError(res, 500, error.message);
     }
 };
 
@@ -158,12 +158,12 @@ export const forgotPassword = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'OTP sent to your email',
+            message: 'OTP sent to your email',
             data: null
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+        return ThrowError(res, 500, error.message);
     }
 };
 export const verifyOTP = async (req, res) => {
@@ -196,12 +196,12 @@ export const verifyOTP = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'OTP verified successfully',
+            message: 'OTP verified successfully',
             resetToken
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+        return ThrowError(res, 500, error.message);
     }
 };
 
@@ -227,11 +227,11 @@ export const resetPassword = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'Password reset successfully',
+            message: 'Password reset successfully',
             data: null
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+        return ThrowError(res, 500, error.message);
     }
 };

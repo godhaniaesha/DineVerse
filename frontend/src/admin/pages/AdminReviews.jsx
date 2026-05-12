@@ -89,7 +89,7 @@ export default function AdminReviews() {
       console.error("Error deleting review:", error);
       toast.error(
         "Error deleting review: " +
-        (error.response?.data?.message || error.msg)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -98,7 +98,7 @@ export default function AdminReviews() {
     try {
       setLoading(true);
       const res = await reviewService.getAllReviews();
-      // assuming { success, msg, data: [...] }
+      // assuming { success, message, data: [...] }
       const list = Array.isArray(res.data) ? res.data : res;
 
       const mapped = list.map((item) => ({
@@ -392,7 +392,7 @@ export default function AdminReviews() {
                 x
               </button>
             </div>
-            <p className="rooms__delete_msg">
+            <p className="rooms__delete_message">
               Delete review by {modal.row.name}?
             </p>
             <div className="rooms__form_actions">

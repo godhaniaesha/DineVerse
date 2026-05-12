@@ -18,7 +18,7 @@ const ALL_ROLES = [
   'User'
 ];
 
-const Toast = ({ msg, type, onDone }) => {
+const Toast = ({ message, type, onDone }) => {
   const [exiting, setExiting] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => { setExiting(true); setTimeout(onDone, 300); }, 3200);
@@ -27,7 +27,7 @@ const Toast = ({ msg, type, onDone }) => {
   return (
     <div className={`z_toast${type === "error" ? " z_toast_error" : ""}${exiting ? " z_toast_exit" : ""}`}>
       <div className={`z_toast_dot${type === "error" ? " z_dot_error" : ""}`} />
-      {msg}
+      {message}
     </div>
   );
 };
@@ -57,7 +57,7 @@ const Field = ({ label, id, icon, type = "text", placeholder, value, onChange, e
           </button>
         )}
       </div>
-      {error && <div className="z_error_msg">{error}</div>}
+      {error && <div className="z_error_message">{error}</div>}
     </div>
   );
 };
@@ -79,7 +79,7 @@ const SelectField = ({ label, id, icon, options, value, onChange, error }) => {
           ))}
         </select>
       </div>
-      {error && <div className="z_error_msg">{error}</div>}
+      {error && <div className="z_error_message">{error}</div>}
     </div>
   );
 };
@@ -398,7 +398,7 @@ const RegisterForm = ({ onSuccess, onToast }) => {
           <button type="button" className="z_terms_link">Privacy Policy</button>
         </label>
       </div>
-      {errors.terms && <div className="z_error_msg" style={{ marginTop: -14, marginBottom: 12 }}>{errors.terms}</div>}
+      {errors.terms && <div className="z_error_message" style={{ marginTop: -14, marginBottom: 12 }}>{errors.terms}</div>}
 
       <button type="submit" className="z_submit_btn" disabled={loading}>
         {loading
@@ -570,7 +570,7 @@ const ForgotPasswordForm = ({ onBack, onSuccess, onToast }) => {
                   />
                 ))}
               </div>
-              {errors.otp && <div className="z_error_msg">{errors.otp}</div>}
+              {errors.otp && <div className="z_error_message">{errors.otp}</div>}
             </div>
           )}
 
@@ -637,7 +637,7 @@ export default function Auth() {
     }
   };
   
-  const handleToast = (msg, type) => setToast({ msg, type, key: Date.now() });
+  const handleToast = (message, type) => setToast({ message, type, key: Date.now() });
 
   const handleTabSwitch = (t) => { setTab(t); setSuccess(null); };
 
@@ -673,7 +673,7 @@ export default function Auth() {
       </div>
       <div className="z_bg_grain" />
 
-      {toast && <Toast key={toast.key} msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
+      {toast && <Toast key={toast.key} message={toast.message} type={toast.type} onDone={() => setToast(null)} />}
 
       <div className="z_auth_layout">
         <div className="z_auth_image_side" key={tab}>

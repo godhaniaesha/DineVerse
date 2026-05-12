@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("adminName", userData.full_name);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Login failed" };
+        return { success: false, error: data.message || data.message || "Login failed" };
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Registration failed" };
+        return { success: false, error: data.message || data.message || "Registration failed" };
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Failed to send OTP" };
+        return { success: false, error: data.message || data.message || "Failed to send OTP" };
       }
     } catch (error) {
       console.error("Forgot password error:", error);
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         return { success: true, resetToken: data.resetToken, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "OTP verification failed" };
+        return { success: false, error: data.message || data.message || "OTP verification failed" };
       }
     } catch (error) {
       console.error("OTP verification error:", error);
@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Password reset failed" };
+        return { success: false, error: data.message || data.message || "Password reset failed" };
       }
     } catch (error) {
       console.error("Reset password error:", error);
@@ -166,7 +166,7 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Password change failed" };
+        return { success: false, error: data.message || data.message || "Password change failed" };
       }
     } catch (error) {
       console.error("Change password error:", error);
@@ -196,7 +196,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("adminName", userData.full_name);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Profile update failed" };
+        return { success: false, error: data.message || data.message || "Profile update failed" };
       }
     } catch (error) {
       console.error("Update profile error:", error);

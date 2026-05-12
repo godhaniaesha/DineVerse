@@ -281,12 +281,12 @@ export default function RoomBooking() {
 
       if (!response.ok) {
         const maybe = await response.json().catch(() => null);
-        throw new Error(maybe?.msg || `HTTP error! status: ${response.status}`);
+        throw new Error(maybe?.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
       if (!data?.success || !data?.data?.roomTypes) {
-        throw new Error(data?.msg || "Failed to fetch availability.");
+        throw new Error(data?.message || "Failed to fetch availability.");
       }
 
       const transformedRooms = transformRoomTypes(data.data.roomTypes);
@@ -310,7 +310,7 @@ export default function RoomBooking() {
         },
       });
     } catch (err) {
-      setAvailabilityError(err?.msg || "Unable to check availability.");
+      setAvailabilityError(err?.message || "Unable to check availability.");
     } finally {
       setAvailabilityLoading(false);
     }
@@ -331,7 +331,7 @@ export default function RoomBooking() {
         setError(null);
       } catch (err) {
         console.error("Error fetching room types:", err);
-        setError(err?.msg || "Unable to load rooms.");
+        setError(err?.message || "Unable to load rooms.");
         setRooms([]);
       } finally {
         setLoading(false);

@@ -40,12 +40,12 @@ export const addStaff = async (req, res) => {
         });
 
         if (user) {
-            res.status(201).json({ success: true, msg: "Staff added successfully", data: user });
+            res.status(201).json({ success: true, message: "Staff added successfully", data: user });
         } else {
             return ThrowError(res, 400, 'Invalid user data');
         }
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -53,9 +53,9 @@ export const getStaff = async (req, res) => {
     try {
         const staff = await UserModel.find({ role: { $ne: 'User' } }).select('-password');
 
-        res.json({ success: true, msg: "Staff fetched successfully", data: staff });
+        res.json({ success: true, message: "Staff fetched successfully", data: staff });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -67,9 +67,9 @@ export const getAdmin = async (req, res) => {
             return sendBadRequestResponse(res, "No any Admin found...")
         }
 
-        res.json({ success: true, msg: "Admin fetched successfully", data: admin });
+        res.json({ success: true, message: "Admin fetched successfully", data: admin });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -102,7 +102,7 @@ export const updateStaffProfile = async (req, res) => {
                 const uploadResult = await uploadFile(req.file);
                 user.img = uploadResult.url;
             } catch (uploadErr) {
-                return ThrowError(res, 500, uploadErr.msg);
+                return ThrowError(res, 500, uploadErr.message);
             }
         }
 
@@ -131,10 +131,10 @@ export const updateStaffProfile = async (req, res) => {
         const userResponse = updatedUser.toObject();
         delete userResponse.password;
 
-        res.json({ success: true, msg: "Staff profile updated successfully", data: userResponse });
+        res.json({ success: true, message: "Staff profile updated successfully", data: userResponse });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -156,8 +156,8 @@ export const deleteStaff = async (req, res) => {
         }
 
         await user.deleteOne();
-        res.json({ success: true, msg: 'Staff removed successfully' });
+        res.json({ success: true, message: 'Staff removed successfully' });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

@@ -67,11 +67,11 @@ export const getUserBookings = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Bookings fetched successfully",
+            message: "Bookings fetched successfully",
             data: formattedBookings
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -136,10 +136,10 @@ export const getUserBillingHistory = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Billing history fetched successfully",
+            message: "Billing history fetched successfully",
             data: combinedHistory
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

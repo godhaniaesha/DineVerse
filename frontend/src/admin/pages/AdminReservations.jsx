@@ -239,7 +239,7 @@ export default function AdminReservations() {
 
       {modal?.mode === "delete" && (
         <Modal title="Delete Reservation" onClose={close}>
-          <p className="rooms__delete_msg">Delete {modal.row.id}?</p>
+          <p className="rooms__delete_message">Delete {modal.row.id}?</p>
           <div className="rooms__form_actions">
             <button className="rooms__btn rooms__btn--ghost" onClick={close}>
               Cancel

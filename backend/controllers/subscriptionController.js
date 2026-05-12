@@ -18,7 +18,7 @@ export const subscribe = async (req, res) => {
                 await existing.save();
                 return res.status(200).json({
                     success: true,
-                    msg: "Subscription reactivated successfully!",
+                    message: "Subscription reactivated successfully!",
                     data: existing
                 });
             }
@@ -32,7 +32,7 @@ export const subscribe = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Thank you for subscribing to DineVerse Digest!",
+            message: "Thank you for subscribing to DineVerse Digest!",
             data: newSubscription
         });
 
@@ -40,7 +40,7 @@ export const subscribe = async (req, res) => {
         if (error.code === 11000) {
             return ThrowError(res, 400, "Email already exists");
         }
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -51,11 +51,11 @@ export const getAllSubscriptions = async (req, res) => {
         return res.status(200).json({
             success: true,
             count: subscriptions.length,
-            msg: "Subscriptions fetched successfully",
+            message: "Subscriptions fetched successfully",
             data: subscriptions
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -71,9 +71,9 @@ export const deleteSubscription = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Subscription deleted successfully"
+            message: "Subscription deleted successfully"
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

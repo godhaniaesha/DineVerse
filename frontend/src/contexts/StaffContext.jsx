@@ -36,7 +36,7 @@ export const StaffProvider = ({ children }) => {
         return { success: true, data: data }; 
       } else {
         console.log(data, "data");
-        return { success: false, error: data.msg || data.message || "Failed to add staff" };
+        return { success: false, error: data.message || data.message || "Failed to add staff" };
       }
     } catch (error) {
       console.error("Add staff error:", error);
@@ -64,7 +64,7 @@ export const StaffProvider = ({ children }) => {
         setStaff(data.data);
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Failed to fetch staff" };
+        return { success: false, error: data.message || data.message || "Failed to fetch staff" };
       }
     } catch (error) {
       console.error("Get staff error:", error);
@@ -91,7 +91,7 @@ export const StaffProvider = ({ children }) => {
         setStaff(prev => prev.map(s => s._id === id ? data.data : s));
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Failed to update staff" };
+        return { success: false, error: data.message || data.message || "Failed to update staff" };
       }
     } catch (error) {
       console.error("Update staff error:", error);
@@ -117,7 +117,7 @@ export const StaffProvider = ({ children }) => {
         setStaff(prev => prev.filter(s => s._id !== id));
         return { success: true, data: data };
       } else {
-        return { success: false, error: data.msg || data.message || "Failed to delete staff" };
+        return { success: false, error: data.message || data.message || "Failed to delete staff" };
       }
     } catch (error) {
       console.error("Delete staff error:", error);

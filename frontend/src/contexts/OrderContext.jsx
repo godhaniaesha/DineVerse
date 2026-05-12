@@ -64,7 +64,7 @@ export const OrderProvider = ({ children }) => {
         setOrders(data.data);
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
       console.error("Get all orders error:", err);
       return { success: false, error: "Network error" };
@@ -104,7 +104,7 @@ export const OrderProvider = ({ children }) => {
         await fetchOrders();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
       return { success: false, error: "Network error" };
     } finally {
@@ -127,7 +127,7 @@ export const OrderProvider = ({ children }) => {
         setOrders(data.data);
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
       console.error("Get waiter active orders error:", err);
       return { success: false, error: "Network error" };
@@ -167,9 +167,9 @@ export const OrderProvider = ({ children }) => {
         return { success: true };
       }
 
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }
@@ -187,7 +187,7 @@ export const OrderProvider = ({ children }) => {
         await fetchOrders();
         return { success: true };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
       return { success: false, error: "Network error" };
     } finally {
@@ -207,7 +207,7 @@ export const OrderProvider = ({ children }) => {
       if (data.success) {
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
       console.error("Get billing orders error:", err);
       return { success: false, error: "Network error" };
@@ -226,13 +226,13 @@ export const OrderProvider = ({ children }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        return { success: false, error: data.msg || data.message || 'Payment intent creation failed' };
+        return { success: false, error: data.message || data.message || 'Payment intent creation failed' };
       }
 
       if (data.success) {
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message || 'Unknown error occurred' };
+      return { success: false, error: data.message || data.message || 'Unknown error occurred' };
     } catch (err) {
       console.error("Create billing payment intent error:", err);
       return { success: false, error: "Network error" };
@@ -252,14 +252,14 @@ export const OrderProvider = ({ children }) => {
       const data = await res.json();
 
       if (!res.ok) {
-        return { success: false, error: data.msg || data.message || 'Checkout confirmation failed' };
+        return { success: false, error: data.message || data.message || 'Checkout confirmation failed' };
       }
 
       if (data.success) {
         await fetchOrders();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message || 'Unknown error occurred' };
+      return { success: false, error: data.message || data.message || 'Unknown error occurred' };
     } catch (err) {
       console.error("Confirm billing and checkout error:", err);
       return { success: false, error: "Network error" };
@@ -286,7 +286,7 @@ export const OrderProvider = ({ children }) => {
       if (data.success) {
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
       console.error("Get completed payments error:", err);
       return { success: false, error: "Network error" };
@@ -316,7 +316,7 @@ export const OrderProvider = ({ children }) => {
       if (data.success) {
         return data.data;
       } else {
-        setError(data.msg || "Failed to fetch guests");
+        setError(data.message || "Failed to fetch guests");
         return [];
       }
     } catch (err) {

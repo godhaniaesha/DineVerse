@@ -30,11 +30,11 @@ export const addTable = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            msg: "Table added successfully",
+            message: "Table added successfully",
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -44,12 +44,12 @@ export const getTables = async (req, res) => {
         const tables = await Table.find({}).sort({ area: 1, tableNo: 1 });
         res.status(200).json({
             success: true,
-            msg: "Tables fetched successfully",
+            message: "Tables fetched successfully",
             count: tables.length,
             data: tables
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -68,11 +68,11 @@ export const getTableById = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Table fetched successfully",
+            message: "Table fetched successfully",
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -122,11 +122,11 @@ export const updateTable = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Table updated successfully",
+            message: "Table updated successfully",
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -147,11 +147,11 @@ export const deleteTable = async (req, res) => {
         await table.deleteOne();
         res.status(200).json({
             success: true,
-            msg: "Table deleted successfully",
+            message: "Table deleted successfully",
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -174,11 +174,11 @@ export const getTablesByArea = async (req, res) => {
         res.status(200).json({
             success: true,
             count: tables.length,
-            msg: area ? `${area} tables fetched` : "All tables fetched",
+            message: area ? `${area} tables fetched` : "All tables fetched",
             data: tables
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -200,11 +200,11 @@ export const getTablesByStatus = async (req, res) => {
         res.status(200).json({
             success: true,
             count: tables.length,
-            msg: status ? `${status} tables fetched` : "All tables fetched",
+            message: status ? `${status} tables fetched` : "All tables fetched",
             data: tables
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -236,14 +236,14 @@ export const getTableStats = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Table statistics fetched successfully",
+            message: "Table statistics fetched successfully",
             data: {
                 summary: { total, available, occupied, reserved },
                 byArea
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -273,10 +273,10 @@ export const updateTableStatus = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: `Table status updated to ${status}`,
+            message: `Table status updated to ${status}`,
             data: table
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

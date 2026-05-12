@@ -25,12 +25,12 @@ export const addInquiry = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: 'Inquiry submitted successfully',
+            message: 'Inquiry submitted successfully',
             data: inquiry
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getInquiries = async (req, res) => {
@@ -48,12 +48,12 @@ export const getInquiries = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'Inquiries fetched successfully',
+            message: 'Inquiries fetched successfully',
             data: formatted
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getInquiryById = async (req, res) => {
@@ -78,12 +78,12 @@ export const getInquiryById = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'Inquiry fetched successfully',
+            message: 'Inquiry fetched successfully',
             data: formatted
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateInquiryStatus = async (req, res) => {
@@ -105,12 +105,12 @@ export const updateInquiryStatus = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'Inquiry status updated successfully',
+            message: 'Inquiry status updated successfully',
             data: inquiry
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteInquiry = async (req, res) => {
@@ -128,11 +128,11 @@ export const deleteInquiry = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: 'Inquiry deleted successfully',
+            message: 'Inquiry deleted successfully',
             data: inquiry
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

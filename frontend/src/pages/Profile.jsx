@@ -95,12 +95,12 @@ export default function Profile() {
         );
         const data = await response.json();
         if (!response.ok || !data?.success) {
-          throw new Error(data?.msg || "Failed to load bookings");
+          throw new Error(data?.message || "Failed to load bookings");
         }
         setBookings(data?.data || []);
       } catch (error) {
         setBookings([]);
-        setBookingsError(error.msg || "Failed to load bookings");
+        setBookingsError(error.message || "Failed to load bookings");
       } finally {
         setBookingsLoading(false);
       }

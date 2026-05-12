@@ -94,7 +94,7 @@ export const validateGuestDetails = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Details validated successfully",
+            message: "Details validated successfully",
             data: {
                 first_name,
                 last_name,
@@ -110,7 +110,7 @@ export const validateGuestDetails = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getAvailableRoomTypes = async (req, res) => {
@@ -175,7 +175,7 @@ export const getAvailableRoomTypes = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Room types fetched successfully",
+            message: "Room types fetched successfully",
             data: {
                 roomTypes: result,
                 checkIn: checkInDateTime,
@@ -188,7 +188,7 @@ export const getAvailableRoomTypes = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getRoomsByType = async (req, res) => {
@@ -228,7 +228,7 @@ export const getRoomsByType = async (req, res) => {
         if (!availableRooms.length) {
             return res.status(200).json({
                 success: false,
-                msg: "No rooms available for selected dates",
+                message: "No rooms available for selected dates",
                 data: null
             });
         }
@@ -241,7 +241,7 @@ export const getRoomsByType = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Rooms fetched successfully",
+            message: "Rooms fetched successfully",
             data: {
                 roomType,
                 availableRooms,
@@ -254,7 +254,7 @@ export const getRoomsByType = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const createPaymentIntent = async (req, res) => {
@@ -310,7 +310,7 @@ export const createPaymentIntent = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Payment intent created",
+            message: "Payment intent created",
             data: {
                 clientSecret: paymentIntent.client_secret,
                 paymentIntentId: paymentIntent.id,
@@ -325,7 +325,7 @@ export const createPaymentIntent = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const confirmBooking = async (req, res) => {
@@ -387,7 +387,7 @@ export const confirmBooking = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Booking confirmed successfully",
+            message: "Booking confirmed successfully",
             data: {
                 bookingRef: booking.bookingRef,
                 guest: `${first_name} ${last_name}`,
@@ -408,7 +408,7 @@ export const confirmBooking = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -436,7 +436,7 @@ export const getReservationById = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Reservation fetched successfully",
+            message: "Reservation fetched successfully",
             data: {
                 ...reservation._doc,
                 checkInFormatted: formatDate(reservation.checkIn),
@@ -445,7 +445,7 @@ export const getReservationById = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getReservations = async (req, res) => {
@@ -468,11 +468,11 @@ export const getReservations = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Reservations fetched successfully",
+            message: "Reservations fetched successfully",
             data: formatted
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -542,11 +542,11 @@ export const searchReservations = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Search executed successfully",
+            message: "Search executed successfully",
             data: combined
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateReservationStatus = async (req, res) => {
@@ -610,11 +610,11 @@ export const updateReservationStatus = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Reservation status updated",
+            message: "Reservation status updated",
             data: reservation
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -664,11 +664,11 @@ export const getGuests = async (req, res) => {
         return res.status(200).json({
             success: true,
             count: guests.length,
-            msg: "Guests fetched successfully",
+            message: "Guests fetched successfully",
             data: guests
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -728,11 +728,11 @@ export const searchGuests = async (req, res) => {
         return res.status(200).json({
             success: true,
             count: guests.length,
-            msg: "Guests searched successfully",
+            message: "Guests searched successfully",
             data: guests
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -793,6 +793,6 @@ export const getAdminReservations = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

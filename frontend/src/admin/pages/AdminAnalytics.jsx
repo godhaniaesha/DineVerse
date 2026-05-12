@@ -50,7 +50,7 @@ export default function AdminAnalytics() {
           monthlyRevenue: Array.isArray(response.data.monthlyRevenue) ? response.data.monthlyRevenue : []
         });
       } else {
-        setError(response.msg || 'Failed to load analytics data');
+        setError(response.message || 'Failed to load analytics data');
       }
     } catch (error) {
       console.error('Error fetching analytics data:', error);

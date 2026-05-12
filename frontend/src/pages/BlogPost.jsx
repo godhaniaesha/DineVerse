@@ -36,7 +36,7 @@ export default function BlogPost() {
         setLiked(blogData.likes?.includes(localStorage.getItem('userId')) || false);
         setLikesCount(blogData.likes?.length || 0);
       } else {
-        setError(response.msg || 'Failed to fetch blog');
+        setError(response.message || 'Failed to fetch blog');
       }
     } catch (err) {
       setError('Failed to fetch blog');

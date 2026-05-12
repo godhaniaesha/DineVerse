@@ -29,11 +29,11 @@ export const addBlog = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Blog added successfully",
+            message: "Blog added successfully",
             data: blog
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getBlogs = async (req, res) => {
@@ -58,11 +58,11 @@ export const getBlogs = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Blogs fetched successfully",
+            message: "Blogs fetched successfully",
             data: formatted
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const getBlogById = async (req, res) => {
@@ -81,14 +81,14 @@ export const getBlogById = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Blog fetched successfully",
+            message: "Blog fetched successfully",
             data: {
                 ...blog._doc,
                 likesCount: blog.likes.length
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const toggleLike = async (req, res) => {
@@ -115,11 +115,11 @@ export const toggleLike = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: alreadyLiked ? "Like removed" : "Blog liked",
+            message: alreadyLiked ? "Like removed" : "Blog liked",
             likesCount: blog.likes.length
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const updateBlog = async (req, res) => {
@@ -149,14 +149,14 @@ export const updateBlog = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Blog updated successfully",
+            message: "Blog updated successfully",
             data: {
                 ...updatedBlog._doc,
                 likesCount: updatedBlog.likes.length
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 export const deleteBlog = async (req, res) => {
@@ -176,10 +176,10 @@ export const deleteBlog = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Blog deleted successfully",
+            message: "Blog deleted successfully",
             data: blog
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

@@ -59,11 +59,11 @@ export const getAvailableTablesByArea = async (req, res) => {
         return res.status(200).json({
             success: true,
             count: tablesWithMatchInfo.length,
-            msg: `Available tables in ${area} for ${time} fetched successfully`,
+            message: `Available tables in ${area} for ${time} fetched successfully`,
             data: tablesWithMatchInfo
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -98,7 +98,7 @@ export const createTablePaymentIntent = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Table payment intent created",
+            message: "Table payment intent created",
             data: {
                 clientSecret: paymentIntent.client_secret,
                 paymentIntentId: paymentIntent.id,
@@ -106,7 +106,7 @@ export const createTablePaymentIntent = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -172,9 +172,9 @@ export const confirmTableBooking = async (req, res) => {
             .populate('table', 'tableNo area floor')
             .populate('user', 'full_name email');
 
-        return res.status(201).json({ success: true, msg: "Table Reserved Successfully", data: populatedBooking });
+        return res.status(201).json({ success: true, message: "Table Reserved Successfully", data: populatedBooking });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -206,11 +206,11 @@ export const updateTableReservationStatus = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: `Reservation status updated to ${status}`,
+            message: `Reservation status updated to ${status}`,
             data: reservation
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -236,6 +236,6 @@ export const getTableReservationsByDate = async (req, res) => {
             data: reservations
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

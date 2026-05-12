@@ -24,7 +24,7 @@ export const addReview = async (req, res) => {
 
         const existingReview = await Review.findOne({ user: userId, area: area });
         if (existingReview) {
-            return res.status(400).json({ success: false, msg: `You have already reviewed the ${area}` });
+            return res.status(400).json({ success: false, message: `You have already reviewed the ${area}` });
         }
 
         const review = new Review({
@@ -37,9 +37,9 @@ export const addReview = async (req, res) => {
         });
 
         await review.save();
-        res.status(201).json({ success: true, msg: "Review added successfully", data: review });
+        res.status(201).json({ success: true, message: "Review added successfully", data: review });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -51,11 +51,11 @@ export const getReviews = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Reviews fetched successfully",
+            message: "Reviews fetched successfully",
             data: reviews
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -69,13 +69,13 @@ export const deleteReview = async (req, res) => {
 
         const review = await Review.findById(id);
         if (!review) {
-            return res.status(404).json({ success: false, msg: "Review not found" });
+            return res.status(404).json({ success: false, message: "Review not found" });
         }
 
         await Review.findByIdAndDelete(id);
-        res.status(200).json({ success: true, msg: "Review deleted successfully" });
+        res.status(200).json({ success: true, message: "Review deleted successfully" });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -89,11 +89,11 @@ export const getAreaReviews = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: `${area} reviews fetched successfully`,
+            message: `${area} reviews fetched successfully`,
             data: reviews
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -107,7 +107,7 @@ export const getUserReviews = async (req, res) => {
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ success: false, msg: "User not found" });
+            return res.status(404).json({ success: false, message: "User not found" });
         }
 
         const reviews = await Review.find({ user: userId })
@@ -115,10 +115,10 @@ export const getUserReviews = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "User reviews fetched successfully",
+            message: "User reviews fetched successfully",
             data: reviews
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

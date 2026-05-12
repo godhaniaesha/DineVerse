@@ -187,7 +187,7 @@ export default function AdminBlogs() {
       console.error("Error saving blog:", error);
       toast.error(
         "Error saving blog: " +
-          (error.response?.data?.msg || error.msg)
+          (error.response?.data?.message || error.message)
       );
     }
   };
@@ -208,7 +208,7 @@ export default function AdminBlogs() {
       console.error("Error deleting blog:", error);
       toast.error(
         "Error deleting blog: " +
-          (error.response?.data?.msg || error.msg)
+          (error.response?.data?.message || error.message)
       );
     }
   };
@@ -496,7 +496,7 @@ export default function AdminBlogs() {
 
       {modal?.mode === "delete" && (
         <Modal title="Delete Blog" onClose={close}>
-          <p className="rooms__delete_msg">Delete "{modal.blog.title}"?</p>
+          <p className="rooms__delete_message">Delete "{modal.blog.title}"?</p>
           <div className="rooms__form_actions">
             <button className="rooms__btn rooms__btn--ghost" onClick={close}>
               Cancel

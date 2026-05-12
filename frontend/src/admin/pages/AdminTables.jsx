@@ -10,7 +10,7 @@ const EMPTY_FORM = {
   area: "",
   capacity: "2",
   status: "Available",
-};
+}; 
 
 const AREA_OPTIONS = ["Restaurant", "Cafe", "Bar"];
 const STATUS_OPTIONS = ["Available", "Occupied", "Reserved"];
@@ -330,7 +330,7 @@ export default function AdminTables() {
       {/* DELETE MODAL */}
       {modal?.mode === "delete" && (
         <Modal title="Delete Table" onClose={close}>
-          <p className="rooms__delete_msg">
+          <p className="rooms__delete_message">
             Delete {modal.row.tableNo}?
           </p>
 

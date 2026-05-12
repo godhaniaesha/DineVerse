@@ -149,7 +149,7 @@ export const getAdminDashboardData = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Dashboard data fetched successfully",
+            message: "Dashboard data fetched successfully",
             data: {
                 kpiCards,
                 bestSellingDishes: bestSellingDishes,
@@ -160,6 +160,6 @@ export const getAdminDashboardData = async (req, res) => {
         });
 
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

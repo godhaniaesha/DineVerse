@@ -93,7 +93,7 @@ export default function Rooms() {
                 const data = await response.json();
 
                 if (!response.ok || !data?.success) {
-                    throw new Error(data?.msg || "Failed to load room types");
+                    throw new Error(data?.message || "Failed to load room types");
                 }
 
                 const mapped = (data?.data || []).map((room, index) => ({

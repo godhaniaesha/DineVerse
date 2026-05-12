@@ -691,7 +691,7 @@ body {
   box-shadow: 0 0 0 3px rgba(220, 50, 50, 0.07);
 }
 
-.h_err_msg {
+.h_err_message {
   font-size: 0.61rem;
   color: #e05555;
   margin-top: 0.3rem;
@@ -1385,7 +1385,7 @@ body {
   margin-bottom: 0.9rem;
 }
 
-.h_success_msg {
+.h_success_message {
   font-size: 0.82rem;
   color: var(--h-silver);
   line-height: 2;

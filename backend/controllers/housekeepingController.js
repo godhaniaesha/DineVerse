@@ -65,11 +65,11 @@ export const getHousekeepingStaff = async (req, res) => {
         const staff = await UserModel.find({ role: 'Housekeeping', status: 'Active' }).select('-password');
         res.status(200).json({
             success: true,
-            msg: "Housekeeping staff fetched successfully",
+            message: "Housekeeping staff fetched successfully",
             data: staff
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -104,11 +104,11 @@ export const assignHousekeeper = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: `Task assigned to ${housekeeper.full_name}`,
+            message: `Task assigned to ${housekeeper.full_name}`,
             data: room
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -154,11 +154,11 @@ export const updateCleanStatus = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: `Status changed from ${oldStatus} to ${cleanStatus}`,
+            message: `Status changed from ${oldStatus} to ${cleanStatus}`,
             data: { currentStatus: oldStatus, newStatus: cleanStatus, roomDetails: updatedRoom }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -187,11 +187,11 @@ export const approveRoomCleaning = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Room approved and now Available for booking",
+            message: "Room approved and now Available for booking",
             data: room
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -233,7 +233,7 @@ export const getHousekeepingTasks = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Housekeeping tasks fetched successfully",
+            message: "Housekeeping tasks fetched successfully",
             data: {
                 stats: {
                     roomsToClean: roomsToCleanCount,
@@ -244,7 +244,7 @@ export const getHousekeepingTasks = async (req, res) => {
             }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };
 
@@ -272,10 +272,10 @@ export const getHousekeepingStats = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: "Housekeeping stats fetched successfully",
+            message: "Housekeeping stats fetched successfully",
             data: { roomsToClean, inProgress, cleanedToday }
         });
     } catch (error) {
-        return ThrowError(res, 500, error.msg);
+         return ThrowError(res, 500, error.message);
     }
 };

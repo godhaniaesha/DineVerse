@@ -143,7 +143,7 @@ function Newsletter() {
             setSent(true);
             setEmail("");
         } catch (err) {
-            alert(err.msg); // you can replace with toast later
+            alert(err.message); // you can replace with toast later
         }
     };
 
@@ -219,7 +219,7 @@ export default function Blog() {
                 console.log('Available areas:', [...new Set(blogData.map(p => p.area))]);
                 setPosts(blogData);
             } else {
-                setError(response.msg || 'Failed to fetch blogs');
+                setError(response.message || 'Failed to fetch blogs');
             }
         } catch (err) {
             setError('Failed to fetch blogs');

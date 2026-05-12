@@ -156,7 +156,7 @@ export default function Register() {
           </div>
 
           <form onSubmit={handleSubmit} className="z_reg_auth-form">
-            {error && <div className="z_reg_error-msg mb-3 text-danger text-center small">{error}</div>}
+            {error && <div className="z_reg_error-message mb-3 text-danger text-center small">{error}</div>}
 
             {/* SUCCESS VIEW */}
             {authMode === 'forgotPassword' && fpStep === 'success' && (

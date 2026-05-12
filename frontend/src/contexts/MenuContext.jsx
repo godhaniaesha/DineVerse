@@ -66,7 +66,7 @@ export const MenuProvider = ({ children }) => {
         setMappedDishes(data.data.map(mapBackendDishToFrontend));
         setError(null);
       } else {
-        setError(data.msg || data.message || "Failed to fetch dishes");
+        setError(data.message || data.message || "Failed to fetch dishes");
       }
     } catch (err) {
       console.error("Fetch dishes error:", err);
@@ -132,9 +132,9 @@ export const MenuProvider = ({ children }) => {
         await fetchDishes();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -152,9 +152,9 @@ export const MenuProvider = ({ children }) => {
         await fetchDishes();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -171,9 +171,9 @@ export const MenuProvider = ({ children }) => {
         await fetchDishes();
         return { success: true };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -192,9 +192,9 @@ export const MenuProvider = ({ children }) => {
         await fetchCategories();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -212,9 +212,9 @@ export const MenuProvider = ({ children }) => {
         await fetchCategories();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -231,9 +231,9 @@ export const MenuProvider = ({ children }) => {
         await fetchCategories();
         return { success: true };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -252,9 +252,9 @@ export const MenuProvider = ({ children }) => {
         await fetchCuisines();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -272,9 +272,9 @@ export const MenuProvider = ({ children }) => {
         await fetchCuisines();
         return { success: true, data: data.data };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
@@ -291,9 +291,9 @@ export const MenuProvider = ({ children }) => {
         await fetchCuisines();
         return { success: true };
       }
-      return { success: false, error: data.msg || data.message };
+      return { success: false, error: data.message || data.message };
     } catch (err) {
-      return { success: false, error: err.msg };
+      return { success: false, error: err.message };
     }
   };
 
