@@ -3,6 +3,7 @@ import DeleteIconButton from "../components/DeleteIconButton";
 import { useMenu } from "../../contexts/MenuContext";
 import { toast } from "react-toastify";
 import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 
@@ -124,7 +125,16 @@ export default function AdminCategoryManagement() {
     setCurrentPage(1);
   }, [search, areaFilter, sortBy]);
 
-  if (loading) return <div className="ad_page"><div className="ad_h2">Loading Categories...</div></div>;
+  if (loading) return (
+    <div className="ad_page">
+      <FoodLoadingAnimation 
+        type="ingredients" 
+        size="large" 
+        text="Loading categories..." 
+        fullScreen={false}
+      />
+    </div>
+  );
 
   return (
     <div className="ad_page">

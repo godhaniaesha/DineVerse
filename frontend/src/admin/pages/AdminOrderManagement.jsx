@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
 import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const IcView = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
 
@@ -226,7 +227,17 @@ export default function AdminOrderManagement() {
             </tr>
           </thead>
           <tbody>
-            {paginatedOrders.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={role === "Super Admin" || role === "Manager" ? "6" : "7"} style={{ padding: '40px' }}>
+                  <FoodLoadingAnimation 
+                    type="ingredients" 
+                    size="medium" 
+                    text="Loading orders..." 
+                  />
+                </td>
+              </tr>
+            ) : paginatedOrders.length === 0 ? (
               <tr>
                 <td colSpan={role === "Super Admin" || role === "Manager" ? "6" : "7"} style={{ textAlign: 'center', padding: '2rem' }}>
                   <p style={{ margin: 0, color: '#666' }}>No orders found for your area</p>

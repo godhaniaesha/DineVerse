@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useOrder } from "../../contexts/OrderContext";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
 const KITCHEN_FLOW = ["Pending", "Accepted by Chef", "Preparing", "Ready", "Served / Delivered"];
@@ -115,7 +116,12 @@ export default function AdminKDS() {
   if (loading) {
     return (
       <div className="ad_page">
-        <div className="ad_h2">Loading Kitchen Queue...</div>
+        <FoodLoadingAnimation 
+          type="chef" 
+          size="large" 
+          text="Loading kitchen queue..." 
+          fullScreen={false}
+        />
       </div>
     );
   }

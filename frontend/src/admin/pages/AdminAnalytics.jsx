@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import dashboardService from '../../services/dashboardService';
+import FoodLoadingAnimation from '../components/FoodLoadingAnimation';
 
 const THEME_COLORS = [
   "#d4a373", // Primary Gold
@@ -66,7 +67,12 @@ export default function AdminAnalytics() {
       <div className="ad_page">
         <h2 className="ad_h2">Analytics</h2>
         <p className="ad_p">Performance snapshot for revenue trends and booking channels.</p>
-        <div style={{ textAlign: 'center', padding: '40px' }}>Loading analytics data...</div>
+        <FoodLoadingAnimation 
+          type="plates" 
+          size="large" 
+          text="Loading analytics data..." 
+          fullScreen={false}
+        />
       </div>
     );
   }

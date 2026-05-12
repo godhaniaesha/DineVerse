@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useGallery } from "../../contexts/GalleryContext";
 import { toast } from "react-toastify";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 const IcEye = () => (
@@ -82,7 +83,16 @@ export default function AdminGallery() {
   const visibleCount = images.filter((image) => image.visibility === "Visible").length;
   const hiddenCount = images.length - visibleCount;
 
-  if (loading) return <div className="ad_page"><div className="ad_h2">Loading Gallery...</div></div>;
+  if (loading) return (
+    <div className="ad_page">
+      <FoodLoadingAnimation 
+        type="plates" 
+        size="large" 
+        text="Loading gallery..." 
+        fullScreen={false}
+      />
+    </div>
+  );
 
   return (
     <div className="ad_page">

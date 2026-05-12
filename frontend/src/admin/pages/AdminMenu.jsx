@@ -6,6 +6,7 @@ import {
   CATEGORIES,
 } from "../../pages/Menu";
 import { useMenu } from "../../contexts/MenuContext";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 function MenuCard({ item, hovered, visible, onHover, registerRef }) {
   const accent = item.category === "bar" ? "var(--d-bar)" : "var(--d-restaurant)";
@@ -108,7 +109,16 @@ export default function AdminMenu() {
   });
 
   if (loading) {
-    return <div style={{ padding: "20px", textAlign: "center" }}>Loading...</div>;
+    return (
+      <div className="ad_page">
+        <FoodLoadingAnimation 
+          type="plates" 
+          size="large" 
+          text="Loading menu items..." 
+          fullScreen={false}
+        />
+      </div>
+    );
   }
 
   return (

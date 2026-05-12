@@ -3,6 +3,7 @@ import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { MdCheck, MdDoneAll, MdClose } from "react-icons/md";
 import Pagination from "../components/Pagination";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 const IcCheck = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M20 6L9 17l-5-5" /></svg>;
 
@@ -71,7 +72,13 @@ export default function ResBookTable() {
           <thead><tr><th>Table</th><th>Guest</th><th>Date</th><th>Time</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="7" style={{ textAlign: "center" }}>Loading reservations...</td></tr>
+              <tr><td colSpan="7" style={{ padding: "40px" }}>
+                <FoodLoadingAnimation 
+                  type="plates" 
+                  size="medium" 
+                  text="Loading restaurant reservations..." 
+                />
+              </td></tr>
             ) : restaurantReservations.length === 0 ? (
               <tr><td colSpan="7" style={{ textAlign: "center" }}>No reservations found</td></tr>
             ) : (

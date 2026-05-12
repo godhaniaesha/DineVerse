@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import dashboardService from "../../services/dashboardService";
+import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -92,9 +93,12 @@ export default function AdminDashboard() {
         <p className="ad_p">
           Track key admin metrics across bookings, rooms and menu performance.
         </p>
-        <div style={{ textAlign: "center", padding: "40px" }}>
-          Loading dashboard data...
-        </div>
+        <FoodLoadingAnimation 
+          type="ingredients" 
+          size="large" 
+          text="Loading dashboard data..." 
+          fullScreen={false}
+        />
       </div>
     );
   }

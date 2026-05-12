@@ -1,0 +1,414 @@
+/* ─── FOOD LOADING ANIMATIONS ─────────────────────────────────────────────── */
+
+.food-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.food-loading--fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 4, 6, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+}
+
+.food-loading--inline {
+  min-height: 200px;
+  width: 100%;
+}
+
+.food-loading__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.food-loading__text {
+  color: var(--ad-text-2);
+  font-size: 14px;
+  font-family: var(--ad-font-sans);
+  margin: 0;
+  letter-spacing: 0.02em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ─── UTENSILS ANIMATION ─────────────────────────────────────────────── */
+
+.utensils-animation {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  position: relative;
+}
+
+.utensil {
+  position: relative;
+  animation: utensilFloat 3s ease-in-out infinite;
+}
+
+.utensil:nth-child(1) { animation-delay: 0s; }
+.utensil:nth-child(2) { animation-delay: 0.2s; }
+.utensil:nth-child(3) { animation-delay: 0.4s; }
+
+.utensil__handle {
+  width: 3px;
+  height: 40px;
+  background: linear-gradient(180deg, var(--ad-gold), var(--ad-gold-dim));
+  border-radius: 1px;
+  position: relative;
+}
+
+.utensil__head {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Fork specifics */
+.fork .utensil__head {
+  display: flex;
+  gap: 2px;
+}
+
+.prong {
+  width: 2px;
+  height: 8px;
+  background: var(--ad-gold);
+  border-radius: 1px;
+}
+
+/* Knife specifics */
+.knife .utensil__head {
+  width: 6px;
+  height: 12px;
+  background: linear-gradient(180deg, var(--ad-gold-light), var(--ad-gold));
+  border-radius: 1px 1px 0 0;
+}
+
+/* Spoon specifics */
+.spoon .utensil__head {
+  width: 8px;
+  height: 10px;
+  background: var(--ad-gold);
+  border-radius: 50% 50% 40% 40%;
+}
+
+/* Size variations */
+.utensils-animation--small .utensil__handle {
+  height: 30px;
+  width: 2px;
+}
+
+.utensils-animation--large .utensil__handle {
+  height: 50px;
+  width: 4px;
+}
+
+@keyframes utensilFloat {
+  0%, 100% { 
+    transform: translateY(0) rotate(0deg); 
+    opacity: 0.7;
+  }
+  25% { 
+    transform: translateY(-10px) rotate(-5deg); 
+    opacity: 1;
+  }
+  50% { 
+    transform: translateY(-5px) rotate(3deg); 
+    opacity: 0.9;
+  }
+  75% { 
+    transform: translateY(-15px) rotate(-2deg); 
+    opacity: 1;
+  }
+}
+
+/* ─── PLATES ANIMATION ─────────────────────────────────────────────── */
+
+.plates-animation {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+}
+
+.plate {
+  position: relative;
+  animation: plateSpin 4s ease-in-out infinite;
+}
+
+.plate:nth-child(1) { animation-delay: 0s; }
+.plate:nth-child(2) { animation-delay: 0.5s; }
+.plate:nth-child(3) { animation-delay: 1s; }
+
+.plate__rim {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--ad-gold);
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle, rgba(215, 164, 106, 0.1), transparent);
+}
+
+.plate__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--ad-gold-dim);
+  border-radius: 50%;
+  background: var(--ad-surface);
+}
+
+/* Size variations */
+.plates-animation--small .plate__rim {
+  width: 30px;
+  height: 30px;
+  border-width: 2px;
+}
+
+.plates-animation--small .plate__center {
+  width: 15px;
+  height: 15px;
+}
+
+.plates-animation--large .plate__rim {
+  width: 50px;
+  height: 50px;
+  border-width: 4px;
+}
+
+.plates-animation--large .plate__center {
+  width: 25px;
+  height: 25px;
+}
+
+@keyframes plateSpin {
+  0%, 100% { 
+    transform: rotateY(0deg) scale(1); 
+    opacity: 0.8;
+  }
+  25% { 
+    transform: rotateY(90deg) scale(1.1); 
+    opacity: 1;
+  }
+  50% { 
+    transform: rotateY(180deg) scale(1); 
+    opacity: 0.9;
+  }
+  75% { 
+    transform: rotateY(270deg) scale(1.05); 
+    opacity: 1;
+  }
+}
+
+/* ─── CHEF ANIMATION ─────────────────────────────────────────────── */
+
+.chef-animation {
+  position: relative;
+  animation: chefBounce 2s ease-in-out infinite;
+}
+
+.chef__hat {
+  position: relative;
+  margin-bottom: 5px;
+}
+
+.hat__base {
+  width: 30px;
+  height: 8px;
+  background: var(--ad-text-1);
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.hat__top {
+  width: 20px;
+  height: 15px;
+  background: var(--ad-text-1);
+  border-radius: 50% 50% 40% 40%;
+  margin: -5px auto 0;
+  position: relative;
+}
+
+.hat__top::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 25px;
+  height: 8px;
+  background: var(--ad-text-1);
+  border-radius: 50%;
+}
+
+.chef__body {
+  position: relative;
+}
+
+.body__main {
+  width: 25px;
+  height: 30px;
+  background: var(--ad-gold-soft);
+  border: 2px solid var(--ad-gold);
+  border-radius: 8px 8px 4px 4px;
+  margin: 0 auto;
+}
+
+.body__apron {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 20px;
+  background: var(--ad-text-1);
+  border-radius: 2px;
+}
+
+.chef__arms {
+  position: absolute;
+  top: 35px;
+  width: 100%;
+}
+
+.arm {
+  position: absolute;
+  width: 3px;
+  height: 20px;
+  background: var(--ad-gold-soft);
+  border: 1px solid var(--ad-gold);
+  border-radius: 2px;
+}
+
+.arm-left {
+  left: -5px;
+  transform: rotate(-15deg);
+  animation: armWave 1.5s ease-in-out infinite;
+}
+
+.arm-right {
+  right: -5px;
+  transform: rotate(15deg);
+  animation: armWave 1.5s ease-in-out infinite 0.5s;
+}
+
+/* Size variations */
+.chef-animation--small .hat__base {
+  width: 24px;
+  height: 6px;
+}
+
+.chef-animation--small .hat__top {
+  width: 16px;
+  height: 12px;
+}
+
+.chef-animation--small .body__main {
+  width: 20px;
+  height: 24px;
+}
+
+.chef-animation--large .hat__base {
+  width: 36px;
+  height: 10px;
+}
+
+.chef-animation--large .hat__top {
+  width: 24px;
+  height: 18px;
+}
+
+.chef-animation--large .body__main {
+  width: 30px;
+  height: 36px;
+}
+
+@keyframes chefBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes armWave {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-25deg); }
+}
+
+/* ─── INGREDIENTS ANIMATION ─────────────────────────────────────────────── */
+
+.ingredients-animation {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 200px;
+}
+
+.ingredient {
+  font-size: 24px;
+  animation: ingredientFloat var(--duration) ease-in-out infinite;
+  animation-delay: var(--delay);
+  opacity: 0.8;
+}
+
+/* Size variations */
+.ingredients-animation--small .ingredient {
+  font-size: 18px;
+}
+
+.ingredients-animation--large .ingredient {
+  font-size: 32px;
+}
+
+@keyframes ingredientFloat {
+  0%, 100% { 
+    transform: translateY(0) rotate(0deg); 
+    opacity: 0.6;
+  }
+  25% { 
+    transform: translateY(-12px) rotate(-10deg); 
+    opacity: 1;
+  }
+  50% { 
+    transform: translateY(-6px) rotate(5deg); 
+    opacity: 0.8;
+  }
+  75% { 
+    transform: translateY(-18px) rotate(-5deg); 
+    opacity: 1;
+  }
+}
+
+/* ─── COMMON ANIMATIONS ─────────────────────────────────────────────── */
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .utensils-animation {
+    gap: 10px;
+  }
+  
+  .plates-animation {
+    gap: 15px;
+  }
+  
+  .food-loading__text {
+    font-size: 12px;
+  }
+}
