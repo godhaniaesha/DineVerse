@@ -1,5 +1,5 @@
 // src/admin/pages/AdminBlogs.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import blogService from "../../services/blogService";
@@ -66,6 +66,7 @@ export default function AdminBlogs() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
+  const fileInputRef = useRef(null);
 
   // pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,144 +118,11 @@ export default function AdminBlogs() {
   const openDelete = (blog) => setModal({ mode: "delete", blog });
   const close = () => setModal(null);
 
- const handleImageChange = (e) => {
-  const file = e.target.files?.[0];
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  const allowedTypes = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-  ];
-
-  if (!allowedTypes.includes(file.type)) {
-    toast.error(
-      "Only JPG, JPEG, PNG and WEBP images are allowed"
-    );
-    return;
-  }
-
-  const maxSize = 5 * 1024 * 1024;
-
-  if (file.size > maxSize) {
-    toast.error("Image size must be less than 5MB");
-    return;
-  }
-
-  const preview = URL.createObjectURL(file);
-
-  setForm((f) => ({
-    ...f,
-    coverImg: {
-      file,
-      preview,
-    },
-  }));
-};
-
-  const save = async () => {
-  const { title, short_des, des, area, status, coverImg } = form;
-
-  // =========================
-  // TITLE VALIDATION
-  // =========================
-  if (!title || !title.trim()) {
-    return toast.error("Title is required");
-  }
-
-  if (title.trim().length < 5) {
-    return toast.error("Title must be at least 5 characters");
-  }
-
-  if (title.trim().length > 120) {
-    return toast.error("Title must not exceed 120 characters");
-  }
-
-  const titleRegex = /^[A-Za-z0-9\s&.,'-]+$/;
-
-  if (!titleRegex.test(title.trim())) {
-    return toast.error(
-      "Title contains invalid characters"
-    );
-  }
-
-  // =========================
-  // SHORT DESCRIPTION
-  // =========================
-  if (!short_des || !short_des.trim()) {
-    return toast.error("Short description is required");
-  }
-
-  if (short_des.trim().length < 10) {
-    return toast.error(
-      "Short description must be at least 10 characters"
-    );
-  }
-
-  if (short_des.trim().length > 250) {
-    return toast.error(
-      "Short description must not exceed 250 characters"
-    );
-  }
-
-  // =========================
-  // FULL DESCRIPTION
-  // =========================
-  if (!des || !des.trim()) {
-    return toast.error("Full description is required");
-  }
-
-  if (des.trim().length < 30) {
-    return toast.error(
-      "Full description must be at least 30 characters"
-    );
-  }
-
-  if (des.trim().length > 5000) {
-    return toast.error(
-      "Full description must not exceed 5000 characters"
-    );
-  }
-
-  // =========================
-  // AREA VALIDATION
-  // =========================
-  const validAreas = ["Restaurant", "Cafe", "Bar"];
-
-  if (!area) {
-    return toast.error("Area is required");
-  }
-
-  if (!validAreas.includes(area)) {
-    return toast.error("Invalid area selected");
-  }
-
-  // =========================
-  // STATUS VALIDATION
-  // =========================
-  const validStatus = ["draft", "published"];
-
-  if (!status) {
-    return toast.error("Status is required");
-  }
-
-  if (!validStatus.includes(status)) {
-    return toast.error("Invalid status selected");
-  }
-
-  // =========================
-  // IMAGE VALIDATION
-  // =========================
-
-  // Add mode ma image compulsory
-  if (modal.mode === "add" && !coverImg.file) {
-    return toast.error("Please select a cover image");
-  }
-
-  // New uploaded image validate
-  if (coverImg.file instanceof File) {
     const allowedTypes = [
       "image/jpeg",
       "image/jpg",
@@ -262,91 +130,224 @@ export default function AdminBlogs() {
       "image/webp",
     ];
 
-    if (!allowedTypes.includes(coverImg.file.type)) {
-      return toast.error(
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(
         "Only JPG, JPEG, PNG and WEBP images are allowed"
       );
+      return;
     }
 
-    // Max 5MB
     const maxSize = 5 * 1024 * 1024;
 
-    if (coverImg.file.size > maxSize) {
+    if (file.size > maxSize) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+
+    setForm((f) => ({
+      ...f,
+      coverImg: {
+        file,
+        preview,
+      },
+    }));
+  };
+
+  const save = async () => {
+    const { title, short_des, des, area, status, coverImg } = form;
+
+    // =========================
+    // TITLE VALIDATION
+    // =========================
+    if (!title || !title.trim()) {
+      return toast.error("Title is required");
+    }
+
+    if (title.trim().length < 5) {
+      return toast.error("Title must be at least 5 characters");
+    }
+
+    if (title.trim().length > 120) {
+      return toast.error("Title must not exceed 120 characters");
+    }
+
+    const titleRegex = /^[A-Za-z0-9\s&.,'-]+$/;
+
+    if (!titleRegex.test(title.trim())) {
       return toast.error(
-        "Image size must be less than 5MB"
+        "Title contains invalid characters"
       );
-    }
-  }
-
-  try {
-    const authToken = localStorage.getItem("authToken");
-
-    if (!authToken) {
-      return toast.error("Please login to perform this action");
-    }
-
-    const formData = new FormData();
-
-    formData.append("title", title.trim());
-    formData.append("short_des", short_des.trim());
-    formData.append("des", des.trim());
-    formData.append("area", area);
-    formData.append("status", status);
-
-    // append image only if selected
-    if (coverImg.file) {
-      formData.append("coverImg", coverImg.file);
     }
 
     // =========================
-    // ADD BLOG
+    // SHORT DESCRIPTION
     // =========================
-    if (modal.mode === "add") {
-      const newBlogRes = await blogService.createBlog(
-        formData,
-        authToken
+    if (!short_des || !short_des.trim()) {
+      return toast.error("Short description is required");
+    }
+
+    if (short_des.trim().length < 10) {
+      return toast.error(
+        "Short description must be at least 10 characters"
       );
+    }
 
-      const newBlog = newBlogRes.data || newBlogRes;
-
-      setBlogs((prev) => [...prev, newBlog]);
-
-      toast.success("Blog post created successfully!");
+    if (short_des.trim().length > 250) {
+      return toast.error(
+        "Short description must not exceed 250 characters"
+      );
     }
 
     // =========================
-    // UPDATE BLOG
+    // FULL DESCRIPTION
     // =========================
-    if (modal.mode === "edit") {
-      const updatedBlogRes = await blogService.updateBlog(
-        modal.blog._id,
-        formData,
-        authToken
-      );
-
-      const updated = updatedBlogRes.data || updatedBlogRes;
-
-      setBlogs((prev) =>
-        prev.map((b) =>
-          b._id === modal.blog._id ? updated : b
-        )
-      );
-
-      toast.success("Blog post updated successfully!");
+    if (!des || !des.trim()) {
+      return toast.error("Full description is required");
     }
 
-    close();
+    if (des.trim().length < 30) {
+      return toast.error(
+        "Full description must be at least 30 characters"
+      );
+    }
 
-  } catch (error) {
-    console.error("Error saving blog:", error);
+    if (des.trim().length > 5000) {
+      return toast.error(
+        "Full description must not exceed 5000 characters"
+      );
+    }
 
-    toast.error(
-      error.response?.data?.message ||
-      error.message ||
-      "Failed to save blog"
-    );
-  }
-};
+    // =========================
+    // AREA VALIDATION
+    // =========================
+    const validAreas = ["Restaurant", "Cafe", "Bar"];
+
+    if (!area) {
+      return toast.error("Area is required");
+    }
+
+    if (!validAreas.includes(area)) {
+      return toast.error("Invalid area selected");
+    }
+
+    // =========================
+    // STATUS VALIDATION
+    // =========================
+    const validStatus = ["draft", "published"];
+
+    if (!status) {
+      return toast.error("Status is required");
+    }
+
+    if (!validStatus.includes(status)) {
+      return toast.error("Invalid status selected");
+    }
+
+    // =========================
+    // IMAGE VALIDATION
+    // =========================
+
+    // Add mode ma image compulsory
+    if (modal.mode === "add" && !coverImg.file) {
+      return toast.error("Please select a cover image");
+    }
+
+    // New uploaded image validate
+    if (coverImg.file instanceof File) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(coverImg.file.type)) {
+        return toast.error(
+          "Only JPG, JPEG, PNG and WEBP images are allowed"
+        );
+      }
+
+      // Max 5MB
+      const maxSize = 5 * 1024 * 1024;
+
+      if (coverImg.file.size > maxSize) {
+        return toast.error(
+          "Image size must be less than 5MB"
+        );
+      }
+    }
+
+    try {
+      const authToken = localStorage.getItem("authToken");
+
+      if (!authToken) {
+        return toast.error("Please login to perform this action");
+      }
+
+      const formData = new FormData();
+
+      formData.append("title", title.trim());
+      formData.append("short_des", short_des.trim());
+      formData.append("des", des.trim());
+      formData.append("area", area);
+      formData.append("status", status);
+
+      // append image only if selected
+      if (coverImg.file) {
+        formData.append("coverImg", coverImg.file);
+      }
+
+      // =========================
+      // ADD BLOG
+      // =========================
+      if (modal.mode === "add") {
+        const newBlogRes = await blogService.createBlog(
+          formData,
+          authToken
+        );
+
+        const newBlog = newBlogRes.data || newBlogRes;
+
+        setBlogs((prev) => [...prev, newBlog]);
+
+        toast.success("Blog post created successfully!");
+      }
+
+      // =========================
+      // UPDATE BLOG
+      // =========================
+      if (modal.mode === "edit") {
+        const updatedBlogRes = await blogService.updateBlog(
+          modal.blog._id,
+          formData,
+          authToken
+        );
+
+        const updated = updatedBlogRes.data || updatedBlogRes;
+
+        setBlogs((prev) =>
+          prev.map((b) =>
+            b._id === modal.blog._id ? updated : b
+          )
+        );
+
+        toast.success("Blog post updated successfully!");
+      }
+
+      close();
+
+    } catch (error) {
+      console.error("Error saving blog:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to save blog"
+      );
+    }
+  };
 
   const remove = async () => {
     try {
@@ -364,7 +365,7 @@ export default function AdminBlogs() {
       console.error("Error deleting blog:", error);
       toast.error(
         "Error deleting blog: " +
-          (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -540,29 +541,13 @@ export default function AdminBlogs() {
           {/* Image upload */}
           <div className="rooms__form_row">
             <label className="rooms__form_label">Cover Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              className="rooms__form_input"
-              onChange={handleImageChange}
-            />
-            {form.coverImg.preview && (
-              <div style={{ marginTop: "8px" }}>
-                <span className="rooms__form_label" style={{ fontSize: 12 }}>
-                  Preview:
-                </span>
-                <img
-                  src={form.coverImg.preview}
-                  alt="Preview"
-                  style={{
-                    width: 120,
-                    height: 70,
-                    objectFit: "cover",
-                    borderRadius: "6px",
-                  }}
-                />
-              </div>
-            )}
+            <input type="file" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*" />
+            <div className="d-flex align-items-center gap-2">
+              <button className="rooms__add_btn" style={{ padding: '5px 15px', fontSize: '12px' }} onClick={() => fileInputRef.current.click()}>
+                Change Image
+              </button>
+              {form.img && <span style={{ fontSize: '12px' }}>{form.img instanceof File ? form.img.name : "Current Image"}</span>}
+            </div>
           </div>
 
           <div className="rooms__form_grid2">
