@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import "../styleadmin/AdminLayout.css";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
+import { FiAlertCircle } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 
 /* ─── ICONS (inline SVG to remove icon-lib dependency) ─────────── */
@@ -292,6 +293,7 @@ export default function AdminLayout() {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
+    setUserMenuOpen(false);
     logout();
     navigate("/auth");
   };
@@ -615,32 +617,50 @@ export default function AdminLayout() {
 
       </main>
 
-      {/* Logout Confirmation Modal */}
+      {/* Logout Confirmation Modal — same pattern as Profile.jsx */}
       {showLogoutModal && (
-        <>
-          <div className="rooms__modal_overlay" onClick={() => setShowLogoutModal(false)} />
-          <div className="rooms__modal_box" style={{ maxWidth: "400px" }}>
-            <div className="rooms__modal_head">
-              <span className="rooms__modal_title">Logout Confirmation</span>
-              <button className="rooms__modal_close" onClick={() => setShowLogoutModal(false)}>×</button>
+        <div
+          className="z_modal_overlay"
+          onClick={() => setShowLogoutModal(false)}
+          role="presentation"
+        >
+          <div
+            className="z_modal_content"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-logout-modal-title"
+          >
+            <div className="z_modal_icon">
+              <FiAlertCircle />
             </div>
-            <div className="rooms__modal_body" style={{ padding: "24px", textAlign: "center" }}>
-              <p style={{ color: "var(--ad-text-2)", fontSize: "15px", marginBottom: "0" }}>
-                Are you sure you want to log out of the admin panel?
-              </p>
-            </div>
-            <div className="rooms__modal_foot" style={{ justifyContent: "center", gap: "12px", paddingBottom: "24px" }}>
-              <button className="rooms__btn" onClick={() => setShowLogoutModal(false)}>Cancel</button>
-              <button className="rooms__btn rooms__btn--primary" onClick={() => {
-                localStorage.removeItem("authToken");
-                localStorage.removeItem("authUser");
-                localStorage.removeItem("adminRole");
-                localStorage.removeItem("adminName");
-                navigate("/auth", { replace: true });
-              }}>Logout</button>
+            <h2 id="admin-logout-modal-title" className="z_modal_title">
+              Sign Out?
+            </h2>
+            <p className="z_modal_text">
+              Are you sure you want to sign out from DineVerse?
+            </p>
+            <div className="z_modal_actions">
+              <button
+                type="button"
+                className="z_modal_btn z_modal_btn_cancel"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Stay Logged In
+              </button>
+              <button
+                type="button"
+                className="z_modal_btn z_modal_btn_confirm"
+                onClick={() => {
+                  setShowLogoutModal(false);
+                  handleLogout();
+                }}
+              >
+                Yes, Sign Out
+              </button>
             </div>
           </div>
-        </>
+        </div>
       )}
 
       <ToastContainer
