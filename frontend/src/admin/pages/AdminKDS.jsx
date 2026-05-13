@@ -204,7 +204,7 @@ export default function AdminKDS() {
             </div>
             <div className="ad_list__item"><span>Order {item.orderId}</span><span>Table {item.table}</span></div>
             <ul className="ad_list">
-              <li className="ad_list__item">{item.itemName} x{item.quantity}</li>
+              <li className="ad_list__item">{item.itemName} x {item.quantity}</li>
             </ul>
             <div className="ad_list__item"><span>Status</span><span>{item.status}</span></div>
             <div className="ad_row_actions">

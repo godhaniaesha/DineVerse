@@ -33,32 +33,127 @@ export default function AdminGallery() {
   const itemsPerPage = 10;
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setForm(f => ({ ...f, img: e.target.files[0] }));
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only JPG, JPEG, PNG and WEBP images are allowed");
+      return;
     }
+
+    const maxSize = 5 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    setForm((f) => ({
+      ...f,
+      img: file,
+    }));
   };
 
   const handleSave = async () => {
     const { title, category, visibility, img } = form;
 
-    // --- Frontend Validations ---
-    if (!title.trim()) return toast.error("Title is required");
-    if (title.length < 2) return toast.error("Title must be at least 2 characters long");
-    
+    // =========================
+    // TITLE VALIDATION
+    // =========================
+    if (!title || !title.trim()) {
+      return toast.error("Title is required");
+    }
+
+    if (title.trim().length < 2) {
+      return toast.error("Title must be at least 2 characters");
+    }
+
+    if (title.trim().length > 60) {
+      return toast.error("Title must not exceed 60 characters");
+    }
+
+    // only letters, numbers, spaces
+    const titleRegex = /^[A-Za-z0-9\s&-]+$/;
+
+    if (!titleRegex.test(title.trim())) {
+      return toast.error(
+        "Title can contain only letters, numbers, spaces, & and -"
+      );
+    }
+
+    // =========================
+    // CATEGORY VALIDATION
+    // =========================
+    if (!category) {
+      return toast.error("Category is required");
+    }
+
+    if (!CATEGORIES.includes(category)) {
+      return toast.error("Invalid category selected");
+    }
+
+    // =========================
+    // IMAGE VALIDATION
+    // =========================
+
+    // Add mode ma image compulsory
     if (modal.mode === "add" && !img) {
       return toast.error("Image is required");
     }
 
+    // New uploaded image validate
+    if (img instanceof File) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(img.type)) {
+        return toast.error(
+          "Only JPG, JPEG, PNG and WEBP images are allowed"
+        );
+      }
+
+      // 5MB max
+      const maxSize = 5 * 1024 * 1024;
+
+      if (img.size > maxSize) {
+        return toast.error("Image size must be less than 5MB");
+      }
+    }
+
+    // =========================
+    // VISIBILITY VALIDATION
+    // =========================
+    if (!["Visible", "Hidden"].includes(visibility)) {
+      return toast.error("Invalid visibility selected");
+    }
+
+    // =========================
+    // FORM DATA
+    // =========================
     const formData = new FormData();
-    formData.append("title", title);
+
+    formData.append("title", title.trim());
     formData.append("category", category);
     formData.append("visibility", visibility);
-    
+
     if (img instanceof File) {
       formData.append("img", img);
     }
 
     let res;
+
     if (modal.mode === "add") {
       res = await addImage(formData);
     } else {
@@ -66,9 +161,20 @@ export default function AdminGallery() {
     }
 
     if (res.success) {
-      toast.success(modal.mode === "add" ? "Image added" : "Image updated");
+      toast.success(
+        modal.mode === "add"
+          ? "Image added successfully"
+          : "Image updated successfully"
+      );
+
       setModal(null);
-      setForm({ title: "", category: "Ambiance", img: null, visibility: "Visible" });
+
+      setForm({
+        title: "",
+        category: "Ambiance",
+        img: null,
+        visibility: "Visible",
+      });
     } else {
       toast.error(res.error || "Failed to save image");
     }
@@ -108,10 +214,10 @@ export default function AdminGallery() {
 
   if (loading) return (
     <div className="ad_page">
-      <FoodLoadingAnimation 
-        type="plates" 
-        size="large" 
-        text="Loading gallery..." 
+      <FoodLoadingAnimation
+        type="plates"
+        size="large"
+        text="Loading gallery..."
         fullScreen={false}
       />
     </div>
@@ -163,7 +269,7 @@ export default function AdminGallery() {
                 <td>{image.category}</td>
                 <td><span className="ad_chip">{image.visibility}</span></td>
                 <td>
-                  <div className="d-flex" style={{gap:"6px"}}>
+                  <div className="d-flex" style={{ gap: "6px" }}>
                     <button className="rooms__icon_btn" title="Edit image" onClick={() => {
                       setForm({ title: image.title, category: image.category, visibility: image.visibility, img: image.img });
                       setModal({ mode: "edit", image });
@@ -198,7 +304,7 @@ export default function AdminGallery() {
           <div className="rooms__modal_box">
             <div className="rooms__modal_head"><span className="rooms__modal_title">Add Image</span><button className="rooms__modal_close" onClick={() => setModal(null)}>x</button></div>
             <div className="rooms__form_row"><label className="rooms__form_label">Title</label><input required className="rooms__form_input" value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} /></div>
-            
+
             <div className="rooms__form_row">
               <label className="rooms__form_label">Category</label>
               <select className="rooms__form_select" value={form.category} onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}>
@@ -227,7 +333,7 @@ export default function AdminGallery() {
           <div className="rooms__modal_box">
             <div className="rooms__modal_head"><span className="rooms__modal_title">Edit Image</span><button className="rooms__modal_close" onClick={() => setModal(null)}>x</button></div>
             <div className="rooms__form_row"><label className="rooms__form_label">Title</label><input required className="rooms__form_input" value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} /></div>
-            
+
             <div className="rooms__form_row">
               <label className="rooms__form_label">Category</label>
               <select className="rooms__form_select" value={form.category} onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}>

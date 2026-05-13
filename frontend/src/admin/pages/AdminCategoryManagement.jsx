@@ -24,8 +24,8 @@ const MANAGER_ROLES = new Set(["Super Admin", "Manager"]);
 const canEdit = (adminRole) => MANAGER_ROLES.has(adminRole);
 
 export default function AdminCategoryManagement() {
-  const { categories: rows,  loading, addCategory, updateCategory, deleteCategory } = useMenu();
-  const  adminRole = localStorage.getItem("adminRole") || "Super Admin";
+  const { categories: rows, loading, addCategory, updateCategory, deleteCategory } = useMenu();
+  const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const isChefRole = CHEF_ROLES.has(adminRole);
   const canEditItems = canEdit(adminRole);
 
@@ -57,43 +57,180 @@ export default function AdminCategoryManagement() {
   }, []);
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setForm(f => ({ ...f, img: e.target.files[0] }));
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(
+        "Only JPG, PNG and WEBP images are allowed"
+      );
+
+      return;
     }
+
+    // 2MB max
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error(
+        "Image size must be less than 2MB"
+      );
+
+      return;
+    }
+
+    setForm((f) => ({
+      ...f,
+      img: file,
+    }));
   };
 
   const save = async () => {
-    const { name, area } = form;
+    const { name, area, status, img } = form;
 
-    // --- Frontend Validations matching backend/utils/validationRules.js ---
-    if (!name.trim()) return toast.error("Category name is required");
-    if (name.length < 2 || name.length > 50) return toast.error("Category name must be between 2 and 50 characters");
-    if (area.length === 0) return toast.error("At least one area is required");
+    // =========================
+    // NAME VALIDATION
+    // =========================
+
+    if (!name || !name.trim()) {
+      return toast.error("Please enter category name");
+    }
+
+    const trimmedName = name.trim();
+
+    if (trimmedName.length < 2) {
+      return toast.error(
+        "Category name must be at least 2 characters"
+      );
+    }
+
+    if (trimmedName.length > 50) {
+      return toast.error(
+        "Category name cannot exceed 50 characters"
+      );
+    }
+
+    if (!/^[A-Za-z\s]+$/.test(trimmedName)) {
+      return toast.error(
+        "Category name must contain only letters and spaces"
+      );
+    }
+
+    // =========================
+    // AREA VALIDATION
+    // =========================
+
+    if (!area || area.length === 0) {
+      return toast.error(
+        "Please select at least one area"
+      );
+    }
+
+    const invalidAreas = area.filter(
+      (a) => !AREAS.includes(a)
+    );
+
+    if (invalidAreas.length > 0) {
+      return toast.error("Invalid area selected");
+    }
+
+    // =========================
+    // STATUS VALIDATION
+    // =========================
+
+    const validStatuses = ["Active", "Inactive"];
+
+    if (!validStatuses.includes(status)) {
+      return toast.error("Invalid status selected");
+    }
+
+    // =========================
+    // IMAGE VALIDATION
+    // =========================
+
+    if (modal?.mode === "add" && !img) {
+      return toast.error(
+        "Please upload category image"
+      );
+    }
+
+    if (img instanceof File) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(img.type)) {
+        return toast.error(
+          "Only JPG, PNG and WEBP images are allowed"
+        );
+      }
+
+      // 2MB limit
+      if (img.size > 2 * 1024 * 1024) {
+        return toast.error(
+          "Image size must be less than 2MB"
+        );
+      }
+    }
+
+    // =========================
+    // FORM DATA
+    // =========================
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("status", form.status);
+
+    formData.append("name", trimmedName);
+    formData.append("status", status);
     formData.append("area", JSON.stringify(area));
 
-    if (form.img instanceof File) {
-      formData.append("img", form.img);
+    if (img instanceof File) {
+      formData.append("img", img);
     }
+
+    // =========================
+    // API CALL
+    // =========================
 
     let result;
+
     if (modal?.mode === "add") {
       result = await addCategory(formData);
-    } else if (modal?.mode === "edit" && modal.row) {
-      result = await updateCategory(modal.row._id, formData);
     }
+
+    if (modal?.mode === "edit" && modal.row) {
+      result = await updateCategory(
+        modal.row._id,
+        formData
+      );
+    }
+
+    // =========================
+    // RESPONSE
+    // =========================
 
     if (result?.success) {
-      toast.success(modal?.mode === "add" ? "Category added" : "Category updated");
+      toast.success(
+        modal?.mode === "add"
+          ? "Category added successfully!"
+          : "Category updated successfully!"
+      );
+
       close();
     } else {
-      toast.error(result?.error || "Something went wrong");
+      toast.error(
+        result?.error || "Something went wrong"
+      );
     }
   };
-
   const filtered = useMemo(() => {
     if (!rows) return [];
     return rows.filter((r) => {
@@ -129,10 +266,10 @@ export default function AdminCategoryManagement() {
 
   if (loading) return (
     <div className="ad_page">
-      <FoodLoadingAnimation 
-        type="ingredients" 
-        size="large" 
-        text="Loading categories..." 
+      <FoodLoadingAnimation
+        type="ingredients"
+        size="large"
+        text="Loading categories..."
         fullScreen={false}
       />
     </div>
@@ -232,15 +369,24 @@ export default function AdminCategoryManagement() {
               <button className="rooms__modal_close" onClick={close}>x</button>
             </div>
 
-            <div className="rooms__form_row"><label className="rooms__form_label">Name</label><input className="rooms__form_input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} /></div>
+            <div className="rooms__form_row"><label className="rooms__form_label">Name</label>
+              <input
+                className="rooms__form_input"
+                value={form.name}
+                maxLength={50}
+                onChange={(e) => {
+                  const value = e.target.value;
 
-            <div className="rooms__form_row">
-              <label className="rooms__form_label">Cuisine</label>
-              {/* <select className="rooms__form_select" value={form.cuisineId} onChange={(e) => setForm((f) => ({ ...f, cuisineId: e.target.value }))}>
-                <option value="">Select Cuisine</option>
-                {cuisines.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
-              </select> */}
-            </div>
+                  // only letters + spaces
+                  if (/^[A-Za-z\s]*$/.test(value)) {
+                    setForm((f) => ({
+                      ...f,
+                      name: value,
+                    }));
+                  }
+                }}
+              /></div>
+
 
             <div className="rooms__form_row">
               <label className="rooms__form_label">Image</label>
@@ -253,34 +399,7 @@ export default function AdminCategoryManagement() {
               </div>
             </div>
 
-            <div className="rooms__form_row">
-              <label className="rooms__form_label">Area</label>
-              <div className="rooms__multi_select_wrapper" ref={areaDropdownRef}>
-                <div className="rooms__multi_select_trigger" onClick={() => setIsAreaDropdownOpen(!isAreaDropdownOpen)}>
-                  {form.area.length > 0 ? (
-                    form.area.map((a) => <span key={a} className="rooms__multi_select_tag">{a}</span>)
-                  ) : (
-                    <span className="rooms__multi_select_placeholder">Select Areas</span>
-                  )}
-                </div>
-                {isAreaDropdownOpen && (
-                  <div className="rooms__multi_select_dropdown">
-                    {AREAS.map((area) => {
-                      const isSelected = form.area.includes(area);
-                      return (
-                        <div key={area} className={`rooms__multi_select_item ${isSelected ? "selected" : ""}`} onClick={() => {
-                          const next = isSelected ? form.area.filter((a) => a !== area) : [...form.area, area];
-                          setForm((f) => ({ ...f, area: next }));
-                        }}>
-                          <div className="rooms__multi_select_checkbox"></div>
-                          <span className="rooms__multi_select_item_label">{area}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
+            <div className="rooms__form_row"><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select></div>
 
             <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
 

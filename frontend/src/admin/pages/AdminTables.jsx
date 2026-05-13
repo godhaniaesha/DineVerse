@@ -10,7 +10,7 @@ const EMPTY_FORM = {
   area: "",
   capacity: "2",
   status: "Available",
-}; 
+};
 
 const AREA_OPTIONS = ["Restaurant", "Cafe", "Bar"];
 const STATUS_OPTIONS = ["Available", "Occupied", "Reserved"];
@@ -83,42 +83,78 @@ export default function AdminTables() {
   const save = async () => {
     const { tableNo, area, capacity, status } = form;
 
-    // --- Frontend Validations matching backend/utils/validationRules.js ---
-    if (!tableNo.trim()) return toast.error("Table number is required");
-    
-    if (!area) return toast.error("Area is required");
-    const validAreas = ['Restaurant', 'Cafe', 'Bar'];
-    if (!validAreas.includes(area)) return toast.error("Invalid area selected");
-
-    if (!capacity || isNaN(capacity) || Number(capacity) < 1) {
-      return toast.error("Capacity must be an integer and at least 1");
+    // TABLE NO VALIDATION
+    if (!tableNo || !tableNo.trim()) {
+      return toast.error("Please enter table number");
     }
 
-    // Auto-prefix table number
+    if (!/^\d+$/.test(tableNo.trim())) {
+      return toast.error("Table number must contain only numbers");
+    }
+
+    if (Number(tableNo) <= 0) {
+      return toast.error("Table number must be greater than 0");
+    }
+
+    // AREA VALIDATION
+    if (!area) {
+      return toast.error("Please select area");
+    }
+
+    const validAreas = ["Restaurant", "Cafe", "Bar"];
+
+    if (!validAreas.includes(area)) {
+      return toast.error("Invalid area selected");
+    }
+
+    // CAPACITY VALIDATION
+    if (!capacity || capacity === "") {
+      return toast.error("Please enter capacity");
+    }
+
+    if (!/^\d+$/.test(capacity)) {
+      return toast.error("Capacity must be a valid number");
+    }
+
+    if (Number(capacity) < 1) {
+      return toast.error("Capacity must be at least 1");
+    }
+
+    if (Number(capacity) > 20) {
+      return toast.error("Capacity cannot exceed 20");
+    }
+
+    // STATUS VALIDATION
+    if (!status) {
+      return toast.error("Please select status");
+    }
+
+    const validStatus = ["Available", "Occupied", "Reserved"];
+
+    if (!validStatus.includes(status)) {
+      return toast.error("Invalid status selected");
+    }
+
+    // AUTO PREFIX TABLE NUMBER
     const prefix = AREA_PREFIXES[area] || "";
     let finalTableNo = tableNo.trim();
-    
-    // If user entered only number, add prefix
+
     if (/^\d+$/.test(finalTableNo)) {
       finalTableNo = prefix + finalTableNo;
     } else {
-      // If user entered with prefix, ensure it's correct
-      const requiredPrefix = prefix;
-      if (!finalTableNo.startsWith(requiredPrefix)) {
-        // Remove any existing prefix and add correct one
-        const numPart = finalTableNo.replace(/^[A-Za-z]+/, "");
-        finalTableNo = requiredPrefix + (numPart || "1");
-      }
+      const numPart = finalTableNo.replace(/^[A-Za-z]+/, "");
+      finalTableNo = prefix + (numPart || "1");
     }
 
     const payload = {
       tableNo: finalTableNo,
-      area: area,
+      area,
       capacity: Number(capacity),
-      status: status,
+      status,
     };
 
     let result;
+
     if (modal.mode === "add") {
       result = await addTable(payload);
     }
@@ -128,7 +164,12 @@ export default function AdminTables() {
     }
 
     if (result?.success) {
-      toast.success(modal.mode === "add" ? "Table added successfully!" : "Table updated successfully!");
+      toast.success(
+        modal.mode === "add"
+          ? "Table added successfully!"
+          : "Table updated successfully!"
+      );
+
       close();
     } else {
       toast.error(result?.error || "Failed to save table");
@@ -210,39 +251,39 @@ export default function AdminTables() {
             {loading ? (
               <tr>
                 <td colSpan="5" style={{ padding: "40px" }}>
-                  <FoodLoadingAnimation 
-                    type="plates" 
-                    size="medium" 
-                    text="Loading tables..." 
+                  <FoodLoadingAnimation
+                    type="plates"
+                    size="medium"
+                    text="Loading tables..."
                   />
                 </td>
               </tr>
             ) : (
               paginatedRows.map((row) => (
-                  <tr key={row.id}>
-                    <td>{row.tableNo}</td>
-                    <td>{row.area}</td>
-                    <td>{row.capacity} members</td>
-                    <td>
-                      <span className="ad_chip">{row.status}</span>
-                    </td>
-                    <td>
-                      <div className="d-flex" style={{ gap: "6px" }}>
-                        <button
-                          className="rooms__icon_btn"
-                          title="Edit table"
-                          onClick={() => openEdit(row)}
-                        >
-                          <IcEdit />
-                        </button>
-                        <DeleteIconButton
-                          title="Delete table"
-                          onClick={() => openDelete(row)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                <tr key={row.id}>
+                  <td>{row.tableNo}</td>
+                  <td>{row.area}</td>
+                  <td>{row.capacity} members</td>
+                  <td>
+                    <span className="ad_chip">{row.status}</span>
+                  </td>
+                  <td>
+                    <div className="d-flex" style={{ gap: "6px" }}>
+                      <button
+                        className="rooms__icon_btn"
+                        title="Edit table"
+                        onClick={() => openEdit(row)}
+                      >
+                        <IcEdit />
+                      </button>
+                      <DeleteIconButton
+                        title="Delete table"
+                        onClick={() => openDelete(row)}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
@@ -267,14 +308,15 @@ export default function AdminTables() {
             <input
               className="rooms__form_input"
               value={form.tableNo}
-            onChange={(e) => {
-  const value = e.target.value;
+              maxLength={3}
+              onChange={(e) => {
+                const value = e.target.value;
 
-  // Only numbers allow
-  if (/^\d*$/.test(value)) {
-    setForm((f) => ({ ...f, tableNo: value }));
-  }
-}}
+                // only numbers
+                if (/^\d*$/.test(value)) {
+                  setForm((f) => ({ ...f, tableNo: value }));
+                }
+              }}
             />
           </div>
 
@@ -304,9 +346,13 @@ export default function AdminTables() {
               max="20"
               className="rooms__form_input"
               value={form.capacity}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, capacity: e.target.value }))
-              }
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value === "" || (/^\d+$/.test(value) && Number(value) <= 20)) {
+                  setForm((f) => ({ ...f, capacity: value }));
+                }
+              }}
             />
           </div>
 

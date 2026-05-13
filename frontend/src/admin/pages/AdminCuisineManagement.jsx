@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Pagination from "../components/Pagination";
 import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
-const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>;
+const IcEdit = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>;
 
 const AREAS = ["Restaurant", "Cafe", "Bar"];
 const SORT_OPTIONS = ["None", "Name A–Z", "Name Z–A", "Area"];
@@ -22,7 +22,7 @@ export default function AdminCuisineManagement() {
   const adminRole = localStorage.getItem("adminRole") || "Super Admin";
   const isChefRole = CHEF_ROLES.has(adminRole);
   const canEditItems = canEdit(adminRole);
-  
+
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [search, setSearch] = useState("");
@@ -38,41 +38,192 @@ export default function AdminCuisineManagement() {
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setForm(f => ({ ...f, img: e.target.files[0] }));
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(
+        "Only JPG, PNG and WEBP images are allowed"
+      );
+
+      return;
     }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error(
+        "Image size must be less than 2MB"
+      );
+
+      return;
+    }
+
+    setForm((f) => ({
+      ...f,
+      img: file,
+    }));
   };
 
   const save = async () => {
-    const { name, description, area, status } = form;
+    const { name, description, area, status, img } = form;
 
-    // --- Frontend Validations matching backend/utils/validationRules.js ---
-    if (!name.trim()) return toast.error("Cuisine name is required");
-    if (name.length < 2 || name.length > 50) return toast.error("Cuisine name must be between 2 and 50 characters");
-    if (!description.trim()) return toast.error("Description is required");
+    // =========================
+    // NAME VALIDATION
+    // =========================
+
+    if (!name || !name.trim()) {
+      return toast.error("Please enter cuisine name");
+    }
+
+    const trimmedName = name.trim();
+
+    if (trimmedName.length < 2) {
+      return toast.error(
+        "Cuisine name must be at least 2 characters"
+      );
+    }
+
+    if (trimmedName.length > 50) {
+      return toast.error(
+        "Cuisine name cannot exceed 50 characters"
+      );
+    }
+
+    if (!/^[A-Za-z\s]+$/.test(trimmedName)) {
+      return toast.error(
+        "Cuisine name must contain only letters and spaces"
+      );
+    }
+
+    // =========================
+    // DESCRIPTION VALIDATION
+    // =========================
+
+    if (!description || !description.trim()) {
+      return toast.error("Please enter description");
+    }
+
+    const trimmedDescription = description.trim();
+
+    if (trimmedDescription.length < 10) {
+      return toast.error(
+        "Description must be at least 10 characters"
+      );
+    }
+
+    if (trimmedDescription.length > 300) {
+      return toast.error(
+        "Description cannot exceed 300 characters"
+      );
+    }
+
+    // =========================
+    // AREA VALIDATION
+    // =========================
+
+    if (!area) {
+      return toast.error("Please select area");
+    }
+
+    if (!AREAS.includes(area)) {
+      return toast.error("Invalid area selected");
+    }
+
+    // =========================
+    // STATUS VALIDATION
+    // =========================
+
+    const validStatuses = ["Active", "Inactive"];
+
+    if (!validStatuses.includes(status)) {
+      return toast.error("Invalid status selected");
+    }
+
+    // =========================
+    // IMAGE VALIDATION
+    // =========================
+
+    if (modal?.mode === "add" && !img) {
+      return toast.error("Please upload cuisine image");
+    }
+
+    if (img instanceof File) {
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+
+      if (!allowedTypes.includes(img.type)) {
+        return toast.error(
+          "Only JPG, PNG and WEBP images are allowed"
+        );
+      }
+
+      // 2MB max
+      if (img.size > 2 * 1024 * 1024) {
+        return toast.error(
+          "Image size must be less than 2MB"
+        );
+      }
+    }
+
+    // =========================
+    // FORM DATA
+    // =========================
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
+
+    formData.append("name", trimmedName);
+    formData.append("description", trimmedDescription);
     formData.append("area", area);
     formData.append("status", status);
-    
-    if (form.img instanceof File) {
-      formData.append("img", form.img);
+
+    if (img instanceof File) {
+      formData.append("img", img);
     }
+
+    // =========================
+    // API CALL
+    // =========================
 
     let result;
+
     if (modal?.mode === "add") {
       result = await addCuisine(formData);
-    } else if (modal?.mode === "edit" && modal.row) {
-      result = await updateCuisine(modal.row._id, formData);
     }
 
+    if (modal?.mode === "edit" && modal.row) {
+      result = await updateCuisine(
+        modal.row._id,
+        formData
+      );
+    }
+
+    // =========================
+    // RESPONSE
+    // =========================
+
     if (result?.success) {
-      toast.success(modal?.mode === "add" ? "Cuisine added" : "Cuisine updated");
+      toast.success(
+        modal?.mode === "add"
+          ? "Cuisine added successfully!"
+          : "Cuisine updated successfully!"
+      );
+
       close();
     } else {
-      toast.error(result?.error || "Something went wrong");
+      toast.error(
+        result?.error || "Something went wrong"
+      );
     }
   };
 
@@ -110,10 +261,10 @@ export default function AdminCuisineManagement() {
 
   if (loading) return (
     <div className="ad_page">
-      <FoodLoadingAnimation 
-        type="chef" 
-        size="large" 
-        text="Loading cuisines..." 
+      <FoodLoadingAnimation
+        type="chef"
+        size="large"
+        text="Loading cuisines..."
         fullScreen={false}
       />
     </div>
@@ -170,22 +321,22 @@ export default function AdminCuisineManagement() {
                   {r.img ? (
                     <img src={r.img} alt={r.name} className="ad_gallery_img" style={{ width: 60, height: 40, marginBottom: 0, objectFit: 'cover' }} />
                   ) : (
-                    <div style={{ width: 60, height: 40, background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>No Img</div>
+                    <div style={{ width: 60, height: 40, background: '#333', color: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>No Img</div>
                   )}
                 </td>
                 <td title={r.description}>{truncate(r.description)}</td>
                 <td>{r.area}</td>
                 <td><span className="ad_chip">{r.status}</span></td>
                 <td>
-                  <div className="d-flex" style={{gap:"6px"}}>
-                  {canEditItems ? (
-                    <>
-                      <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, img: r.img }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
-                      <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
-                    </>
-                  ) : (
-                    <span className="ad_chip">View only</span>
-                  )}
+                  <div className="d-flex" style={{ gap: "6px" }}>
+                    {canEditItems ? (
+                      <>
+                        <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, img: r.img }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
+                        <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
+                      </>
+                    ) : (
+                      <span className="ad_chip">View only</span>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -214,8 +365,26 @@ export default function AdminCuisineManagement() {
               <button className="rooms__modal_close" onClick={close}>x</button>
             </div>
 
-            <div className="rooms__form_row"><label className="rooms__form_label">Name</label><input className="rooms__form_input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} /></div>
-            
+            <div className="rooms__form_row">
+              <label className="rooms__form_label">Name</label>
+              <input
+                className="rooms__form_input"
+                value={form.name}
+                maxLength={50}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  // only letters + spaces
+                  if (/^[A-Za-z\s]*$/.test(value)) {
+                    setForm((f) => ({
+                      ...f,
+                      name: value,
+                    }));
+                  }
+                }}
+              />
+            </div>
+
             <div className="rooms__form_row">
               <label className="rooms__form_label">Image</label>
               <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />

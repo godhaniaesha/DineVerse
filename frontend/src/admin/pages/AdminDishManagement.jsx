@@ -84,38 +84,208 @@ export default function AdminDishManagement() {
     };
 
     const save = async () => {
-        const { name, price, cat_id, area, short_des, des, cuisineId, mealType, prepTime, ingredients, note, status, chef } = form;
+        const {
+            name,
+            price,
+            cat_id,
+            area,
+            short_des,
+            des,
+            cuisineId,
+            mealType,
+            prepTime,
+            ingredients,
+            note,
+            status,
+            chef,
+            img
+        } = form;
 
-        // --- Frontend Validations matching backend/utils/validationRules.js ---
-        if (!name.trim()) return toast.error("Dish name is required");
-        if (name.length < 2 || name.length > 100) return toast.error("Dish name must be between 2 and 100 characters");
-        
-        if (!price || isNaN(price) || Number(price) <= 0) return toast.error("Price must be a number greater than 0");
-        
-        if (!cat_id) return toast.error("Category is required");
-        
-        if (!area || area.length === 0) return toast.error("At least one area is required");
+        // =========================
+        // NAME VALIDATION
+        // =========================
+        if (!name || !name.trim()) {
+            return toast.error("Dish name is required");
+        }
 
+        if (name.trim().length < 2) {
+            return toast.error("Dish name must be at least 2 characters");
+        }
+
+        if (name.trim().length > 100) {
+            return toast.error("Dish name cannot exceed 100 characters");
+        }
+
+        // =========================
+        // IMAGE VALIDATION
+        // =========================
+        if (modal?.mode === "add" && !img) {
+            return toast.error("Dish image is required");
+        }
+
+        if (img instanceof File) {
+            const allowedTypes = [
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "image/webp"
+            ];
+
+            if (!allowedTypes.includes(img.type)) {
+                return toast.error("Only JPG, PNG and WEBP images are allowed");
+            }
+
+            if (img.size > 2 * 1024 * 1024) {
+                return toast.error("Image size must be less than 2MB");
+            }
+        }
+
+        // =========================
+        // SHORT DESCRIPTION
+        // =========================
+        if (!short_des || !short_des.trim()) {
+            return toast.error("Short description is required");
+        }
+
+        if (short_des.trim().length < 5) {
+            return toast.error("Short description must be at least 5 characters");
+        }
+
+        if (short_des.trim().length > 150) {
+            return toast.error("Short description cannot exceed 150 characters");
+        }
+
+        // =========================
+        // DESCRIPTION
+        // =========================
+        if (!des || !des.trim()) {
+            return toast.error("Description is required");
+        }
+
+        if (des.trim().length < 10) {
+            return toast.error("Description must be at least 10 characters");
+        }
+
+        // =========================
+        // CATEGORY
+        // =========================
+        if (!cat_id) {
+            return toast.error("Please select category");
+        }
+
+        // =========================
+        // CUISINE
+        // =========================
+        if (!cuisineId) {
+            return toast.error("Please select cuisine");
+        }
+
+        // =========================
+        // MEAL TYPE
+        // =========================
+        if (!mealType) {
+            return toast.error("Please select meal type");
+        }
+
+        // =========================
+        // PRICE
+        // =========================
+        if (!price || price.toString().trim() === "") {
+            return toast.error("Price is required");
+        }
+
+        if (isNaN(price)) {
+            return toast.error("Price must be a valid number");
+        }
+
+        if (Number(price) <= 0) {
+            return toast.error("Price must be greater than 0");
+        }
+
+        if (Number(price) > 100000) {
+            return toast.error("Price is too high");
+        }
+
+        // =========================
+        // PREP TIME
+        // =========================
+        if (!prepTime || !prepTime.trim()) {
+            return toast.error("Preparation time is required");
+        }
+
+        if (prepTime.trim().length > 50) {
+            return toast.error("Preparation time is too long");
+        }
+
+        // =========================
+        // INGREDIENTS
+        // =========================
+        if (!ingredients || !ingredients.trim()) {
+            return toast.error("Ingredients are required");
+        }
+
+        const ingredientList = ingredients
+            .split(",")
+            .map((i) => i.trim())
+            .filter(Boolean);
+
+        if (ingredientList.length === 0) {
+            return toast.error("Please enter valid ingredients");
+        }
+
+        // =========================
+        // NOTE
+        // =========================
+        if (note && note.length > 300) {
+            return toast.error("Note cannot exceed 300 characters");
+        }
+
+        // =========================
+        // CHEF VALIDATION
+        // =========================
+        if (!chef || chef.length === 0) {
+            return toast.error("Please assign at least one chef");
+        }
+
+        // =========================
+        // AREA VALIDATION
+        // =========================
+        if (!area || area.length === 0) {
+            return toast.error("Please select at least one area");
+        }
+
+        // =========================
+        // STATUS VALIDATION
+        // =========================
+        if (!status) {
+            return toast.error("Please select status");
+        }
+
+        // =========================
+        // FORM DATA
+        // =========================
         const formData = new FormData();
-        formData.append("name", name);
+
+        formData.append("name", name.trim());
         formData.append("cat_id", cat_id);
-        formData.append("short_des", short_des);
-        formData.append("des", des);
+        formData.append("short_des", short_des.trim());
+        formData.append("des", des.trim());
         formData.append("cuisineId", cuisineId);
         formData.append("mealType", mealType);
         formData.append("price", price);
-        formData.append("prepTime", prepTime);
-        formData.append("ingredients", ingredients);
-        formData.append("note", note);
+        formData.append("prepTime", prepTime.trim());
+        formData.append("ingredients", ingredients.trim());
+        formData.append("note", note.trim());
         formData.append("status", status);
         formData.append("area", JSON.stringify(area));
         formData.append("chef", JSON.stringify(chef));
 
-        if (form.img instanceof File) {
-            formData.append("img", form.img);
+        if (img instanceof File) {
+            formData.append("img", img);
         }
 
         let result;
+
         if (modal?.mode === "add") {
             result = await addDish(formData);
         } else if (modal?.mode === "edit" && modal.row) {
@@ -123,7 +293,11 @@ export default function AdminDishManagement() {
         }
 
         if (result?.success) {
-            toast.success(modal?.mode === "add" ? "Dish added successfully" : "Dish updated successfully");
+            toast.success(
+                modal?.mode === "add"
+                    ? "Dish added successfully"
+                    : "Dish updated successfully"
+            );
             close();
         } else {
             toast.error(result?.error || "Something went wrong");
@@ -338,7 +512,7 @@ export default function AdminDishManagement() {
                         <div className="rooms__form_row"><label className="rooms__form_label">Meal</label><select className="rooms__form_select" value={form.mealType} onChange={(e) => setForm((f) => ({ ...f, mealType: e.target.value }))}>{MEALS.map((m) => <option key={m}>{m}</option>)}</select></div>
 
                         <div className="rooms__form_grid2">
-                            <div><label className="rooms__form_label">Price</label><input type="number" className="rooms__form_input" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} /></div>
+                            <div><label className="rooms__form_label">Price</label><input type="number" className="rooms__form_input" value={form.price} maxLength={4} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} /></div>
                             <div><label className="rooms__form_label">Prep time</label><input className="rooms__form_input" value={form.prepTime} onChange={(e) => setForm((f) => ({ ...f, prepTime: e.target.value }))} /></div>
                         </div>
 
@@ -390,47 +564,7 @@ export default function AdminDishManagement() {
                             </div>
                         </div>
 
-                        <div className="rooms__form_row">
-                            <label className="rooms__form_label">Area</label>
-                            <div className="rooms__multi_select_wrapper" ref={areaDropdownRef}>
-                                <div
-                                    className="rooms__multi_select_trigger"
-                                    onClick={() => setIsAreaDropdownOpen(!isAreaDropdownOpen)}
-                                >
-                                    {form.area.length > 0 ? (
-                                        form.area.map((a) => (
-                                            <span key={a} className="rooms__multi_select_tag">
-                                                {a}
-                                            </span>
-                                        ))
-                                    ) : (
-                                        <span className="rooms__multi_select_placeholder">Select Areas</span>
-                                    )}
-                                </div>
-                                {isAreaDropdownOpen && (
-                                    <div className="rooms__multi_select_dropdown">
-                                        {AREAS.map((area) => {
-                                            const isSelected = form.area.includes(area);
-                                            return (
-                                                <div
-                                                    key={area}
-                                                    className={`rooms__multi_select_item ${isSelected ? "selected" : ""}`}
-                                                    onClick={() => {
-                                                        const next = isSelected
-                                                            ? form.area.filter((a) => a !== area)
-                                                            : [...form.area, area];
-                                                        setForm((f) => ({ ...f, area: next }));
-                                                    }}
-                                                >
-                                                    <div className="rooms__multi_select_checkbox"></div>
-                                                    <span className="rooms__multi_select_item_label">{area}</span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                        <div className="rooms__form_row"><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select></div>
 
                         <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option value="available">Available</option><option value="out of stock">Out of Stock</option></select></div>
 

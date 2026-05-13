@@ -239,91 +239,293 @@ export default function AdminStaffManagement() {
   };
 
   const handleSave = async () => {
-    const { full_name, email, phone, role, department, password, confirmPassword } = form;
+    const {
+      full_name,
+      email,
+      phone,
+      role,
+      department,
+      password,
+      confirmPassword,
+      cuisineSpecialization,
+      status,
+    } = form;
 
-    // --- Frontend Validations matching backend/utils/validationRules.js ---
-    
-    // Full Name Validation
-    if (!full_name.trim()) return toast.error("Full name is required");
-    if (full_name.length < 2 || full_name.length > 50) return toast.error("Full name must be between 2 and 50 characters");
-    if (!/^[A-Za-z\s]+$/.test(full_name)) return toast.error("Full name must contain only letters");
+    // =========================
+    // FULL NAME VALIDATION
+    // =========================
 
-    // Email Validation
-    if (!email.trim()) return toast.error("Email is required");
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return toast.error("Please provide a valid email address");
-
-    // Phone Validation
-    if (!phone.trim()) return toast.error("Phone number is required");
-    if (!/^\d+$/.test(phone)) return toast.error("Phone number must contain only digits");
-    if (phone.length < 10 || phone.length > 15) return toast.error("Phone number must be between 10 and 15 digits");
-
-    // Role Validation
-    if (!role) return toast.error("Role is required");
-    const validRoles = ['Manager', 'Housekeeping', 'Cafe Waiter', 'Res Waiter', 'Bar Waiter', 'Chef'];
-    if (!validRoles.includes(role)) return toast.error("Invalid staff role selected");
-
-    // Department Validation
-    if (!department) return toast.error("Department is required");
-
-    // Password Validation
-    if (modal.mode === "add") {
-      if (!password) return toast.error("Password is required");
-      if (password.length < 6) return toast.error("Password must be at least 6 characters long");
-      if (password !== confirmPassword) return toast.error("Passwords do not match!");
-    } else if (modal.mode === "edit" && password) {
-      if (password.length < 6) return toast.error("Password must be at least 6 characters long");
-      if (password !== confirmPassword) return toast.error("Passwords do not match!");
+    if (!full_name || !full_name.trim()) {
+      return toast.error("Please enter full name");
     }
 
+    const trimmedName = full_name.trim();
+
+    if (trimmedName.length < 2) {
+      return toast.error("Full name must be at least 2 characters");
+    }
+
+    if (trimmedName.length > 50) {
+      return toast.error("Full name cannot exceed 50 characters");
+    }
+
+    if (!/^[A-Za-z\s]+$/.test(trimmedName)) {
+      return toast.error(
+        "Full name must contain only letters and spaces"
+      );
+    }
+
+    // =========================
+    // EMAIL VALIDATION
+    // =========================
+
+    if (!email || !email.trim()) {
+      return toast.error("Please enter email address");
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(trimmedEmail)) {
+      return toast.error("Please enter valid email address");
+    }
+
+    // =========================
+    // PHONE VALIDATION
+    // =========================
+
+    if (!phone || !phone.trim()) {
+      return toast.error("Please enter phone number");
+    }
+
+    if (!/^\d+$/.test(phone)) {
+      return toast.error(
+        "Phone number must contain only digits"
+      );
+    }
+
+    if (phone.length !== 10) {
+      return toast.error(
+        "Phone number must be exactly 10 digits"
+      );
+    }
+
+    // if (!/^[0-9]/.test(phone)) {
+    //   return toast.error(
+    //     "Phone number must start with 6, 7, 8 or 9"
+    //   );
+    // }
+
+    // =========================
+    // ROLE VALIDATION
+    // =========================
+
+    if (!role) {
+      return toast.error("Please select role");
+    }
+
+    const validRoles = [
+      "Manager",
+      "Housekeeping",
+      "Cafe Waiter",
+      "Res Waiter",
+      "Bar Waiter",
+      "Chef",
+    ];
+
+    if (!validRoles.includes(role)) {
+      return toast.error("Invalid role selected");
+    }
+
+    // =========================
+    // DEPARTMENT VALIDATION
+    // =========================
+
+    if (!department) {
+      return toast.error("Please select department");
+    }
+
+    const validDepartments = [
+      "Kitchen",
+      "Cafe",
+      "Restaurant",
+      "Bar",
+      "Reception",
+      "Housekeeping",
+    ];
+
+    if (!validDepartments.includes(department)) {
+      return toast.error("Invalid department selected");
+    }
+
+    // =========================
+    // CHEF CUISINE VALIDATION
+    // =========================
+
+    if (
+      role === "Chef" &&
+      (!cuisineSpecialization ||
+        cuisineSpecialization.length === 0)
+    ) {
+      return toast.error(
+        "Please select at least one cuisine specialization"
+      );
+    }
+
+    // =========================
+    // STATUS VALIDATION
+    // =========================
+
+    const validStatuses = ["Active", "Inactive"];
+
+    if (!validStatuses.includes(status)) {
+      return toast.error("Invalid status selected");
+    }
+
+    // =========================
+    // PASSWORD VALIDATION
+    // =========================
+
     if (modal.mode === "add") {
-      const formData = new FormData();
-      formData.append("full_name", form.full_name);
-      formData.append("email", form.email);
-      formData.append("phone", form.phone);
-      formData.append("password", form.password);
-      formData.append("role", form.role);
-      formData.append("department", form.department);
-      formData.append("status", form.status);
-      if (form.cuisineSpecialization && form.cuisineSpecialization.length > 0) {
-        formData.append(
-          "cuisineSpecialization",
-          JSON.stringify(form.cuisineSpecialization),
+      if (!password) {
+        return toast.error("Please enter password");
+      }
+
+      if (password.length < 6) {
+        return toast.error(
+          "Password must be at least 6 characters"
         );
       }
 
-      const result = await addStaff(formData);
-      if (result.success) {
-        toast.success("Staff added successfully!");
-        close();
-      } else {
-        toast.error(result.error || "Failed to add staff");
-      }
-    } else if (modal.mode === "edit") {
-      const formData = new FormData();
-      formData.append("full_name", form.full_name);
-      formData.append("email", form.email);
-      formData.append("phone", form.phone);
-      formData.append("role", form.role);
-      formData.append("department", form.department);
-      formData.append("status", form.status);
-      if (form.cuisineSpecialization && form.cuisineSpecialization.length > 0) {
-        formData.append(
-          "cuisineSpecialization",
-          JSON.stringify(form.cuisineSpecialization),
+      if (!/(?=.*[A-Z])/.test(password)) {
+        return toast.error(
+          "Password must contain at least one uppercase letter"
         );
       }
-      if (form.password) {
-        formData.append("password", form.password);
+
+      if (!/(?=.*[a-z])/.test(password)) {
+        return toast.error(
+          "Password must contain at least one lowercase letter"
+        );
       }
 
-      const result = await updateStaffProfile(modal.row._id, formData);
-      if (result.success) {
-        toast.success("Staff updated successfully!");
-        close();
-      } else {
-        toast.error(result.error || "Failed to update staff");
+      if (!/(?=.*\d)/.test(password)) {
+        return toast.error(
+          "Password must contain at least one number"
+        );
       }
+
+      if (!confirmPassword) {
+        return toast.error(
+          "Please enter confirm password"
+        );
+      }
+
+      if (password !== confirmPassword) {
+        return toast.error("Passwords do not match");
+      }
+    }
+
+    // =========================
+    // EDIT PASSWORD VALIDATION
+    // =========================
+
+    if (modal.mode === "edit" && password) {
+      if (password.length < 6) {
+        return toast.error(
+          "Password must be at least 6 characters"
+        );
+      }
+
+      if (!/(?=.*[A-Z])/.test(password)) {
+        return toast.error(
+          "Password must contain at least one uppercase letter"
+        );
+      }
+
+      if (!/(?=.*[a-z])/.test(password)) {
+        return toast.error(
+          "Password must contain at least one lowercase letter"
+        );
+      }
+
+      if (!/(?=.*\d)/.test(password)) {
+        return toast.error(
+          "Password must contain at least one number"
+        );
+      }
+
+      if (password !== confirmPassword) {
+        return toast.error("Passwords do not match");
+      }
+    }
+
+    // =========================
+    // FORM DATA
+    // =========================
+
+    const formData = new FormData();
+
+    formData.append("full_name", trimmedName);
+    formData.append("email", trimmedEmail);
+    formData.append("phone", phone);
+    formData.append("role", role);
+    formData.append("department", department);
+    formData.append("status", status);
+
+    if (
+      cuisineSpecialization &&
+      cuisineSpecialization.length > 0
+    ) {
+      formData.append(
+        "cuisineSpecialization",
+        JSON.stringify(cuisineSpecialization)
+      );
+    }
+
+    if (password) {
+      formData.append("password", password);
+    }
+
+    // =========================
+    // ADD STAFF
+    // =========================
+
+    let result;
+
+    if (modal.mode === "add") {
+      result = await addStaff(formData);
+    }
+
+    // =========================
+    // EDIT STAFF
+    // =========================
+
+    if (modal.mode === "edit") {
+      result = await updateStaffProfile(
+        modal.row._id,
+        formData
+      );
+    }
+
+    // =========================
+    // RESPONSE
+    // =========================
+
+    if (result?.success) {
+      toast.success(
+        modal.mode === "add"
+          ? "Staff added successfully!"
+          : "Staff updated successfully!"
+      );
+
+      close();
+    } else {
+      toast.error(
+        result?.error || "Failed to save staff"
+      );
     }
   };
 
@@ -467,9 +669,18 @@ export default function AdminStaffManagement() {
                 <input
                   className="rooms__form_input"
                   value={form.full_name}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, full_name: e.target.value }))
-                  }
+                  maxLength={50}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    // only letters + spaces
+                    if (/^[A-Za-z\s]*$/.test(value)) {
+                      setForm((f) => ({
+                        ...f,
+                        full_name: value,
+                      }));
+                    }
+                  }}
                 />
               </div>
               <div className="rooms__form_row">
@@ -493,7 +704,6 @@ export default function AdminStaffManagement() {
                     onChange={(e) => {
                       const value = e.target.value;
 
-                      // Only numbers allow
                       if (/^\d*$/.test(value)) {
                         setForm((f) => ({
                           ...f,
@@ -622,10 +832,13 @@ export default function AdminStaffManagement() {
                       type={showPass ? "text" : "password"}
                       className="rooms__form_input"
                       value={form.password}
+                      minLength={6}
                       onChange={(e) =>
-                        setForm((f) => ({ ...f, password: e.target.value }))
+                        setForm((f) => ({
+                          ...f,
+                          password: e.target.value,
+                        }))
                       }
-                      style={{ paddingRight: "40px" }}
                     />
                     <button
                       type="button"
@@ -723,17 +936,6 @@ export default function AdminStaffManagement() {
               <button
                 className="rooms__btn rooms__btn--primary"
                 onClick={handleSave}
-                disabled={
-                  !form.full_name ||
-                  !form.email ||
-                  !form.phone ||
-                  !form.role ||
-                  !form.department ||
-                  (modal.mode === "add" &&
-                    (!form.password ||
-                      form.password !== form.confirmPassword)) ||
-                  (form.password && form.password !== form.confirmPassword)
-                }
               >
                 {modal.mode === "add" ? "Add Staff" : "Save Changes"}
               </button>
