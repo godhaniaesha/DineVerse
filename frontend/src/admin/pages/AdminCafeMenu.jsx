@@ -5,6 +5,7 @@ import { useTableReservation } from "../../contexts/TableReservationContext";
 import { useOrder } from "../../contexts/OrderContext";
 import { useMenu } from "../../contexts/MenuContext";
 import emptyCart from "../../img/no.png";
+import Pagination from "../components/Pagination";
 
 
 const ORDER_QUEUE_KEY = "admin-order-queue";
@@ -28,7 +29,7 @@ const MENU_CONFIG = {
     ],
   },
   restaurant: {
-    title: "Restaurant Menu",
+    title: "Restaurant Menu", 
     sub: "Manage premium starters, mains and plated desserts in card format.",
     categories: ["All", "Starter", "Main Course", "Seafood", "Dessert", "Signature"],
     items: [
@@ -77,6 +78,8 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
   const [lineQuantities, setLineQuantities] = useState({});
   const [lastSubmitted, setLastSubmitted] = useState(null);
   const [occupiedTables, setOccupiedTables] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
   const { reservations, getReservations } = useTableReservation();
   const { orders, fetchOrders, createOrder: sendOrderToBackend } = useOrder();
 
@@ -153,6 +156,20 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
       return matchesCategory && matchesSearch;
     })
   ), [activeCategory, items, search]);
+
+  // Pagination
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredItems.slice(startIndex, endIndex);
+  }, [filteredItems, currentPage]);
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeCategory]);
 
   const availableCount = items.filter((item) => item.status === "available").length;
   const featuredCount = items.filter((item) => item.featured).length;
@@ -354,7 +371,9 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
 
       <section style={{ marginTop: 16 }}>
         <div className="row g-3">
-          {filteredItems.map((item) => (
+          {paginatedItems.map((item) => {
+            const isAlreadyInOrder = orderDraft.items.some(orderedItem => orderedItem.id === item.id);
+            return (
             <div key={item.id} className="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 col-xxl-3 d-flex">
               <article
                 className="ad_card w-100 d-flex flex-column"
@@ -397,16 +416,30 @@ export default function AdminCafeMenu({ title, sub, variant = "cafe" }) {
                   </div>
 
                   <div style={{ marginTop: "auto", display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    <button className="ad_btn" type="button" onClick={() => addToOrder(item)} disabled={item.status !== "available"}>
-                      Add to Order
+                    <button 
+                      className="ad_btn" 
+                      type="button" 
+                      onClick={() => addToOrder(item)} 
+                      disabled={item.status !== "available" || isAlreadyInOrder}
+                    >
+                      {isAlreadyInOrder ? "Already in Order" : "Add to Order"}
                     </button>
                   </div>
                 </div>
               </article>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={filteredItems.length}
+      />
 
       <div className="row" style={{ marginTop: 16 }}>
 
