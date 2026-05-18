@@ -37,7 +37,8 @@ export default function AdminProfile() {
   const [profileImage, setProfileImage] = useState(null);
 
   const handleSave = async () => {
-    const { full_name, email, phone } = form;
+    const { full_name, email } = form;
+    const phone = String(form.phone || "");
 
     // --- Frontend Validations matching backend/utils/validationRules.js ---
     if (!full_name.trim()) return toast.error("Full name is required");
