@@ -618,6 +618,166 @@ export const updateReservationStatus = async (req, res) => {
     }
 };
 
+export const updateReservation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            guest,
+            firstName,
+            lastName,
+            email,
+            phone,
+            date,
+            checkIn,
+            time,
+            checkInTime,
+            party,
+            adults,
+            children,
+            specialRequest,
+            status
+        } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return ThrowError(res, 400, "Invalid Reservation ID");
+        }
+
+        const reservation = await RoomReservation.findById(id);
+        if (!reservation) return ThrowError(res, 404, "Reservation not found");
+
+        if (guest || firstName || lastName) {
+            const nameParts = String(guest || "").trim().split(/\s+/).filter(Boolean);
+            reservation.first_name = firstName || nameParts[0] || reservation.first_name;
+            reservation.last_name = lastName || nameParts.slice(1).join(" ") || reservation.last_name;
+        }
+
+        if (email) reservation.email = email;
+        if (phone) reservation.phone = phone;
+        if (specialRequest !== undefined) reservation.specialRequest = specialRequest;
+
+        const nextCheckInDate = date || checkIn;
+        const nextCheckInTime = checkInTime || time;
+        const originalStayMs = reservation.checkOut - reservation.checkIn;
+
+        if (nextCheckInDate || nextCheckInTime) {
+            const parsedCheckInDate = nextCheckInDate ? new Date(nextCheckInDate) : reservation.checkIn;
+            if (isNaN(parsedCheckInDate)) {
+                return ThrowError(res, 400, "Invalid check-in date");
+            }
+
+            const datePart = parsedCheckInDate.toISOString().split("T")[0];
+            const timePart = convertTo24Hour(nextCheckInTime || reservation.checkInTime || "14:00");
+            const checkInDateTime = new Date(`${datePart}T${timePart}:00`);
+
+            if (isNaN(checkInDateTime)) {
+                return ThrowError(res, 400, "Invalid check-in date or time");
+            }
+
+            reservation.checkIn = checkInDateTime;
+            reservation.checkInTime = timePart;
+
+            if (!req.body.checkOut) {
+                reservation.checkOut = new Date(checkInDateTime.getTime() + originalStayMs);
+            }
+        }
+
+        if (req.body.checkOut || req.body.checkOutTime) {
+            const parsedCheckOutDate = req.body.checkOut ? new Date(req.body.checkOut) : reservation.checkOut;
+            if (isNaN(parsedCheckOutDate)) {
+                return ThrowError(res, 400, "Invalid check-out date");
+            }
+
+            const datePart = parsedCheckOutDate.toISOString().split("T")[0];
+            const timePart = convertTo24Hour(req.body.checkOutTime || reservation.checkOutTime || "11:00");
+            const checkOutDateTime = new Date(`${datePart}T${timePart}:00`);
+
+            if (isNaN(checkOutDateTime)) {
+                return ThrowError(res, 400, "Invalid check-out date or time");
+            }
+
+            reservation.checkOut = checkOutDateTime;
+            reservation.checkOutTime = timePart;
+        }
+
+        if (reservation.checkIn >= reservation.checkOut) {
+            return ThrowError(res, 400, "Check-out must be after check-in");
+        }
+
+        if (party !== undefined || adults !== undefined || children !== undefined) {
+            const nextChildren = Number(children ?? reservation.children ?? 0);
+            const nextAdults = adults !== undefined
+                ? Number(adults)
+                : Math.max(Number(party || 1) - nextChildren, 1);
+
+            if (!Number.isFinite(nextAdults) || nextAdults < 1) {
+                return ThrowError(res, 400, "At least 1 adult is required");
+            }
+
+            reservation.adults = nextAdults;
+            reservation.children = Number.isFinite(nextChildren) ? nextChildren : 0;
+        }
+
+        if (status) {
+            const validStatuses = ["Confirmed", "Cancelled", "Checked In", "Checked Out", "No Show"];
+            if (!validStatuses.includes(status)) {
+                return ThrowError(res, 400, "Invalid reservation status");
+            }
+            reservation.status = status;
+        }
+
+        await reservation.save();
+
+        const populated = await RoomReservation.findById(id)
+            .populate("roomType", "display_name price_per_night")
+            .populate("room", "roomNumber floor");
+
+        return res.status(200).json({
+            success: true,
+            message: "Reservation updated successfully",
+            data: {
+                ...populated._doc,
+                checkInFormatted: formatDate(populated.checkIn),
+                checkOutFormatted: formatDate(populated.checkOut),
+                guest: `${populated.first_name} ${populated.last_name}`.trim()
+            }
+        });
+    } catch (error) {
+         return ThrowError(res, 500, error.message);
+    }
+};
+
+export const deleteReservation = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return ThrowError(res, 400, "Invalid Reservation ID");
+        }
+
+        const reservation = await RoomReservation.findByIdAndDelete(id);
+        if (!reservation) return ThrowError(res, 404, "Reservation not found");
+
+        if (reservation.room) {
+            await Room.findByIdAndUpdate(reservation.room, {
+                status: "Available",
+                cleanStatus: "Done",
+                cleanedAt: null,
+                assignedHousekeeper: null,
+                lastUpdatedBy: null,
+                lastUpdatedByName: ""
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Reservation deleted successfully",
+            data: { id }
+        });
+    } catch (error) {
+         return ThrowError(res, 500, error.message);
+    }
+};
+
 export const getGuests = async (req, res) => {
     try {
 

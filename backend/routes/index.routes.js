@@ -3,7 +3,7 @@ import { register, login, changePassword, forgotPassword, verifyOTP, resetPasswo
 import { addStaff, getStaff, updateStaffProfile, deleteStaff, getAdmin } from '../controllers/staffController.js';
 import { addCategory, getCategories, getCategoryById, updateCategory, deleteCategory, addDish, getDishes, getDishById, updateDish, deleteDish, getDishesByArea, getCategoriesByArea, searchDishes, searchCategories } from '../controllers/foodController.js';
 import { addRoomType, getRoomTypes, updateRoomType, deleteRoomType, addRoom, getRooms, updateRoom, deleteRoom, getRoomById, searchRooms } from '../controllers/roomController.js';
-import { getReservations, updateReservationStatus, createPaymentIntent, confirmBooking, getReservationById, getAvailableRoomTypes, getRoomsByType, validateGuestDetails, getGuests, searchReservations, searchGuests, getAdminReservations } from '../controllers/reservationController.js';
+import { getReservations, updateReservationStatus, updateReservation, deleteReservation, createPaymentIntent, confirmBooking, getReservationById, getAvailableRoomTypes, getRoomsByType, validateGuestDetails, getGuests, searchReservations, searchGuests, getAdminReservations } from '../controllers/reservationController.js';
 import { addTable, getTables, getTableById, updateTable, deleteTable, getTablesByArea } from '../controllers/tableController.js';
 import { UserAuth, superAdminAuth, managerAuth, adminManagerAuth, waiterAuth, chefAuth, housekeepingAuth, isStaff } from '../middlewares/authMiddleware.js';
 import { validate } from '../middlewares/validationMiddleware.js';
@@ -88,7 +88,9 @@ router.get('/reservations/search', UserAuth, adminManagerAuth, searchReservation
 router.get('/reservations/getAdminReservations', UserAuth, adminManagerAuth, getAdminReservations);
 router.get('/reservations/getAll', UserAuth, housekeepingAuth, getReservations);
 router.get('/reservations/getById/:id', UserAuth, adminManagerAuth, getReservationById);
+router.put('/reservations/update/:id', UserAuth, adminManagerAuth, updateReservation);
 router.patch('/reservations/updateStatus/:id', UserAuth, adminManagerAuth, updateReservationStatus);
+router.delete('/reservations/delete/:id', UserAuth, adminManagerAuth, deleteReservation);
 
 
 // ========== TABLE RESERVATION ROUTES (Public) ==========
