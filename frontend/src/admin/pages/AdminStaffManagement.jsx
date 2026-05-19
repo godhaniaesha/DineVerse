@@ -7,7 +7,8 @@ import Pagination from "../components/Pagination";
 import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
 /* ── API CONFIGURATION ───────────────────────────────────────────── */
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 /* ── CUISINE CHECKBOX STYLES ───────────────────────────────────────────── */
 const cuisineCheckboxStyles = `
@@ -153,6 +154,54 @@ const IcEdit = () => (
   </svg>
 );
 
+// Helper: deeply normalize cuisine field to plain array of strings.
+// Recursively JSON.parse strings until we get an array/primitive, then flatten.
+const parseCuisineArray = (val) => {
+  const tryParse = (v, depth = 0) => {
+    if (depth > 8) return v;
+    if (v === null || v === undefined) return [];
+    if (Array.isArray(v)) return v.flatMap((item) => tryParse(item, depth + 1));
+    if (typeof v === "string") {
+      const trimmed = v.trim();
+      // empty
+      if (trimmed === "") return [];
+      // try JSON parse repeatedly to unwrap nested encodings
+      try {
+        let parsed = trimmed;
+        let guard = 0;
+        while (typeof parsed === "string" && guard < 6) {
+          const tmp = JSON.parse(parsed);
+          if (tmp === parsed) break;
+          parsed = tmp;
+          guard += 1;
+        }
+        return tryParse(parsed, depth + 1);
+      } catch {
+        // not JSON - split comma separated strings
+        return trimmed.split(",").map((s) => s.trim()).filter(Boolean);
+      }
+    }
+    // other primitive (number/boolean) -> string
+    if (typeof v === "number" || typeof v === "boolean") return [String(v)];
+    // object (unexpected) -> take stringified values
+    if (typeof v === "object") {
+      try {
+        return Object.values(v).flatMap((x) => tryParse(x, depth + 1));
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
+
+  const result = tryParse(val);
+  // final normalization: unique & preserve order
+  const seen = new Set();
+  return result
+    .map((x) => String(x).trim())
+    .filter((x) => x && !seen.has(x) && (seen.add(x), true));
+};
+
 const EMPTY = {
   full_name: "",
   role: "",
@@ -207,6 +256,19 @@ export default function AdminStaffManagement() {
     setForm(EMPTY);
   };
 
+  // Normalize role and department to match dropdown options
+  const normalizeRole = (role) => {
+    if (!role) return "";
+    const normalized = role.trim().toLowerCase();
+    return ROLES.find((r) => r.toLowerCase() === normalized) || "";
+  };
+
+  const normalizeDepartment = (department) => {
+    if (!department) return "";
+    const normalized = department.trim().toLowerCase();
+    return DEPTS.find((d) => d.toLowerCase() === normalized) || "";
+  };
+
   useEffect(() => {
     getStaff();
     fetchCuisines();
@@ -227,7 +289,10 @@ export default function AdminStaffManagement() {
       if (data.success && data.data) {
         setCuisines(data.data);
       } else {
-        console.error("Failed to fetch cuisines:", data.message || data.message);
+        console.error(
+          "Failed to fetch cuisines:",
+          data.message || data.message,
+        );
         setCuisines([]);
       }
     } catch (err) {
@@ -270,9 +335,7 @@ export default function AdminStaffManagement() {
     }
 
     if (!/^[A-Za-z\s]+$/.test(trimmedName)) {
-      return toast.error(
-        "Full name must contain only letters and spaces"
-      );
+      return toast.error("Full name must contain only letters and spaces");
     }
 
     // =========================
@@ -285,8 +348,7 @@ export default function AdminStaffManagement() {
 
     const trimmedEmail = email.trim().toLowerCase();
 
-    const emailRegex =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(trimmedEmail)) {
       return toast.error("Please enter valid email address");
@@ -296,22 +358,19 @@ export default function AdminStaffManagement() {
     // PHONE VALIDATION
     // =========================
 
-    if (!phone || !phone.trim()) {
+    const trimmedPhone = String(phone || "").trim();
+
+    if (!trimmedPhone) {
       return toast.error("Please enter phone number");
     }
 
-    if (!/^\d+$/.test(phone)) {
-      return toast.error(
-        "Phone number must contain only digits"
-      );
+    if (!/^\d+$/.test(trimmedPhone)) {
+      return toast.error("Phone number must contain only digits");
     }
 
-    if (phone.length !== 10) {
-      return toast.error(
-        "Phone number must be exactly 10 digits"
-      );
+    if (trimmedPhone.length !== 10) {
+      return toast.error("Phone number must be exactly 10 digits");
     }
-
     // if (!/^[0-9]/.test(phone)) {
     //   return toast.error(
     //     "Phone number must start with 6, 7, 8 or 9"
@@ -326,16 +385,7 @@ export default function AdminStaffManagement() {
       return toast.error("Please select role");
     }
 
-    const validRoles = [
-      "Manager",
-      "Housekeeping",
-      "Cafe Waiter",
-      "Res Waiter",
-      "Bar Waiter",
-      "Chef",
-    ];
-
-    if (!validRoles.includes(role)) {
+    if (!ROLES.includes(role)) {
       return toast.error("Invalid role selected");
     }
 
@@ -347,16 +397,7 @@ export default function AdminStaffManagement() {
       return toast.error("Please select department");
     }
 
-    const validDepartments = [
-      "Kitchen",
-      "Cafe",
-      "Restaurant",
-      "Bar",
-      "Reception",
-      "Housekeeping",
-    ];
-
-    if (!validDepartments.includes(department)) {
+    if (!DEPTS.includes(department)) {
       return toast.error("Invalid department selected");
     }
 
@@ -366,21 +407,16 @@ export default function AdminStaffManagement() {
 
     if (
       role === "Chef" &&
-      (!cuisineSpecialization ||
-        cuisineSpecialization.length === 0)
+      (!cuisineSpecialization || cuisineSpecialization.length === 0)
     ) {
-      return toast.error(
-        "Please select at least one cuisine specialization"
-      );
+      return toast.error("Please select at least one cuisine specialization");
     }
 
     // =========================
     // STATUS VALIDATION
     // =========================
 
-    const validStatuses = ["Active", "Inactive"];
-
-    if (!validStatuses.includes(status)) {
+    if (!STATUSES.includes(status)) {
       return toast.error("Invalid status selected");
     }
 
@@ -394,33 +430,27 @@ export default function AdminStaffManagement() {
       }
 
       if (password.length < 6) {
-        return toast.error(
-          "Password must be at least 6 characters"
-        );
+        return toast.error("Password must be at least 6 characters");
       }
 
       if (!/(?=.*[A-Z])/.test(password)) {
         return toast.error(
-          "Password must contain at least one uppercase letter"
+          "Password must contain at least one uppercase letter",
         );
       }
 
       if (!/(?=.*[a-z])/.test(password)) {
         return toast.error(
-          "Password must contain at least one lowercase letter"
+          "Password must contain at least one lowercase letter",
         );
       }
 
       if (!/(?=.*\d)/.test(password)) {
-        return toast.error(
-          "Password must contain at least one number"
-        );
+        return toast.error("Password must contain at least one number");
       }
 
       if (!confirmPassword) {
-        return toast.error(
-          "Please enter confirm password"
-        );
+        return toast.error("Please enter confirm password");
       }
 
       if (password !== confirmPassword) {
@@ -434,27 +464,23 @@ export default function AdminStaffManagement() {
 
     if (modal.mode === "edit" && password) {
       if (password.length < 6) {
-        return toast.error(
-          "Password must be at least 6 characters"
-        );
+        return toast.error("Password must be at least 6 characters");
       }
 
       if (!/(?=.*[A-Z])/.test(password)) {
         return toast.error(
-          "Password must contain at least one uppercase letter"
+          "Password must contain at least one uppercase letter",
         );
       }
 
       if (!/(?=.*[a-z])/.test(password)) {
         return toast.error(
-          "Password must contain at least one lowercase letter"
+          "Password must contain at least one lowercase letter",
         );
       }
 
       if (!/(?=.*\d)/.test(password)) {
-        return toast.error(
-          "Password must contain at least one number"
-        );
+        return toast.error("Password must contain at least one number");
       }
 
       if (password !== confirmPassword) {
@@ -470,19 +496,22 @@ export default function AdminStaffManagement() {
 
     formData.append("full_name", trimmedName);
     formData.append("email", trimmedEmail);
-    formData.append("phone", phone);
+    formData.append("phone", trimmedPhone);
     formData.append("role", role);
     formData.append("department", department);
     formData.append("status", status);
 
-    if (
-      cuisineSpecialization &&
-      cuisineSpecialization.length > 0
-    ) {
+    // prepare cuisines safely (always simple array of strings)
+    const flatCuisine = parseCuisineArray(cuisineSpecialization);
+
+    if (flatCuisine && flatCuisine.length > 0) {
+      // send a JSON string (for APIs expecting a JSON array)
       formData.append(
         "cuisineSpecialization",
-        JSON.stringify(cuisineSpecialization)
+        JSON.stringify(flatCuisine),
       );
+      // also append individual items as `cuisineSpecialization[]` (many backends handle arrays this way)
+      flatCuisine.forEach((c) => formData.append("cuisineSpecialization[]", c));
     }
 
     if (password) {
@@ -504,10 +533,7 @@ export default function AdminStaffManagement() {
     // =========================
 
     if (modal.mode === "edit") {
-      result = await updateStaffProfile(
-        modal.row._id,
-        formData
-      );
+      result = await updateStaffProfile(modal.row._id, formData);
     }
 
     // =========================
@@ -518,14 +544,12 @@ export default function AdminStaffManagement() {
       toast.success(
         modal.mode === "add"
           ? "Staff added successfully!"
-          : "Staff updated successfully!"
+          : "Staff updated successfully!",
       );
 
       close();
     } else {
-      toast.error(
-        result?.error || "Failed to save staff"
-      );
+      toast.error(result?.error || "Failed to save staff");
     }
   };
 
@@ -545,9 +569,15 @@ export default function AdminStaffManagement() {
   const paginatedStaff = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return staffWithoutSuperAdmin.slice(startIndex, endIndex);
+    // normalize cuisineSpecialization for display and editing
+    return staffWithoutSuperAdmin
+      .slice(startIndex, endIndex)
+      .map((s) => ({
+        ...s,
+        cuisineSpecialization: parseCuisineArray(s.cuisineSpecialization),
+      }));
   }, [staffWithoutSuperAdmin, currentPage]);
-
+  
   const totalPages = Math.ceil(staffWithoutSuperAdmin.length / itemsPerPage);
 
   return (
@@ -618,14 +648,23 @@ export default function AdminStaffManagement() {
                       <button
                         className="rooms__icon_btn"
                         onClick={() => {
-                          setForm({
+                          // use sanitized row and form to avoid double-encoding problems
+                          const sanitizedCuisine = parseCuisineArray(
+                            r.cuisineSpecialization,
+                          );
+                          const sanitizedRow = {
                             ...r,
-                            cuisineSpecialization:
-                              r.cuisineSpecialization || [],
+                            cuisineSpecialization: sanitizedCuisine,
+                          };
+                          setForm({
+                            ...sanitizedRow,
+                            role: normalizeRole(r.role),
+                            department: normalizeDepartment(r.department),
+                            phone: String(r.phone || ""),
                             password: "",
                             confirmPassword: "",
                           });
-                          setModal({ mode: "edit", row: r });
+                          setModal({ mode: "edit", row: sanitizedRow });
                         }}
                       >
                         <IcEdit />
@@ -698,6 +737,8 @@ export default function AdminStaffManagement() {
                 <div>
                   <label className="rooms__form_label">Phone</label>
                   <input
+                    type="tel"
+                    inputMode="numeric"
                     className="rooms__form_input"
                     value={form.phone}
                     maxLength={10}
@@ -955,7 +996,9 @@ export default function AdminStaffManagement() {
                 ×
               </button>
             </div>
-            <p className="rooms__delete_message">Delete {modal.row.full_name}?</p>
+            <p className="rooms__delete_message">
+              Delete {modal.row.full_name}?
+            </p>
             <div className="rooms__form_actions">
               <button className="rooms__btn rooms__btn--ghost" onClick={close}>
                 Cancel
