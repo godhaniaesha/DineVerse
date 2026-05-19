@@ -128,11 +128,13 @@ export default function AdminCuisineManagement() {
     // AREA VALIDATION
     // =========================
 
-    if (!area) {
+    const trimmedArea = typeof area === 'string' ? area.trim() : "";
+
+    if (!trimmedArea) {
       return toast.error("Please select area");
     }
 
-    if (!AREAS.includes(area)) {
+    if (!AREAS.includes(trimmedArea)) {
       return toast.error("Invalid area selected");
     }
 
@@ -184,7 +186,7 @@ export default function AdminCuisineManagement() {
 
     formData.append("name", trimmedName);
     formData.append("description", trimmedDescription);
-    formData.append("area", area);
+    formData.append("area", trimmedArea);
     formData.append("status", status);
 
     if (img instanceof File) {
@@ -331,7 +333,7 @@ export default function AdminCuisineManagement() {
                   <div className="d-flex" style={{ gap: "6px" }}>
                     {canEditItems ? (
                       <>
-                        <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, img: r.img }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
+                        <button className="rooms__icon_btn" onClick={() => { setForm({ ...r, img: r.img, area: String(r.area || "").trim() }); setModal({ mode: "edit", row: r }); }}><IcEdit /></button>
                         <DeleteIconButton onClick={() => setModal({ mode: "delete", row: r })} />
                       </>
                     ) : (

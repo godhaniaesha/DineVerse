@@ -284,6 +284,7 @@ export default function AdminCategoryManagement() {
 
       <div className="rooms__filters" style={{ marginBottom: 12 }}>
         <input
+
           className="rooms__search"
           placeholder="Search name/area/cuisine..."
           value={search}

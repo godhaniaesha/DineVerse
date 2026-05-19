@@ -68,6 +68,7 @@ export default function AdminTables() {
   const openEdit = (row) => {
     setForm({
       ...row,
+      tableNo: row.tableNo.replace(/^[A-Za-z]+/, ""),
       capacity: String(row.capacity),
     });
     setModal({ mode: "edit", row });
