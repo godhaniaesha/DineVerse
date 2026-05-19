@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import indexRoutes from './routes/index.routes.js';
+import dns from 'node:dns';
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 dotenv.config();
 connectDB();
 
