@@ -7,7 +7,7 @@ import { useTableReservation } from "../contexts/TableReservationContext";
 import { useAuth } from "../contexts/AuthContext";
 
 const DAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MONTHS = ["Janary", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 function buildCalendar(year, month) {
   const first = new Date(year, month, 1).getDay();
