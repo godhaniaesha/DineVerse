@@ -65,6 +65,7 @@ export default function AdminReservations() {
   useEffect(() => {
     getReservations();
   }, [getReservations]);
+  
 
   const filtered = useMemo(() => {
     return reservations.filter((row) => {
