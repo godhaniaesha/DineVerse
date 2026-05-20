@@ -1,17 +1,18 @@
 import { useMemo, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import DeleteIconButton from "../components/DeleteIconButton";
 import { useReservations } from "../../contexts/ReservationContext";
 import FoodLoadingAnimation from "../components/FoodLoadingAnimation";
 
-const STATUSES = ["All", "Pending", "Confirmed", "Checked In", "Cancelled"];
+const STATUSES = ["All", "Confirmed", "Checked In", "Checked Out", "No Show", "Cancelled"];
 const EMPTY_FORM = {
   id: "",
   guest: "",
   date: "",
   time: "",
   party: "2",
-  type: "Table",
-  status: "Pending",
+  type: "Room",
+  status: "Confirmed",
 };
 const IcEdit = () => (
   <svg
@@ -45,13 +46,21 @@ function Modal({ title, onClose, children }) {
 }
 
 export default function AdminReservations() {
-  const { reservations, loading, getReservations, updateReservationStatus } =
-    useReservations();
+  const {
+    reservations,
+    loading,
+    getReservations,
+    updateReservationStatus,
+    updateReservation,
+    deleteReservation,
+  } = useReservations();
   const [status, setStatus] = useState("All");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     getReservations();
@@ -72,12 +81,13 @@ export default function AdminReservations() {
   }, [filtered]);
 
   const updateStatus = async (id, nextStatus) => {
-    await updateReservationStatus(id, nextStatus);
+    const result = await updateReservationStatus(id, nextStatus);
+    if (result?.success) {
+      toast.success("Reservation status updated.");
+    } else {
+      toast.error(result?.error || "Failed to update reservation status");
+    }
     setEditingId(null);
-  };
-  const openAdd = () => {
-    setForm(EMPTY_FORM);
-    setModal({ mode: "add" });
   };
   const openEdit = (row) => {
     setForm({ ...row, party: String(row.party) });
@@ -85,11 +95,45 @@ export default function AdminReservations() {
   };
   const openDelete = (row) => setModal({ mode: "delete", row });
   const close = () => setModal(null);
-  const save = () => {
-    close();
+  const save = async () => {
+    if (!modal?.row?.id) return;
+
+    if (!form.guest.trim() || !form.date || !form.time || Number(form.party) < 1) {
+      toast.error("Please fill guest, date, time and party size.");
+      return;
+    }
+
+    setSaving(true);
+    const result = await updateReservation(modal.row.id, {
+      guest: form.guest.trim(),
+      date: form.date,
+      time: form.time,
+      party: Number(form.party),
+      status: form.status,
+      specialRequest: form.specialRequest,
+    });
+
+    if (result?.success) {
+      toast.success("Reservation updated successfully.");
+      close();
+    } else {
+      toast.error(result?.error || "Failed to update reservation");
+    }
+    setSaving(false);
   };
-  const remove = () => {
-    close();
+  const remove = async () => {
+    if (!modal?.row?.id) return;
+
+    setDeleting(true);
+    const result = await deleteReservation(modal.row.id);
+
+    if (result?.success) {
+      toast.success("Reservation deleted successfully.");
+      close();
+    } else {
+      toast.error(result?.error || "Failed to delete reservation");
+    }
+    setDeleting(false);
   };
 
   const total = reservations.length;
@@ -110,7 +154,6 @@ export default function AdminReservations() {
             Manage table and room bookings with quick status updates.
           </p>
         </div>
-        {/* <button className="rooms__add_btn" onClick={openAdd}>Add Reservation</button> */}
       </div>
 
       <div className="ad_cards_grid">
@@ -185,12 +228,10 @@ export default function AdminReservations() {
               </tr>
             ) : (
               latestTenReservations.map((row) => (
-                console.log(row,"row"),
-                
                 <tr key={row.id}>
                   <td>{row.reservation}</td>
                   <td>{row.guest}</td>
-                  <td>{row.date}</td>
+                  <td>{row.displayDate || row.date}</td>
                   <td>{row.time}</td>
                   <td>{row.party}</td>
                   <td>{row.type}</td>
@@ -219,8 +260,8 @@ export default function AdminReservations() {
                     <div className="d-flex" style={{ gap: "6px" }}>
                       <button
                         className="rooms__icon_btn"
-                        title="Edit status"
-                        onClick={() => setEditingId(row.id)}
+                        title="Edit reservation"
+                        onClick={() => openEdit(row)}
                       >
                         <IcEdit />
                       </button>
@@ -239,13 +280,19 @@ export default function AdminReservations() {
 
       {modal?.mode === "delete" && (
         <Modal title="Delete Reservation" onClose={close}>
-          <p className="rooms__delete_message">Delete {modal.row.id}?</p>
+          <p className="rooms__delete_message">
+            Delete {modal.row.reservation || modal.row.id}?
+          </p>
           <div className="rooms__form_actions">
             <button className="rooms__btn rooms__btn--ghost" onClick={close}>
               Cancel
             </button>
-            <button className="rooms__btn rooms__btn--danger" onClick={remove}>
-              Delete
+            <button
+              className="rooms__btn rooms__btn--danger"
+              onClick={remove}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </Modal>
@@ -300,14 +347,7 @@ export default function AdminReservations() {
           </div>
           <div className="rooms__form_row">
             <label className="rooms__form_label">Type</label>
-            <select
-              className="rooms__form_select"
-              value={form.type}
-              onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-            >
-              <option value="Table">Table</option>
-              <option value="Room">Room</option>
-            </select>
+            <input className="rooms__form_input" value={form.type} readOnly />
           </div>
           <div className="rooms__form_row">
             <label className="rooms__form_label">Status</label>
@@ -329,8 +369,12 @@ export default function AdminReservations() {
             <button className="rooms__btn rooms__btn--ghost" onClick={close}>
               Cancel
             </button>
-            <button className="rooms__btn rooms__btn--primary" onClick={save}>
-              Save
+            <button
+              className="rooms__btn rooms__btn--primary"
+              onClick={save}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save"}
             </button>
           </div>
         </Modal>
