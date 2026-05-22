@@ -126,13 +126,15 @@ export default function AdminCategoryManagement() {
     // AREA VALIDATION
     // =========================
 
-    if (!area || area.length === 0) {
+    const areaList = Array.isArray(area) ? area : area ? [area] : [];
+
+    if (areaList.length === 0) {
       return toast.error(
         "Please select at least one area"
       );
     }
 
-    const invalidAreas = area.filter(
+    const invalidAreas = areaList.filter(
       (a) => !AREAS.includes(a)
     );
 
@@ -190,7 +192,7 @@ export default function AdminCategoryManagement() {
 
     formData.append("name", trimmedName);
     formData.append("status", status);
-    formData.append("area", JSON.stringify(area));
+    formData.append("area", JSON.stringify(areaList));
 
     if (img instanceof File) {
       formData.append("img", img);
@@ -400,7 +402,7 @@ export default function AdminCategoryManagement() {
               </div>
             </div>
 
-            <div className="rooms__form_row"><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={form.area} onChange={(e) => setForm((f) => ({ ...f, area: e.target.value }))}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select></div>
+            <div className="rooms__form_row"><label className="rooms__form_label">Area</label><select className="rooms__form_select" value={Array.isArray(form.area) ? form.area[0] : form.area} onChange={(e) => setForm((f) => ({ ...f, area: [e.target.value] }))}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select></div>
 
             <div className="rooms__form_row"><label className="rooms__form_label">Status</label><select className="rooms__form_select" value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
 
