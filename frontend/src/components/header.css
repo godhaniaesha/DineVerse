@@ -464,8 +464,8 @@ button {
 
 /* Ghost round button (search, close) */
 .d_btn-ghost {
-  width: 42px !important;
-  height: 42px !important;
+  width: 28px !important;
+  height: 30px !important;
   border-radius: var(--d-r-pill) !important;
   border: 1px solid var(--d-border) !important;
   background: transparent !important;
@@ -474,7 +474,7 @@ button {
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  font-size: 19px !important;
+  font-size: 16px !important;
   transition: all var(--d-dur) var(--d-ease) !important;
 }
 
@@ -1005,7 +1005,7 @@ button {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 24px 24px 20px !important;
+  padding: 24px 15px 20px !important;
   border-bottom: 1px solid var(--d-border) !important;
   flex-shrink: 0 !important;
 }

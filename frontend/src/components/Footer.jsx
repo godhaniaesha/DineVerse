@@ -142,10 +142,10 @@ export default function Footer() {
                         </div>
                         <div className="col-md-6 text-center text-md-end">
                             <ul className="z_footer_bottom_links list-inline mb-0">
-                                <li className="list-inline-item"><Link to="/privacy">Privacy Policy</Link></li>
-                                <li className="list-inline-item"><Link to="/terms">Terms of Service</Link></li>
-                                <li className="list-inline-item"><Link to="/faq">Cookie Settings</Link></li>
-                                <li className="list-inline-item"><Link to="/contact">Support</Link></li>
+                                <li className="list-inline-item" style={{color:"#b2ab9b"}} ><Link to="/privacy">Privacy Policy</Link></li>
+                                <li className="list-inline-item" style={{color:"#b2ab9b"}} ><Link to="/terms">Terms of Service</Link></li>
+                                {/* <li className="list-inline-item"><Link to="/faq">Cookie Settings</Link></li>
+                                <li className="list-inline-item"><Link to="/contact">Support</Link></li> */}
                             </ul>
                         </div>
                     </div>

@@ -120,7 +120,7 @@ export default function Bar() {
                             >
                                 <img src={drink.img} alt={drink.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 <div className="z_bar_item_overlay">
-                                    <h3 style={{ fontSize: '2rem', margin: '0.5rem 0' }}>{drink.name}</h3>
+                                    <h3 style={{ fontSize: '1.8rem', margin: '0.5rem 0' }}>{drink.name}</h3>
                                     <p style={{ color: 'var(--d-text-2)', fontSize: '0.9rem' }}>{drink.desc}</p>
                                 </div>
                             </div>
@@ -169,13 +169,13 @@ export default function Bar() {
                                 </p>
                                 <div className="row g-4">
                                     <div className="col-6 reveal reveal-up delay-1">
-                                        <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
+                                        <div className="p-2 p-md-4" style={{ background: 'var(--d-surface-3)', borderRadius: 'var(--d-r-md)' }}>
                                             <MdWineBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
                                             <h5 style={{ marginTop: '1rem' }}>Rare Spirits</h5>
                                         </div>
                                     </div>
                                     <div className="col-6 reveal reveal-up delay-2">
-                                        <div style={{ background: 'var(--d-surface-3)', padding: '1.5rem', borderRadius: 'var(--d-r-md)' }}>
+                                        <div className="p-2 p-md-4" style={{ background: 'var(--d-surface-3)', borderRadius: 'var(--d-r-md)' }}>
                                             <MdLocalBar style={{ color: 'var(--d-bar)', fontSize: '2rem' }} />
                                             <h5 style={{ marginTop: '1rem' }}>Botanicals</h5>
                                         </div>

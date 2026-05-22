@@ -1031,10 +1031,9 @@ body {
 
 .z_prestige_title {
   font-family: var(--d-font-serif);
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: 400;
   color: var(--d-text-1);
-  margin-bottom: 1rem;
   letter-spacing: -1px;
 }
 
@@ -1160,7 +1159,7 @@ body {
 
 .z_prestige_room_name {
   font-family: var(--d-font-serif);
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 500;
   color: var(--d-text-1);
   margin-bottom: 1.5rem;
@@ -4928,7 +4927,7 @@ body {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    font-size: 10px;
+    /* font-size: 10px; */
   }
 
   .z_bar_btn_outline:hover {
@@ -6440,7 +6439,11 @@ body {
   width: max-content;
   /* Ensure track takes full width of images */
 }
-
+@media (max-width: 375px) {
+.z_res_dish_btn {
+    padding: 0.8rem 1rem !important;
+}
+}
 @keyframes z_slide_marquee {
   0% {
     transform: translateX(0);

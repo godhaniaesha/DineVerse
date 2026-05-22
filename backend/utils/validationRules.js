@@ -216,5 +216,9 @@ export const blogValidation = [
 
 // Helper to make rules optional for update routes
 export const updateValidation = (rules) => {
-    return rules.map(rule => rule.optional());
+    return rules.map(rule => {
+        // For password field, make it truly optional (skip if empty)
+        // For other fields, make them optional but validate if provided
+        return rule.optional({ checkFalsy: true });
+    });
 };

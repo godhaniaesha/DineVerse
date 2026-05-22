@@ -18,7 +18,7 @@ const COFFEE_ITEMS = [
         name: "Velvet Latte",
         desc: "Smooth and creamy with a delicate foam art and a hint of vanilla.",
         price: "$5",
-        img: "https://i.pinimg.com/736x/04/ee/42/04ee4271e8e3b6c8a653eee2f49cca8c.jpg"
+        img: "https://i.pinimg.com/736x/80/10/fe/8010fe5dceef92c08d87e9acc9f04e08.jpg"
     },
     {
         id: 3,

@@ -226,7 +226,7 @@ const ROLES = [
   "Manager",
   "Housekeeping",
   "Cafe Waiter",
-  "Res Waiter",
+  "Restaurant Waiter",
   "Bar Waiter",
   "Chef",
 ];
